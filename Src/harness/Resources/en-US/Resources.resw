@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- Toolbar -->
+  <data name="S_BACK" xml:space="preserve"><value>Back</value></data>
+  <data name="S_FORWARD" xml:space="preserve"><value>Forward</value></data>
+  <data name="S_REFRESH" xml:space="preserve"><value>Reload</value></data>
+  <data name="S_BOOKMARK" xml:space="preserve"><value>Bookmark</value></data>
+  <data name="S_BOOKMARKED" xml:space="preserve"><value>Bookmarked</value></data>
+  <data name="S_NEW_TAB" xml:space="preserve"><value>New Tab</value></data>
+  <data name="S_HOME" xml:space="preserve"><value>Home</value></data>
+  <data name="S_DESKTOP_SITE" xml:space="preserve"><value>Desktop Site</value></data>
+  <data name="S_MOBILE_SITE" xml:space="preserve"><value>Mobile Site</value></data>
+  <data name="S_FIND_IN_PAGE" xml:space="preserve"><value>Find in Page</value></data>
+  <data name="S_SHARE" xml:space="preserve"><value>Share</value></data>
+  <data name="S_COPY_LINK" xml:space="preserve"><value>Copy Link</value></data>
+  <data name="S_DOWNLOAD_PAGE" xml:space="preserve"><value>Download Page</value></data>
+  <data name="S_BOOKMARKS" xml:space="preserve"><value>Bookmarks</value></data>
+  <data name="S_HISTORY" xml:space="preserve"><value>History</value></data>
+  <data name="S_DOWNLOADS" xml:space="preserve"><value>Downloads</value></data>
+  <data name="S_SETTINGS" xml:space="preserve"><value>Settings</value></data>
+  <data name="S_MENU" xml:space="preserve"><value>Menu</value></data>
+  <data name="S_MENU_TITLE" xml:space="preserve"><value>Menu</value></data>
+
+  <!-- URL bar -->
+  <data name="S_SEARCH_PLACEHOLDER" xml:space="preserve"><value>Search or enter URL</value></data>
+  <data name="S_LOCK_SECURE" xml:space="preserve"><value></value></data>
+  <data name="S_LOCK_INSECURE" xml:space="preserve"><value></value></data>
+
+  <!-- Status -->
+  <data name="S_LOADING" xml:space="preserve"><value>Loading</value></data>
+  <data name="S_PROCESSING" xml:space="preserve"><value>Processing…</value></data>
+  <data name="S_LOAD_FAILED" xml:space="preserve"><value>Load Failed</value></data>
+  <data name="S_LOAD_TIMEOUT" xml:space="preserve"><value>Load Timeout</value></data>
+
+  <!-- Empty drawers -->
+  <data name="S_EMPTY_FAV" xml:space="preserve"><value>No Bookmarks</value></data>
+  <data name="S_EMPTY_HIST" xml:space="preserve"><value>No History</value></data>
+  <data name="S_EMPTY_DL" xml:space="preserve"><value>No Downloads</value></data>
+  <data name="S_NO_SHARE" xml:space="preserve"><value>Nothing to Share</value></data>
+
+  <!-- Settings page -->
+  <data name="S_SETTINGS_TITLE" xml:space="preserve"><value>Settings</value></data>
+  <data name="S_SET_LANG" xml:space="preserve"><value>Language</value></data>
+  <data name="S_SET_LANG_ZH" xml:space="preserve"><value>中文</value></data>
+  <data name="S_SET_LANG_EN" xml:space="preserve"><value>English</value></data>
+  <data name="S_SET_LANG_RU" xml:space="preserve"><value>Русский</value></data>
+  <data name="S_SET_SEARCH" xml:space="preserve"><value>Default Search Engine</value></data>
+  <data name="S_SET_HOME" xml:space="preserve"><value>Homepage (leave empty for default)</value></data>
+  <data name="S_SET_HOME_PLACEHOLDER" xml:space="preserve"><value>about:home</value></data>
+  <data name="S_SET_UA" xml:space="preserve"><value>Request Desktop Site on Startup</value></data>
+  <data name="S_SET_UA_CUSTOM" xml:space="preserve"><value>Custom User-Agent (empty = use toggle; reload to apply)</value></data>
+  <data name="S_SET_UA_CUSTOM_PLACEHOLDER" xml:space="preserve"><value>Mozilla/5.0 (Windows NT 10.0; Win64; x64) ...</value></data>
+  <data name="S_SET_ZOOM" xml:space="preserve"><value>Default Zoom</value></data>
+  <data name="S_SET_GPU" xml:space="preserve"><value>Enable GPU on Startup (auto after first page)</value></data>
+  <data name="S_SET_GPU_NOW" xml:space="preserve"><value>Enable GPU Now (restart to revert)</value></data>
+  <data name="S_SET_CLEAR_DATA" xml:space="preserve"><value>Clear Data</value></data>
+  <data name="S_SET_CLEAR_HIST" xml:space="preserve"><value>Clear History</value></data>
+  <data name="S_SET_CLEAR_FAV" xml:space="preserve"><value>Clear All Bookmarks</value></data>
+  <data name="S_SET_CLEAR_DL" xml:space="preserve"><value>Clear Downloads</value></data>
+  <data name="S_SET_DIAG" xml:space="preserve"><value>Diagnostics</value></data>
+  <data name="S_SET_EXPORT" xml:space="preserve"><value>Export Debug Logs / Crash Dumps</value></data>
+  <data name="S_SET_ABOUT" xml:space="preserve"><value>About / Update</value></data>
+  <data name="S_SET_CHECK_UPDATE" xml:space="preserve"><value>Check for Update (GitHub Releases)</value></data>
+
+  <!-- Tab switcher -->
+  <data name="S_TAB_SWITCHER_TITLE" xml:space="preserve"><value>Tabs</value></data>
+  <data name="S_TAB_SWITCHER_DONE" xml:space="preserve"><value>Done</value></data>
+  <data name="S_NEW_TAB_BTN" xml:space="preserve"><value>New Tab</value></data>
+
+  <!-- Drawer tabs -->
+  <data name="S_FAV_TAB" xml:space="preserve"><value>★ Favorites</value></data>
+  <data name="S_HIST_TAB" xml:space="preserve"><value>★ History</value></data>
+  <data name="S_DL_TAB" xml:space="preserve"><value>↓ Downloads</value></data>
+
+  <!-- Action sheet -->
+  <data name="S_ACTION_ADD_FAV" xml:space="preserve"><value>★ Bookmark This Page</value></data>
+  <data name="S_ACTION_DEL_FAV" xml:space="preserve"><value>★ Unbookmark</value></data>
+  <data name="S_ACTION_CLEAR" xml:space="preserve"><value>🗑 Clear</value></data>
+  <data name="S_ACTION_DL_PAGE" xml:space="preserve"><value>↓ Download This Page</value></data>
+
+  <!-- Download status -->
+  <data name="S_DL_STARTED" xml:space="preserve"><value>Downloading</value></data>
+  <data name="S_DL_DONE" xml:space="preserve"><value>Done</value></data>
+  <data name="S_DL_FAILED" xml:space="preserve"><value>Failed(</value></data>
+
+  <!-- Misc status toasts -->
+  <data name="S_COPIED" xml:space="preserve"><value>Link Copied</value></data>
+  <data name="S_CANCELLED" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="S_FOUND_N" xml:space="preserve"><value> matches</value></data>
+  <data name="S_FOUND_NONE" xml:space="preserve"><value>No Results</value></data>
+  <data name="S_FOUND_NO_MORE" xml:space="preserve"><value>No More</value></data>
+  <data name="S_FIND_PLACEHOLDER" xml:space="preserve"><value>Find in Page</value></data>
+  <data name="S_CANCEL_FAV" xml:space="preserve"><value>✕ Remove Bookmark</value></data>
+  <data name="S_DEL_FAV" xml:space="preserve"><value>✕ Remove Bookmark</value></data>
+  <data name="S_AUTODIAG_DONE" xml:space="preserve"><value>AUTODIAG DONE</value></data>
+  <data name="S_HOME_TITLE" xml:space="preserve"><value>Home</value></data>
+
+  <!-- GPU status -->
+  <data name="S_GPU_ON" xml:space="preserve"><value>🖥 GPU·</value></data>
+  <data name="S_GPU_FAIL" xml:space="preserve"><value>🖥 GPU✗</value></data>
+
+  <!-- Update check -->
+  <data name="S_UPDATE_CHECKING" xml:space="preserve"><value>Checking for Update…</value></data>
+  <data name="S_UPDATE_FAIL" xml:space="preserve"><value>Update Check Failed</value></data>
+  <data name="S_UPDATE_LATEST" xml:space="preserve"><value>Already Up to Date </value></data>
+  <data name="S_UPDATE_FOUND" xml:space="preserve"><value>New Version </value></data>
+  <data name="S_UPDATE_DLG_TITLE" xml:space="preserve"><value>Update Available</value></data>
+  <data name="S_UPDATE_DLG_GO" xml:space="preserve"><value>Go to Download</value></data>
+  <data name="S_UPDATE_DLG_LATER" xml:space="preserve"><value>Later</value></data>
+
+  <!-- Export -->
+  <data name="S_EXPORT_CHOOSE" xml:space="preserve"><value>Choose location to export…</value></data>
+  <data name="S_EXPORT_FAIL" xml:space="preserve"><value>Export Failed</value></data>
+
+  <!-- Toast strings for data clearing / status (added for i18n) -->
+  <data name="S_TOAST_BOOKMARKED" xml:space="preserve"><value>Bookmarked</value></data>
+  <data name="S_TOAST_UNBOOKMARKED" xml:space="preserve"><value>Bookmark Removed</value></data>
+  <data name="S_TOAST_HIST_CLEARED" xml:space="preserve"><value>History Cleared</value></data>
+  <data name="S_TOAST_FAV_CLEARED" xml:space="preserve"><value>Bookmarks Cleared</value></data>
+  <data name="S_TOAST_DL_CLEARED" xml:space="preserve"><value>Downloads Cleared</value></data>
+  <data name="S_TOAST_CANNOT_FIND" xml:space="preserve"><value>Cannot Find in This Page</value></data>
+</root>

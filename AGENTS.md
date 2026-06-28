@@ -10,11 +10,11 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 ## 关键约束（先读，违反必踩坑）
 
-- **只能用 ASCII 路径**：构建链（Ruby 代码生成器 / meson）对非 ASCII 路径敏感 → 仓库必须在 `E:\Apotheosis`，vcpkg 在 `C:\vcpkg`。原中文路径 `E:\Desktop\项目\…` 炸过生成器。脚本里大量 `E:\Apotheosis\…` 是硬编码绝对路径。
-- **三套工具链并存，别混**：
-  - 引擎 WTF/JSC/WebCore = **clang-cl**（`--target=thumbv7-unknown-windows-msvc`，WebKit 已弃纯 MSVC）。
-  - 移植驱动 `port/*.cpp` = clang-cl，链 **lld-link**。
-  - harness（C++/CX UWP）= **MSVC v143（工具集 14.44.35207）ARM**。因为 VS18 砍了 arm32 vcvars、SDK 26100 删了 arm32 库 → 用 **SDK 22621** 的 arm 库，并用 `port\arm32-uwp-env.ps1` 手搓 ARM32 环境（INCLUDE/LIB/PATH）绕过被移除的 vcvars。
+- **Пути**: все скрипты используют `$env:APOTHEOSIS_ROOT` (устанавливается `Src\setenv.ps1`). Старые жёсткие `E:\Apotheosis\` исправлены на относительные через эту переменную. Репозиторий может быть в любом ASCII-пути без пробелов.
+- **Три тулчейна, не смешивать**:
+  - WTF/JSC/WebCore = **clang-cl** (`--target=thumbv7-unknown-windows-msvc` для ARM, `x86_64-unknown-windows-msvc` для x64)
+  - `port/*.cpp` = clang-cl, линковка **lld-link**
+  - harness (C++/CX UWP) = **MSVC v143 (14.44.35207)**. Для ARM32: `arm32-uwp-env.ps1` настраивает INCLUDE/LIB из SDK 19041.
 - **C++ 异常必须关**：clang 的 thumbv7-windows-msvc 后端无法 lower `cleanupret`（Windows 异常展开）→ `_HAS_EXCEPTIONS=0` + `/EHs-c-`。
 - **所有上游 WebKit 改动用 `#if defined(WK_WINUWP)` 守卫 + `Apotheosis:` 注释**，只影响本 port，不污染上游语义。
 - **软件渲染是通用底座，GPU 运行时切换**：合成开关严格 gate 在 `g_gpuActive`（默认 false，仅 `WebCoreGpuInit` 成功后置 true）。GPU 未起时回 Cairo 软渲染 + EmptyChromeClient（零回归）。曾经无条件开合成导致真机静默闪退（`__fastfail`，无 dump）。
@@ -23,7 +23,15 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 仓库**只跟踪移植层与宿主**，不含 GB 级上游与可重下二进制：
 
-- `port/` —— WebCore 驱动 + Port 层客户端 + 各 stub + 构建/链接脚本。⚠️ 真源码混在**大量一次性调试残留**里（`repro_*.cpp`、`mangle-repro*`、`*.obj/*.lib/*.dll`、`*.log`、`undef-*.txt`、`_*.bat`）——这些是趟编译墙时的实验件，可忽略。核心源码见下。
+- `port/` —— WebCore 驱动 + Port 层客户端 + 各 stub + 构建/链接脚本。核心源码:
+  - `WebCoreDriver.cpp/.h` — C ABI драйвера
+  - `PortChromeClient.h/.cpp` — ChromeClient для GPU
+  - `LoadingFrameLoaderClient.h/.cpp` — FrameLoaderClient
+  - `stubs-*.cpp` — платформенные заглушки
+  - `Toolchain-*.cmake` — тулчейны ARM32/x64
+  - `configure-*.ps1` / `link-*.ps1` — скрипты сборки
+  - `vcpkg-triplets/` — триплеты arm-uwp / x64-uwp
+  - (прочие `repro_*` / `mangle-repro*` / `_*.bat` удалены — были экспериментальным мусором)
 - `harness/` —— UWP 宿主 App（C++/CX、XAML、`Package.appxmanifest`、签名证书 `.cer`/`.pfx`）。
 - `tools/` —— Device Portal（WDP）远程部署 / 抓崩溃 dump / 自动诊断脚本。
 - `angle/include` —— ANGLE 头（跟踪）；`angle/arm`、`angle-windowsstore` 二进制 gitignore（可重下）。
@@ -72,53 +80,52 @@ WebCore / JavaScriptCore / WTF (clang-cl, thumbv7-windows-msvc, App Container)
 
 ## 常用命令（PowerShell 7 / pwsh）
 
-改 `port/*.cpp` 驱动后，重编 + 重链 GPU 驱动（产出 `WebCoreDriver-gpu.lib`）：
+Перед сборкой: `. .\Src\setenv.ps1` (устанавливает `$env:APOTHEOSIS_ROOT`).
+
+Изменив `port/*.cpp`, пересобрать + перелинковать GPU-драйвер:
 
 ```powershell
-pwsh -File E:\Apotheosis\port\link-driver-gpu.ps1
+pwsh -File $env:APOTHEOSIS_ROOT\port\link-driver-gpu.ps1
 ```
 
-单文件编译验证（快，定位编译错，看 `port\driver-compile-gpu.log`）：
+Компиляция одного файла для быстрой проверки ошибок:
 
 ```powershell
-pwsh -File E:\Apotheosis\port\compile-driver-gpu.ps1 E:\Apotheosis\port\WebCoreDriver.cpp E:\Apotheosis\port\WebCoreDriver.gpu.obj
+pwsh -File $env:APOTHEOSIS_ROOT\port\compile-driver-gpu.ps1 $env:APOTHEOSIS_ROOT\port\WebCoreDriver.cpp $env:APOTHEOSIS_ROOT\port\WebCoreDriver.gpu.obj
 ```
 
-改了上游 WebCore 源（WK_WINUWP 补丁）后，增量重编引擎，再重链驱动：
+После изменения ядра WebCore (WK_WINUWP-патчи) — инкрементальная пересборка:
 
 ```powershell
-. E:\Apotheosis\port\arm32-uwp-env.ps1
-& "C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\ninja.exe" -C E:\Apotheosis\build-clang-gpu WebCore
-pwsh -File E:\Apotheosis\port\link-driver-gpu.ps1
+. $env:APOTHEOSIS_ROOT\port\arm32-uwp-env.ps1
+& "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\ninja.exe" -C $env:APOTHEOSIS_ROOT\build-clang-gpu WebCore
+pwsh -File $env:APOTHEOSIS_ROOT\port\link-driver-gpu.ps1
 ```
 
 构建 harness appx（MSBuild v143 ARM；脚本内部两段式：先 `MarkupCompilePass1;MarkupCompilePass2` 生成 XAML `.g.hpp` 再全量编）：
 
 ```powershell
-pwsh -File E:\Apotheosis\port\build-harness.ps1
+pwsh -File $env:APOTHEOSIS_ROOT\port\build-harness.ps1
 # 看 harness-build.log；appx 在 harness\AppPackages\Harness\Harness_<ver>_ARM_Test\
 ```
 
 部署到真机并启动（交互测，不轮询）：
 
 ```powershell
-pwsh -File E:\Apotheosis\tools\deploy-launch.ps1 -Ip <设备IP> -Ver <版本号>
+pwsh -File $env:APOTHEOSIS_ROOT\tools\deploy-launch.ps1 -Ip <设备IP> -Ver <版本号>
 ```
 
 全自动诊断回路（卸→装→启→轮询拉 `LocalState` 的 dump/BMP 截图；仅当设备里有 `autodiag.txt` 时触发）：
 
 ```powershell
-pwsh -File E:\Apotheosis\tools\auto-diag2.ps1
+pwsh -File $env:APOTHEOSIS_ROOT\tools\auto-diag2.ps1
 ```
 
 - **JIT（非 GPU）线**对应：`port\configure-jit.ps1` / `link-driver-jit.ps1` / `compile-driver-jit.ps1`；首次配引擎用 `port\configure-gpu.ps1` 等。
 - 升版本号改 `harness\Package.appxmanifest`，deploy 脚本 `-Ver` 要对上。
 - 量 appx 大小用 PowerShell `.Length`（**别用 `ls -la`**，Windows 属主名带空格会把列读偏）。
 - 这是 **x64 构建机，ARM32 appx 跑不了**——引擎验证唯一靠真机。设备常因省电掉 WiFi，部署易传一半断，用 `tools\Deploy-Robust.ps1` 容错重试；远程时只产出 appx 交用户部署。
-
-## 真机部署前置
-
-设备：开机、同一 WiFi、设置→面向开发人员→开 **Device Portal**。appx 依赖 `Microsoft.VCLibs.140.00 (ARM)`（设备多半已由其他 -Reborn 应用装上）。**HTTPS 在 App Container 无系统证书库** → 打包 `cacert.pem`，启动时 `WebCoreSetCACertPath` 注入（curl/OpenSSL 自带 TLS 1.3，不靠 OS 的只到 1.2 的 Schannel）。
+- HTTPS 在 App Container 无系统证书库 → 打包 `cacert.pem`，启动时 `WebCoreSetCACertPath` 注入（curl/OpenSSL 自带 TLS 1.3，不靠 OS 的只到 1.2 的 Schannel）。
 
 ## 项目记忆（深层背景在这）
 

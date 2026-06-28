@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- Toolbar -->
+  <data name="S_BACK" xml:space="preserve"><value>Назад</value></data>
+  <data name="S_FORWARD" xml:space="preserve"><value>Вперёд</value></data>
+  <data name="S_REFRESH" xml:space="preserve"><value>Обновить</value></data>
+  <data name="S_BOOKMARK" xml:space="preserve"><value>Избранное</value></data>
+  <data name="S_BOOKMARKED" xml:space="preserve"><value>В избранном</value></data>
+  <data name="S_NEW_TAB" xml:space="preserve"><value>Новая вкладка</value></data>
+  <data name="S_HOME" xml:space="preserve"><value>Домой</value></data>
+  <data name="S_DESKTOP_SITE" xml:space="preserve"><value>Полная версия</value></data>
+  <data name="S_MOBILE_SITE" xml:space="preserve"><value>Мобильная версия</value></data>
+  <data name="S_FIND_IN_PAGE" xml:space="preserve"><value>Найти на странице</value></data>
+  <data name="S_SHARE" xml:space="preserve"><value>Поделиться</value></data>
+  <data name="S_COPY_LINK" xml:space="preserve"><value>Копировать ссылку</value></data>
+  <data name="S_DOWNLOAD_PAGE" xml:space="preserve"><value>Скачать страницу</value></data>
+  <data name="S_BOOKMARKS" xml:space="preserve"><value>Закладки</value></data>
+  <data name="S_HISTORY" xml:space="preserve"><value>История</value></data>
+  <data name="S_DOWNLOADS" xml:space="preserve"><value>Загрузки</value></data>
+  <data name="S_SETTINGS" xml:space="preserve"><value>Настройки</value></data>
+  <data name="S_MENU" xml:space="preserve"><value>Меню</value></data>
+  <data name="S_MENU_TITLE" xml:space="preserve"><value>Меню</value></data>
+
+  <!-- URL bar -->
+  <data name="S_SEARCH_PLACEHOLDER" xml:space="preserve"><value>Поиск или введите URL</value></data>
+  <data name="S_LOCK_SECURE" xml:space="preserve"><value></value></data>
+  <data name="S_LOCK_INSECURE" xml:space="preserve"><value></value></data>
+
+  <!-- Status -->
+  <data name="S_LOADING" xml:space="preserve"><value>Загрузка</value></data>
+  <data name="S_PROCESSING" xml:space="preserve"><value>Обработка…</value></data>
+  <data name="S_LOAD_FAILED" xml:space="preserve"><value>Ошибка загрузки</value></data>
+  <data name="S_LOAD_TIMEOUT" xml:space="preserve"><value>Тайм-аут загрузки</value></data>
+
+  <!-- Empty drawers -->
+  <data name="S_EMPTY_FAV" xml:space="preserve"><value>Нет закладок</value></data>
+  <data name="S_EMPTY_HIST" xml:space="preserve"><value>Нет истории</value></data>
+  <data name="S_EMPTY_DL" xml:space="preserve"><value>Нет загрузок</value></data>
+  <data name="S_NO_SHARE" xml:space="preserve"><value>Нечем поделиться</value></data>
+
+  <!-- Settings page -->
+  <data name="S_SETTINGS_TITLE" xml:space="preserve"><value>Настройки</value></data>
+  <data name="S_SET_LANG" xml:space="preserve"><value>Язык интерфейса</value></data>
+  <data name="S_SET_LANG_ZH" xml:space="preserve"><value>中文</value></data>
+  <data name="S_SET_LANG_EN" xml:space="preserve"><value>English</value></data>
+  <data name="S_SET_LANG_RU" xml:space="preserve"><value>Русский</value></data>
+  <data name="S_SET_SEARCH" xml:space="preserve"><value>Поисковая система</value></data>
+  <data name="S_SET_HOME" xml:space="preserve"><value>Домашняя страница (пусто = по умолч.)</value></data>
+  <data name="S_SET_HOME_PLACEHOLDER" xml:space="preserve"><value>about:home</value></data>
+  <data name="S_SET_UA" xml:space="preserve"><value>Запрашивать полную версию при старте</value></data>
+  <data name="S_SET_UA_CUSTOM" xml:space="preserve"><value>Свой User-Agent (пусто = переключатель; перезагрузите страницу)</value></data>
+  <data name="S_SET_UA_CUSTOM_PLACEHOLDER" xml:space="preserve"><value>Mozilla/5.0 (Windows NT 10.0; Win64; x64) ...</value></data>
+  <data name="S_SET_ZOOM" xml:space="preserve"><value>Масштаб</value></data>
+  <data name="S_SET_GPU" xml:space="preserve"><value>Включить GPU при старте (авто после первой загрузки)</value></data>
+  <data name="S_SET_GPU_NOW" xml:space="preserve"><value>Включить GPU сейчас (перезапуск = софт)</value></data>
+  <data name="S_SET_CLEAR_DATA" xml:space="preserve"><value>Очистить данные</value></data>
+  <data name="S_SET_CLEAR_HIST" xml:space="preserve"><value>Очистить историю</value></data>
+  <data name="S_SET_CLEAR_FAV" xml:space="preserve"><value>Очистить закладки</value></data>
+  <data name="S_SET_CLEAR_DL" xml:space="preserve"><value>Очистить загрузки</value></data>
+  <data name="S_SET_DIAG" xml:space="preserve"><value>Диагностика</value></data>
+  <data name="S_SET_EXPORT" xml:space="preserve"><value>Экспорт логов / дампов</value></data>
+  <data name="S_SET_ABOUT" xml:space="preserve"><value>О программе / Обновления</value></data>
+  <data name="S_SET_CHECK_UPDATE" xml:space="preserve"><value>Проверить обновления (GitHub Releases)</value></data>
+
+  <!-- Tab switcher -->
+  <data name="S_TAB_SWITCHER_TITLE" xml:space="preserve"><value>Вкладки</value></data>
+  <data name="S_TAB_SWITCHER_DONE" xml:space="preserve"><value>Готово</value></data>
+  <data name="S_NEW_TAB_BTN" xml:space="preserve"><value>Новая вкладка</value></data>
+
+  <!-- Drawer tabs -->
+  <data name="S_FAV_TAB" xml:space="preserve"><value>★ Избранное</value></data>
+  <data name="S_HIST_TAB" xml:space="preserve"><value>★ История</value></data>
+  <data name="S_DL_TAB" xml:space="preserve"><value>↓ Загрузки</value></data>
+
+  <!-- Action sheet -->
+  <data name="S_ACTION_ADD_FAV" xml:space="preserve"><value>★ В избранное</value></data>
+  <data name="S_ACTION_DEL_FAV" xml:space="preserve"><value>★ Убрать</value></data>
+  <data name="S_ACTION_CLEAR" xml:space="preserve"><value>🗑 Очистить</value></data>
+  <data name="S_ACTION_DL_PAGE" xml:space="preserve"><value>↓ Скачать</value></data>
+
+  <!-- Download status -->
+  <data name="S_DL_STARTED" xml:space="preserve"><value>Скачивание</value></data>
+  <data name="S_DL_DONE" xml:space="preserve"><value>Завершено</value></data>
+  <data name="S_DL_FAILED" xml:space="preserve"><value>Ошибка(</value></data>
+
+  <!-- Misc status toasts -->
+  <data name="S_COPIED" xml:space="preserve"><value>Ссылка скопирована</value></data>
+  <data name="S_CANCELLED" xml:space="preserve"><value>Отменено</value></data>
+  <data name="S_FOUND_N" xml:space="preserve"><value> совпад.</value></data>
+  <data name="S_FOUND_NONE" xml:space="preserve"><value>Нет результатов</value></data>
+  <data name="S_FOUND_NO_MORE" xml:space="preserve"><value>Больше нет</value></data>
+  <data name="S_FIND_PLACEHOLDER" xml:space="preserve"><value>Поиск на странице</value></data>
+  <data name="S_CANCEL_FAV" xml:space="preserve"><value>✕ Удалить закладку</value></data>
+  <data name="S_DEL_FAV" xml:space="preserve"><value>✕ Удалить закладку</value></data>
+  <data name="S_AUTODIAG_DONE" xml:space="preserve"><value>AUTODIAG DONE</value></data>
+  <data name="S_HOME_TITLE" xml:space="preserve"><value>Домой</value></data>
+
+  <!-- GPU status -->
+  <data name="S_GPU_ON" xml:space="preserve"><value>🖥 GPU·</value></data>
+  <data name="S_GPU_FAIL" xml:space="preserve"><value>🖥 GPU✗</value></data>
+
+  <!-- Update check -->
+  <data name="S_UPDATE_CHECKING" xml:space="preserve"><value>Проверка обновлений…</value></data>
+  <data name="S_UPDATE_FAIL" xml:space="preserve"><value>Ошибка проверки</value></data>
+  <data name="S_UPDATE_LATEST" xml:space="preserve"><value>Уже актуально </value></data>
+  <data name="S_UPDATE_FOUND" xml:space="preserve"><value>Найдена новая версия </value></data>
+  <data name="S_UPDATE_DLG_TITLE" xml:space="preserve"><value>Доступно обновление</value></data>
+  <data name="S_UPDATE_DLG_GO" xml:space="preserve"><value>Перейти к загрузке</value></data>
+  <data name="S_UPDATE_DLG_LATER" xml:space="preserve"><value>Позже</value></data>
+
+  <!-- Export -->
+  <data name="S_EXPORT_CHOOSE" xml:space="preserve"><value>Выберите место для экспорта…</value></data>
+  <data name="S_EXPORT_FAIL" xml:space="preserve"><value>Ошибка экспорта</value></data>
+
+  <!-- Toast strings (new for i18n) -->
+  <data name="S_TOAST_BOOKMARKED" xml:space="preserve"><value>В избранное</value></data>
+  <data name="S_TOAST_UNBOOKMARKED" xml:space="preserve"><value>Убрано из избранного</value></data>
+  <data name="S_TOAST_HIST_CLEARED" xml:space="preserve"><value>История очищена</value></data>
+  <data name="S_TOAST_FAV_CLEARED" xml:space="preserve"><value>Закладки очищены</value></data>
+  <data name="S_TOAST_DL_CLEARED" xml:space="preserve"><value>Загрузки очищены</value></data>
+  <data name="S_TOAST_CANNOT_FIND" xml:space="preserve"><value>Поиск на этой странице недоступен</value></data>
+</root>

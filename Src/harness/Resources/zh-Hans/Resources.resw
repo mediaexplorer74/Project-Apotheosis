@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- Toolbar -->
+  <data name="S_BACK" xml:space="preserve"><value>后退</value></data>
+  <data name="S_FORWARD" xml:space="preserve"><value>前进</value></data>
+  <data name="S_REFRESH" xml:space="preserve"><value>刷新</value></data>
+  <data name="S_BOOKMARK" xml:space="preserve"><value>收藏</value></data>
+  <data name="S_BOOKMARKED" xml:space="preserve"><value>已收藏</value></data>
+  <data name="S_NEW_TAB" xml:space="preserve"><value>新标签页</value></data>
+  <data name="S_HOME" xml:space="preserve"><value>主页</value></data>
+  <data name="S_DESKTOP_SITE" xml:space="preserve"><value>桌面版网站</value></data>
+  <data name="S_MOBILE_SITE" xml:space="preserve"><value>移动版网站</value></data>
+  <data name="S_FIND_IN_PAGE" xml:space="preserve"><value>页内查找</value></data>
+  <data name="S_SHARE" xml:space="preserve"><value>分享</value></data>
+  <data name="S_COPY_LINK" xml:space="preserve"><value>复制链接</value></data>
+  <data name="S_DOWNLOAD_PAGE" xml:space="preserve"><value>下载此页</value></data>
+  <data name="S_BOOKMARKS" xml:space="preserve"><value>书签</value></data>
+  <data name="S_HISTORY" xml:space="preserve"><value>历史记录</value></data>
+  <data name="S_DOWNLOADS" xml:space="preserve"><value>下载内容</value></data>
+  <data name="S_SETTINGS" xml:space="preserve"><value>设置</value></data>
+  <data name="S_MENU" xml:space="preserve"><value>菜单</value></data>
+  <data name="S_MENU_TITLE" xml:space="preserve"><value>菜单</value></data>
+
+  <!-- URL bar -->
+  <data name="S_SEARCH_PLACEHOLDER" xml:space="preserve"><value>搜索或输入网址</value></data>
+  <data name="S_LOCK_SECURE" xml:space="preserve"><value></value></data>
+  <data name="S_LOCK_INSECURE" xml:space="preserve"><value></value></data>
+
+  <!-- Status -->
+  <data name="S_LOADING" xml:space="preserve"><value>加载中</value></data>
+  <data name="S_PROCESSING" xml:space="preserve"><value>处理中…</value></data>
+  <data name="S_LOAD_FAILED" xml:space="preserve"><value>加载失败</value></data>
+  <data name="S_LOAD_TIMEOUT" xml:space="preserve"><value>加载超时</value></data>
+
+  <!-- Empty drawers -->
+  <data name="S_EMPTY_FAV" xml:space="preserve"><value>暂无收藏</value></data>
+  <data name="S_EMPTY_HIST" xml:space="preserve"><value>暂无历史记录</value></data>
+  <data name="S_EMPTY_DL" xml:space="preserve"><value>暂无下载</value></data>
+  <data name="S_NO_SHARE" xml:space="preserve"><value>无可分享内容</value></data>
+
+  <!-- Settings page -->
+  <data name="S_SETTINGS_TITLE" xml:space="preserve"><value>设置</value></data>
+  <data name="S_SET_LANG" xml:space="preserve"><value>界面语言</value></data>
+  <data name="S_SET_LANG_ZH" xml:space="preserve"><value>中文</value></data>
+  <data name="S_SET_LANG_EN" xml:space="preserve"><value>English</value></data>
+  <data name="S_SET_LANG_RU" xml:space="preserve"><value>Русский</value></data>
+  <data name="S_SET_SEARCH" xml:space="preserve"><value>默认搜索引擎</value></data>
+  <data name="S_SET_HOME" xml:space="preserve"><value>主页(URL,留空用内置主页)</value></data>
+  <data name="S_SET_HOME_PLACEHOLDER" xml:space="preserve"><value>about:home</value></data>
+  <data name="S_SET_UA" xml:space="preserve"><value>启动请求桌面版网站</value></data>
+  <data name="S_SET_UA_CUSTOM" xml:space="preserve"><value>自定义 User-Agent(留空=用上面的开关;改后刷新网页生效)</value></data>
+  <data name="S_SET_UA_CUSTOM_PLACEHOLDER" xml:space="preserve"><value>Mozilla/5.0 (Windows NT 10.0; Win64; x64) ...</value></data>
+  <data name="S_SET_ZOOM" xml:space="preserve"><value>默认缩放</value></data>
+  <data name="S_SET_GPU" xml:space="preserve"><value>默认启用 GPU 渲染(加载首个网页后自动开)</value></data>
+  <data name="S_SET_GPU_NOW" xml:space="preserve"><value>立即开启 GPU 合成(重启回软件)</value></data>
+  <data name="S_SET_CLEAR_DATA" xml:space="preserve"><value>清除数据</value></data>
+  <data name="S_SET_CLEAR_HIST" xml:space="preserve"><value>清除历史记录</value></data>
+  <data name="S_SET_CLEAR_FAV" xml:space="preserve"><value>清除全部收藏</value></data>
+  <data name="S_SET_CLEAR_DL" xml:space="preserve"><value>清除下载记录</value></data>
+  <data name="S_SET_DIAG" xml:space="preserve"><value>诊断</value></data>
+  <data name="S_SET_EXPORT" xml:space="preserve"><value>导出调试日志 / 崩溃 dump</value></data>
+  <data name="S_SET_ABOUT" xml:space="preserve"><value>关于 / 更新</value></data>
+  <data name="S_SET_CHECK_UPDATE" xml:space="preserve"><value>检查更新(GitHub Releases)</value></data>
+
+  <!-- Tab switcher -->
+  <data name="S_TAB_SWITCHER_TITLE" xml:space="preserve"><value>标签</value></data>
+  <data name="S_TAB_SWITCHER_DONE" xml:space="preserve"><value>完成</value></data>
+  <data name="S_NEW_TAB_BTN" xml:space="preserve"><value>新建标签页</value></data>
+
+  <!-- Drawer tabs -->
+  <data name="S_FAV_TAB" xml:space="preserve"><value>★ 收藏</value></data>
+  <data name="S_HIST_TAB" xml:space="preserve"><value>★ 历史</value></data>
+  <data name="S_DL_TAB" xml:space="preserve"><value>↓ 下载</value></data>
+
+  <!-- Action sheet -->
+  <data name="S_ACTION_ADD_FAV" xml:space="preserve"><value>★ 收藏此页</value></data>
+  <data name="S_ACTION_DEL_FAV" xml:space="preserve"><value>★ 取消收藏</value></data>
+  <data name="S_ACTION_CLEAR" xml:space="preserve"><value>🗑 清空</value></data>
+  <data name="S_ACTION_DL_PAGE" xml:space="preserve"><value>↓ 下载此页</value></data>
+
+  <!-- Download status -->
+  <data name="S_DL_STARTED" xml:space="preserve"><value>下载中</value></data>
+  <data name="S_DL_DONE" xml:space="preserve"><value>已完成</value></data>
+  <data name="S_DL_FAILED" xml:space="preserve"><value>失败(</value></data>
+
+  <!-- Misc status toasts -->
+  <data name="S_COPIED" xml:space="preserve"><value>已复制链接</value></data>
+  <data name="S_CANCELLED" xml:space="preserve"><value>已停止</value></data>
+  <data name="S_FOUND_N" xml:space="preserve"><value> 处</value></data>
+  <data name="S_FOUND_NONE" xml:space="preserve"><value>无结果</value></data>
+  <data name="S_FOUND_NO_MORE" xml:space="preserve"><value>无更多</value></data>
+  <data name="S_FIND_PLACEHOLDER" xml:space="preserve"><value>页内查找</value></data>
+  <data name="S_CANCEL_FAV" xml:space="preserve"><value>✕ 删除收藏</value></data>
+  <data name="S_DEL_FAV" xml:space="preserve"><value>✕ 删除收藏</value></data>
+  <data name="S_AUTODIAG_DONE" xml:space="preserve"><value>AUTODIAG DONE</value></data>
+  <data name="S_HOME_TITLE" xml:space="preserve"><value>主页</value></data>
+
+  <!-- GPU status -->
+  <data name="S_GPU_ON" xml:space="preserve"><value>🖥 GPU·</value></data>
+  <data name="S_GPU_FAIL" xml:space="preserve"><value>🖥 GPU✗</value></data>
+
+  <!-- Update check -->
+  <data name="S_UPDATE_CHECKING" xml:space="preserve"><value>正在检查更新…</value></data>
+  <data name="S_UPDATE_FAIL" xml:space="preserve"><value>检查更新失败(网络?)</value></data>
+  <data name="S_UPDATE_LATEST" xml:space="preserve"><value>已是最新版 </value></data>
+  <data name="S_UPDATE_FOUND" xml:space="preserve"><value>发现新版本 </value></data>
+  <data name="S_UPDATE_DLG_TITLE" xml:space="preserve"><value>有可用更新</value></data>
+  <data name="S_UPDATE_DLG_GO" xml:space="preserve"><value>前往下载</value></data>
+  <data name="S_UPDATE_DLG_LATER" xml:space="preserve"><value>稍后</value></data>
+
+  <!-- Export -->
+  <data name="S_EXPORT_CHOOSE" xml:space="preserve"><value>选择保存位置以导出…</value></data>
+  <data name="S_EXPORT_FAIL" xml:space="preserve"><value>导出失败</value></data>
+
+  <!-- Toast strings (new for i18n) -->
+  <data name="S_TOAST_BOOKMARKED" xml:space="preserve"><value>已收藏</value></data>
+  <data name="S_TOAST_UNBOOKMARKED" xml:space="preserve"><value>已取消收藏</value></data>
+  <data name="S_TOAST_HIST_CLEARED" xml:space="preserve"><value>历史记录已清除</value></data>
+  <data name="S_TOAST_FAV_CLEARED" xml:space="preserve"><value>收藏已清除</value></data>
+  <data name="S_TOAST_DL_CLEARED" xml:space="preserve"><value>下载记录已清除</value></data>
+  <data name="S_TOAST_CANNOT_FIND" xml:space="preserve"><value>当前页不可查找</value></data>
+</root>
