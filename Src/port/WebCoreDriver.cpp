@@ -78,6 +78,9 @@
 #include <WebCore/CommonAtomStrings.h>   // WebCore::initializeCommonAtomStrings
 #include <WebCore/WebCoreJITOperations.h>// WebCore::populateJITOperations (no-op w/ C_LOOP)
 #include <WebCore/EmptyClients.h>        // pageConfigurationWithEmptyClients
+#include <WebCore/BackForwardCache.h>    // Apotheosis: disable back-forward cache (OOM prevention)
+#include <WebCore/MemoryCache.h>         // Apotheosis: resource cache caps
+#include <WebCore/MemoryRelease.h>       // Apotheosis: WebCore::releaseMemory on pressure
 #include <WebCore/PageConfiguration.h>   // WebCore::PageConfiguration
 #include <WebCore/CookieJar.h>           // WebCore::CookieJar(cookie 持久化)
 #include <WebCore/StorageSessionProvider.h>  // 完整类型(Ref<StorageSessionProvider> 析构需要)
@@ -212,6 +215,13 @@ bool ensureWebCoreInitialized()
         WebCore::initializeCommonAtomStrings();  // interns "auto", "all", content types, etc.
         installPortPlatformStrategies();         // PlatformStrategies (loader strategy) — required before any load
         WebCore::populateJITOperations();        // no-op under ENABLE(C_LOOP) (header has inline {} fallback)
+
+        // Apotheosis: 32-bit low-memory (Lumia) OOM prevention — disable
+        // back-forward cache (whole-page DOM+render tree is huge in 32-bit
+        // address space), tighten resource cache caps. harness calls
+        // WebCoreReleaseMemory() under memory pressure.
+        WebCore::BackForwardCache::singleton().setMaxSize(0);
+        WebCore::MemoryCache::singleton().setCapacities(0, 8u * 1024 * 1024, 16u * 1024 * 1024);
         return true;
     }();
     return initialized;
@@ -1700,6 +1710,13 @@ int WebCoreFindClear(uint8_t* outRGBA)
     g_findText = WTF::String();
     int prc = finishInteractionPaint(outRGBA);
     return prc == kOK ? 0 : prc;
+}
+
+// Apotheosis: memory pressure release. Called by harness on UWP memory events.
+extern "C" void WebCoreReleaseMemory(int critical)
+{
+    WebCore::releaseMemory(critical ? WebCore::Critical::Yes : WebCore::Critical::No,
+                           WebCore::Synchronous::Yes);
 }
 
 // M4 捏合缩放:把页面缩放因子设为 scale(钳到 [0.5,6.0]),以屏幕焦点 (focalX,focalY) 为锚 —— 缩放后让焦点

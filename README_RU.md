@@ -1,10 +1,8 @@
-# Project_Apotheosis - dev branch 
-
-![](Images/sshot01.png)
+# Project_Apotheosis v0.1.8.5 - dev branch 
 
 ## О проекте 
 
-Это мой форк Project-Apotheosis (проект-Апофеоз версии 0.1.8.4) от Jimmy Xiao2009.
+Это мой форк Project-Apotheosis (проект-Апофеоз версии 0.1.8.5) от Jimmy Xiao2009.
 
 Будет представлен**WebKit/WebCore*****windows10mobile*arm32·uwp*********************
 Вернет экосистему Windows phone, от которой отказалась Microsoft, и которая сможет запускать реальные веб-страницы с помощью JIT.Современный движок рендеринга для синтеза на GPU.
@@ -85,6 +83,10 @@ pwsh-порт файла\сборка-жгут.ps1
 pwsh-Файловые инструменты\развертывание-запуск.ps1-Версия <сжатый файл>
 ```
 
+## Скриншоты
+
+![](Images/sshot01.png)
+
 ## Поверхность/цель
 
 UWP 10.0.15063.
@@ -93,7 +95,7 @@ UWP 10.0.15063.
 
 - https://www.reddit.com/r/windowsphone/comments/1ugn2kn/porting_webkitgtk_2524_to_windows_10_mobile/ Портирование WebKitGTK 2.52.4 на Windows 10 Mobile (27 июня 2026 г.)
 - https://github.com/Jimmyxiao2009/Project-Apotheosis "Проект-апофеоз"::*Возродит Windows Phone Web для людей, которые никогда не позволят ему умереть.* 📱
-- https://github.com/Jimmyxiao2009 Джимми Сяо2009, горячий китайский вибратор 
+- https://github.com/Jimmyxiao2009 Джимми Сяо2009, горячий китайский разработчик 
 
 
 ## .

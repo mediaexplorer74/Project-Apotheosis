@@ -22,14 +22,19 @@ $env:APOTHEOSIS_MSVC = "$env:APOTHEOSIS_VS\VC\Tools\MSVC\14.44.35207"
 $env:APOTHEOSIS_SDK = 'C:\Program Files (x86)\Windows Kits\10'
 $env:APOTHEOSIS_SDK_VER = '10.0.19041.0'
 
-# Vcpkg + ICU (внешние зависимости)
+# Vcpkg + ICU (внешние зависимости, arch-специфичные)
 $env:APOTHEOSIS_VCPKG = 'C:\vcpkg'
-$env:APOTHEOSIS_ICU   = 'C:\icu-arm-uwp'
+$archSuffix = if ($env:APOTHEOSIS_ARCH -eq 'arm') { 'arm-uwp' } else { 'x64-uwp' }
+$env:APOTHEOSIS_VCPKG_TRIPLET = $archSuffix
+$env:APOTHEOSIS_ICU   = "C:\icu-$archSuffix"
+$env:APOTHEOSIS_ANGLE_ARCH = if ($env:APOTHEOSIS_ARCH -eq 'arm') { 'arm' } else { 'x64' }
 
 write-host "==> APOTHEOSIS_ROOT  = $Root" -ForegroundColor Cyan
 write-host "==> APOTHEOSIS_PORT  = $env:APOTHEOSIS_PORT" -ForegroundColor Cyan
 write-host "==> APOTHEOSIS_TOOLS = $env:APOTHEOSIS_TOOLS" -ForegroundColor Cyan
 write-host "==> APOTHEOSIS_ARCH  = $env:APOTHEOSIS_ARCH" -ForegroundColor Cyan
+write-host "==> ICU path         = $env:APOTHEOSIS_ICU" -ForegroundColor Cyan
+write-host "==> VCPKG triplet    = $env:APOTHEOSIS_VCPKG_TRIPLET" -ForegroundColor Cyan
 
 # Валидация критических путей
 $checks = @(

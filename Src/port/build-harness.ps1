@@ -1,15 +1,17 @@
-# build-harness.ps1 — 构建 Phase 1b harness appx(v143 ARM)。
-# C++/CX 两段式陷阱:MarkupCompilePass2(生成 .g.hpp)在 ClCompile 之后跑,
-# 首次/改 XAML 后必须先显式生成 .g.hpp,否则 ClCompile 找不到。
-$msbuild = 'C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\amd64\MSBuild.exe'
+# build-harness.ps1 — build harness appx (v143, ARM or x64 depending on APOTHEOSIS_ARCH).
+$msbuild = 'C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.exe'
 $proj = "$env:APOTHEOSIS_HARNESS\Harness.vcxproj"
 $log = "$env:APOTHEOSIS_ROOT\harness-build.log"
 
-Write-Host "=== [1/2] 生成 XAML .g.hpp(MarkupCompilePass1+2) ===" -ForegroundColor Cyan
-& $msbuild $proj /p:Configuration=Release /p:Platform=ARM /t:MarkupCompilePass1`;MarkupCompilePass2 /v:minimal 2>&1 | Out-Null
+if (-not $env:APOTHEOSIS_ARCH) { $env:APOTHEOSIS_ARCH = 'x64' }
+$arch = if ($env:APOTHEOSIS_ARCH -eq 'arm') { 'ARM' } else { 'x64' }
+Write-Host "=== Target arch: $arch (APOTHEOSIS_ARCH=$env:APOTHEOSIS_ARCH) ===" -ForegroundColor Cyan
 
-Write-Host "=== [2/2] 全量构建 + 打包 appx ===" -ForegroundColor Cyan
-& $msbuild $proj /p:Configuration=Release /p:Platform=ARM /m /v:minimal 2>&1 | Tee-Object $log
+Write-Host "=== [1/2] Generate XAML .g.hpp (MarkupCompilePass1+2) ===" -ForegroundColor Cyan
+& $msbuild $proj /p:Configuration=Release /p:Platform=$arch /t:MarkupCompilePass1`;MarkupCompilePass2 /v:minimal 2>&1 | Out-Null
+
+Write-Host "=== [2/2] Full build + appx package ===" -ForegroundColor Cyan
+& $msbuild $proj /p:Configuration=Release /p:Platform=$arch /m /v:minimal 2>&1 | Tee-Object $log
 $code = $LASTEXITCODE
-Write-Host "=== MSBuild 退出码: $code ==="
-exit $code   # 传播 MSBuild 退出码(否则脚本恒返回 0,掩盖编译失败)
+Write-Host "=== MSBuild exit code: $code ==="
+exit $code

@@ -23,7 +23,7 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 仓库**只跟踪移植层与宿主**，不含 GB 级上游与可重下二进制：
 
-- `port/` —— WebCore 驱动 + Port 层客户端 + 各 stub + 构建/链接脚本。核心源码:
+- `Src/port/` —— WebCore 驱动 + Port 层客户端 + 各 stub + 构建/链接脚本。核心源码:
   - `WebCoreDriver.cpp/.h` — C ABI драйвера
   - `PortChromeClient.h/.cpp` — ChromeClient для GPU
   - `LoadingFrameLoaderClient.h/.cpp` — FrameLoaderClient
@@ -31,13 +31,13 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
   - `Toolchain-*.cmake` — тулчейны ARM32/x64
   - `configure-*.ps1` / `link-*.ps1` — скрипты сборки
   - `vcpkg-triplets/` — триплеты arm-uwp / x64-uwp
-  - (прочие `repro_*` / `mangle-repro*` / `_*.bat` удалены — были экспериментальным мусором)
-- `harness/` —— UWP 宿主 App（C++/CX、XAML、`Package.appxmanifest`、签名证书 `.cer`/`.pfx`）。
-- `tools/` —— Device Portal（WDP）远程部署 / 抓崩溃 dump / 自动诊断脚本。
+  - (прочие `repro_*` / `mangle-repro*` / `_*.bat` удалены)
+- `Src/harness/` —— UWP 宿主 App（C++/CX、XAML、`Package.appxmanifest`、签名证书 `.cer`/`.pfx`）。
+- `Src/tools/` —— Device Portal（WDP）远程部署 / 抓崩溃 dump / 自动诊断脚本。
 - `angle/include` —— ANGLE 头（跟踪）；`angle/arm`、`angle-windowsstore` 二进制 gitignore（可重下）。
 - **不在仓库**：`WebKit/`（sparse webkitgtk-2.52.4，GB 级，gitignore；上游 ARM32/App-Container 补丁清单记在**项目记忆**而非仓库）、`build-clang-*/` `build-release/` `deps-build/`（构建输出）、字体、`*.pfx`、`*.log`。
 
-**核心移植层源码**（在 `port/` 一堆实验件中）：
+**核心移植层源码**（в `Src/port/`）：
 
 - `WebCoreDriver.cpp` / `WebCoreDriver.h` —— 引擎对外的 C ABI + 常驻 Page 会话（导航、真实事件派发、链接提取、软/硬呈现）。
 - `PortChromeClient.{h,cpp}` —— 非 final 的 `ChromeClient` 子类（EmptyChromeClient 合成钩子是 `final` 不能覆写），开 GPU 合成、捕获根 `GraphicsLayer`、`triggerRenderingUpdate` 置 needsPresent。
@@ -51,11 +51,11 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 三层经 C ABI 解耦：
 
 ```
-Harness (C++/CX UWP, MSVC v143)         harness/
+Harness (C++/CX UWP, MSVC v143)         Src/harness/
   · MainPage: 地址栏/工具栏 + 触摸手势 → 引擎滚动/点击/缩放/选择
   · GpuPanel (SwapChainPanel) ← GPU 直呈现 | RenderImage (WriteableBitmap) ← 软件回退
         │  C ABI = WebCoreDriver.h  (extern "C")
-WebCoreDriver (port/, clang-cl → WebCoreDriver-gpu.lib)
+WebCoreDriver (Src/port/, clang-cl → WebCoreDriver-gpu.lib)
   · 常驻 Page/Frame/FrameView 会话、真实事件派发、链接提取
   · 两条呈现路：Cairo paintToRGBA（软件） | TextureMapper→ANGLE swapchain（GPU）
   · PortChromeClient / LoadingFrameLoaderClient / Port*Strategies
@@ -85,46 +85,46 @@ WebCore / JavaScriptCore / WTF (clang-cl, thumbv7-windows-msvc, App Container)
 Изменив `port/*.cpp`, пересобрать + перелинковать GPU-драйвер:
 
 ```powershell
-pwsh -File $env:APOTHEOSIS_ROOT\port\link-driver-gpu.ps1
+pwsh -File $env:APOTHEOSIS_ROOT\Src\port\link-driver-gpu.ps1
 ```
 
 Компиляция одного файла для быстрой проверки ошибок:
 
 ```powershell
-pwsh -File $env:APOTHEOSIS_ROOT\port\compile-driver-gpu.ps1 $env:APOTHEOSIS_ROOT\port\WebCoreDriver.cpp $env:APOTHEOSIS_ROOT\port\WebCoreDriver.gpu.obj
+pwsh -File $env:APOTHEOSIS_ROOT\Src\port\compile-driver-gpu.ps1 $env:APOTHEOSIS_ROOT\Src\port\WebCoreDriver.cpp $env:APOTHEOSIS_ROOT\Src\port\WebCoreDriver.gpu.obj
 ```
 
 После изменения ядра WebCore (WK_WINUWP-патчи) — инкрементальная пересборка:
 
 ```powershell
-. $env:APOTHEOSIS_ROOT\port\arm32-uwp-env.ps1
+. $env:APOTHEOSIS_ROOT\Src\port\arm32-uwp-env.ps1
 & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\ninja.exe" -C $env:APOTHEOSIS_ROOT\build-clang-gpu WebCore
-pwsh -File $env:APOTHEOSIS_ROOT\port\link-driver-gpu.ps1
+pwsh -File $env:APOTHEOSIS_ROOT\Src\port\link-driver-gpu.ps1
 ```
 
 构建 harness appx（MSBuild v143 ARM；脚本内部两段式：先 `MarkupCompilePass1;MarkupCompilePass2` 生成 XAML `.g.hpp` 再全量编）：
 
 ```powershell
-pwsh -File $env:APOTHEOSIS_ROOT\port\build-harness.ps1
-# 看 harness-build.log；appx 在 harness\AppPackages\Harness\Harness_<ver>_ARM_Test\
+pwsh -File $env:APOTHEOSIS_ROOT\Src\port\build-harness.ps1
+# 看 harness-build.log；appx 在 Src\harness\AppPackages\Harness\Harness_<ver>_ARM_Test\
 ```
 
 部署到真机并启动（交互测，不轮询）：
 
 ```powershell
-pwsh -File $env:APOTHEOSIS_ROOT\tools\deploy-launch.ps1 -Ip <设备IP> -Ver <版本号>
+pwsh -File $env:APOTHEOSIS_ROOT\Src\tools\deploy-launch.ps1 -Ip <设备IP> -Ver <版本号>
 ```
 
 全自动诊断回路（卸→装→启→轮询拉 `LocalState` 的 dump/BMP 截图；仅当设备里有 `autodiag.txt` 时触发）：
 
 ```powershell
-pwsh -File $env:APOTHEOSIS_ROOT\tools\auto-diag2.ps1
+pwsh -File $env:APOTHEOSIS_ROOT\Src\tools\auto-diag2.ps1
 ```
 
-- **JIT（非 GPU）线**对应：`port\configure-jit.ps1` / `link-driver-jit.ps1` / `compile-driver-jit.ps1`；首次配引擎用 `port\configure-gpu.ps1` 等。
-- 升版本号改 `harness\Package.appxmanifest`，deploy 脚本 `-Ver` 要对上。
+- **JIT（非 GPU）线**对应：`Src\port\configure-jit.ps1` / `link-driver-jit.ps1` / `compile-driver-jit.ps1`；首次配引擎用 `Src\port\configure-gpu.ps1` 等。
+- 升版本号改 `Src\harness\Package.appxmanifest`，deploy 脚本 `-Ver` 要对上。
 - 量 appx 大小用 PowerShell `.Length`（**别用 `ls -la`**，Windows 属主名带空格会把列读偏）。
-- 这是 **x64 构建机，ARM32 appx 跑不了**——引擎验证唯一靠真机。设备常因省电掉 WiFi，部署易传一半断，用 `tools\Deploy-Robust.ps1` 容错重试；远程时只产出 appx 交用户部署。
+- 这是 **x64 构建机，ARM32 appx 跑不了**——引擎验证唯一靠真机。设备常因省电掉 WiFi，部署易传一半断，用 `Src\tools\Deploy-Robust.ps1` 容错重试；远程时只产出 appx 交用户部署。
 - HTTPS 在 App Container 无系统证书库 → 打包 `cacert.pem`，启动时 `WebCoreSetCACertPath` 注入（curl/OpenSSL 自带 TLS 1.3，不靠 OS 的只到 1.2 的 Schannel）。
 
 ## 项目记忆（深层背景在这）

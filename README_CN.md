@@ -1,10 +1,8 @@
-# Project_Apotheosis - dev branch 
+# Project_Apotheosis v0.1.8.5 - dev branch 
 
-![](Images/sshot01.png)
+## 关于 
 
-##关于 
-
-这是我的fork project-Apotheosis（project-Apotheosis v0.1.8.4）by Jimmy Xiao2009。
+这是我的fork project-Apotheosis（project-Apotheosis v0.1.8.5）by Jimmy Xiao2009。
 
 将代表**WebKit/WebCore*****windows10mobile*arm32*uwp*********************
 带回一个已经被微软抛弃的Windows phone生态系统，可以使用JIT运行真实的网页。用于GPU合成的现代渲染引擎。
@@ -85,7 +83,11 @@ pwsh-文件端口\build-harness.ps1
 pwsh-File tools\deploy-launch.ps1-Ver<压缩文件>
 ```
 
-##表面/目标
+## 屏幕截图
+
+![](Images/sshot01.png)
+
+## 表面/目标
 
 UWP10.0.15063.
 
@@ -93,7 +95,7 @@ UWP10.0.15063.
 
 -https://www.reddit.com/r/windowsphone/comments/1ugn2kn/porting_webkitgtk_2524_to_windows_10_mobile/将Webkitgtk2.52.4移植到Windows10mobile(2026年6月27日)
 -https://github.com/Jimmyxiao2009/Project-Apotheosis "Project-Apotheosis"::*为永远不会让它死亡的人复兴Windows Phone web。* 📱
--https://github.com/Jimmyxiao2009 Jimmyxiao2009，中国热感应编码器 
+-https://github.com/Jimmyxiao2009 Jimmyxiao2009，中国热门开发者 
 
 
 ## .

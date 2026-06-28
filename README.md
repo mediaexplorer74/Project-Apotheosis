@@ -1,10 +1,8 @@
-# Project Apotheosis - dev branch
-
-![](Images/sshot01.png)
+# Project Apotheosis v0.1.8.5 - dev branch
 
 ## About 
 
-This is my fork project-Apotheosis (project-Apotheosis v0.1.8.4) by Jimmy Xiao2009.
+This is my fork project-Apotheosis (project-Apotheosis v0.1.8.5) by Jimmy Xiao2009.
 
 Will represent**WebKit/WebCore*****windows10mobile*arm32·uwp*********************
 Bring back a Windows phone ecosystem that has been abandoned by Microsoft that can run real Web pages with JIT.A modern rendering engine for GPU synthesis.
@@ -85,6 +83,10 @@ pwsh-file port\build-harness.ps1
 pwsh-File tools\deploy-launch.ps1-Ver <compressed file>
 ```
 
+## Screenshots
+
+![](Images/sshot01.png)
+
 ## Surface/target
 
 UWP 10.0.15063.
@@ -93,7 +95,7 @@ UWP 10.0.15063.
 
 - https://www.reddit.com/r/windowsphone/comments/1ugn2kn/porting_webkitgtk_2524_to_windows_10_mobile/ Porting WebKitGTK 2.52.4 to Windows 10 Mobile (Jun 27, 2026)
 - https://github.com/Jimmyxiao2009/Project-Apotheosis "Project-Apotheosis"::*Revive Windows Phone web for people who will never let it die.* 📱
-- https://github.com/Jimmyxiao2009 Jimmyxiao2009, hot Chinese vibe encoder 
+- https://github.com/Jimmyxiao2009 Jimmyxiao2009, hot Chinese vibe developer 
 
 
 ## .
