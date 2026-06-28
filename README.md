@@ -1,6 +1,8 @@
-#Project Apotheosis-EdgeHTML Rebirth 
+# Project Apotheosis - dev branch
 
-##About 
+![](Images/sshot01.png)
+
+## About 
 
 This is my fork project-Apotheosis (project-Apotheosis v0.1.8.4) by Jimmy Xiao2009.
 
@@ -10,7 +12,7 @@ Bring back a Windows phone ecosystem that has been abandoned by Microsoft that c
 >Port the modern**WebKit/WebCore**rendering engine to**Windows10mobile (ARM32, UWP)** —
 >Bring the real, JIT-accelerated, GPU-synthesized browser engine back to the abandoned Windows Phone platform.
 
-##Present/status
+## Status
 
 Machine (Lumia, ARM32, Windows10mobile15254):
 
@@ -22,7 +24,7 @@ Machine (Lumia, ARM32, Windows10mobile15254):
 -***Smooth scrolling/kneading zoom (M3/M4)**--straight rendering, fast scrolling +real-time zoom transformation+re-grid at a new scale
 -Change Ui to Safari/edge shape
 
-##Architecture/Architecture
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -57,24 +59,24 @@ This warehouse only tracks the porting layer and the host, ** does not contain *
 
 Key changes since the last document:
 
-✅Repo cleanup: ~60 debug/repro files are deleted from the port/
+- ✅Repo cleanup: ~60 debug/repro files are deleted from the port/
 SrcSrc/setenv.ps1 Use env vars to create all paths
-✅All E:\Apotheosis\paths.ps1/.bat/.cmake file→$env: APOTHEOSIS_ROOT or %APOTHEOSIS_ROOT%
+- ✅All E:\Apotheosis\paths.ps1/.bat/.cmake file→$env: APOTHEOSIS_ROOT or %APOTHEOSIS_ROOT%
  All references are fixed in the.ps1 script
-✅ .resw file created for en-US, zh-Hans, ru-RU
-◦Dual-source string loading (.resw+fallback form)
+- ✅ .resw file created for en-US, zh-Hans, ru-RU
+- Dual-source string loading (.resw+fallback form)
  All hard-coded Chinese toasts have been replaced with GetStr()
 xx64 build infrastructure
-▪WebKit upgrade research completed (WEBKIT-UPGRADE.md )
+- WebKit upgrade research completed (WEBKIT-UPGRADE.md )
 - Multilingual UI, 64, key corrections, architecture
+- The construction of Plan.md & Summary.md files, the establishment of systems and dependencies, and the discovery of
 
-## The construction of Plan.md & Summary.md files, the establishment of systems and dependencies, and the discovery of
-
-##Construct/Build (just knock on the door)
+## Construct/Build (just knock on the door)
 
 Arm32uwp monoclonal antibody (clang-cl+lld-link).See you (cairo/Icu/LIBCURL/freetype/harfbuzz/angle...)lib`, again:
 
-"'powershell
+``` 
+( PowerShell )
 # 1. →WebCoreDriver-gpu.library
 pwsh-file port\link-driver-gpu.ps1
 # 2. Main body appx
@@ -83,20 +85,20 @@ pwsh-file port\build-harness.ps1
 pwsh-File tools\deploy-launch.ps1-Ver <compressed file>
 ```
 
-##Surface/target
+## Surface/target
 
-......except......outside......Universal'minversion10.0.15063).
+UWP 10.0.15063.
 
-##Recommend/Thanks/credits
+## References / Thanks / Credits
 
--https://github.com/Jimmyxiao2009/Project-Apotheosis "Project-Apotheosis"::*Revive Windows Phone web for people who will never let it die.* 📱
-
--https://github.com/Jimmyxiao2009 Jimmyxiao2009, hot Chinese vibe encoder 
+- https://www.reddit.com/r/windowsphone/comments/1ugn2kn/porting_webkitgtk_2524_to_windows_10_mobile/ Porting WebKitGTK 2.52.4 to Windows 10 Mobile (Jun 27, 2026)
+- https://github.com/Jimmyxiao2009/Project-Apotheosis "Project-Apotheosis"::*Revive Windows Phone web for people who will never let it die.* 📱
+- https://github.com/Jimmyxiao2009 Jimmyxiao2009, hot Chinese vibe encoder 
 
 
 ## .
 
-As usual. No support. RnD only.
+As is. No support. RnD only. DIY.
 
 ## ..
 
