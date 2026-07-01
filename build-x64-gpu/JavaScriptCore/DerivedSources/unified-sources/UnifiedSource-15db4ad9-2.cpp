@@ -1,0 +1,8 @@
+#include "wasm/WasmCompilationMode.cpp"
+#include "wasm/WasmConstExprGenerator.cpp"
+#include "wasm/WasmContext.cpp"
+#include "wasm/WasmEntryPlan.cpp"
+#include "wasm/WasmFaultSignalHandler.cpp"
+#include "wasm/WasmFormat.cpp"
+#include "wasm/WasmFunctionIPIntMetadataGenerator.cpp"
+#include "wasm/WasmGlobal.cpp"

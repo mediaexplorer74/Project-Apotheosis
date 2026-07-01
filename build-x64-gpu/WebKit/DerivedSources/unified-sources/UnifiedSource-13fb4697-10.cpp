@@ -1,0 +1,7 @@
+#include "GPUProcess/media/RemoteMediaSourceProxy.cpp"
+#include "GPUProcess/media/RemoteRemoteCommandListenerProxy.cpp"
+#include "GPUProcess/media/RemoteSourceBufferProxy.cpp"
+#include "GPUProcess/media/RemoteTextTrackProxy.cpp"
+#include "GPUProcess/media/RemoteVideoFrameObjectHeap.cpp"
+#include "GPUProcess/media/RemoteVideoTrackProxy.cpp"
+#include "GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp"

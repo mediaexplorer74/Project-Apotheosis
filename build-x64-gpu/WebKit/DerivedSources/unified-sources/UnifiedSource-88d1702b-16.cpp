@@ -1,0 +1,8 @@
+#include "UIProcess/API/APIWebAuthenticationPanel.cpp"
+#include "UIProcess/API/APIWebPushDaemonConnection.cpp"
+#include "UIProcess/API/APIWebsitePolicies.cpp"
+#include "UIProcess/API/APIWindowFeatures.cpp"
+#include "UIProcess/API/C/WKAuthenticationChallenge.cpp"
+#include "UIProcess/API/C/WKAuthenticationDecisionListener.cpp"
+#include "UIProcess/API/C/WKBackForwardListItemRef.cpp"
+#include "UIProcess/API/C/WKBackForwardListRef.cpp"

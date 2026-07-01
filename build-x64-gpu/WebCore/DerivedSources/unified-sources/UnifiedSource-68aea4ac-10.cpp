@@ -1,0 +1,8 @@
+#include "bindings/js/JSIntersectionObserverCustom.cpp"
+#include "bindings/js/JSIntersectionObserverEntryCustom.cpp"
+#include "bindings/js/JSKeyframeEffectCustom.cpp"
+#include "bindings/js/JSLazyEventListener.cpp"
+#include "bindings/js/JSLocationCustom.cpp"
+#include "bindings/js/JSMediaControlsHostCustom.cpp"
+#include "bindings/js/JSMediaSessionCustom.cpp"
+#include "bindings/js/JSMessageChannelCustom.cpp"

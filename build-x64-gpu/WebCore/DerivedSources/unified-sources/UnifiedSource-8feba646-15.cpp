@@ -1,0 +1,8 @@
+#include "svg/SVGTests.cpp"
+#include "svg/SVGTextContentElement.cpp"
+#include "svg/SVGTextElement.cpp"
+#include "svg/SVGTextPathElement.cpp"
+#include "svg/SVGTextPositioningElement.cpp"
+#include "svg/SVGTitleElement.cpp"
+#include "svg/SVGToOTFFontConversion.cpp"
+#include "svg/SVGTransformDistance.cpp"

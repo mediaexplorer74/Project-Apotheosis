@@ -1,0 +1,8 @@
+#include "style/values/backgrounds/StyleBorderImageRepeat.cpp"
+#include "style/values/backgrounds/StyleBorderImageSlice.cpp"
+#include "style/values/backgrounds/StyleBorderImageSource.cpp"
+#include "style/values/backgrounds/StyleBorderImageWidth.cpp"
+#include "style/values/backgrounds/StyleLineWidth.cpp"
+#include "style/values/backgrounds/StyleRepeatStyle.cpp"
+#include "style/values/borders/StyleBorderRadius.cpp"
+#include "style/values/borders/StyleBoxShadow.cpp"

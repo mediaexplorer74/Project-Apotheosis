@@ -1,0 +1,8 @@
+#include "Shared/WebGPU/WebGPUSupportedFeatures.cpp"
+#include "Shared/WebGPU/WebGPUSupportedLimits.cpp"
+#include "Shared/WebGPU/WebGPUTextureBindingLayout.cpp"
+#include "Shared/WebGPU/WebGPUTextureDescriptor.cpp"
+#include "Shared/WebGPU/WebGPUTextureViewDescriptor.cpp"
+#include "Shared/WebGPU/WebGPUValidationError.cpp"
+#include "Shared/WebGPU/WebGPUVertexAttribute.cpp"
+#include "Shared/WebGPU/WebGPUVertexBufferLayout.cpp"

@@ -1,0 +1,8 @@
+#include "JSXMLHttpRequestUpload.cpp"
+#include "JSXMLSerializer.cpp"
+#include "JSXPathEvaluator.cpp"
+#include "JSXPathExpression.cpp"
+#include "JSXPathNSResolver.cpp"
+#include "JSXPathResult.cpp"
+#include "JSXRCompositionLayer.cpp"
+#include "JSXRCubeLayer.cpp"

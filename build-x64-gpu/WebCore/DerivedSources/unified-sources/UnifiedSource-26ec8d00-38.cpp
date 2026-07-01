@@ -1,0 +1,8 @@
+#include "style/values/transforms/functions/StyleScaleTransformFunction.cpp"
+#include "style/values/transforms/functions/StyleSkewTransformFunction.cpp"
+#include "style/values/transforms/functions/StyleTransformFunctionBase.cpp"
+#include "style/values/transforms/functions/StyleTranslateTransformFunction.cpp"
+#include "style/values/transitions/StyleSingleTransitionProperty.cpp"
+#include "style/values/transitions/StyleTransition.cpp"
+#include "style/values/ui/StyleAccentColor.cpp"
+#include "style/values/ui/StyleCaretColor.cpp"

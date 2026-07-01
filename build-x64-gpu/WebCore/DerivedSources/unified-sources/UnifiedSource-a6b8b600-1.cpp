@@ -1,0 +1,8 @@
+#include "animation/AcceleratedEffectStackUpdater.cpp"
+#include "animation/AcceleratedTimelinesUpdater.cpp"
+#include "animation/AnimationEffect.cpp"
+#include "animation/AnimationEffectTiming.cpp"
+#include "animation/AnimationEventBase.cpp"
+#include "animation/AnimationMalloc.cpp"
+#include "animation/AnimationPlaybackEvent.cpp"
+#include "animation/AnimationTimeline.cpp"

@@ -1,7 +1,7 @@
 # 增量重编 WebCore.lib(改了 RenderLayerBacking.cpp 的 paintsIntoWindow)→ 重链驱动 → 重打 harness。
 $ErrorActionPreference='Continue'
 . "$env:APOTHEOSIS_PORT\arm32-uwp-env.ps1" *> $null
-$ninja = 'C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\ninja.exe'
+$ninja = 'C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\ninja.exe'
 $build = "$env:APOTHEOSIS_ROOT\build-clang-gpu"
 Write-Host "=== [1/3] ninja WebCore(增量) ==="
 & $ninja -C $build WebCore *>&1 | Tee-Object "$env:APOTHEOSIS_PORT\_webcore-rebuild.log" | Select-Object -Last 3

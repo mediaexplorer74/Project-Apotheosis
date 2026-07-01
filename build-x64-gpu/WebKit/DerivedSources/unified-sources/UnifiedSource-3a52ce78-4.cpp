@@ -1,0 +1,8 @@
+#include "RemoteCompositorIntegrationMessageReceiver.cpp"
+#include "RemoteComputePassEncoderMessageReceiver.cpp"
+#include "RemoteComputePipelineMessageReceiver.cpp"
+#include "RemoteDDMeshMessageReceiver.cpp"
+#include "RemoteDeviceMessageReceiver.cpp"
+#include "RemoteExternalTextureMessageReceiver.cpp"
+#include "RemoteFaceDetectorMessageReceiver.cpp"
+#include "RemoteGPUMessageReceiver.cpp"

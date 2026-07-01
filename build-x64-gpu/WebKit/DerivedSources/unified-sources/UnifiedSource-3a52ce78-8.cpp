@@ -1,0 +1,8 @@
+#include "RemoteXRViewMessageReceiver.cpp"
+#include "ServiceWorkerDownloadTaskMessageReceiver.cpp"
+#include "WebBroadcastChannelRegistryMessageReceiver.cpp"
+#include "WebFrameMessageReceiver.cpp"
+#include "WebFrameProxyMessageReceiver.cpp"
+#include "WebLockRegistryProxyMessageReceiver.cpp"
+#include "WebPermissionControllerMessageReceiver.cpp"
+#include "WebPermissionControllerProxyMessageReceiver.cpp"

@@ -1,0 +1,8 @@
+#include "Modules/mediastream/MediaTrackCapabilities.cpp"
+#include "Modules/mediastream/MediaTrackConstraints.cpp"
+#include "Modules/mediastream/NavigatorMediaDevices.cpp"
+#include "Modules/mediastream/OverconstrainedErrorEvent.cpp"
+#include "Modules/mediastream/PeerConnectionBackend.cpp"
+#include "Modules/mediastream/RTCCertificate.cpp"
+#include "Modules/mediastream/RTCController.cpp"
+#include "Modules/mediastream/RTCDTMFSender.cpp"

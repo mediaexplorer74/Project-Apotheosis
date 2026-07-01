@@ -1,0 +1,8 @@
+#include "JSMediaStreamTrack.cpp"
+#include "JSMediaStreamTrackEvent.cpp"
+#include "JSMediaStreamTrackProcessor.cpp"
+#include "JSMediaTrackCapabilities.cpp"
+#include "JSMediaTrackConstraints.cpp"
+#include "JSMediaTrackSupportedConstraints.cpp"
+#include "JSMerchantValidationEvent.cpp"
+#include "JSMessageChannel.cpp"

@@ -1,0 +1,8 @@
+#include "html/HTMLLegendElement.cpp"
+#include "html/HTMLLinkElement.cpp"
+#include "html/HTMLMapElement.cpp"
+#include "html/HTMLMarqueeElement.cpp"
+#include "html/HTMLMaybeFormAssociatedCustomElement.cpp"
+#include "html/HTMLMediaElement.cpp"
+#include "html/HTMLMenuElement.cpp"
+#include "html/HTMLMetaElement.cpp"

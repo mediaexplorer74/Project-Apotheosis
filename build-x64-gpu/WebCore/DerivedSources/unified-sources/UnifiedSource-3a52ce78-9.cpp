@@ -1,0 +1,8 @@
+#include "JSAudioWorkletNodeOptions.cpp"
+#include "JSAudioWorkletProcessor.cpp"
+#include "JSAudioWorkletProcessorConstructor.cpp"
+#include "JSAuthenticationExtensionsClientInputs.cpp"
+#include "JSAuthenticationExtensionsClientInputsJSON.cpp"
+#include "JSAuthenticationExtensionsClientOutputs.cpp"
+#include "JSAuthenticationExtensionsClientOutputsJSON.cpp"
+#include "JSAuthenticationResponseJSON.cpp"

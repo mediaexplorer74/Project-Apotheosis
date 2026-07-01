@@ -1,0 +1,8 @@
+#include "JSGPUBindGroupLayoutDescriptor.cpp"
+#include "JSGPUBindGroupLayoutEntry.cpp"
+#include "JSGPUBlendComponent.cpp"
+#include "JSGPUBlendFactor.cpp"
+#include "JSGPUBlendOperation.cpp"
+#include "JSGPUBlendState.cpp"
+#include "JSGPUBuffer.cpp"
+#include "JSGPUBufferBinding.cpp"

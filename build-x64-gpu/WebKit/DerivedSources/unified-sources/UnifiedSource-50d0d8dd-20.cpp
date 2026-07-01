@@ -1,0 +1,8 @@
+#include "Shared/WebGPU/WebGPURenderPipelineDescriptor.cpp"
+#include "Shared/WebGPU/WebGPURequestAdapterOptions.cpp"
+#include "Shared/WebGPU/WebGPUSamplerBindingLayout.cpp"
+#include "Shared/WebGPU/WebGPUSamplerDescriptor.cpp"
+#include "Shared/WebGPU/WebGPUShaderModuleCompilationHint.cpp"
+#include "Shared/WebGPU/WebGPUShaderModuleDescriptor.cpp"
+#include "Shared/WebGPU/WebGPUStencilFaceState.cpp"
+#include "Shared/WebGPU/WebGPUStorageTextureBindingLayout.cpp"

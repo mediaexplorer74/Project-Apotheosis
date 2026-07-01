@@ -1,0 +1,8 @@
+#include "page/scrolling/ScrollingCoordinator.cpp"
+#include "page/scrolling/ScrollingCoordinatorTypes.cpp"
+#include "page/scrolling/ScrollingStateFixedNode.cpp"
+#include "page/scrolling/ScrollingStateFrameHostingNode.cpp"
+#include "page/scrolling/ScrollingStateFrameScrollingNode.cpp"
+#include "page/scrolling/ScrollingStateNode.cpp"
+#include "page/scrolling/ScrollingStateOverflowScrollProxyNode.cpp"
+#include "page/scrolling/ScrollingStateOverflowScrollingNode.cpp"

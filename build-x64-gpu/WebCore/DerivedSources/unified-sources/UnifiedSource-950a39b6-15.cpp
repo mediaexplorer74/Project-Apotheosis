@@ -1,0 +1,8 @@
+#include "html/HTMLTemplateElement.cpp"
+#include "html/HTMLTextAreaElement.cpp"
+#include "html/HTMLTextFormControlElement.cpp"
+#include "html/HTMLTimeElement.cpp"
+#include "html/HTMLTitleElement.cpp"
+#include "html/HTMLTrackElement.cpp"
+#include "html/HTMLUListElement.cpp"
+#include "html/HTMLUnknownElement.cpp"

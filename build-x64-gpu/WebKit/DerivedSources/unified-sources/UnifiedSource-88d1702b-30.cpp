@@ -1,0 +1,8 @@
+#include "UIProcess/WebAuthentication/Mock/MockHidConnection.cpp"
+#include "UIProcess/WebAuthentication/Mock/MockHidService.cpp"
+#include "UIProcess/WebAuthentication/fido/CtapNfcDriver.cpp"
+#include "UIProcess/WebAuthentication/fido/FidoAuthenticator.cpp"
+#include "UIProcess/WebAuthentication/fido/FidoService.cpp"
+#include "UIProcess/WebAuthentication/fido/U2fAuthenticator.cpp"
+#include "UIProcess/WebsiteData/EnhancedSecuritySitesHolder.cpp"
+#include "UIProcess/WebsiteData/EnhancedSecuritySitesPersistence.cpp"

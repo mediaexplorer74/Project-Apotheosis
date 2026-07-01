@@ -1,0 +1,8 @@
+#include "Shared/WebGPU/WebGPUBindGroupEntry.cpp"
+#include "Shared/WebGPU/WebGPUBindGroupLayoutDescriptor.cpp"
+#include "Shared/WebGPU/WebGPUBindGroupLayoutEntry.cpp"
+#include "Shared/WebGPU/WebGPUBlendComponent.cpp"
+#include "Shared/WebGPU/WebGPUBlendState.cpp"
+#include "Shared/WebGPU/WebGPUBufferBinding.cpp"
+#include "Shared/WebGPU/WebGPUBufferBindingLayout.cpp"
+#include "Shared/WebGPU/WebGPUBufferDescriptor.cpp"

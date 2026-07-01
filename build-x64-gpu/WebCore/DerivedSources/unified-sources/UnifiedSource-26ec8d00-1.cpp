@@ -1,0 +1,8 @@
+#include "style/AnchorPositionEvaluator.cpp"
+#include "style/AttributeChangeInvalidation.cpp"
+#include "style/ChildChangeInvalidation.cpp"
+#include "style/ClassChangeInvalidation.cpp"
+#include "style/ContainerQueryEvaluator.cpp"
+#include "style/CustomFunctionRegistry.cpp"
+#include "style/ElementRuleCollector.cpp"
+#include "style/HasSelectorFilter.cpp"

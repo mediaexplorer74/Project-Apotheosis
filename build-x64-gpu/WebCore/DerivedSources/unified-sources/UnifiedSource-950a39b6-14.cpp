@@ -1,0 +1,8 @@
+#include "html/HTMLTableCaptionElement.cpp"
+#include "html/HTMLTableCellElement.cpp"
+#include "html/HTMLTableColElement.cpp"
+#include "html/HTMLTableElement.cpp"
+#include "html/HTMLTablePartElement.cpp"
+#include "html/HTMLTableRowElement.cpp"
+#include "html/HTMLTableRowsCollection.cpp"
+#include "html/HTMLTableSectionElement.cpp"

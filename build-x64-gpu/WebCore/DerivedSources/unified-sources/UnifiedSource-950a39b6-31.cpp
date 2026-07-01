@@ -1,0 +1,8 @@
+#include "html/canvas/WebGLDepthTexture.cpp"
+#include "html/canvas/WebGLDrawBuffers.cpp"
+#include "html/canvas/WebGLDrawInstancedBaseVertexBaseInstance.cpp"
+#include "html/canvas/WebGLFramebuffer.cpp"
+#include "html/canvas/WebGLLoseContext.cpp"
+#include "html/canvas/WebGLMultiDraw.cpp"
+#include "html/canvas/WebGLMultiDrawInstancedBaseVertexBaseInstance.cpp"
+#include "html/canvas/WebGLObject.cpp"

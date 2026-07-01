@@ -1,0 +1,8 @@
+#include "dom/MutationObserverRegistration.cpp"
+#include "dom/MutationRecord.cpp"
+#include "dom/NameNodeList.cpp"
+#include "dom/NamedNodeMap.cpp"
+#include "dom/NativeNodeFilter.cpp"
+#include "dom/Node.cpp"
+#include "dom/NodeFilterCondition.cpp"
+#include "dom/NodeIterator.cpp"

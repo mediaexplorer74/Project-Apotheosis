@@ -1,0 +1,8 @@
+#include "JSHTMLSlotElement.cpp"
+#include "JSHTMLSourceElement.cpp"
+#include "JSHTMLSpanElement.cpp"
+#include "JSHTMLStyleElement.cpp"
+#include "JSHTMLTableCaptionElement.cpp"
+#include "JSHTMLTableCellElement.cpp"
+#include "JSHTMLTableColElement.cpp"
+#include "JSHTMLTableElement.cpp"

@@ -1,0 +1,8 @@
+#include "platform/graphics/filters/software/FEGaussianBlurSoftwareApplier.cpp"
+#include "platform/graphics/filters/software/FEImageSoftwareApplier.cpp"
+#include "platform/graphics/filters/software/FELightingSoftwareApplier.cpp"
+#include "platform/graphics/filters/software/FELightingSoftwareParallelApplier.cpp"
+#include "platform/graphics/filters/software/FEMergeSoftwareApplier.cpp"
+#include "platform/graphics/filters/software/FEMorphologySoftwareApplier.cpp"
+#include "platform/graphics/filters/software/FEOffsetSoftwareApplier.cpp"
+#include "platform/graphics/filters/software/FETileSoftwareApplier.cpp"

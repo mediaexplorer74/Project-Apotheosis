@@ -1,0 +1,8 @@
+#include "platform/graphics/DisplayUpdate.cpp"
+#include "platform/graphics/DoublePoint.cpp"
+#include "platform/graphics/DoubleRect.cpp"
+#include "platform/graphics/DoubleSize.cpp"
+#include "platform/graphics/Float16ArrayPixelBuffer.cpp"
+#include "platform/graphics/FloatLine.cpp"
+#include "platform/graphics/FloatPoint.cpp"
+#include "platform/graphics/FloatPoint3D.cpp"

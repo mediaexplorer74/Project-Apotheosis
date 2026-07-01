@@ -1,0 +1,8 @@
+#include "platform/graphics/transforms/PerspectiveTransformOperation.cpp"
+#include "platform/graphics/transforms/Quaternion.cpp"
+#include "platform/graphics/transforms/RotateTransformOperation.cpp"
+#include "platform/graphics/transforms/ScaleTransformOperation.cpp"
+#include "platform/graphics/transforms/SkewTransformOperation.cpp"
+#include "platform/graphics/transforms/TransformOperation.cpp"
+#include "platform/graphics/transforms/TransformOperations.cpp"
+#include "platform/graphics/transforms/TransformState.cpp"

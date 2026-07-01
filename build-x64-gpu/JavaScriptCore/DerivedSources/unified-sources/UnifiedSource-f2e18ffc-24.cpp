@@ -1,0 +1,8 @@
+#include "runtime/JSInternalPromise.cpp"
+#include "runtime/JSInternalPromiseConstructor.cpp"
+#include "runtime/JSInternalPromisePrototype.cpp"
+#include "runtime/JSIterator.cpp"
+#include "runtime/JSIteratorConstructor.cpp"
+#include "runtime/JSIteratorHelper.cpp"
+#include "runtime/JSIteratorHelperPrototype.cpp"
+#include "runtime/JSIteratorPrototype.cpp"

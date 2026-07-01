@@ -1,0 +1,8 @@
+#include "JSBackgroundFetchEvent.cpp"
+#include "JSBackgroundFetchEventInit.cpp"
+#include "JSBackgroundFetchFailureReason.cpp"
+#include "JSBackgroundFetchManager.cpp"
+#include "JSBackgroundFetchOptions.cpp"
+#include "JSBackgroundFetchRecord.cpp"
+#include "JSBackgroundFetchRegistration.cpp"
+#include "JSBackgroundFetchResult.cpp"

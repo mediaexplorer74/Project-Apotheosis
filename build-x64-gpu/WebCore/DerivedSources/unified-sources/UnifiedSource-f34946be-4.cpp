@@ -1,0 +1,8 @@
+#include "editing/IndentOutdentCommand.cpp"
+#include "editing/InsertIntoTextNodeCommand.cpp"
+#include "editing/InsertLineBreakCommand.cpp"
+#include "editing/InsertListCommand.cpp"
+#include "editing/InsertNestedListCommand.cpp"
+#include "editing/InsertNodeBeforeCommand.cpp"
+#include "editing/InsertParagraphSeparatorCommand.cpp"
+#include "editing/InsertTextCommand.cpp"

@@ -1,0 +1,8 @@
+#include "platform/graphics/ColorConversion.cpp"
+#include "platform/graphics/ColorInterpolation.cpp"
+#include "platform/graphics/ColorInterpolationMethod.cpp"
+#include "platform/graphics/ColorLuminance.cpp"
+#include "platform/graphics/ColorSerialization.cpp"
+#include "platform/graphics/ColorSpace.cpp"
+#include "platform/graphics/ColorUtilities.cpp"
+#include "platform/graphics/ComplexTextController.cpp"

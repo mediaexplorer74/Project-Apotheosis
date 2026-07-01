@@ -1,0 +1,8 @@
+#include "rendering/RenderEmbeddedObject.cpp"
+#include "rendering/RenderFileUploadControl.cpp"
+#include "rendering/RenderFlexibleBox.cpp"
+#include "rendering/RenderFragmentContainer.cpp"
+#include "rendering/RenderFragmentContainerSet.cpp"
+#include "rendering/RenderFragmentedFlow.cpp"
+#include "rendering/RenderFrame.cpp"
+#include "rendering/RenderFrameBase.cpp"

@@ -13,11 +13,10 @@ param(
 $ErrorActionPreference = 'Continue'
 . "$PSScriptRoot\arm32-uwp-env.ps1"
 
-$Root   = Split-Path -Parent $PSScriptRoot
-$cmake  = "C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
-$ninja  = "C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\ninja.exe"
-$WebKit = Join-Path $Root 'WebKit'
-$Build  = Join-Path $Root 'build-clang-gpu'
+$cmake  = "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
+$ninja  = "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\ninja.exe"
+$WebKit = Join-Path $env:APOTHEOSIS_ROOT 'WebKit'
+$Build  = Join-Path $env:APOTHEOSIS_ROOT 'build-clang-gpu'
 $Toolchain = Join-Path $PSScriptRoot 'Toolchain-ARM32-UWP-clang.cmake'
 
 $pkgconfig = (Get-ChildItem "C:\vcpkg\downloads\tools\msys2" -Recurse -Filter "pkg-config.exe" -ErrorAction SilentlyContinue | Select-Object -First 1).FullName

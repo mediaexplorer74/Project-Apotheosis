@@ -1,0 +1,8 @@
+#include "NetworkProcess/BackgroundFetchLoad.cpp"
+#include "NetworkProcess/DatabaseUtilities.cpp"
+#include "NetworkProcess/EarlyHintsResourceLoader.cpp"
+#include "NetworkProcess/NetworkActivityTracker.cpp"
+#include "NetworkProcess/NetworkBroadcastChannelRegistry.cpp"
+#include "NetworkProcess/NetworkCORSPreflightChecker.cpp"
+#include "NetworkProcess/NetworkConnectionToWebProcess.cpp"
+#include "NetworkProcess/NetworkContentRuleListManager.cpp"

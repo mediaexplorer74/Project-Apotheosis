@@ -1,0 +1,8 @@
+#include "Modules/WebGPU/Implementation/WebGPUBindGroupLayoutImpl.cpp"
+#include "Modules/WebGPU/Implementation/WebGPUBufferImpl.cpp"
+#include "Modules/WebGPU/Implementation/WebGPUCommandBufferImpl.cpp"
+#include "Modules/WebGPU/Implementation/WebGPUCommandEncoderImpl.cpp"
+#include "Modules/WebGPU/Implementation/WebGPUCompositorIntegrationImpl.cpp"
+#include "Modules/WebGPU/Implementation/WebGPUComputePassEncoderImpl.cpp"
+#include "Modules/WebGPU/Implementation/WebGPUComputePipelineImpl.cpp"
+#include "Modules/WebGPU/Implementation/WebGPUConvertToBackingContext.cpp"

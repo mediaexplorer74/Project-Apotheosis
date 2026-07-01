@@ -1,0 +1,8 @@
+#include "html/canvas/CanvasStyle.cpp"
+#include "html/canvas/EXTBlendMinMax.cpp"
+#include "html/canvas/EXTClipControl.cpp"
+#include "html/canvas/EXTColorBufferFloat.cpp"
+#include "html/canvas/EXTColorBufferHalfFloat.cpp"
+#include "html/canvas/EXTConservativeDepth.cpp"
+#include "html/canvas/EXTDepthClamp.cpp"
+#include "html/canvas/EXTDisjointTimerQuery.cpp"

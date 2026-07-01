@@ -1,0 +1,8 @@
+#include "platform/graphics/ImagePaintingOptions.cpp"
+#include "platform/graphics/ImageResolution.cpp"
+#include "platform/graphics/ImageSource.cpp"
+#include "platform/graphics/InbandGenericCue.cpp"
+#include "platform/graphics/IntPoint.cpp"
+#include "platform/graphics/IntRect.cpp"
+#include "platform/graphics/IntSize.cpp"
+#include "platform/graphics/LayoutPoint.cpp"

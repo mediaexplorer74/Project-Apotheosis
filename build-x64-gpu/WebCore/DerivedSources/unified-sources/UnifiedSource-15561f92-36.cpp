@@ -1,0 +1,8 @@
+#include "Modules/model-element/ModelPlayerClient.cpp"
+#include "Modules/model-element/ModelPlayerProvider.cpp"
+#include "Modules/model-element/PlaceholderModelPlayer.cpp"
+#include "Modules/model-element/dummy/DummyModelPlayer.cpp"
+#include "Modules/model-element/dummy/DummyModelPlayerProvider.cpp"
+#include "Modules/notifications/Notification.cpp"
+#include "Modules/notifications/NotificationController.cpp"
+#include "Modules/notifications/NotificationData.cpp"

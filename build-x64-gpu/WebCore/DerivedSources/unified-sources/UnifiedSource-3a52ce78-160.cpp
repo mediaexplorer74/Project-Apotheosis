@@ -1,0 +1,8 @@
+#include "JSSpeechRecognitionResultList.cpp"
+#include "JSSpeechSynthesis.cpp"
+#include "JSSpeechSynthesisEvent.cpp"
+#include "JSSpeechSynthesisUtterance.cpp"
+#include "JSSpeechSynthesisVoice.cpp"
+#include "JSStartViewTransitionOptions.cpp"
+#include "JSStaticRange.cpp"
+#include "JSStereoPannerNode.cpp"

@@ -1,0 +1,8 @@
+#include "GPUProcess/graphics/RemoteRenderingBackend.cpp"
+#include "GPUProcess/graphics/RemoteResourceCache.cpp"
+#include "GPUProcess/graphics/RemoteSnapshot.cpp"
+#include "GPUProcess/graphics/RemoteSnapshotRecorder.cpp"
+#include "GPUProcess/graphics/ScopedRenderingResourcesRequest.cpp"
+#include "GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp"
+#include "GPUProcess/graphics/ShareablePixelBuffer.cpp"
+#include "GPUProcess/graphics/Model/ModelObjectHeap.cpp"

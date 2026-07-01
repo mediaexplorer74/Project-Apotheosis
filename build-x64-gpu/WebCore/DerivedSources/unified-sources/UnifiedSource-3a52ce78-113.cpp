@@ -1,0 +1,8 @@
+#include "JSPageTransitionEvent.cpp"
+#include "JSPaintRenderingContext2D.cpp"
+#include "JSPaintWorkletGlobalScope.cpp"
+#include "JSPannerNode.cpp"
+#include "JSPannerOptions.cpp"
+#include "JSPanningModelType.cpp"
+#include "JSParentNode.cpp"
+#include "JSPath2D.cpp"

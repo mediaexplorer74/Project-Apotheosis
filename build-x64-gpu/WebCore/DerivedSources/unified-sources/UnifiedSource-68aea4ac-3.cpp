@@ -1,0 +1,8 @@
+#include "bindings/js/JSAudioWorkletGlobalScopeCustom.cpp"
+#include "bindings/js/JSAudioWorkletProcessorCustom.cpp"
+#include "bindings/js/JSCSSRuleCustom.cpp"
+#include "bindings/js/JSCSSRuleListCustom.cpp"
+#include "bindings/js/JSCSSStyleDeclarationCustom.cpp"
+#include "bindings/js/JSCallbackData.cpp"
+#include "bindings/js/JSCanvasRenderingContext2DCustom.cpp"
+#include "bindings/js/JSCustomElementInterface.cpp"

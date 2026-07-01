@@ -1,0 +1,8 @@
+#include "style/values/transforms/StyleTransform.cpp"
+#include "style/values/transforms/StyleTransformFunction.cpp"
+#include "style/values/transforms/StyleTransformList.cpp"
+#include "style/values/transforms/StyleTranslate.cpp"
+#include "style/values/transforms/functions/StyleMatrix3DTransformFunction.cpp"
+#include "style/values/transforms/functions/StyleMatrixTransformFunction.cpp"
+#include "style/values/transforms/functions/StylePerspectiveTransformFunction.cpp"
+#include "style/values/transforms/functions/StyleRotateTransformFunction.cpp"

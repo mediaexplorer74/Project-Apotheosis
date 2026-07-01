@@ -1,0 +1,8 @@
+#include "RemoteTextureMessageReceiver.cpp"
+#include "RemoteTextureViewMessageReceiver.cpp"
+#include "RemoteVideoFrameObjectHeapMessageReceiver.cpp"
+#include "RemoteVideoFrameObjectHeapProxyProcessorMessageReceiver.cpp"
+#include "RemoteWebLockRegistryMessageReceiver.cpp"
+#include "RemoteXRBindingMessageReceiver.cpp"
+#include "RemoteXRProjectionLayerMessageReceiver.cpp"
+#include "RemoteXRSubImageMessageReceiver.cpp"

@@ -1,0 +1,8 @@
+#include "JSReadableStreamBYOBRequest.cpp"
+#include "JSReadableStreamDefaultController.cpp"
+#include "JSReadableStreamDefaultReader.cpp"
+#include "JSReadableStreamReadResult.cpp"
+#include "JSReadableStreamSource.cpp"
+#include "JSReadableStreamType.cpp"
+#include "JSRedEyeReduction.cpp"
+#include "JSReducerCallback.cpp"

@@ -1,0 +1,8 @@
+#include "crypto/algorithms/CryptoAlgorithmPBKDF2.cpp"
+#include "crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp"
+#include "crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp"
+#include "crypto/algorithms/CryptoAlgorithmRSA_PSS.cpp"
+#include "crypto/algorithms/CryptoAlgorithmSHA1.cpp"
+#include "crypto/algorithms/CryptoAlgorithmSHA256.cpp"
+#include "crypto/algorithms/CryptoAlgorithmSHA384.cpp"
+#include "crypto/algorithms/CryptoAlgorithmSHA512.cpp"

@@ -1,0 +1,8 @@
+#include "JSPublicKeyCredentialRpEntity.cpp"
+#include "JSPublicKeyCredentialType.cpp"
+#include "JSPublicKeyCredentialUserEntity.cpp"
+#include "JSPublicKeyCredentialUserEntityJSON.cpp"
+#include "JSPushEncryptionKeyName.cpp"
+#include "JSPushEvent.cpp"
+#include "JSPushEventInit.cpp"
+#include "JSPushManager.cpp"

@@ -1,0 +1,8 @@
+#include "platform/graphics/transforms/TransformationMatrix.cpp"
+#include "platform/graphics/transforms/TranslateTransformOperation.cpp"
+#include "platform/mediacapabilities/MediaCapabilitiesLogging.cpp"
+#include "platform/mediacapabilities/MediaEngineConfigurationFactory.cpp"
+#include "platform/mediarecorder/MediaRecorderPrivate.cpp"
+#include "platform/mediarecorder/MediaRecorderPrivateMock.cpp"
+#include "platform/mediastream/AudioMediaStreamTrackRenderer.cpp"
+#include "platform/mediastream/AudioTrackPrivateMediaStream.cpp"

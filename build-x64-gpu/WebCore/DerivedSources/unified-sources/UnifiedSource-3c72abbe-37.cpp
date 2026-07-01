@@ -1,0 +1,8 @@
+#include "platform/graphics/PathUtilities.cpp"
+#include "platform/graphics/Pattern.cpp"
+#include "platform/graphics/PixelBuffer.cpp"
+#include "platform/graphics/PixelBufferConversion.cpp"
+#include "platform/graphics/PixelBufferFormat.cpp"
+#include "platform/graphics/PixelFormat.cpp"
+#include "platform/graphics/PlatformDynamicRangeLimit.cpp"
+#include "platform/graphics/PlatformTimeRanges.cpp"

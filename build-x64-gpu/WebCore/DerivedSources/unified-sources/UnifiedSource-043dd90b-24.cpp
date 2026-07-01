@@ -1,0 +1,8 @@
+#include "rendering/style/StyleCursorImage.cpp"
+#include "rendering/style/StyleFilterImage.cpp"
+#include "rendering/style/StyleGeneratedImage.cpp"
+#include "rendering/style/StyleGradientImage.cpp"
+#include "rendering/style/StyleImageSet.cpp"
+#include "rendering/style/StyleInvalidImage.cpp"
+#include "rendering/style/StyleMultiImage.cpp"
+#include "rendering/style/StyleNamedImage.cpp"

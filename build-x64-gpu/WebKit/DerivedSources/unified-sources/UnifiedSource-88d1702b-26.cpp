@@ -1,0 +1,8 @@
+#include "UIProcess/Inspector/InspectorTargetProxy.cpp"
+#include "UIProcess/Inspector/RemoteWebInspectorUIProxy.cpp"
+#include "UIProcess/Inspector/WasmDebuggerDebuggable.cpp"
+#include "UIProcess/Inspector/WebFrameInspectorTargetProxy.cpp"
+#include "UIProcess/Inspector/WebInspectorBackendProxy.cpp"
+#include "UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp"
+#include "UIProcess/Inspector/WebInspectorUIProxy.cpp"
+#include "UIProcess/Inspector/WebInspectorUtilities.cpp"

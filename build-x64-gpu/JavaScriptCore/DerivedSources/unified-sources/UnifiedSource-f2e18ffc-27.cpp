@@ -1,0 +1,8 @@
+#include "runtime/JSPromisePrototype.cpp"
+#include "runtime/JSPromiseReaction.cpp"
+#include "runtime/JSPropertyNameEnumerator.cpp"
+#include "runtime/JSRawJSONObject.cpp"
+#include "runtime/JSRegExpStringIterator.cpp"
+#include "runtime/JSRemoteFunction.cpp"
+#include "runtime/JSRunLoopTimer.cpp"
+#include "runtime/JSScope.cpp"

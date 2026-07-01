@@ -1,0 +1,8 @@
+#include "jit/CallFrameShuffler32_64.cpp"
+#include "jit/CallFrameShuffler64.cpp"
+#include "jit/ExecutableAllocationFuzz.cpp"
+#include "jit/ExecutableAllocator.cpp"
+#include "jit/ExecutableMemoryHandle.cpp"
+#include "jit/GCAwareJITStubRoutine.cpp"
+#include "jit/GPRInfo.cpp"
+#include "jit/GdbJIT.cpp"

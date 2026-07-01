@@ -1,0 +1,8 @@
+#include "JSBlobPropertyBag.cpp"
+#include "JSBroadcastChannel.cpp"
+#include "JSBufferedChangeEvent.cpp"
+#include "JSByteLengthQueuingStrategy.cpp"
+#include "JSCDATASection.cpp"
+#include "JSCOEPInheritenceViolationReportBody.cpp"
+#include "JSCORPViolationReportBody.cpp"
+#include "JSCSPViolationReportBody.cpp"

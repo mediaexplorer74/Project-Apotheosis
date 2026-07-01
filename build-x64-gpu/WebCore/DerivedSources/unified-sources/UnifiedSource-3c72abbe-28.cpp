@@ -1,0 +1,8 @@
+#include "platform/graphics/FontGenericFamilies.cpp"
+#include "platform/graphics/FontPlatformData.cpp"
+#include "platform/graphics/FontRanges.cpp"
+#include "platform/graphics/FontRenderOptions.cpp"
+#include "platform/graphics/FontSelectionAlgorithm.cpp"
+#include "platform/graphics/FontSelector.cpp"
+#include "platform/graphics/FontTaggedSettings.cpp"
+#include "platform/graphics/FourCC.cpp"

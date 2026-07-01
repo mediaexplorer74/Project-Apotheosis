@@ -1,0 +1,8 @@
+#include "runtime/NativeCalleeRegistry.cpp"
+#include "runtime/NativeErrorConstructor.cpp"
+#include "runtime/NativeErrorPrototype.cpp"
+#include "runtime/NativeExecutable.cpp"
+#include "runtime/NullGetterFunction.cpp"
+#include "runtime/NullSetterFunction.cpp"
+#include "runtime/NumberConstructor.cpp"
+#include "runtime/NumberObject.cpp"

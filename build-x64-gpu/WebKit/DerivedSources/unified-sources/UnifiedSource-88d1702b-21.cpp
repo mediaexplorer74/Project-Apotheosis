@@ -1,0 +1,8 @@
+#include "UIProcess/API/C/WKPage.cpp"
+#include "UIProcess/API/C/WKPageConfigurationRef.cpp"
+#include "UIProcess/API/C/WKPageGroup.cpp"
+#include "UIProcess/API/C/WKPreferences.cpp"
+#include "UIProcess/API/C/WKProtectionSpace.cpp"
+#include "UIProcess/API/C/WKQueryPermissionResultCallback.cpp"
+#include "UIProcess/API/C/WKResourceCacheManager.cpp"
+#include "UIProcess/API/C/WKScriptMessageRef.cpp"

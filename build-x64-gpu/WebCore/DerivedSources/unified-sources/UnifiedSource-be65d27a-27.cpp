@@ -1,0 +1,8 @@
+#include "dom/UserGestureIndicator.cpp"
+#include "dom/UserTypingGestureIndicator.cpp"
+#include "dom/ViewTransition.cpp"
+#include "dom/ViewTransitionTypeSet.cpp"
+#include "dom/ViewportArguments.cpp"
+#include "dom/VisitedLinkState.cpp"
+#include "dom/WheelEvent.cpp"
+#include "dom/WindowEventLoop.cpp"

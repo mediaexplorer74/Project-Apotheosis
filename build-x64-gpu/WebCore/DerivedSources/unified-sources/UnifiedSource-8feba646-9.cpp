@@ -1,0 +1,8 @@
+#include "svg/SVGImageElement.cpp"
+#include "svg/SVGImageLoader.cpp"
+#include "svg/SVGLength.cpp"
+#include "svg/SVGLengthContext.cpp"
+#include "svg/SVGLengthList.cpp"
+#include "svg/SVGLengthValue.cpp"
+#include "svg/SVGLineElement.cpp"
+#include "svg/SVGLinearGradientElement.cpp"

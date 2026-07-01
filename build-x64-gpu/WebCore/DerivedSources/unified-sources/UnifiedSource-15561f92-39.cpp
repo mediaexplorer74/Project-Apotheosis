@@ -1,0 +1,8 @@
+#include "Modules/permissions/Permissions.cpp"
+#include "Modules/permissions/WorkerNavigatorPermissions.cpp"
+#include "Modules/pictureinpicture/DocumentOrShadowRootPictureInPicture.cpp"
+#include "Modules/pictureinpicture/DocumentPictureInPicture.cpp"
+#include "Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp"
+#include "Modules/pictureinpicture/PictureInPictureEvent.cpp"
+#include "Modules/pictureinpicture/PictureInPictureWindow.cpp"
+#include "Modules/push-api/PushCrypto.cpp"

@@ -1,0 +1,8 @@
+#include "NetworkProcess/ServiceWorker/ServiceWorkerNavigationPreloader.cpp"
+#include "NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp"
+#include "NetworkProcess/ServiceWorker/WebSWRegistrationStore.cpp"
+#include "NetworkProcess/SharedWorker/WebSharedWorker.cpp"
+#include "NetworkProcess/SharedWorker/WebSharedWorkerServer.cpp"
+#include "NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.cpp"
+#include "NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.cpp"
+#include "NetworkProcess/cache/AsyncRevalidation.cpp"

@@ -1,0 +1,8 @@
+#include "Modules/webcodecs/WebCodecsVideoFrame.cpp"
+#include "Modules/webcodecs/WebCodecsVideoFrameAlgorithms.cpp"
+#include "Modules/webdatabase/ChangeVersionWrapper.cpp"
+#include "Modules/webdatabase/Database.cpp"
+#include "Modules/webdatabase/DatabaseAuthorizer.cpp"
+#include "Modules/webdatabase/DatabaseContext.cpp"
+#include "Modules/webdatabase/DatabaseManager.cpp"
+#include "Modules/webdatabase/DatabaseTask.cpp"

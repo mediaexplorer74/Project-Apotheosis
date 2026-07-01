@@ -1,0 +1,8 @@
+#include "platform/audio/UpSampler.cpp"
+#include "platform/audio/VectorMath.cpp"
+#include "platform/audio/ZeroPole.cpp"
+#include "platform/encryptedmedia/CDMFactory.cpp"
+#include "platform/encryptedmedia/CDMLogging.cpp"
+#include "platform/encryptedmedia/CDMPrivate.cpp"
+#include "platform/encryptedmedia/CDMProxy.cpp"
+#include "platform/encryptedmedia/CDMUtilities.cpp"

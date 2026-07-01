@@ -1,0 +1,8 @@
+#include "editing/TypingCommand.cpp"
+#include "editing/UnlinkCommand.cpp"
+#include "editing/VisiblePosition.cpp"
+#include "editing/VisibleSelection.cpp"
+#include "editing/VisibleUnits.cpp"
+#include "editing/WebContentReader.cpp"
+#include "editing/WebCorePasteboardFileReader.cpp"
+#include "editing/WrapContentsInDummySpanCommand.cpp"

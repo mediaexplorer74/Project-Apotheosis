@@ -1,0 +1,8 @@
+#include "Modules/indexeddb/shared/IDBResourceIdentifier.cpp"
+#include "Modules/indexeddb/shared/IDBResultData.cpp"
+#include "Modules/indexeddb/shared/IDBTransactionInfo.cpp"
+#include "Modules/indexeddb/shared/IndexKey.cpp"
+#include "Modules/mediacapabilities/MediaCapabilities.cpp"
+#include "Modules/mediacapabilities/NavigatorMediaCapabilities.cpp"
+#include "Modules/mediacapabilities/WorkerNavigatorMediaCapabilities.cpp"
+#include "Modules/mediacontrols/LocalDOMWindowMediaControls.cpp"

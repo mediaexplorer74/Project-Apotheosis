@@ -1,0 +1,8 @@
+#include "JSGPUBufferBindingLayout.cpp"
+#include "JSGPUBufferBindingType.cpp"
+#include "JSGPUBufferDescriptor.cpp"
+#include "JSGPUBufferMapState.cpp"
+#include "JSGPUBufferUsage.cpp"
+#include "JSGPUCanvasAlphaMode.cpp"
+#include "JSGPUCanvasConfiguration.cpp"
+#include "JSGPUCanvasContext.cpp"

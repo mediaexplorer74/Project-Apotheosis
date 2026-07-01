@@ -1,0 +1,8 @@
+#include "WebProcess/GPU/graphics/WebGPU/RemoteShaderModuleProxy.cpp"
+#include "WebProcess/GPU/graphics/WebGPU/RemoteTextureProxy.cpp"
+#include "WebProcess/GPU/graphics/WebGPU/RemoteTextureViewProxy.cpp"
+#include "WebProcess/GPU/graphics/WebGPU/RemoteXRBindingProxy.cpp"
+#include "WebProcess/GPU/graphics/WebGPU/RemoteXRProjectionLayerProxy.cpp"
+#include "WebProcess/GPU/graphics/WebGPU/RemoteXRSubImageProxy.cpp"
+#include "WebProcess/GPU/graphics/WebGPU/RemoteXRViewProxy.cpp"
+#include "WebProcess/GPU/graphics/WebGPU/WebGPUDowncastConvertToBackingContext.cpp"

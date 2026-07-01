@@ -1,0 +1,8 @@
+#include "layout/integration/LayoutIntegrationFormattingContextLayout.cpp"
+#include "layout/integration/LayoutIntegrationUtils.cpp"
+#include "layout/integration/flex/LayoutIntegrationFlexLayout.cpp"
+#include "layout/integration/grid/LayoutIntegrationGridCoverage.cpp"
+#include "layout/integration/grid/LayoutIntegrationGridLayout.cpp"
+#include "layout/integration/inline/InlineIteratorBox.cpp"
+#include "layout/integration/inline/InlineIteratorInlineBox.cpp"
+#include "layout/integration/inline/InlineIteratorLineBox.cpp"

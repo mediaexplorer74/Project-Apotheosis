@@ -1,0 +1,8 @@
+#include "JSMediaKeySession.cpp"
+#include "JSMediaKeySessionType.cpp"
+#include "JSMediaKeyStatusMap.cpp"
+#include "JSMediaKeySystemAccess.cpp"
+#include "JSMediaKeySystemConfiguration.cpp"
+#include "JSMediaKeySystemMediaCapability.cpp"
+#include "JSMediaKeys.cpp"
+#include "JSMediaKeysRequirement.cpp"

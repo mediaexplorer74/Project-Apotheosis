@@ -1,0 +1,8 @@
+#include "WebProcess/WebProcess.cpp"
+#include "WebProcess/WebSleepDisablerClient.cpp"
+#include "WebProcess/WebSystemSoundDelegate.cpp"
+#include "WebProcess/Automation/WebAutomationDOMWindowObserver.cpp"
+#include "WebProcess/Cache/WebCacheStorageConnection.cpp"
+#include "WebProcess/Cache/WebCacheStorageProvider.cpp"
+#include "WebProcess/Databases/WebDatabaseProvider.cpp"
+#include "WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp"

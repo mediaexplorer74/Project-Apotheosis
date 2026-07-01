@@ -1,0 +1,8 @@
+#include "loader/ResourceMonitorPersistence.cpp"
+#include "loader/ResourceMonitorThrottler.cpp"
+#include "loader/ResourceMonitorThrottlerHolder.cpp"
+#include "loader/ResourceTiming.cpp"
+#include "loader/ResourceTimingInformation.cpp"
+#include "loader/ServerTiming.cpp"
+#include "loader/ServerTimingParser.cpp"
+#include "loader/SinkDocument.cpp"

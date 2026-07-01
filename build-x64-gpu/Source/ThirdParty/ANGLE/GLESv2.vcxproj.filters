@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\egl_ext_stubs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\egl_stubs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\egl_stubs_getprocaddress_autogen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\entry_points_egl_autogen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\entry_points_egl_ext_autogen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\entry_points_gles_1_0_autogen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\entry_points_gles_2_0_autogen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\entry_points_gles_3_0_autogen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\entry_points_gles_3_1_autogen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\entry_points_gles_3_2_autogen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\entry_points_gles_ext_autogen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\global_state.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\libGLESv2_autogen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\egl_context_lock_autogen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\egl_context_lock_impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\egl_ext_stubs_autogen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\egl_stubs_autogen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\entry_points_egl_autogen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\entry_points_egl_ext_autogen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\entry_points_gles_1_0_autogen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\entry_points_gles_2_0_autogen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\entry_points_gles_3_0_autogen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\entry_points_gles_3_1_autogen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\entry_points_gles_3_2_autogen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\entry_points_gles_ext_autogen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\global_state.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\libGLESv2_autogen.def">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{BF66F9E0-6FF8-3040-8768-4A92287CF160}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{98865446-B9C7-371B-AEAA-AFE46AD8BC02}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,6 @@
+#include "plugins/DOMMimeType.cpp"
+#include "plugins/DOMMimeTypeArray.cpp"
+#include "plugins/DOMPlugin.cpp"
+#include "plugins/DOMPluginArray.cpp"
+#include "plugins/PluginData.cpp"
+#include "plugins/PluginInfoProvider.cpp"

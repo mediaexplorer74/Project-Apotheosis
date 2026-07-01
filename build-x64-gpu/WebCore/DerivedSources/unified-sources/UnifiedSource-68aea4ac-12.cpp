@@ -1,0 +1,8 @@
+#include "bindings/js/JSNodeIteratorCustom.cpp"
+#include "bindings/js/JSNodeListCustom.cpp"
+#include "bindings/js/JSObservableArray.cpp"
+#include "bindings/js/JSOffscreenCanvasRenderingContext2DCustom.cpp"
+#include "bindings/js/JSPaintRenderingContext2DCustom.cpp"
+#include "bindings/js/JSPaintWorkletGlobalScopeCustom.cpp"
+#include "bindings/js/JSPaymentMethodChangeEventCustom.cpp"
+#include "bindings/js/JSPaymentResponseCustom.cpp"

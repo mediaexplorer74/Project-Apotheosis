@@ -1,0 +1,8 @@
+#include "html/canvas/CanvasFilterContextSwitcher.cpp"
+#include "html/canvas/CanvasGradient.cpp"
+#include "html/canvas/CanvasLayerContextSwitcher.cpp"
+#include "html/canvas/CanvasPath.cpp"
+#include "html/canvas/CanvasPattern.cpp"
+#include "html/canvas/CanvasRenderingContext.cpp"
+#include "html/canvas/CanvasRenderingContext2D.cpp"
+#include "html/canvas/CanvasRenderingContext2DBase.cpp"

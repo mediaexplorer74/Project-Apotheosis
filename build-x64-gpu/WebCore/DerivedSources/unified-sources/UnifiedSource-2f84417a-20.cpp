@@ -1,0 +1,8 @@
+#include "css/calc/CSSCalcTree+Copy.cpp"
+#include "css/calc/CSSCalcTree+Evaluation.cpp"
+#include "css/calc/CSSCalcTree+Parser.cpp"
+#include "css/calc/CSSCalcTree+Serialization.cpp"
+#include "css/calc/CSSCalcTree+Simplification.cpp"
+#include "css/calc/CSSCalcTree.cpp"
+#include "css/calc/CSSCalcType.cpp"
+#include "css/calc/CSSCalcValue.cpp"

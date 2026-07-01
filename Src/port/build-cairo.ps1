@@ -10,7 +10,7 @@ $src   = "C:\vcpkg\buildtrees\cairo\src\1.18.4-237a3f692a.clean"
 $build = "$env:APOTHEOSIS_ROOT\deps-build\cairo"
 $prefix= "C:\vcpkg\installed\arm-uwp"
 $cross = "$PSScriptRoot\cairo-cross-clang.txt"
-$ninja = "C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\ninja.exe"
+$ninja = "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\ninja.exe"
 
 $env:PKG_CONFIG_PATH = "C:\vcpkg\installed\arm-uwp\lib\pkgconfig"
 Remove-Item $build -Recurse -Force -ErrorAction SilentlyContinue

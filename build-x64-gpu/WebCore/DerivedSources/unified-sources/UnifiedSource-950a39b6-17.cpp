@@ -1,0 +1,8 @@
+#include "html/ImageInputType.cpp"
+#include "html/InputMode.cpp"
+#include "html/InputType.cpp"
+#include "html/InputTypeNames.cpp"
+#include "html/LabelsNodeList.cpp"
+#include "html/LazyLoadFrameObserver.cpp"
+#include "html/LazyLoadImageObserver.cpp"
+#include "html/LinkIconCollector.cpp"

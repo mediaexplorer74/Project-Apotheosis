@@ -1,0 +1,8 @@
+#include "Modules/webauthn/cbor/CBORReader.cpp"
+#include "Modules/webauthn/cbor/CBORValue.cpp"
+#include "Modules/webauthn/cbor/CBORWriter.cpp"
+#include "Modules/webauthn/fido/AuthenticatorGetInfoResponse.cpp"
+#include "Modules/webauthn/fido/AuthenticatorSupportedOptions.cpp"
+#include "Modules/webauthn/fido/DeviceRequestConverter.cpp"
+#include "Modules/webauthn/fido/DeviceResponseConverter.cpp"
+#include "Modules/webauthn/fido/FidoConstants.cpp"

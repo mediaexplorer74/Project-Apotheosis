@@ -1,0 +1,8 @@
+#include "JSVideoMatrixCoefficients.cpp"
+#include "JSVideoPixelFormat.cpp"
+#include "JSVideoPlaybackQuality.cpp"
+#include "JSVideoTrack.cpp"
+#include "JSVideoTrackConfiguration.cpp"
+#include "JSVideoTrackGenerator.cpp"
+#include "JSVideoTrackList.cpp"
+#include "JSVideoTransferCharacteristics.cpp"

@@ -1,0 +1,8 @@
+#include "loader/archive/Archive.cpp"
+#include "loader/archive/ArchiveFactory.cpp"
+#include "loader/archive/ArchiveResource.cpp"
+#include "loader/archive/ArchiveResourceCollection.cpp"
+#include "loader/archive/mhtml/MHTMLArchive.cpp"
+#include "loader/archive/mhtml/MHTMLParser.cpp"
+#include "loader/cache/CachedApplicationManifest.cpp"
+#include "loader/cache/CachedCSSStyleSheet.cpp"

@@ -1,0 +1,6 @@
+#include "bridge/IdentifierRep.cpp"
+#include "bridge/runtime_array.cpp"
+#include "bridge/runtime_method.cpp"
+#include "bridge/runtime_object.cpp"
+#include "bridge/runtime_root.cpp"
+#include "bridge/jsc/BridgeJSC.cpp"

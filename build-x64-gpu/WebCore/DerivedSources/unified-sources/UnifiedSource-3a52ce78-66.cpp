@@ -1,0 +1,8 @@
+#include "JSGPUMultisampleState.cpp"
+#include "JSGPUObjectBase.cpp"
+#include "JSGPUObjectDescriptorBase.cpp"
+#include "JSGPUOrigin2DDict.cpp"
+#include "JSGPUOrigin3DDict.cpp"
+#include "JSGPUOutOfMemoryError.cpp"
+#include "JSGPUPipelineBase.cpp"
+#include "JSGPUPipelineDescriptorBase.cpp"

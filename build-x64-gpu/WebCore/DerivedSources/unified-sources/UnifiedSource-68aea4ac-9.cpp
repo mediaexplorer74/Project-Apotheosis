@@ -1,0 +1,8 @@
+#include "bindings/js/JSHistoryCustom.cpp"
+#include "bindings/js/JSIDBCursorCustom.cpp"
+#include "bindings/js/JSIDBCursorWithValueCustom.cpp"
+#include "bindings/js/JSIDBObjectStoreCustom.cpp"
+#include "bindings/js/JSIDBRequestCustom.cpp"
+#include "bindings/js/JSIDBSerializationGlobalObject.cpp"
+#include "bindings/js/JSIDBTransactionCustom.cpp"
+#include "bindings/js/JSImageDataCustom.cpp"

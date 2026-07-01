@@ -1,0 +1,8 @@
+#include "platform/audio/Reverb.cpp"
+#include "platform/audio/ReverbAccumulationBuffer.cpp"
+#include "platform/audio/ReverbConvolver.cpp"
+#include "platform/audio/ReverbConvolverStage.cpp"
+#include "platform/audio/ReverbInputBuffer.cpp"
+#include "platform/audio/SharedAudioDestination.cpp"
+#include "platform/audio/SincResampler.cpp"
+#include "platform/audio/StereoPanner.cpp"

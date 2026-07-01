@@ -1,0 +1,1296 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0FB2CEAB-1FB6-3514-BA87-C8AE4CD5682D}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>JSCBuiltins</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\generate-js-builtins.py">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../JavaScriptCore/Scripts/generate-js-builtins.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/generate-js-builtins.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/generate-js-builtins.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\generate-js-builtins.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../JavaScriptCore/Scripts/generate-js-builtins.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/generate-js-builtins.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/generate-js-builtins.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\generate-js-builtins.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../JavaScriptCore/Scripts/generate-js-builtins.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/generate-js-builtins.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/generate-js-builtins.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\generate-js-builtins.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../JavaScriptCore/Scripts/generate-js-builtins.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/generate-js-builtins.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/generate-js-builtins.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\generate-js-builtins.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_generate_combined_header.py">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_combined_header.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_combined_header.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_combined_header.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_combined_header.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_combined_header.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_combined_header.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_combined_header.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_combined_header.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_combined_header.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_combined_header.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_combined_header.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_combined_header.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_combined_header.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_combined_header.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_combined_header.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_combined_header.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_generate_combined_implementation.py">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_combined_implementation.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_combined_implementation.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_combined_implementation.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_combined_implementation.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_combined_implementation.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_combined_implementation.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_combined_implementation.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_combined_implementation.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_combined_implementation.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_combined_implementation.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_combined_implementation.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_combined_implementation.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_combined_implementation.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_combined_implementation.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_combined_implementation.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_combined_implementation.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_generate_internals_wrapper_header.py">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_internals_wrapper_header.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_internals_wrapper_header.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_internals_wrapper_header.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_internals_wrapper_header.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_internals_wrapper_header.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_internals_wrapper_header.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_internals_wrapper_header.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_internals_wrapper_header.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_internals_wrapper_header.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_internals_wrapper_header.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_internals_wrapper_header.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_internals_wrapper_header.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_internals_wrapper_header.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_internals_wrapper_header.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_internals_wrapper_header.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_internals_wrapper_header.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_generate_internals_wrapper_implementation.py">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_internals_wrapper_implementation.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_internals_wrapper_implementation.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_internals_wrapper_implementation.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_internals_wrapper_implementation.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_internals_wrapper_implementation.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_internals_wrapper_implementation.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_internals_wrapper_implementation.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_internals_wrapper_implementation.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_internals_wrapper_implementation.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_internals_wrapper_implementation.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_internals_wrapper_implementation.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_internals_wrapper_implementation.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_internals_wrapper_implementation.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_internals_wrapper_implementation.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_internals_wrapper_implementation.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_internals_wrapper_implementation.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_generate_separate_header.py">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_separate_header.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_separate_header.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_separate_header.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_separate_header.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_separate_header.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_separate_header.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_separate_header.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_separate_header.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_separate_header.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_separate_header.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_separate_header.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_separate_header.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_separate_header.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_separate_header.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_separate_header.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_separate_header.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_generate_separate_implementation.py">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_separate_implementation.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_separate_implementation.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_separate_implementation.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_separate_implementation.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_separate_implementation.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_separate_implementation.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_separate_implementation.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_separate_implementation.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_separate_implementation.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_separate_implementation.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_separate_implementation.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_separate_implementation.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_separate_implementation.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_separate_implementation.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_separate_implementation.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_separate_implementation.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_generate_wrapper_header.py">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_wrapper_header.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_wrapper_header.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_wrapper_header.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_wrapper_header.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_wrapper_header.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_wrapper_header.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_wrapper_header.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_wrapper_header.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_wrapper_header.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_wrapper_header.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_wrapper_header.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_wrapper_header.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_wrapper_header.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_wrapper_header.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_wrapper_header.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_wrapper_header.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_generate_wrapper_implementation.py">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_wrapper_implementation.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_wrapper_implementation.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_wrapper_implementation.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_wrapper_implementation.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_wrapper_implementation.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_wrapper_implementation.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_wrapper_implementation.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_wrapper_implementation.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_wrapper_implementation.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_wrapper_implementation.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_wrapper_implementation.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_wrapper_implementation.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generate_wrapper_implementation.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generate_wrapper_implementation.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generate_wrapper_implementation.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_wrapper_implementation.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_generator.py">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generator.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generator.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generator.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generator.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generator.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generator.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generator.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generator.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generator.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generator.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generator.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generator.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../JavaScriptCore/Scripts/builtins_generator.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_generator.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_generator.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generator.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_model.py">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../JavaScriptCore/Scripts/builtins_model.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_model.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_model.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_model.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../JavaScriptCore/Scripts/builtins_model.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_model.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_model.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_model.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../JavaScriptCore/Scripts/builtins_model.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_model.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_model.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_model.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../JavaScriptCore/Scripts/builtins_model.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_model.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_model.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_model.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_templates.py">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../JavaScriptCore/Scripts/builtins_templates.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_templates.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_templates.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_templates.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../JavaScriptCore/Scripts/builtins_templates.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_templates.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_templates.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_templates.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../JavaScriptCore/Scripts/builtins_templates.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_templates.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_templates.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_templates.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../JavaScriptCore/Scripts/builtins_templates.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/builtins_templates.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/builtins_templates.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_templates.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\lazywriter.py">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../JavaScriptCore/Scripts/lazywriter.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/lazywriter.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/lazywriter.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\lazywriter.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../JavaScriptCore/Scripts/lazywriter.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/lazywriter.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/lazywriter.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\lazywriter.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../JavaScriptCore/Scripts/lazywriter.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/lazywriter.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/lazywriter.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\lazywriter.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../JavaScriptCore/Scripts/lazywriter.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/lazywriter.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/lazywriter.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\lazywriter.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\wkbuiltins.py">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../JavaScriptCore/Scripts/wkbuiltins.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/wkbuiltins.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/wkbuiltins.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\wkbuiltins.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../JavaScriptCore/Scripts/wkbuiltins.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/wkbuiltins.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/wkbuiltins.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\wkbuiltins.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../JavaScriptCore/Scripts/wkbuiltins.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/wkbuiltins.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/wkbuiltins.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\wkbuiltins.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../JavaScriptCore/Scripts/wkbuiltins.py</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+cd C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E copy_if_different C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/Scripts/wkbuiltins/wkbuiltins.py C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/wkbuiltins.py
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\wkbuiltins.py</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\generate-js-builtins.py">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../JavaScriptCore/DerivedSources/JSCBuiltins.cpp, ../../JavaScriptCore/DerivedSources/JSCBuiltins.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+C:\Users\Admin\AppData\Local\Programs\Python\Python313\python.exe C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/generate-js-builtins.py --framework JavaScriptCore --output-directory C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources --combined C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/AsyncFromSyncIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ArrayConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ArrayIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ArrayPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/AsyncDisposableStackPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/AsyncGeneratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/AsyncIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/DisposableStackPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/FunctionPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/GeneratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/GlobalOperations.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/IteratorHelpers.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/JSIteratorConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/JSIteratorHelperPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/JSIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/MapConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/MapIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/MapPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ModuleLoader.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ObjectConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/PromiseConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/PromiseOperations.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ProxyHelpers.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ReflectObject.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/RegExpPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/RegExpStringIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/SetIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/SetPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ShadowRealmPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/StringConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/StringIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/StringPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/TypedArrayConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/TypedArrayPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/WebAssembly.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/WrapForValidIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/inspector/InjectedScriptSource.js
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\AsyncFromSyncIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ArrayConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ArrayIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ArrayPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\AsyncDisposableStackPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\AsyncGeneratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\AsyncIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\DisposableStackPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\FunctionPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\GeneratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\GlobalOperations.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\IteratorHelpers.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\JSIteratorConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\JSIteratorHelperPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\JSIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\MapConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\MapIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\MapPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ModuleLoader.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ObjectConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\PromiseConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\PromiseOperations.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ProxyHelpers.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ReflectObject.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\RegExpPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\RegExpStringIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\SetIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\SetPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ShadowRealmPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\StringConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\StringIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\StringPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\TypedArrayConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\TypedArrayPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\WebAssembly.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\WrapForValidIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\inspector\InjectedScriptSource.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\wkbuiltins.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generator.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_model.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_templates.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_combined_header.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_combined_implementation.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_separate_header.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_separate_implementation.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_wrapper_header.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_wrapper_implementation.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_internals_wrapper_header.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_internals_wrapper_implementation.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\lazywriter.py;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\JSCBuiltins.cpp;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\JSCBuiltins.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../JavaScriptCore/DerivedSources/JSCBuiltins.cpp, ../../JavaScriptCore/DerivedSources/JSCBuiltins.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+C:\Users\Admin\AppData\Local\Programs\Python\Python313\python.exe C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/generate-js-builtins.py --framework JavaScriptCore --output-directory C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources --combined C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/AsyncFromSyncIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ArrayConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ArrayIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ArrayPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/AsyncDisposableStackPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/AsyncGeneratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/AsyncIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/DisposableStackPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/FunctionPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/GeneratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/GlobalOperations.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/IteratorHelpers.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/JSIteratorConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/JSIteratorHelperPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/JSIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/MapConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/MapIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/MapPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ModuleLoader.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ObjectConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/PromiseConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/PromiseOperations.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ProxyHelpers.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ReflectObject.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/RegExpPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/RegExpStringIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/SetIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/SetPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ShadowRealmPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/StringConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/StringIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/StringPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/TypedArrayConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/TypedArrayPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/WebAssembly.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/WrapForValidIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/inspector/InjectedScriptSource.js
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\AsyncFromSyncIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ArrayConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ArrayIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ArrayPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\AsyncDisposableStackPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\AsyncGeneratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\AsyncIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\DisposableStackPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\FunctionPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\GeneratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\GlobalOperations.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\IteratorHelpers.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\JSIteratorConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\JSIteratorHelperPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\JSIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\MapConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\MapIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\MapPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ModuleLoader.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ObjectConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\PromiseConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\PromiseOperations.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ProxyHelpers.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ReflectObject.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\RegExpPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\RegExpStringIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\SetIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\SetPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ShadowRealmPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\StringConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\StringIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\StringPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\TypedArrayConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\TypedArrayPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\WebAssembly.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\WrapForValidIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\inspector\InjectedScriptSource.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\wkbuiltins.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generator.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_model.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_templates.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_combined_header.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_combined_implementation.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_separate_header.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_separate_implementation.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_wrapper_header.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_wrapper_implementation.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_internals_wrapper_header.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_internals_wrapper_implementation.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\lazywriter.py;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\JSCBuiltins.cpp;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\JSCBuiltins.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../JavaScriptCore/DerivedSources/JSCBuiltins.cpp, ../../JavaScriptCore/DerivedSources/JSCBuiltins.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+C:\Users\Admin\AppData\Local\Programs\Python\Python313\python.exe C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/generate-js-builtins.py --framework JavaScriptCore --output-directory C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources --combined C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/AsyncFromSyncIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ArrayConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ArrayIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ArrayPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/AsyncDisposableStackPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/AsyncGeneratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/AsyncIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/DisposableStackPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/FunctionPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/GeneratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/GlobalOperations.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/IteratorHelpers.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/JSIteratorConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/JSIteratorHelperPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/JSIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/MapConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/MapIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/MapPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ModuleLoader.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ObjectConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/PromiseConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/PromiseOperations.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ProxyHelpers.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ReflectObject.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/RegExpPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/RegExpStringIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/SetIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/SetPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ShadowRealmPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/StringConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/StringIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/StringPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/TypedArrayConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/TypedArrayPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/WebAssembly.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/WrapForValidIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/inspector/InjectedScriptSource.js
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\AsyncFromSyncIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ArrayConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ArrayIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ArrayPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\AsyncDisposableStackPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\AsyncGeneratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\AsyncIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\DisposableStackPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\FunctionPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\GeneratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\GlobalOperations.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\IteratorHelpers.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\JSIteratorConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\JSIteratorHelperPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\JSIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\MapConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\MapIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\MapPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ModuleLoader.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ObjectConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\PromiseConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\PromiseOperations.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ProxyHelpers.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ReflectObject.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\RegExpPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\RegExpStringIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\SetIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\SetPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ShadowRealmPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\StringConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\StringIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\StringPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\TypedArrayConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\TypedArrayPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\WebAssembly.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\WrapForValidIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\inspector\InjectedScriptSource.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\wkbuiltins.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generator.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_model.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_templates.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_combined_header.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_combined_implementation.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_separate_header.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_separate_implementation.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_wrapper_header.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_wrapper_implementation.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_internals_wrapper_header.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_internals_wrapper_implementation.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\lazywriter.py;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\JSCBuiltins.cpp;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\JSCBuiltins.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../JavaScriptCore/DerivedSources/JSCBuiltins.cpp, ../../JavaScriptCore/DerivedSources/JSCBuiltins.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+C:\Users\Admin\AppData\Local\Programs\Python\Python313\python.exe C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/Scripts/generate-js-builtins.py --framework JavaScriptCore --output-directory C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources --combined C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/AsyncFromSyncIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ArrayConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ArrayIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ArrayPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/AsyncDisposableStackPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/AsyncGeneratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/AsyncIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/DisposableStackPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/FunctionPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/GeneratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/GlobalOperations.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/IteratorHelpers.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/JSIteratorConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/JSIteratorHelperPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/JSIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/MapConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/MapIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/MapPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ModuleLoader.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ObjectConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/PromiseConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/PromiseOperations.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ProxyHelpers.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ReflectObject.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/RegExpPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/RegExpStringIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/SetIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/SetPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/ShadowRealmPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/StringConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/StringIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/StringPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/TypedArrayConstructor.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/TypedArrayPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/WebAssembly.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/builtins/WrapForValidIteratorPrototype.js C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/inspector/InjectedScriptSource.js
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\AsyncFromSyncIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ArrayConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ArrayIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ArrayPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\AsyncDisposableStackPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\AsyncGeneratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\AsyncIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\DisposableStackPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\FunctionPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\GeneratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\GlobalOperations.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\IteratorHelpers.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\JSIteratorConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\JSIteratorHelperPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\JSIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\MapConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\MapIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\MapPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ModuleLoader.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ObjectConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\PromiseConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\PromiseOperations.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ProxyHelpers.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ReflectObject.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\RegExpPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\RegExpStringIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\SetIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\SetPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\ShadowRealmPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\StringConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\StringIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\StringPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\TypedArrayConstructor.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\TypedArrayPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\WebAssembly.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\builtins\WrapForValidIteratorPrototype.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\inspector\InjectedScriptSource.js;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\wkbuiltins.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generator.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_model.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_templates.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_combined_header.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_combined_implementation.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_separate_header.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_separate_implementation.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_wrapper_header.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_wrapper_implementation.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_internals_wrapper_header.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\builtins_generate_internals_wrapper_implementation.py;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\lazywriter.py;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\JSCBuiltins.cpp;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\JSCBuiltins.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\d81eab6feb6208a9809e18fd988342b2\JSCBuiltins.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\JSCBuiltins.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\CMakeFiles\JSCBuiltins</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</VerifyInputsAndOutputsExist>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\JSCBuiltins.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\CMakeFiles\JSCBuiltins</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</VerifyInputsAndOutputsExist>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\JSCBuiltins.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\CMakeFiles\JSCBuiltins</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</VerifyInputsAndOutputsExist>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\JSCBuiltins.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\CMakeFiles\JSCBuiltins</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</VerifyInputsAndOutputsExist>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/JavaScriptCore/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Sources.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/JavaScriptCore/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Sources.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/JavaScriptCore/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Sources.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/JavaScriptCore/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Sources.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\CMakeFiles\JSCBuiltins">
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\ZERO_CHECK.vcxproj">
+      <Project>{8AEDA3F9-554F-3BC4-B70A-0E1A01F04A21}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

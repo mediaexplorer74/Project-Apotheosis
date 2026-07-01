@@ -1,0 +1,8 @@
+#include "WebProcess/Network/WebSocketChannelManager.cpp"
+#include "WebProcess/Network/WebSocketProvider.cpp"
+#include "WebProcess/Network/WebTransportSession.cpp"
+#include "WebProcess/Network/webrtc/LibWebRTCDnsResolverFactory.cpp"
+#include "WebProcess/Network/webrtc/LibWebRTCNetwork.cpp"
+#include "WebProcess/Network/webrtc/LibWebRTCNetworkManager.cpp"
+#include "WebProcess/Network/webrtc/LibWebRTCProvider.cpp"
+#include "WebProcess/Network/webrtc/LibWebRTCResolver.cpp"

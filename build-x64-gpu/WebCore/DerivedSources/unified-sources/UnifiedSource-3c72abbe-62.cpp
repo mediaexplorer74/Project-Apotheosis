@@ -1,0 +1,8 @@
+#include "platform/sql/SQLiteAuthorizer.cpp"
+#include "platform/sql/SQLiteDatabase.cpp"
+#include "platform/sql/SQLiteDatabaseTracker.cpp"
+#include "platform/sql/SQLiteFileSystem.cpp"
+#include "platform/sql/SQLiteStatement.cpp"
+#include "platform/sql/SQLiteStatementAutoResetScope.cpp"
+#include "platform/sql/SQLiteTransaction.cpp"
+#include "platform/text/BidiContext.cpp"

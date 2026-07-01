@@ -1,0 +1,8 @@
+#include "dom/CustomEvent.cpp"
+#include "dom/CustomStateSet.cpp"
+#include "dom/DOMException.cpp"
+#include "dom/DOMImplementation.cpp"
+#include "dom/DOMPointReadOnly.cpp"
+#include "dom/DOMQuad.cpp"
+#include "dom/DOMRectList.cpp"
+#include "dom/DOMRectReadOnly.cpp"

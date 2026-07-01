@@ -1,0 +1,8 @@
+#include "platform/audio/MultiChannelResampler.cpp"
+#include "platform/audio/Panner.cpp"
+#include "platform/audio/PlatformMediaSession.cpp"
+#include "platform/audio/PlatformMediaSessionInterface.cpp"
+#include "platform/audio/PlatformMediaSessionManager.cpp"
+#include "platform/audio/PlatformRawAudioData.cpp"
+#include "platform/audio/PushPullFIFO.cpp"
+#include "platform/audio/RealtimeAudioThread.cpp"

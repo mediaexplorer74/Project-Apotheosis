@@ -1,0 +1,8 @@
+#include "dom/PromiseRejectionEvent.cpp"
+#include "dom/PseudoElement.cpp"
+#include "dom/QualifiedName.cpp"
+#include "dom/QualifiedNameCache.cpp"
+#include "dom/RadioButtonGroups.cpp"
+#include "dom/Range.cpp"
+#include "dom/RejectedPromiseTracker.cpp"
+#include "dom/ScopedEventQueue.cpp"

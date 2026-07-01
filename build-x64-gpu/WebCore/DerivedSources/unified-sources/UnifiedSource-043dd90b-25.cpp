@@ -1,0 +1,8 @@
+#include "rendering/style/StylePaintImage.cpp"
+#include "rendering/style/StyleSelfAlignmentData.cpp"
+#include "rendering/svg/RenderSVGBlock.cpp"
+#include "rendering/svg/RenderSVGContainer.cpp"
+#include "rendering/svg/RenderSVGEllipse.cpp"
+#include "rendering/svg/RenderSVGForeignObject.cpp"
+#include "rendering/svg/RenderSVGGradientStop.cpp"
+#include "rendering/svg/RenderSVGHiddenContainer.cpp"

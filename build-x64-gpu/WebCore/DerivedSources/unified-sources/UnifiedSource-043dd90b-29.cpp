@@ -1,0 +1,8 @@
+#include "rendering/svg/SVGBoundingBoxComputation.cpp"
+#include "rendering/svg/SVGContainerLayout.cpp"
+#include "rendering/svg/SVGInlineFlowBox.cpp"
+#include "rendering/svg/SVGInlineTextBox.cpp"
+#include "rendering/svg/SVGPathData.cpp"
+#include "rendering/svg/SVGRenderSupport.cpp"
+#include "rendering/svg/SVGRenderTreeAsText.cpp"
+#include "rendering/svg/SVGRenderingContext.cpp"

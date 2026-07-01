@@ -1,0 +1,8 @@
+#include "JSWebGLBuffer.cpp"
+#include "JSWebGLClipCullDistance.cpp"
+#include "JSWebGLColorBufferFloat.cpp"
+#include "JSWebGLCompressedTextureASTC.cpp"
+#include "JSWebGLCompressedTextureETC.cpp"
+#include "JSWebGLCompressedTextureETC1.cpp"
+#include "JSWebGLCompressedTexturePVRTC.cpp"
+#include "JSWebGLCompressedTextureS3TC.cpp"

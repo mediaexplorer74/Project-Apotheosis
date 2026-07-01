@@ -1,0 +1,8 @@
+#include "Modules/webaudio/DelayDSPKernel.cpp"
+#include "Modules/webaudio/DelayNode.cpp"
+#include "Modules/webaudio/DelayProcessor.cpp"
+#include "Modules/webaudio/DynamicsCompressorNode.cpp"
+#include "Modules/webaudio/GainNode.cpp"
+#include "Modules/webaudio/IIRDSPKernel.cpp"
+#include "Modules/webaudio/IIRFilterNode.cpp"
+#include "Modules/webaudio/IIRProcessor.cpp"

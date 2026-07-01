@@ -1,0 +1,8 @@
+#include "dom/SpatialBackdropSource.cpp"
+#include "dom/SpeculationRulesMatcher.cpp"
+#include "dom/StaticNodeList.cpp"
+#include "dom/StaticRange.cpp"
+#include "dom/StringCallback.cpp"
+#include "dom/StyledElement.cpp"
+#include "dom/Subscriber.cpp"
+#include "dom/TagCollection.cpp"

@@ -1,0 +1,8 @@
+#include "page/Crypto.cpp"
+#include "page/DOMSelection.cpp"
+#include "page/DOMTimer.cpp"
+#include "page/DOMWindow.cpp"
+#include "page/DOMWindowExtension.cpp"
+#include "page/DatabaseProvider.cpp"
+#include "page/DebugPageOverlays.cpp"
+#include "page/DeprecatedGlobalSettings.cpp"

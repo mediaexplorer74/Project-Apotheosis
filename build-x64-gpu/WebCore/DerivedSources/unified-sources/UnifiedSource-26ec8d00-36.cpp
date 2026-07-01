@@ -1,0 +1,8 @@
+#include "style/values/text-decoration/StyleTextEmphasisPosition.cpp"
+#include "style/values/text-decoration/StyleTextEmphasisStyle.cpp"
+#include "style/values/text-decoration/StyleTextShadow.cpp"
+#include "style/values/text-decoration/StyleTextUnderlineOffset.cpp"
+#include "style/values/text-decoration/StyleTextUnderlinePosition.cpp"
+#include "style/values/transforms/StylePerspective.cpp"
+#include "style/values/transforms/StyleRotate.cpp"
+#include "style/values/transforms/StyleScale.cpp"

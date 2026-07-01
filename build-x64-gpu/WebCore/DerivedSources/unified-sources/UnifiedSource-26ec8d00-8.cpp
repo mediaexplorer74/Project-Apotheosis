@@ -1,0 +1,8 @@
+#include "style/computed/StyleComputedStyle.cpp"
+#include "style/computed/StyleComputedStyleBase.cpp"
+#include "style/computed/StyleComputedStyleProperties+GettersCustom.cpp"
+#include "style/computed/StyleComputedStyleProperties+InitialCustom.cpp"
+#include "style/computed/data/StyleAppleColorFilterData.cpp"
+#include "style/computed/data/StyleBackdropFilterData.cpp"
+#include "style/computed/data/StyleBackgroundData.cpp"
+#include "style/computed/data/StyleBorderImageData.cpp"

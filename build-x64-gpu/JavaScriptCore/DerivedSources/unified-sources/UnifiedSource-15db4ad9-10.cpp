@@ -1,0 +1,8 @@
+#include "wasm/js/JSWebAssemblyTag.cpp"
+#include "wasm/js/WasmToJS.cpp"
+#include "wasm/js/WebAssemblyArrayConstructor.cpp"
+#include "wasm/js/WebAssemblyArrayPrototype.cpp"
+#include "wasm/js/WebAssemblyBuiltin.cpp"
+#include "wasm/js/WebAssemblyBuiltinTrampoline.cpp"
+#include "wasm/js/WebAssemblyCompileErrorConstructor.cpp"
+#include "wasm/js/WebAssemblyCompileErrorPrototype.cpp"

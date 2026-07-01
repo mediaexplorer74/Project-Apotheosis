@@ -1,0 +1,8 @@
+#include "svg/SVGDescElement.cpp"
+#include "svg/SVGDocument.cpp"
+#include "svg/SVGDocumentExtensions.cpp"
+#include "svg/SVGElement.cpp"
+#include "svg/SVGEllipseElement.cpp"
+#include "svg/SVGFEBlendElement.cpp"
+#include "svg/SVGFEColorMatrixElement.cpp"
+#include "svg/SVGFEComponentTransferElement.cpp"

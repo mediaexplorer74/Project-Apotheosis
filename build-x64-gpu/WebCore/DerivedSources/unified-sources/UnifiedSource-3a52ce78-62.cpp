@@ -1,0 +1,8 @@
+#include "JSGPUComputePassTimestampWrites.cpp"
+#include "JSGPUComputePipeline.cpp"
+#include "JSGPUComputePipelineDescriptor.cpp"
+#include "JSGPUCullMode.cpp"
+#include "JSGPUDebugCommandsMixin.cpp"
+#include "JSGPUDepthStencilState.cpp"
+#include "JSGPUDevice.cpp"
+#include "JSGPUDeviceDescriptor.cpp"

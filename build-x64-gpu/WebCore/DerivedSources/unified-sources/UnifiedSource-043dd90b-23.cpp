@@ -1,0 +1,8 @@
+#include "rendering/style/ReferenceFilterOperation.cpp"
+#include "rendering/style/RenderStyle.cpp"
+#include "rendering/style/RenderStyleBase.cpp"
+#include "rendering/style/RenderStyleConstants.cpp"
+#include "rendering/style/StyleCachedImage.cpp"
+#include "rendering/style/StyleCanvasImage.cpp"
+#include "rendering/style/StyleContentAlignmentData.cpp"
+#include "rendering/style/StyleCrossfadeImage.cpp"

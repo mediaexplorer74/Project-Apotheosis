@@ -1,0 +1,8 @@
+#include "rendering/InlineBoxPainter.cpp"
+#include "rendering/LayerAncestorClippingStack.cpp"
+#include "rendering/LayerOverlapMap.cpp"
+#include "rendering/LayoutDisallowedScope.cpp"
+#include "rendering/LayoutRepainter.cpp"
+#include "rendering/LayoutScope.cpp"
+#include "rendering/LegacyInlineBox.cpp"
+#include "rendering/LegacyInlineFlowBox.cpp"

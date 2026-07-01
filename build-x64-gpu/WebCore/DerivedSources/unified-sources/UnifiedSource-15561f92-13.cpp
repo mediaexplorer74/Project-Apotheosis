@@ -1,0 +1,8 @@
+#include "Modules/credentialmanagement/BasicCredential.cpp"
+#include "Modules/credentialmanagement/CredentialsContainer.cpp"
+#include "Modules/credentialmanagement/NavigatorCredentials.cpp"
+#include "Modules/entriesapi/DOMFileSystem.cpp"
+#include "Modules/entriesapi/ErrorCallback.cpp"
+#include "Modules/entriesapi/FileSystemDirectoryEntry.cpp"
+#include "Modules/entriesapi/FileSystemDirectoryReader.cpp"
+#include "Modules/entriesapi/FileSystemEntriesCallback.cpp"

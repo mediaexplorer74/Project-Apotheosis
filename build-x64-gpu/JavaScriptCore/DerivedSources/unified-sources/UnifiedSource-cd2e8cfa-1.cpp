@@ -1,0 +1,8 @@
+#include "assembler/AbstractMacroAssembler.cpp"
+#include "assembler/AssemblerBuffer.cpp"
+#include "assembler/AssemblyComments.cpp"
+#include "assembler/CPU.cpp"
+#include "assembler/JITOperationList.cpp"
+#include "assembler/LinkBuffer.cpp"
+#include "assembler/MacroAssembler.cpp"
+#include "assembler/MacroAssemblerCodeRef.cpp"

@@ -1,0 +1,8 @@
+#include "UIProcess/API/APINavigation.cpp"
+#include "UIProcess/API/APINavigationData.cpp"
+#include "UIProcess/API/APINavigationResponse.cpp"
+#include "UIProcess/API/APIOpenPanelParameters.cpp"
+#include "UIProcess/API/APIPageConfiguration.cpp"
+#include "UIProcess/API/APIProcessPoolConfiguration.cpp"
+#include "UIProcess/API/APIScriptMessage.cpp"
+#include "UIProcess/API/APISerializedNode.cpp"

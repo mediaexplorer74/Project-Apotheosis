@@ -1,0 +1,8 @@
+#include "WebProcess/GPU/ShapeDetection/RemoteBarcodeDetectorProxy.cpp"
+#include "WebProcess/GPU/ShapeDetection/RemoteFaceDetectorProxy.cpp"
+#include "WebProcess/GPU/ShapeDetection/RemoteTextDetectorProxy.cpp"
+#include "WebProcess/GPU/graphics/ImageBufferRemoteDisplayListBackend.cpp"
+#include "WebProcess/GPU/graphics/ImageBufferRemotePDFDocumentBackend.cpp"
+#include "WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp"
+#include "WebProcess/GPU/graphics/PrepareBackingStoreBuffersData.cpp"
+#include "WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.cpp"

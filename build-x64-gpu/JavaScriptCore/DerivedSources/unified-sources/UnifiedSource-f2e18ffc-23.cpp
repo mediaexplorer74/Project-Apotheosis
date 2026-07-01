@@ -1,0 +1,8 @@
+#include "runtime/JSGenericTypedArrayViewPrototype.cpp"
+#include "runtime/JSGlobalLexicalEnvironment.cpp"
+#include "runtime/JSGlobalObject.cpp"
+#include "runtime/JSGlobalObjectDebuggable.cpp"
+#include "runtime/JSGlobalObjectFunctions.cpp"
+#include "runtime/JSGlobalProxy.cpp"
+#include "runtime/JSHeapDouble.cpp"
+#include "runtime/JSHeapInt32.cpp"

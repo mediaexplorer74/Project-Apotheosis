@@ -1,0 +1,8 @@
+#include "platform/graphics/filters/FEDropShadow.cpp"
+#include "platform/graphics/filters/FEFlood.cpp"
+#include "platform/graphics/filters/FEGaussianBlur.cpp"
+#include "platform/graphics/filters/FEImage.cpp"
+#include "platform/graphics/filters/FELighting.cpp"
+#include "platform/graphics/filters/FEMerge.cpp"
+#include "platform/graphics/filters/FEMorphology.cpp"
+#include "platform/graphics/filters/FEOffset.cpp"

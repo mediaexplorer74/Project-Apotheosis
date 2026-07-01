@@ -1,0 +1,8 @@
+#include "UIProcess/Extensions/WebExtensionDeclarativeNetRequestSQLiteStore.cpp"
+#include "UIProcess/Extensions/WebExtensionMatchPattern.cpp"
+#include "UIProcess/Extensions/WebExtensionStorageSQLiteStore.cpp"
+#include "UIProcess/Extensions/API/WebExtensionContextAPIDeclarativeNetRequest.cpp"
+#include "UIProcess/Extensions/API/WebExtensionContextAPIStorage.cpp"
+#include "UIProcess/GPU/GPUProcessProxy.cpp"
+#include "UIProcess/Gamepad/UIGamepad.cpp"
+#include "UIProcess/Gamepad/UIGamepadProvider.cpp"

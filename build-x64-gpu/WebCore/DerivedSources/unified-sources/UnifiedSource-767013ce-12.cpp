@@ -1,0 +1,8 @@
+#include "page/PerformanceTiming.cpp"
+#include "page/PerformanceUserTiming.cpp"
+#include "page/PointerCaptureController.cpp"
+#include "page/PointerLockController.cpp"
+#include "page/PrintContext.cpp"
+#include "page/ProcessWarming.cpp"
+#include "page/Quirks.cpp"
+#include "page/RemoteDOMWindow.cpp"

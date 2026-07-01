@@ -1,0 +1,8 @@
+#include "JSGeolocation.cpp"
+#include "JSGeolocationCoordinates.cpp"
+#include "JSGeolocationPosition.cpp"
+#include "JSGeolocationPositionError.cpp"
+#include "JSGetAnimationsOptions.cpp"
+#include "JSGetComposedRangesOptions.cpp"
+#include "JSGetHTMLOptions.cpp"
+#include "JSHTMLAllCollection.cpp"

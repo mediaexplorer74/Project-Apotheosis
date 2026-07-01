@@ -1,0 +1,8 @@
+#include "Modules/webtransport/DatagramByteSource.cpp"
+#include "Modules/webtransport/DatagramSink.cpp"
+#include "Modules/webtransport/DatagramSource.cpp"
+#include "Modules/webtransport/WebTransport.cpp"
+#include "Modules/webtransport/WebTransportBidirectionalStream.cpp"
+#include "Modules/webtransport/WebTransportBidirectionalStreamSource.cpp"
+#include "Modules/webtransport/WebTransportDatagramDuplexStream.cpp"
+#include "Modules/webtransport/WebTransportDatagramsWritable.cpp"

@@ -1,0 +1,8 @@
+#include "JSSVGFEFuncAElement.cpp"
+#include "JSSVGFEFuncBElement.cpp"
+#include "JSSVGFEFuncGElement.cpp"
+#include "JSSVGFEFuncRElement.cpp"
+#include "JSSVGFEGaussianBlurElement.cpp"
+#include "JSSVGFEImageElement.cpp"
+#include "JSSVGFEMergeElement.cpp"
+#include "JSSVGFEMergeNodeElement.cpp"

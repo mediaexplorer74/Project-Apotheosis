@@ -1,0 +1,8 @@
+#include "style/values/easing/StyleEasingFunction.cpp"
+#include "style/values/easing/StyleLinearEasingFunction.cpp"
+#include "style/values/easing/StyleSpringEasingFunction.cpp"
+#include "style/values/easing/StyleStepsEasingFunction.cpp"
+#include "style/values/fill-stroke/StyleStrokeWidth.cpp"
+#include "style/values/filter-effects/StyleAppleColorFilter.cpp"
+#include "style/values/filter-effects/StyleAppleInvertLightnessFunction.cpp"
+#include "style/values/filter-effects/StyleBlurFunction.cpp"

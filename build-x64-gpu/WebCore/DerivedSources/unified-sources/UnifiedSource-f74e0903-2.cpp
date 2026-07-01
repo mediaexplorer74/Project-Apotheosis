@@ -1,0 +1,8 @@
+#include "workers/WorkerFontLoadRequest.cpp"
+#include "workers/WorkerGlobalScope.cpp"
+#include "workers/WorkerInspectorProxy.cpp"
+#include "workers/WorkerLocation.cpp"
+#include "workers/WorkerMessagingProxy.cpp"
+#include "workers/WorkerNotificationClient.cpp"
+#include "workers/WorkerOrWorkletGlobalScope.cpp"
+#include "workers/WorkerOrWorkletScriptController.cpp"

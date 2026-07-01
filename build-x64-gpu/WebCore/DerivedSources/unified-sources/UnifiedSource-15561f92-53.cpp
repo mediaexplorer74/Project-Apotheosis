@@ -1,0 +1,8 @@
+#include "Modules/webaudio/MediaElementAudioSourceNode.cpp"
+#include "Modules/webaudio/MediaStreamAudioDestinationNode.cpp"
+#include "Modules/webaudio/MediaStreamAudioSource.cpp"
+#include "Modules/webaudio/MediaStreamAudioSourceNode.cpp"
+#include "Modules/webaudio/OfflineAudioCompletionEvent.cpp"
+#include "Modules/webaudio/OfflineAudioContext.cpp"
+#include "Modules/webaudio/OfflineAudioDestinationNode.cpp"
+#include "Modules/webaudio/OscillatorNode.cpp"

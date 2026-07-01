@@ -1,0 +1,8 @@
+#include "style/values/math/StyleMathDepth.cpp"
+#include "style/values/motion/StyleOffsetAnchor.cpp"
+#include "style/values/motion/StyleOffsetPath.cpp"
+#include "style/values/motion/StyleOffsetPosition.cpp"
+#include "style/values/motion/StyleOffsetRotate.cpp"
+#include "style/values/motion/StyleRayFunction.cpp"
+#include "style/values/multicol/StyleColumnCount.cpp"
+#include "style/values/multicol/StyleColumnWidth.cpp"

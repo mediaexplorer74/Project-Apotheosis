@@ -1,0 +1,8 @@
+#include "JSSourceBuffer.cpp"
+#include "JSSourceBufferList.cpp"
+#include "JSSpeechRecognition.cpp"
+#include "JSSpeechRecognitionAlternative.cpp"
+#include "JSSpeechRecognitionErrorCode.cpp"
+#include "JSSpeechRecognitionErrorEvent.cpp"
+#include "JSSpeechRecognitionEvent.cpp"
+#include "JSSpeechRecognitionResult.cpp"

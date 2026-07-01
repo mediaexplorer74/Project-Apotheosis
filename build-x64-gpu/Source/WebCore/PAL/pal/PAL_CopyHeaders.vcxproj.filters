@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\ExportMacros.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\FileSizeFormatter.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\HysteresisActivity.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\Logging.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\SessionID.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\ThreadGlobalData.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\crypto\CryptoDigest.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\crypto\CryptoDigestHashFunction.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system\Clock.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system\ClockGeneric.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system\SleepDisabler.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system\Sound.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system\SystemSleepListener.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\DecodeEscapeSequences.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\EncodingTables.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\KillRing.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodec.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecASCIIFastPath.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecCJK.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecICU.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecLatin1.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecReplacement.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecSingleByte.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecUTF16.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecUTF8.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecUserDefined.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextEncoding.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextEncodingDetector.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextEncodingRegistry.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\UnencodableHandling.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\8625d199d598ad0d501b11d24332be4d\PAL_CopyHeaders.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\PAL\pal\CMakeFiles\PAL_CopyHeaders" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{2661AD7A-8425-36E0-9A39-9B7D055CBE23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{BF66F9E0-6FF8-3040-8768-4A92287CF160}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

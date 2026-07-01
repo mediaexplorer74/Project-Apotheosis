@@ -1,0 +1,8 @@
+#include "JSWebTransportReliabilityMode.cpp"
+#include "JSWebTransportSendGroup.cpp"
+#include "JSWebTransportSendOptions.cpp"
+#include "JSWebTransportSendStream.cpp"
+#include "JSWebTransportSendStreamOptions.cpp"
+#include "JSWebTransportSendStreamStats.cpp"
+#include "JSWebXRBoundedReferenceSpace.cpp"
+#include "JSWebXRFrame.cpp"

@@ -1,0 +1,8 @@
+#include "rendering/line/LineWidth.cpp"
+#include "rendering/line/TrailingObjects.cpp"
+#include "rendering/mathml/MathMLStyle.cpp"
+#include "rendering/mathml/MathOperator.cpp"
+#include "rendering/mathml/MathVariant.cpp"
+#include "rendering/mathml/RenderMathMLBlock.cpp"
+#include "rendering/mathml/RenderMathMLFenced.cpp"
+#include "rendering/mathml/RenderMathMLFencedOperator.cpp"

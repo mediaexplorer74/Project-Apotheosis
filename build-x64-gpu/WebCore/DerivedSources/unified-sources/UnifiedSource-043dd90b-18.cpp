@@ -1,0 +1,8 @@
+#include "rendering/TextBoxPainter.cpp"
+#include "rendering/TextBoxTrimmer.cpp"
+#include "rendering/TextDecorationPainter.cpp"
+#include "rendering/TextPaintStyle.cpp"
+#include "rendering/TextPainter.cpp"
+#include "rendering/TransformOperationData.cpp"
+#include "rendering/line/LineBreaker.cpp"
+#include "rendering/line/LineInfo.cpp"

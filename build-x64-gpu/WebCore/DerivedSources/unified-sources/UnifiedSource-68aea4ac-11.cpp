@@ -1,0 +1,8 @@
+#include "bindings/js/JSMessageEventCustom.cpp"
+#include "bindings/js/JSMessagePortCustom.cpp"
+#include "bindings/js/JSMutationObserverCustom.cpp"
+#include "bindings/js/JSMutationRecordCustom.cpp"
+#include "bindings/js/JSNavigateEventCustom.cpp"
+#include "bindings/js/JSNavigationCustom.cpp"
+#include "bindings/js/JSNavigatorCustom.cpp"
+#include "bindings/js/JSNodeCustom.cpp"

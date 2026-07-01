@@ -1,0 +1,8 @@
+#include "html/HTMLButtonElement.cpp"
+#include "html/HTMLCanvasElement.cpp"
+#include "html/HTMLCollection.cpp"
+#include "html/HTMLDListElement.cpp"
+#include "html/HTMLDataElement.cpp"
+#include "html/HTMLDataListElement.cpp"
+#include "html/HTMLDetailsElement.cpp"
+#include "html/HTMLDialogElement.cpp"

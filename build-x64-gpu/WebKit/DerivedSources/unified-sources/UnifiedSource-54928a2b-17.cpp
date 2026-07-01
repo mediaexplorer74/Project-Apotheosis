@@ -1,0 +1,8 @@
+#include "WebProcess/Inspector/WebInspectorUIExtensionController.cpp"
+#include "WebProcess/Inspector/WebPageInspectorTarget.cpp"
+#include "WebProcess/Inspector/WebPageInspectorTargetFrontendChannel.cpp"
+#include "WebProcess/Media/RemoteMediaSessionManager.cpp"
+#include "WebProcess/MediaSession/RemoteMediaSessionCoordinator.cpp"
+#include "WebProcess/MediaStream/MediaDeviceSandboxExtensions.cpp"
+#include "WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp"
+#include "WebProcess/Model/ModelProcessConnection.cpp"

@@ -1,0 +1,8 @@
+#include "Modules/webaudio/AudioNode.cpp"
+#include "Modules/webaudio/AudioNodeInput.cpp"
+#include "Modules/webaudio/AudioNodeOutput.cpp"
+#include "Modules/webaudio/AudioParam.cpp"
+#include "Modules/webaudio/AudioParamMap.cpp"
+#include "Modules/webaudio/AudioParamTimeline.cpp"
+#include "Modules/webaudio/AudioProcessingEvent.cpp"
+#include "Modules/webaudio/AudioScheduledSourceNode.cpp"

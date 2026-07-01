@@ -1,0 +1,8 @@
+#include "NetworkProcess/storage/IDBStorageManager.cpp"
+#include "NetworkProcess/storage/IDBStorageRegistry.cpp"
+#include "NetworkProcess/storage/LocalStorageManager.cpp"
+#include "NetworkProcess/storage/MemoryStorageArea.cpp"
+#include "NetworkProcess/storage/NetworkStorageManager.cpp"
+#include "NetworkProcess/storage/OriginQuotaManager.cpp"
+#include "NetworkProcess/storage/OriginStorageManager.cpp"
+#include "NetworkProcess/storage/SQLiteStorageArea.cpp"

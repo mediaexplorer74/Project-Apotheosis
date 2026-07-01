@@ -1,0 +1,8 @@
+#include "dom/ToggleEvent.cpp"
+#include "dom/ToggleEventTask.cpp"
+#include "dom/TransformSourceLibxslt.cpp"
+#include "dom/Traversal.cpp"
+#include "dom/TreeScope.cpp"
+#include "dom/TreeScopeOrderedMap.cpp"
+#include "dom/TreeWalker.cpp"
+#include "dom/TrustedHTML.cpp"

@@ -1,0 +1,337 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{9B8FCA4F-39E3-3DF2-9B79-18DFBFFBEF10}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>PAL</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PAL.dir\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PAL.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PAL</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PAL.dir\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PAL.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PAL</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">PAL.dir\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">PAL.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">PAL</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">PAL.dir\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">PAL.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">PAL</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\crypto;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\PrivateHeaders;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/icu-x64-uwp/include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BUILDING_PAL;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;BUILDING_PAL;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\crypto;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\PrivateHeaders;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;C:\icu-x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\crypto;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\PrivateHeaders;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;C:\icu-x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\crypto;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\PrivateHeaders;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/icu-x64-uwp/include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BUILDING_PAL;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BUILDING_PAL;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\crypto;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\PrivateHeaders;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;C:\icu-x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\crypto;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\PrivateHeaders;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;C:\icu-x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\crypto;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\PrivateHeaders;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/icu-x64-uwp/include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BUILDING_PAL;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BUILDING_PAL;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\crypto;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\PrivateHeaders;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;C:\icu-x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\crypto;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\PrivateHeaders;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;C:\icu-x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\crypto;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\PrivateHeaders;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/icu-x64-uwp/include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BUILDING_PAL;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BUILDING_PAL;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\crypto;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\PrivateHeaders;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;C:\icu-x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\crypto;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\PrivateHeaders;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\Headers;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;C:\icu-x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/WebCore/PAL/pal/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\PAL\pal\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/WebCore/PAL/pal/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\PAL\pal\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/WebCore/PAL/pal/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\PAL\pal\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/WebCore/PAL/pal/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\PAL\pal\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\cmakeconfig.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\FileSizeFormatter.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\Logging.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\PALTZoneImpls.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\SessionID.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\ThreadGlobalData.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system\SleepDisabler.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system\SystemSleepListener.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\EncodingTables.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodec.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecCJK.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecICU.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecLatin1.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecReplacement.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecSingleByte.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecUTF16.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecUTF8.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecUserDefined.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextEncoding.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextEncodingDetectorICU.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextEncodingRegistry.cpp" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\ZERO_CHECK.vcxproj">
+      <Project>{8AEDA3F9-554F-3BC4-B70A-0E1A01F04A21}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\JavaScriptCore.vcxproj">
+      <Project>{0D330A1D-49CD-35F3-9A08-B073000A76AB}</Project>
+      <Name>JavaScriptCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\JavaScriptCore_CopyHeaders.vcxproj">
+      <Project>{A688E90F-904D-37D9-8DF8-51ED3B27BCB8}</Project>
+      <Name>JavaScriptCore_CopyHeaders</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\JavaScriptCore_CopyPrivateHeaders.vcxproj">
+      <Project>{B1C3EE68-3637-3930-B685-6871FA740BE9}</Project>
+      <Name>JavaScriptCore_CopyPrivateHeaders</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,8 @@
+#include "UIProcess/RemotePageWebDeviceOrientationUpdateProviderProxy.cpp"
+#include "UIProcess/ResponsivenessTimer.cpp"
+#include "UIProcess/SpeechRecognitionPermissionManager.cpp"
+#include "UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.cpp"
+#include "UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.cpp"
+#include "UIProcess/SpeechRecognitionServer.cpp"
+#include "UIProcess/SuspendedPageProxy.cpp"
+#include "UIProcess/SystemPreviewController.cpp"

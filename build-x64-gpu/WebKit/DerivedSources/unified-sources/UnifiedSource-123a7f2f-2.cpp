@@ -1,0 +1,8 @@
+#include "Platform/IPC/DaemonDecoder.cpp"
+#include "Platform/IPC/DaemonEncoder.cpp"
+#include "Platform/IPC/Decoder.cpp"
+#include "Platform/IPC/Encoder.cpp"
+#include "Platform/IPC/IPCUtilities.cpp"
+#include "Platform/IPC/JSIPCBinding.cpp"
+#include "Platform/IPC/MessageReceiveQueueMap.cpp"
+#include "Platform/IPC/MessageReceiverMap.cpp"

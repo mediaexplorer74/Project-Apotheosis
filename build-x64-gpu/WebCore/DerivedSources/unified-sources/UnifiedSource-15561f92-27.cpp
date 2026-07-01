@@ -1,0 +1,8 @@
+#include "Modules/mediasession/MediaSessionCoordinatorPrivate.cpp"
+#include "Modules/mediasession/NavigatorMediaSession.cpp"
+#include "Modules/mediasource/BufferedChangeEvent.cpp"
+#include "Modules/mediasource/DOMURLMediaSource.cpp"
+#include "Modules/mediasource/ManagedMediaSource.cpp"
+#include "Modules/mediasource/ManagedSourceBuffer.cpp"
+#include "Modules/mediasource/MediaSource.cpp"
+#include "Modules/mediasource/MediaSourceHandle.cpp"

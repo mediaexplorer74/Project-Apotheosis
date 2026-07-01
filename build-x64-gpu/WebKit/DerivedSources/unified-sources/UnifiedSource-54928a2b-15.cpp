@@ -1,0 +1,8 @@
+#include "WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp"
+#include "WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.cpp"
+#include "WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp"
+#include "WebProcess/InjectedBundle/API/c/WKBundlePage.cpp"
+#include "WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp"
+#include "WebProcess/InjectedBundle/API/c/WKBundleRangeHandle.cpp"
+#include "WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp"
+#include "WebProcess/InjectedBundle/DOM/InjectedBundleCSSStyleDeclarationHandle.cpp"

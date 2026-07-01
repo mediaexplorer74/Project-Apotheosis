@@ -1,0 +1,8 @@
+#include "WebProcess/WebCoreSupport/WebContextMenuClient.cpp"
+#include "WebProcess/WebCoreSupport/WebCryptoClient.cpp"
+#include "WebProcess/WebCoreSupport/WebDataListSuggestionPicker.cpp"
+#include "WebProcess/WebCoreSupport/WebDateTimeChooser.cpp"
+#include "WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.cpp"
+#include "WebProcess/WebCoreSupport/WebDocumentSyncClient.cpp"
+#include "WebProcess/WebCoreSupport/WebDragClient.cpp"
+#include "WebProcess/WebCoreSupport/WebEditorClient.cpp"

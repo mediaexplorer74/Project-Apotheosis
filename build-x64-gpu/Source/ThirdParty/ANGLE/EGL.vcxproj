@@ -1,0 +1,306 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{469895CA-E780-3B4F-8BE9-E838B109E784}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>EGL</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\lib\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">EGL.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">libEGL</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\lib\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">EGL.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">libEGL</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\lib\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">EGL.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">libEGL</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\lib\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">EGL.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">libEGL</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;GL_GLES_PROTOTYPES=1;EGL_EGL_PROTOTYPES=1;GL_GLEXT_PROTOTYPES;EGL_EGLEXT_PROTOTYPES;EGLAPI=;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;GL_GLES_PROTOTYPES=1;EGL_EGL_PROTOTYPES=1;GL_GLEXT_PROTOTYPES;EGL_EGLEXT_PROTOTYPES;EGLAPI=;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;GL_GLES_PROTOTYPES=1;EGL_EGL_PROTOTYPES=1;GL_GLEXT_PROTOTYPES;EGL_EGLEXT_PROTOTYPES;EGLAPI=;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;GL_GLES_PROTOTYPES=1;EGL_EGL_PROTOTYPES=1;GL_GLEXT_PROTOTYPES;EGL_EGLEXT_PROTOTYPES;EGLAPI=;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;GL_GLES_PROTOTYPES=1;EGL_EGL_PROTOTYPES=1;GL_GLEXT_PROTOTYPES;EGL_EGLEXT_PROTOTYPES;EGLAPI=;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;GL_GLES_PROTOTYPES=1;EGL_EGL_PROTOTYPES=1;GL_GLEXT_PROTOTYPES;EGL_EGLEXT_PROTOTYPES;EGLAPI=;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;GL_GLES_PROTOTYPES=1;EGL_EGL_PROTOTYPES=1;GL_GLEXT_PROTOTYPES;EGL_EGLEXT_PROTOTYPES;EGLAPI=;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;GL_GLES_PROTOTYPES=1;EGL_EGL_PROTOTYPES=1;GL_GLEXT_PROTOTYPES;EGL_EGLEXT_PROTOTYPES;EGLAPI=;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/ThirdParty/ANGLE/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/ThirdParty/ANGLE/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\Compiler.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\D3D.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\GL.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\GLESv2.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\Metal.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/ThirdParty/ANGLE/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/ThirdParty/ANGLE/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\Compiler.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\D3D.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\GL.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\GLESv2.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\Metal.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/ThirdParty/ANGLE/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/ThirdParty/ANGLE/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\Compiler.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\D3D.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\GL.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\GLESv2.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\Metal.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/ThirdParty/ANGLE/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/ThirdParty/ANGLE/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\Compiler.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\D3D.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\GL.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\GLESv2.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\Metal.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libEGL\egl_loader_autogen.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libEGL\libEGL_autogen.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libEGL\resource.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\entry_points_egl_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libGLESv2\entry_points_egl_ext_autogen.h" />
+    <None Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libEGL\libEGL_autogen.def" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\ZERO_CHECK.vcxproj">
+      <Project>{8AEDA3F9-554F-3BC4-B70A-0E1A01F04A21}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\ANGLE.vcxproj">
+      <Project>{684BF30B-9E23-3BBB-B56B-A5B7A301EC81}</Project>
+      <Name>ANGLE</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\GLESv2.vcxproj">
+      <Project>{DD3BDFF0-ED59-3205-9CAA-627F64CA7535}</Project>
+      <Name>GLESv2</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,8 @@
+#include "platform/graphics/ImageBufferAllocator.cpp"
+#include "platform/graphics/ImageBufferBackend.cpp"
+#include "platform/graphics/ImageBufferContextSwitcher.cpp"
+#include "platform/graphics/ImageBufferDisplayListBackend.cpp"
+#include "platform/graphics/ImageDecoder.cpp"
+#include "platform/graphics/ImageFrame.cpp"
+#include "platform/graphics/ImageFrameAnimator.cpp"
+#include "platform/graphics/ImageFrameWorkQueue.cpp"

@@ -1,0 +1,8 @@
+#include "JSCredentialsContainer.cpp"
+#include "JSCrypto.cpp"
+#include "JSCryptoAesKeyAlgorithm.cpp"
+#include "JSCryptoAlgorithmParameters.cpp"
+#include "JSCryptoEcKeyAlgorithm.cpp"
+#include "JSCryptoHmacKeyAlgorithm.cpp"
+#include "JSCryptoKey.cpp"
+#include "JSCryptoKeyAlgorithm.cpp"

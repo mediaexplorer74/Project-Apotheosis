@@ -1,0 +1,8 @@
+#include "platform/graphics/FontCache.cpp"
+#include "platform/graphics/FontCascade.cpp"
+#include "platform/graphics/FontCascadeCache.cpp"
+#include "platform/graphics/FontCascadeDescription.cpp"
+#include "platform/graphics/FontCascadeFonts.cpp"
+#include "platform/graphics/FontDescription.cpp"
+#include "platform/graphics/FontFamilySpecificationNull.cpp"
+#include "platform/graphics/FontFeatureValues.cpp"

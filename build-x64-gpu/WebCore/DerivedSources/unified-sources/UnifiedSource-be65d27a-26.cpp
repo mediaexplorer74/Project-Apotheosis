@@ -1,0 +1,8 @@
+#include "dom/TrustedScript.cpp"
+#include "dom/TrustedScriptURL.cpp"
+#include "dom/TrustedType.cpp"
+#include "dom/TrustedTypePolicy.cpp"
+#include "dom/TrustedTypePolicyFactory.cpp"
+#include "dom/UIEvent.cpp"
+#include "dom/UIEventWithKeyState.cpp"
+#include "dom/UserActionElementSet.cpp"

@@ -1,0 +1,8 @@
+#include "Modules/WebGPU/GPUDevice.cpp"
+#include "Modules/WebGPU/GPUDeviceLostInfo.cpp"
+#include "Modules/WebGPU/GPUExternalTexture.cpp"
+#include "Modules/WebGPU/GPUInternalError.cpp"
+#include "Modules/WebGPU/GPUPipelineError.cpp"
+#include "Modules/WebGPU/GPUPipelineLayout.cpp"
+#include "Modules/WebGPU/GPUPresentationContext.cpp"
+#include "Modules/WebGPU/GPUQuerySet.cpp"

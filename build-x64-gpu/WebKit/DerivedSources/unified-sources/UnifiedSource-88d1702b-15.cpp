@@ -1,0 +1,8 @@
+#include "UIProcess/API/APISessionState.cpp"
+#include "UIProcess/API/APITargetedElementInfo.cpp"
+#include "UIProcess/API/APITargetedElementRequest.cpp"
+#include "UIProcess/API/APITextRun.cpp"
+#include "UIProcess/API/APIUIClient.cpp"
+#include "UIProcess/API/APIUserScript.cpp"
+#include "UIProcess/API/APIUserStyleSheet.cpp"
+#include "UIProcess/API/APIWebAuthenticationAssertionResponse.cpp"

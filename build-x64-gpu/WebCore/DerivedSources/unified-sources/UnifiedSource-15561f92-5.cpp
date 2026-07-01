@@ -1,0 +1,8 @@
+#include "Modules/WebGPU/GPUSupportedLimits.cpp"
+#include "Modules/WebGPU/GPUTexture.cpp"
+#include "Modules/WebGPU/GPUTextureView.cpp"
+#include "Modules/WebGPU/GPUUncapturedErrorEvent.cpp"
+#include "Modules/WebGPU/GPUValidationError.cpp"
+#include "Modules/WebGPU/WGSLLanguageFeatures.cpp"
+#include "Modules/WebGPU/Implementation/WebGPUAdapterImpl.cpp"
+#include "Modules/WebGPU/Implementation/WebGPUBindGroupImpl.cpp"

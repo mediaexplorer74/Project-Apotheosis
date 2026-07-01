@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\AllIsoHeaps.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\Allocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\AvailableMemory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\Cache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\CryptoRandom.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\Deallocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\SystemHeap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\Environment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\FreeList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\Gigacage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\Heap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\HeapConstants.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\HeapKind.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\IsoHeap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\IsoHeapImpl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\IsoMallocFallback.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\IsoPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\IsoSharedHeap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\IsoSharedPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\IsoTLS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\IsoTLSEntry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\IsoTLSLayout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\LargeMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\Logging.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\Mutex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\ObjectType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\ObjectTypeTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\PerProcess.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\Scavenger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\TZoneHeap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\TZoneHeapManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\bmalloc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas\bmalloc_heap.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas\bmalloc_heap_config.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas\jit_heap.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas\pas_bitfit_page_config_kind.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas\pas_heap_config_kind.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas\pas_segregated_page_config_kind.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\cmakeconfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{BF66F9E0-6FF8-3040-8768-4A92287CF160}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{98865446-B9C7-371B-AEAA-AFE46AD8BC02}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

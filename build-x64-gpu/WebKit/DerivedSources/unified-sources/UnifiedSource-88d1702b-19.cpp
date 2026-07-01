@@ -1,0 +1,8 @@
+#include "UIProcess/API/C/WKIconDatabase.cpp"
+#include "UIProcess/API/C/WKInspector.cpp"
+#include "UIProcess/API/C/WKJSHandleRef.cpp"
+#include "UIProcess/API/C/WKKeyValueStorageManager.cpp"
+#include "UIProcess/API/C/WKMediaKeySystemPermissionCallback.cpp"
+#include "UIProcess/API/C/WKMessageListener.cpp"
+#include "UIProcess/API/C/WKMockMediaDevice.cpp"
+#include "UIProcess/API/C/WKNavigationActionRef.cpp"

@@ -1,0 +1,8 @@
+#include "accessibility/AXTableHelpers.cpp"
+#include "accessibility/AXTextMarker.cpp"
+#include "accessibility/AXTextRun.cpp"
+#include "accessibility/AXTreeStore.cpp"
+#include "accessibility/AXUtilities.cpp"
+#include "accessibility/AccessibilityListBoxOption.cpp"
+#include "accessibility/AccessibilityMathMLElement.cpp"
+#include "accessibility/AccessibilityMenuList.cpp"

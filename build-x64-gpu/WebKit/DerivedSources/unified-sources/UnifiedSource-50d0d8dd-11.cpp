@@ -1,0 +1,8 @@
+#include "Shared/API/c/WKPluginInformation.cpp"
+#include "Shared/API/c/WKRenderLayer.cpp"
+#include "Shared/API/c/WKRenderObject.cpp"
+#include "Shared/API/c/WKSecurityOriginRef.cpp"
+#include "Shared/API/c/WKSerializedScriptValue.cpp"
+#include "Shared/API/c/WKString.cpp"
+#include "Shared/API/c/WKType.cpp"
+#include "Shared/API/c/WKURL.cpp"

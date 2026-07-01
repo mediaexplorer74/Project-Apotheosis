@@ -1,0 +1,1912 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0202BDC8-812B-3BF4-830A-46F225F264E3}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>PAL_CopyHeaders</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\ExportMacros.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/ExportMacros.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/ExportMacros.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/ExportMacros.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\ExportMacros.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/ExportMacros.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/ExportMacros.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/ExportMacros.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\ExportMacros.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/ExportMacros.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/ExportMacros.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/ExportMacros.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\ExportMacros.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/ExportMacros.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/ExportMacros.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/ExportMacros.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\ExportMacros.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\FileSizeFormatter.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/FileSizeFormatter.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/FileSizeFormatter.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/FileSizeFormatter.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\FileSizeFormatter.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/FileSizeFormatter.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/FileSizeFormatter.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/FileSizeFormatter.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\FileSizeFormatter.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/FileSizeFormatter.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/FileSizeFormatter.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/FileSizeFormatter.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\FileSizeFormatter.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/FileSizeFormatter.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/FileSizeFormatter.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/FileSizeFormatter.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\FileSizeFormatter.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\HysteresisActivity.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/HysteresisActivity.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/HysteresisActivity.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/HysteresisActivity.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\HysteresisActivity.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/HysteresisActivity.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/HysteresisActivity.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/HysteresisActivity.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\HysteresisActivity.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/HysteresisActivity.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/HysteresisActivity.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/HysteresisActivity.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\HysteresisActivity.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/HysteresisActivity.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/HysteresisActivity.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/HysteresisActivity.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\HysteresisActivity.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\Logging.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/Logging.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/Logging.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/Logging.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\Logging.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/Logging.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/Logging.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/Logging.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\Logging.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/Logging.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/Logging.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/Logging.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\Logging.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/Logging.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/Logging.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/Logging.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\Logging.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\SessionID.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/SessionID.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/SessionID.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/SessionID.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\SessionID.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/SessionID.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/SessionID.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/SessionID.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\SessionID.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/SessionID.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/SessionID.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/SessionID.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\SessionID.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/SessionID.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/SessionID.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/SessionID.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\SessionID.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\ThreadGlobalData.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/ThreadGlobalData.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/ThreadGlobalData.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/ThreadGlobalData.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\ThreadGlobalData.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/ThreadGlobalData.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/ThreadGlobalData.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/ThreadGlobalData.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\ThreadGlobalData.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/ThreadGlobalData.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/ThreadGlobalData.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/ThreadGlobalData.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\ThreadGlobalData.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/ThreadGlobalData.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/ThreadGlobalData.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/ThreadGlobalData.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\ThreadGlobalData.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\crypto\CryptoDigest.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/crypto/CryptoDigest.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/crypto/CryptoDigest.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/crypto/CryptoDigest.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\crypto\CryptoDigest.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/crypto/CryptoDigest.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/crypto/CryptoDigest.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/crypto/CryptoDigest.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\crypto\CryptoDigest.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/crypto/CryptoDigest.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/crypto/CryptoDigest.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/crypto/CryptoDigest.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\crypto\CryptoDigest.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/crypto/CryptoDigest.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/crypto/CryptoDigest.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/crypto/CryptoDigest.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\crypto\CryptoDigest.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\crypto\CryptoDigestHashFunction.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/crypto/CryptoDigestHashFunction.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/crypto/CryptoDigestHashFunction.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/crypto/CryptoDigestHashFunction.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\crypto\CryptoDigestHashFunction.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/crypto/CryptoDigestHashFunction.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/crypto/CryptoDigestHashFunction.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/crypto/CryptoDigestHashFunction.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\crypto\CryptoDigestHashFunction.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/crypto/CryptoDigestHashFunction.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/crypto/CryptoDigestHashFunction.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/crypto/CryptoDigestHashFunction.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\crypto\CryptoDigestHashFunction.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/crypto/CryptoDigestHashFunction.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/crypto/CryptoDigestHashFunction.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/crypto/CryptoDigestHashFunction.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\crypto\CryptoDigestHashFunction.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system\Clock.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/system/Clock.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/system/Clock.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/system/Clock.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\Clock.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/system/Clock.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/system/Clock.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/system/Clock.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\Clock.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/system/Clock.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/system/Clock.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/system/Clock.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\Clock.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/system/Clock.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/system/Clock.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/system/Clock.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\Clock.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system\ClockGeneric.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/system/ClockGeneric.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/system/ClockGeneric.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/system/ClockGeneric.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\ClockGeneric.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/system/ClockGeneric.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/system/ClockGeneric.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/system/ClockGeneric.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\ClockGeneric.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/system/ClockGeneric.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/system/ClockGeneric.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/system/ClockGeneric.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\ClockGeneric.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/system/ClockGeneric.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/system/ClockGeneric.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/system/ClockGeneric.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\ClockGeneric.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system\SleepDisabler.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/system/SleepDisabler.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/system/SleepDisabler.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/system/SleepDisabler.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\SleepDisabler.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/system/SleepDisabler.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/system/SleepDisabler.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/system/SleepDisabler.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\SleepDisabler.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/system/SleepDisabler.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/system/SleepDisabler.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/system/SleepDisabler.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\SleepDisabler.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/system/SleepDisabler.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/system/SleepDisabler.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/system/SleepDisabler.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\SleepDisabler.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system\Sound.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/system/Sound.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/system/Sound.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/system/Sound.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\Sound.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/system/Sound.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/system/Sound.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/system/Sound.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\Sound.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/system/Sound.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/system/Sound.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/system/Sound.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\Sound.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/system/Sound.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/system/Sound.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/system/Sound.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\Sound.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\system\SystemSleepListener.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/system/SystemSleepListener.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/system/SystemSleepListener.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/system/SystemSleepListener.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\SystemSleepListener.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/system/SystemSleepListener.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/system/SystemSleepListener.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/system/SystemSleepListener.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\SystemSleepListener.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/system/SystemSleepListener.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/system/SystemSleepListener.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/system/SystemSleepListener.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\SystemSleepListener.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/system/SystemSleepListener.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/system/SystemSleepListener.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/system/SystemSleepListener.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\SystemSleepListener.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\DecodeEscapeSequences.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/text/DecodeEscapeSequences.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/DecodeEscapeSequences.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/DecodeEscapeSequences.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\DecodeEscapeSequences.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/text/DecodeEscapeSequences.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/DecodeEscapeSequences.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/DecodeEscapeSequences.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\DecodeEscapeSequences.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/text/DecodeEscapeSequences.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/DecodeEscapeSequences.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/DecodeEscapeSequences.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\DecodeEscapeSequences.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/text/DecodeEscapeSequences.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/DecodeEscapeSequences.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/DecodeEscapeSequences.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\DecodeEscapeSequences.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\EncodingTables.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/text/EncodingTables.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/EncodingTables.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/EncodingTables.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\EncodingTables.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/text/EncodingTables.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/EncodingTables.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/EncodingTables.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\EncodingTables.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/text/EncodingTables.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/EncodingTables.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/EncodingTables.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\EncodingTables.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/text/EncodingTables.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/EncodingTables.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/EncodingTables.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\EncodingTables.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\KillRing.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/text/KillRing.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/KillRing.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/KillRing.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\KillRing.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/text/KillRing.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/KillRing.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/KillRing.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\KillRing.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/text/KillRing.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/KillRing.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/KillRing.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\KillRing.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/text/KillRing.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/KillRing.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/KillRing.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\KillRing.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodec.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodec.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodec.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodec.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodec.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodec.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodec.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodec.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodec.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodec.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodec.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodec.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodec.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodec.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodec.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodec.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodec.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecASCIIFastPath.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecASCIIFastPath.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecASCIIFastPath.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecASCIIFastPath.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecASCIIFastPath.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecASCIIFastPath.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecASCIIFastPath.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecASCIIFastPath.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecASCIIFastPath.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecASCIIFastPath.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecASCIIFastPath.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecASCIIFastPath.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecASCIIFastPath.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecASCIIFastPath.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecASCIIFastPath.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecASCIIFastPath.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecASCIIFastPath.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecCJK.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecCJK.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecCJK.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecCJK.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecCJK.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecCJK.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecCJK.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecCJK.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecCJK.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecCJK.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecCJK.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecCJK.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecCJK.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecCJK.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecCJK.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecCJK.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecCJK.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecICU.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecICU.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecICU.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecICU.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecICU.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecICU.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecICU.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecICU.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecICU.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecICU.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecICU.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecICU.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecICU.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecICU.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecICU.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecICU.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecICU.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecLatin1.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecLatin1.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecLatin1.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecLatin1.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecLatin1.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecLatin1.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecLatin1.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecLatin1.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecLatin1.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecLatin1.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecLatin1.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecLatin1.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecLatin1.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecLatin1.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecLatin1.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecLatin1.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecLatin1.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecReplacement.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecReplacement.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecReplacement.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecReplacement.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecReplacement.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecReplacement.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecReplacement.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecReplacement.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecReplacement.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecReplacement.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecReplacement.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecReplacement.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecReplacement.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecReplacement.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecReplacement.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecReplacement.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecReplacement.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecSingleByte.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecSingleByte.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecSingleByte.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecSingleByte.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecSingleByte.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecSingleByte.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecSingleByte.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecSingleByte.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecSingleByte.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecSingleByte.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecSingleByte.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecSingleByte.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecSingleByte.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecSingleByte.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecSingleByte.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecSingleByte.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecSingleByte.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecUTF16.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecUTF16.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecUTF16.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecUTF16.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUTF16.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecUTF16.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecUTF16.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecUTF16.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUTF16.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecUTF16.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecUTF16.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecUTF16.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUTF16.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecUTF16.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecUTF16.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecUTF16.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUTF16.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecUTF8.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecUTF8.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecUTF8.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecUTF8.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUTF8.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecUTF8.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecUTF8.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecUTF8.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUTF8.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecUTF8.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecUTF8.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecUTF8.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUTF8.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecUTF8.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecUTF8.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecUTF8.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUTF8.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextCodecUserDefined.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecUserDefined.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecUserDefined.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecUserDefined.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUserDefined.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecUserDefined.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecUserDefined.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecUserDefined.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUserDefined.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecUserDefined.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecUserDefined.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecUserDefined.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUserDefined.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/text/TextCodecUserDefined.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextCodecUserDefined.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextCodecUserDefined.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUserDefined.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextEncoding.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/text/TextEncoding.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextEncoding.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextEncoding.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncoding.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/text/TextEncoding.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextEncoding.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextEncoding.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncoding.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/text/TextEncoding.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextEncoding.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextEncoding.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncoding.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/text/TextEncoding.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextEncoding.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextEncoding.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncoding.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextEncodingDetector.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/text/TextEncodingDetector.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextEncodingDetector.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextEncodingDetector.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncodingDetector.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/text/TextEncodingDetector.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextEncodingDetector.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextEncodingDetector.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncodingDetector.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/text/TextEncodingDetector.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextEncodingDetector.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextEncodingDetector.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncodingDetector.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/text/TextEncodingDetector.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextEncodingDetector.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextEncodingDetector.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncodingDetector.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\TextEncodingRegistry.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/text/TextEncodingRegistry.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextEncodingRegistry.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextEncodingRegistry.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncodingRegistry.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/text/TextEncodingRegistry.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextEncodingRegistry.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextEncodingRegistry.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncodingRegistry.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/text/TextEncodingRegistry.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextEncodingRegistry.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextEncodingRegistry.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncodingRegistry.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/text/TextEncodingRegistry.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/TextEncodingRegistry.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/TextEncodingRegistry.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncodingRegistry.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\text\UnencodableHandling.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../../../PAL/Headers/pal/text/UnencodableHandling.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/UnencodableHandling.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/UnencodableHandling.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\UnencodableHandling.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../../../PAL/Headers/pal/text/UnencodableHandling.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/UnencodableHandling.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/UnencodableHandling.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\UnencodableHandling.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../../../PAL/Headers/pal/text/UnencodableHandling.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/UnencodableHandling.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/UnencodableHandling.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\UnencodableHandling.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../../../PAL/Headers/pal/text/UnencodableHandling.h</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/text/UnencodableHandling.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/PAL/Headers/pal/text/UnencodableHandling.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\UnencodableHandling.h</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\8625d199d598ad0d501b11d24332be4d\PAL_CopyHeaders.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\ExportMacros.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\FileSizeFormatter.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\HysteresisActivity.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\Logging.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\SessionID.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\ThreadGlobalData.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\crypto\CryptoDigest.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\crypto\CryptoDigestHashFunction.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\Clock.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\ClockGeneric.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\SleepDisabler.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\Sound.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\SystemSleepListener.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\DecodeEscapeSequences.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\EncodingTables.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\KillRing.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodec.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecASCIIFastPath.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecCJK.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecICU.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecLatin1.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecReplacement.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecSingleByte.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUTF16.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUTF8.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUserDefined.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncoding.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncodingDetector.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncodingRegistry.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\UnencodableHandling.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\PAL\pal\CMakeFiles\PAL_CopyHeaders</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</VerifyInputsAndOutputsExist>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\ExportMacros.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\FileSizeFormatter.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\HysteresisActivity.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\Logging.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\SessionID.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\ThreadGlobalData.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\crypto\CryptoDigest.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\crypto\CryptoDigestHashFunction.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\Clock.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\ClockGeneric.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\SleepDisabler.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\Sound.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\SystemSleepListener.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\DecodeEscapeSequences.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\EncodingTables.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\KillRing.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodec.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecASCIIFastPath.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecCJK.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecICU.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecLatin1.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecReplacement.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecSingleByte.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUTF16.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUTF8.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUserDefined.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncoding.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncodingDetector.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncodingRegistry.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\UnencodableHandling.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\PAL\pal\CMakeFiles\PAL_CopyHeaders</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</VerifyInputsAndOutputsExist>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\ExportMacros.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\FileSizeFormatter.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\HysteresisActivity.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\Logging.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\SessionID.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\ThreadGlobalData.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\crypto\CryptoDigest.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\crypto\CryptoDigestHashFunction.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\Clock.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\ClockGeneric.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\SleepDisabler.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\Sound.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\SystemSleepListener.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\DecodeEscapeSequences.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\EncodingTables.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\KillRing.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodec.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecASCIIFastPath.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecCJK.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecICU.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecLatin1.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecReplacement.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecSingleByte.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUTF16.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUTF8.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUserDefined.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncoding.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncodingDetector.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncodingRegistry.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\UnencodableHandling.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\PAL\pal\CMakeFiles\PAL_CopyHeaders</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</VerifyInputsAndOutputsExist>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\ExportMacros.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\FileSizeFormatter.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\HysteresisActivity.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\Logging.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\SessionID.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\ThreadGlobalData.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\crypto\CryptoDigest.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\crypto\CryptoDigestHashFunction.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\Clock.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\ClockGeneric.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\SleepDisabler.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\Sound.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\system\SystemSleepListener.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\DecodeEscapeSequences.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\EncodingTables.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\KillRing.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodec.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecASCIIFastPath.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecCJK.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecICU.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecLatin1.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecReplacement.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecSingleByte.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUTF16.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUTF8.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextCodecUserDefined.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncoding.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncodingDetector.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\TextEncodingRegistry.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\PAL\Headers\pal\text\UnencodableHandling.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\PAL\pal\CMakeFiles\PAL_CopyHeaders</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</VerifyInputsAndOutputsExist>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\PAL\pal\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/WebCore/PAL/pal/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\PAL\pal\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/WebCore/PAL/pal/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\PAL\pal\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/WebCore/PAL/pal/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\PAL\pal\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WebCore/PAL/pal/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/WebCore/PAL/pal/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\PAL\pal\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\PAL\pal\CMakeFiles\PAL_CopyHeaders">
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\ZERO_CHECK.vcxproj">
+      <Project>{8AEDA3F9-554F-3BC4-B70A-0E1A01F04A21}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

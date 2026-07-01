@@ -1,0 +1,8 @@
+#include "JSWebKitPlaybackTargetAvailabilityEvent.cpp"
+#include "JSWebKitPoint.cpp"
+#include "JSWebKitSerializedNode.cpp"
+#include "JSWebLock.cpp"
+#include "JSWebLockGrantedCallback.cpp"
+#include "JSWebLockManager.cpp"
+#include "JSWebLockManagerSnapshot.cpp"
+#include "JSWebLockMode.cpp"

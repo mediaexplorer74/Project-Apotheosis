@@ -1,0 +1,8 @@
+#include "page/EventHandler.cpp"
+#include "page/EventSource.cpp"
+#include "page/FocusController.cpp"
+#include "page/Frame.cpp"
+#include "page/FrameConsoleClient.cpp"
+#include "page/FrameDestructionObserver.cpp"
+#include "page/FrameIdentifier.cpp"
+#include "page/FrameSnapshotting.cpp"

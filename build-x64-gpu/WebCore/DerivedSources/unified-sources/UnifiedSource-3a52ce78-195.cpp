@@ -1,0 +1,8 @@
+#include "JSXRGPUBinding.cpp"
+#include "JSXRGPULayerInit.cpp"
+#include "JSXRGPUProjectionLayerInit.cpp"
+#include "JSXRGPUSubImage.cpp"
+#include "JSXRHandJoint.cpp"
+#include "JSXRHandedness.cpp"
+#include "JSXRInputSourceEvent.cpp"
+#include "JSXRInputSourcesChangeEvent.cpp"

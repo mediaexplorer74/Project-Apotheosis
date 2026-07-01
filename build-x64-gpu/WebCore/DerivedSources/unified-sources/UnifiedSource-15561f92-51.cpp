@@ -1,0 +1,8 @@
+#include "Modules/webaudio/BiquadDSPKernel.cpp"
+#include "Modules/webaudio/BiquadFilterNode.cpp"
+#include "Modules/webaudio/BiquadProcessor.cpp"
+#include "Modules/webaudio/ChannelMergerNode.cpp"
+#include "Modules/webaudio/ChannelSplitterNode.cpp"
+#include "Modules/webaudio/ConstantSourceNode.cpp"
+#include "Modules/webaudio/ConvolverNode.cpp"
+#include "Modules/webaudio/DefaultAudioDestinationNode.cpp"

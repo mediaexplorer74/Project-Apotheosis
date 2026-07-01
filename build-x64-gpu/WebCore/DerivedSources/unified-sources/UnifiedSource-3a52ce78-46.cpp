@@ -1,0 +1,8 @@
+#include "JSDocumentType.cpp"
+#include "JSDoubleRange.cpp"
+#include "JSDragEvent.cpp"
+#include "JSDynamicsCompressorNode.cpp"
+#include "JSDynamicsCompressorOptions.cpp"
+#include "JSEXTBlendMinMax.cpp"
+#include "JSEXTClipControl.cpp"
+#include "JSEXTColorBufferFloat.cpp"

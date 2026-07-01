@@ -1,0 +1,8 @@
+#include "Modules/WebGPU/GPUQueue.cpp"
+#include "Modules/WebGPU/GPURenderBundle.cpp"
+#include "Modules/WebGPU/GPURenderBundleEncoder.cpp"
+#include "Modules/WebGPU/GPURenderPassEncoder.cpp"
+#include "Modules/WebGPU/GPURenderPipeline.cpp"
+#include "Modules/WebGPU/GPUSampler.cpp"
+#include "Modules/WebGPU/GPUShaderModule.cpp"
+#include "Modules/WebGPU/GPUSupportedFeatures.cpp"

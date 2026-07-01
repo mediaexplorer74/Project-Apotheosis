@@ -1,0 +1,8 @@
+#include "AudioVideoRendererRemoteMessageReceiverMessageReceiver.cpp"
+#include "IPCConnectionTesterMessageReceiver.cpp"
+#include "IPCStreamTesterMessageReceiver.cpp"
+#include "IPCStreamTesterProxyMessageReceiver.cpp"
+#include "IPCTesterMessageReceiver.cpp"
+#include "IPCTesterReceiverMessageReceiver.cpp"
+#include "ModelProcessModelPlayerManagerProxyMessageReceiver.cpp"
+#include "ModelProcessModelPlayerMessageReceiver.cpp"

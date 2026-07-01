@@ -1,0 +1,8 @@
+#include "platform/audio/Cone.cpp"
+#include "platform/audio/DirectConvolver.cpp"
+#include "platform/audio/Distance.cpp"
+#include "platform/audio/DownSampler.cpp"
+#include "platform/audio/DynamicsCompressor.cpp"
+#include "platform/audio/DynamicsCompressorKernel.cpp"
+#include "platform/audio/EqualPowerPanner.cpp"
+#include "platform/audio/FFTConvolver.cpp"

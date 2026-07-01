@@ -1,0 +1,8 @@
+#include "Modules/mediastream/ImageCapture.cpp"
+#include "Modules/mediastream/InputDeviceInfo.cpp"
+#include "Modules/mediastream/MediaDeviceInfo.cpp"
+#include "Modules/mediastream/MediaDevices.cpp"
+#include "Modules/mediastream/MediaStream.cpp"
+#include "Modules/mediastream/MediaStreamTrack.cpp"
+#include "Modules/mediastream/MediaStreamTrackEvent.cpp"
+#include "Modules/mediastream/MediaStreamTrackProcessor.cpp"

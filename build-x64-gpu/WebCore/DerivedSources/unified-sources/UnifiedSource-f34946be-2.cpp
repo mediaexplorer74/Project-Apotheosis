@@ -1,0 +1,8 @@
+#include "editing/CreateLinkCommand.cpp"
+#include "editing/CustomUndoStep.cpp"
+#include "editing/DeleteFromTextNodeCommand.cpp"
+#include "editing/DeleteSelectionCommand.cpp"
+#include "editing/DictationCommand.cpp"
+#include "editing/EditAction.cpp"
+#include "editing/EditCommand.cpp"
+#include "editing/Editing.cpp"

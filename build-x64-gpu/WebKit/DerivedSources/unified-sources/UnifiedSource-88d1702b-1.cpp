@@ -1,0 +1,8 @@
+#include "UIProcess/AboutSchemeHandler.cpp"
+#include "UIProcess/AuxiliaryProcessProxy.cpp"
+#include "UIProcess/BackgroundProcessResponsivenessTimer.cpp"
+#include "UIProcess/BrowsingContextGroup.cpp"
+#include "UIProcess/DeviceIdHashSaltStorage.cpp"
+#include "UIProcess/DisplayLink.cpp"
+#include "UIProcess/DisplayLinkProcessProxyClient.cpp"
+#include "UIProcess/DrawingAreaProxy.cpp"

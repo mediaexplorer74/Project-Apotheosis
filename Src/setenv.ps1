@@ -29,6 +29,12 @@ $env:APOTHEOSIS_VCPKG_TRIPLET = $archSuffix
 $env:APOTHEOSIS_ICU   = "C:\icu-$archSuffix"
 $env:APOTHEOSIS_ANGLE_ARCH = if ($env:APOTHEOSIS_ARCH -eq 'arm') { 'arm' } else { 'x64' }
 
+# Perl (vcpkg downloads) — needed by Python codegen scripts that run `perl` via subprocess
+$perlBin = "C:\vcpkg\downloads\tools\perl\5.42.2.1\perl\bin"
+if (Test-Path "$perlBin\perl.exe") {
+    $env:PATH = "$perlBin;$env:PATH"
+}
+
 write-host "==> APOTHEOSIS_ROOT  = $Root" -ForegroundColor Cyan
 write-host "==> APOTHEOSIS_PORT  = $env:APOTHEOSIS_PORT" -ForegroundColor Cyan
 write-host "==> APOTHEOSIS_TOOLS = $env:APOTHEOSIS_TOOLS" -ForegroundColor Cyan

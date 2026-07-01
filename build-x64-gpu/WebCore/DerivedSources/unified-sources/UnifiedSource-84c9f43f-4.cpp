@@ -1,0 +1,8 @@
+#include "inspector/InspectorStyleSheet.cpp"
+#include "inspector/InspectorThreadableLoaderClient.cpp"
+#include "inspector/InstrumentingAgents.cpp"
+#include "inspector/NetworkResourcesData.cpp"
+#include "inspector/PageDebugger.cpp"
+#include "inspector/PageInspectorController.cpp"
+#include "inspector/TimelineRecordFactory.cpp"
+#include "inspector/UserGestureEmulationScope.cpp"

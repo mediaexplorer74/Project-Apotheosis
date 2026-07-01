@@ -1,0 +1,8 @@
+#include "JSPushMessageData.cpp"
+#include "JSPushPermissionState.cpp"
+#include "JSPushSubscription.cpp"
+#include "JSPushSubscriptionChangeEvent.cpp"
+#include "JSPushSubscriptionChangeEventInit.cpp"
+#include "JSPushSubscriptionJSON.cpp"
+#include "JSPushSubscriptionOptions.cpp"
+#include "JSPushSubscriptionOptionsInit.cpp"

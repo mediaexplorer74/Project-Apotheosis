@@ -1,0 +1,8 @@
+#include "wasm/WasmOSREntryPlan.cpp"
+#include "wasm/WasmOpcodeCounter.cpp"
+#include "wasm/WasmOpcodeOrigin.cpp"
+#include "wasm/WasmOperations.cpp"
+#include "wasm/WasmPlan.cpp"
+#include "wasm/WasmSectionParser.cpp"
+#include "wasm/WasmSourceMappingURLSectionParser.cpp"
+#include "wasm/WasmStreamingCompiler.cpp"

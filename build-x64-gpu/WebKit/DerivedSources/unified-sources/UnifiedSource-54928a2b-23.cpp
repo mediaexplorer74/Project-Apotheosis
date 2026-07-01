@@ -1,0 +1,8 @@
+#include "WebProcess/WebCoreSupport/RemoteWebLockRegistry.cpp"
+#include "WebProcess/WebCoreSupport/SessionStateConversion.cpp"
+#include "WebProcess/WebCoreSupport/ShareableBitmapUtilities.cpp"
+#include "WebProcess/WebCoreSupport/WebAttachmentElementClient.cpp"
+#include "WebProcess/WebCoreSupport/WebBadgeClient.cpp"
+#include "WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.cpp"
+#include "WebProcess/WebCoreSupport/WebChromeClient.cpp"
+#include "WebProcess/WebCoreSupport/WebColorChooser.cpp"

@@ -1,0 +1,8 @@
+#include "JSTrustedTypePolicyOptions.cpp"
+#include "JSUADataValues.cpp"
+#include "JSUALowEntropyJSON.cpp"
+#include "JSUIEvent.cpp"
+#include "JSUIEventInit.cpp"
+#include "JSURLPattern.cpp"
+#include "JSURLPatternInit.cpp"
+#include "JSURLPatternOptions.cpp"

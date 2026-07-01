@@ -1,0 +1,8 @@
+#include "RemoteRenderBundleEncoderMessageReceiver.cpp"
+#include "RemoteRenderBundleMessageReceiver.cpp"
+#include "RemoteRenderPassEncoderMessageReceiver.cpp"
+#include "RemoteRenderPipelineMessageReceiver.cpp"
+#include "RemoteSamplerMessageReceiver.cpp"
+#include "RemoteShaderModuleMessageReceiver.cpp"
+#include "RemoteSnapshotRecorderMessageReceiver.cpp"
+#include "RemoteTextDetectorMessageReceiver.cpp"

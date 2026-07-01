@@ -1,0 +1,8 @@
+#include "runtime/CachePayload.cpp"
+#include "runtime/CacheUpdate.cpp"
+#include "runtime/CacheableIdentifier.cpp"
+#include "runtime/CachedBytecode.cpp"
+#include "runtime/CachedSpecialPropertyAdaptiveStructureWatchpoint.cpp"
+#include "runtime/CachedTypes.cpp"
+#include "runtime/CallData.cpp"
+#include "runtime/CatchScope.cpp"

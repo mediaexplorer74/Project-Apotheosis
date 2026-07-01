@@ -1,0 +1,8 @@
+#include "Modules/mediastream/RTCEncodedStreamProducer.cpp"
+#include "Modules/mediastream/RTCEncodedVideoFrame.cpp"
+#include "Modules/mediastream/RTCError.cpp"
+#include "Modules/mediastream/RTCErrorEvent.cpp"
+#include "Modules/mediastream/RTCIceCandidate.cpp"
+#include "Modules/mediastream/RTCIceCandidateFields.cpp"
+#include "Modules/mediastream/RTCIceTransport.cpp"
+#include "Modules/mediastream/RTCPeerConnection.cpp"

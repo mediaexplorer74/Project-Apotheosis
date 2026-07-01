@@ -1,0 +1,8 @@
+#include "Shared/WebBackForwardListItem.cpp"
+#include "Shared/WebCompiledContentRuleList.cpp"
+#include "Shared/WebCompiledContentRuleListData.cpp"
+#include "Shared/WebContextMenuItem.cpp"
+#include "Shared/WebContextMenuItemData.cpp"
+#include "Shared/WebErrors.cpp"
+#include "Shared/WebEvent.cpp"
+#include "Shared/WebEventConversion.cpp"

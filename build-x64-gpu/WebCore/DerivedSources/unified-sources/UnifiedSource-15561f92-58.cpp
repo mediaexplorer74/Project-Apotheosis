@@ -1,0 +1,8 @@
+#include "Modules/webcodecs/WebCodecsAudioDataAlgorithms.cpp"
+#include "Modules/webcodecs/WebCodecsAudioDecoder.cpp"
+#include "Modules/webcodecs/WebCodecsAudioEncoder.cpp"
+#include "Modules/webcodecs/WebCodecsBase.cpp"
+#include "Modules/webcodecs/WebCodecsEncodedAudioChunk.cpp"
+#include "Modules/webcodecs/WebCodecsEncodedVideoChunk.cpp"
+#include "Modules/webcodecs/WebCodecsVideoDecoder.cpp"
+#include "Modules/webcodecs/WebCodecsVideoEncoder.cpp"

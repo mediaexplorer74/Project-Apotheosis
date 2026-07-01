@@ -1,0 +1,8 @@
+#include "loader/SpeculationRules.cpp"
+#include "loader/SubframeLoader.cpp"
+#include "loader/SubresourceIntegrity.cpp"
+#include "loader/SubresourceLoader.cpp"
+#include "loader/TextResourceDecoder.cpp"
+#include "loader/TextTrackLoader.cpp"
+#include "loader/ThreadableLoader.cpp"
+#include "loader/WorkerThreadableLoader.cpp"

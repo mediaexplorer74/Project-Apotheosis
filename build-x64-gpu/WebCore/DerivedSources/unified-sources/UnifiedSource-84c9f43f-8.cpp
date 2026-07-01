@@ -1,0 +1,8 @@
+#include "inspector/agents/page/PageDOMDebuggerAgent.cpp"
+#include "inspector/agents/page/PageDebuggerAgent.cpp"
+#include "inspector/agents/page/PageHeapAgent.cpp"
+#include "inspector/agents/page/PageNetworkAgent.cpp"
+#include "inspector/agents/page/PageRuntimeAgent.cpp"
+#include "inspector/agents/page/PageTimelineAgent.cpp"
+#include "inspector/agents/page/PageWorkerAgent.cpp"
+#include "inspector/agents/worker/ServiceWorkerAgent.cpp"

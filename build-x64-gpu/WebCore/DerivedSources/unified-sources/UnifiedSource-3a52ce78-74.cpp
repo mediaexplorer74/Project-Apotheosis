@@ -1,0 +1,8 @@
+#include "JSGPUUncapturedErrorEvent.cpp"
+#include "JSGPUUncapturedErrorEventInit.cpp"
+#include "JSGPUValidationError.cpp"
+#include "JSGPUVertexAttribute.cpp"
+#include "JSGPUVertexBufferLayout.cpp"
+#include "JSGPUVertexFormat.cpp"
+#include "JSGPUVertexState.cpp"
+#include "JSGPUVertexStepMode.cpp"

@@ -1,0 +1,8 @@
+#include "JSRTCErrorDetailType.cpp"
+#include "JSRTCErrorEvent.cpp"
+#include "JSRTCIceCandidate.cpp"
+#include "JSRTCIceCandidateInit.cpp"
+#include "JSRTCIceCandidateType.cpp"
+#include "JSRTCIceComponent.cpp"
+#include "JSRTCIceConnectionState.cpp"
+#include "JSRTCIceGatheringState.cpp"

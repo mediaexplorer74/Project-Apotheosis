@@ -1,0 +1,5 @@
+STARTED 
+Before ninja 
+Before ninja 
+EXIT=0 
+EXIT=1 

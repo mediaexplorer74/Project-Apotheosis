@@ -1,0 +1,8 @@
+#include "JSNavigationCurrentEntryChangeEvent.cpp"
+#include "JSNavigationDestination.cpp"
+#include "JSNavigationHistoryEntry.cpp"
+#include "JSNavigationInterceptHandler.cpp"
+#include "JSNavigationNavigationType.cpp"
+#include "JSNavigationPreloadManager.cpp"
+#include "JSNavigationPreloadState.cpp"
+#include "JSNavigationTransition.cpp"

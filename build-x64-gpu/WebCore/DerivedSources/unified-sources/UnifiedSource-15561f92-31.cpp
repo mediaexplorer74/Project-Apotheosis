@@ -1,0 +1,8 @@
+#include "Modules/mediastream/RTCDTMFToneChangeEvent.cpp"
+#include "Modules/mediastream/RTCDataChannel.cpp"
+#include "Modules/mediastream/RTCDataChannelEvent.cpp"
+#include "Modules/mediastream/RTCDataChannelRemoteHandler.cpp"
+#include "Modules/mediastream/RTCDataChannelRemoteSource.cpp"
+#include "Modules/mediastream/RTCDtlsTransport.cpp"
+#include "Modules/mediastream/RTCEncodedAudioFrame.cpp"
+#include "Modules/mediastream/RTCEncodedFrame.cpp"

@@ -1,0 +1,8 @@
+#include "rendering/OutlinePainter.cpp"
+#include "rendering/PathOperation.cpp"
+#include "rendering/PointerEventsHitRules.cpp"
+#include "rendering/PositionedLayoutConstraints.cpp"
+#include "rendering/ReferencedSVGResources.cpp"
+#include "rendering/RegionContext.cpp"
+#include "rendering/RenderAttachment.cpp"
+#include "rendering/RenderBlock.cpp"

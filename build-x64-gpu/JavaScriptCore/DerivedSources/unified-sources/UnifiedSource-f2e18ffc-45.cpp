@@ -1,0 +1,8 @@
+#include "runtime/TemporalPlainDateTimeConstructor.cpp"
+#include "runtime/TemporalPlainDateTimePrototype.cpp"
+#include "runtime/TemporalPlainMonthDay.cpp"
+#include "runtime/TemporalPlainMonthDayConstructor.cpp"
+#include "runtime/TemporalPlainMonthDayPrototype.cpp"
+#include "runtime/TemporalPlainTime.cpp"
+#include "runtime/TemporalPlainTimeConstructor.cpp"
+#include "runtime/TemporalPlainTimePrototype.cpp"

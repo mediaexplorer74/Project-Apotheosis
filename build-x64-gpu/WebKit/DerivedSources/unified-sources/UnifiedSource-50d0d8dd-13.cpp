@@ -1,0 +1,8 @@
+#include "Shared/Extensions/WebExtensionSQLiteDatabase.cpp"
+#include "Shared/Extensions/WebExtensionSQLiteRow.cpp"
+#include "Shared/Extensions/WebExtensionSQLiteStatement.cpp"
+#include "Shared/Extensions/WebExtensionSQLiteStore.cpp"
+#include "Shared/Extensions/WebExtensionUtilities.cpp"
+#include "Shared/Gamepad/GamepadData.cpp"
+#include "Shared/Model/ModelObjectDescriptorBase.cpp"
+#include "Shared/WebGPU/WebGPUBindGroupDescriptor.cpp"

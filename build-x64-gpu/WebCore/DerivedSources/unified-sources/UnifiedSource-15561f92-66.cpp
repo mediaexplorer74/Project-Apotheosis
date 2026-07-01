@@ -1,0 +1,8 @@
+#include "Modules/webxr/WebXRInputSourceArray.cpp"
+#include "Modules/webxr/WebXRInputSpace.cpp"
+#include "Modules/webxr/WebXRJointPose.cpp"
+#include "Modules/webxr/WebXRJointSpace.cpp"
+#include "Modules/webxr/WebXRLayer.cpp"
+#include "Modules/webxr/WebXROpaqueFramebuffer.cpp"
+#include "Modules/webxr/WebXRPose.cpp"
+#include "Modules/webxr/WebXRRay.cpp"

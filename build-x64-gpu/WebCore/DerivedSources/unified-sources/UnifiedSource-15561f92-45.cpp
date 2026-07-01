@@ -1,0 +1,8 @@
+#include "Modules/storage/StorageManager.cpp"
+#include "Modules/storage/WorkerStorageConnection.cpp"
+#include "Modules/streams/ByteLengthQueuingStrategy.cpp"
+#include "Modules/streams/ReadableByteStreamController.cpp"
+#include "Modules/streams/ReadableStream.cpp"
+#include "Modules/streams/ReadableStreamBYOBReader.cpp"
+#include "Modules/streams/ReadableStreamBYOBRequest.cpp"
+#include "Modules/streams/ReadableStreamDefaultReader.cpp"

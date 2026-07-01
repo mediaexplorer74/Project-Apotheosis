@@ -6,7 +6,7 @@
 #       然后正常跑 cmake / ninja
 # ============================================================================
 
-$VS  = 'C:\Program Files\Microsoft Visual Studio\18\Community'
+$VS  = 'C:\Program Files\Microsoft Visual Studio\2022\Community'
 $T   = "$VS\VC\Tools\MSVC\14.44.35207"          # 含 ARM 后端的 v143 工具集
 $SDK = 'C:\Program Files (x86)\Windows Kits\10'
 $VER = '10.0.22621.0'

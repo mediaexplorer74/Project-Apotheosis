@@ -1,0 +1,375 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{D08B5A4B-14D6-3AF3-982F-EFD6E72D430C}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>bmalloc</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">bmalloc.dir\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">bmalloc.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">bmalloc</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">bmalloc.dir\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">bmalloc.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">bmalloc</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">bmalloc.dir\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">bmalloc.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">bmalloc</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">bmalloc.dir\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">bmalloc.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">bmalloc</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) -mcx16 -Wno-cast-align -Wno-missing-field-initializers</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4206</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BUILDING_bmalloc;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;_GNU_SOURCE;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;BUILDING_bmalloc;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;_GNU_SOURCE;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) -mcx16 -Wno-cast-align -Wno-missing-field-initializers</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <DisableSpecificWarnings>4206</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BUILDING_bmalloc;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;_GNU_SOURCE;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BUILDING_bmalloc;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;_GNU_SOURCE;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) -mcx16 -Wno-cast-align -Wno-missing-field-initializers</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <DisableSpecificWarnings>4206</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BUILDING_bmalloc;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;_GNU_SOURCE;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BUILDING_bmalloc;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;_GNU_SOURCE;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) -mcx16 -Wno-cast-align -Wno-missing-field-initializers</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4206</DisableSpecificWarnings>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BUILDING_bmalloc;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;_GNU_SOURCE;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BUILDING_bmalloc;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;_GNU_SOURCE;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/bmalloc/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/bmalloc/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\bmalloc\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/bmalloc/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/bmalloc/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\bmalloc\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/bmalloc/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/bmalloc/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\bmalloc\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/bmalloc/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/bmalloc/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\bmalloc\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\cmakeconfig.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\AllIsoHeaps.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\Allocator.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\AvailableMemory.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\Cache.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\CryptoRandom.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\Deallocator.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\SystemHeap.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\Environment.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\FreeList.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\Gigacage.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\Heap.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\HeapConstants.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\HeapKind.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\IsoHeap.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\IsoHeapImpl.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\IsoMallocFallback.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\IsoPage.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\IsoSharedHeap.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\IsoSharedPage.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\IsoTLS.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\IsoTLSEntry.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\IsoTLSLayout.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\LargeMap.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\Logging.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\Mutex.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\ObjectType.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\ObjectTypeTable.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\PerProcess.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\Scavenger.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\TZoneHeap.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\TZoneHeapManager.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\bmalloc\bmalloc.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas\bmalloc_heap.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas\bmalloc_heap_config.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas\jit_heap.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas\pas_bitfit_page_config_kind.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas\pas_heap_config_kind.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">CompileAsCpp</CompileAs>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\bmalloc\libpas\src\libpas\pas_segregated_page_config_kind.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">CompileAsCpp</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">CompileAsCpp</CompileAs>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\ZERO_CHECK.vcxproj">
+      <Project>{8AEDA3F9-554F-3BC4-B70A-0E1A01F04A21}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\bmalloc\bmalloc_c.vcxproj">
+      <Project>{92DBEF3B-0D12-3229-A4A6-9B25EEEB7BD8}</Project>
+      <Name>bmalloc_c</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

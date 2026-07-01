@@ -1,0 +1,8 @@
+#include "layout/integration/inline/InlineIteratorLogicalOrderTraversal.cpp"
+#include "layout/integration/inline/InlineIteratorSVGTextBox.cpp"
+#include "layout/integration/inline/InlineIteratorTextBox.cpp"
+#include "layout/integration/inline/LayoutIntegrationInlineContent.cpp"
+#include "layout/integration/inline/LayoutIntegrationInlineContentBuilder.cpp"
+#include "layout/integration/inline/LayoutIntegrationInlineContentPainter.cpp"
+#include "layout/integration/inline/LayoutIntegrationLineLayout.cpp"
+#include "layout/integration/inline/LayoutIntegrationPagination.cpp"

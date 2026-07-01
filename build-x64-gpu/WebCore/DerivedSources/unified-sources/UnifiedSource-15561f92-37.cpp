@@ -1,0 +1,8 @@
+#include "Modules/notifications/NotificationEvent.cpp"
+#include "Modules/notifications/NotificationJSONParser.cpp"
+#include "Modules/notifications/NotificationPayload.cpp"
+#include "Modules/notifications/NotificationResourcesLoader.cpp"
+#include "Modules/paymentrequest/MerchantValidationEvent.cpp"
+#include "Modules/paymentrequest/PaymentAddress.cpp"
+#include "Modules/paymentrequest/PaymentHandler.cpp"
+#include "Modules/paymentrequest/PaymentMethodChangeEvent.cpp"

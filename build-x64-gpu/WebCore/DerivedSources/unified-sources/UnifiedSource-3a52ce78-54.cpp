@@ -1,0 +1,8 @@
+#include "JSFileReader.cpp"
+#include "JSFileReaderSync.cpp"
+#include "JSFileSystemDirectoryEntry.cpp"
+#include "JSFileSystemDirectoryHandle.cpp"
+#include "JSFileSystemDirectoryReader.cpp"
+#include "JSFileSystemEntriesCallback.cpp"
+#include "JSFileSystemEntry.cpp"
+#include "JSFileSystemEntryCallback.cpp"

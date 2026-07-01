@@ -1,0 +1,8 @@
+#include "UIProcess/API/APIFrameInfo.cpp"
+#include "UIProcess/API/APIFrameTreeNode.cpp"
+#include "UIProcess/API/APIHTTPCookieStore.cpp"
+#include "UIProcess/API/APIHitTestResult.cpp"
+#include "UIProcess/API/APIInspectorConfiguration.cpp"
+#include "UIProcess/API/APIInspectorExtension.cpp"
+#include "UIProcess/API/APIJSBuffer.cpp"
+#include "UIProcess/API/APIJSHandle.cpp"

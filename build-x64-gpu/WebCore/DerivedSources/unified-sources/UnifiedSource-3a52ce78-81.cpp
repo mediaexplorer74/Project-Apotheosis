@@ -1,0 +1,8 @@
+#include "JSHTMLIFrameElement.cpp"
+#include "JSHTMLImageElement.cpp"
+#include "JSHTMLInputElement.cpp"
+#include "JSHTMLLIElement.cpp"
+#include "JSHTMLLabelElement.cpp"
+#include "JSHTMLLegendElement.cpp"
+#include "JSHTMLLinkElement.cpp"
+#include "JSHTMLMapElement.cpp"

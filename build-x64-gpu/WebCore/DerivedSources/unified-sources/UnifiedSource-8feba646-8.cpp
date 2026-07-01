@@ -1,0 +1,8 @@
+#include "svg/SVGForeignObjectElement.cpp"
+#include "svg/SVGGElement.cpp"
+#include "svg/SVGGeometryElement.cpp"
+#include "svg/SVGGlyphElement.cpp"
+#include "svg/SVGGlyphRefElement.cpp"
+#include "svg/SVGGradientElement.cpp"
+#include "svg/SVGGraphicsElement.cpp"
+#include "svg/SVGHKernElement.cpp"

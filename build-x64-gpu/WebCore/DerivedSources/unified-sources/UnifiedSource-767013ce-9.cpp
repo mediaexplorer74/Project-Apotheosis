@@ -1,0 +1,8 @@
+#include "page/OriginAccessEntry.cpp"
+#include "page/OriginAccessPatterns.cpp"
+#include "page/Page.cpp"
+#include "page/PageColorSampler.cpp"
+#include "page/PageConfiguration.cpp"
+#include "page/PageGroup.cpp"
+#include "page/PageGroupLoadDeferrer.cpp"
+#include "page/PageOverlay.cpp"

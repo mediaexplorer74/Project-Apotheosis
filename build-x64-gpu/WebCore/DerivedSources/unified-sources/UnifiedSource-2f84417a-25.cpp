@@ -1,0 +1,8 @@
+#include "css/parser/CSSPropertyParserConsumer+Position.cpp"
+#include "css/parser/CSSPropertyParserConsumer+PositionTry.cpp"
+#include "css/parser/CSSPropertyParserConsumer+Primitives.cpp"
+#include "css/parser/CSSPropertyParserConsumer+Ratio.cpp"
+#include "css/parser/CSSPropertyParserConsumer+SVG.cpp"
+#include "css/parser/CSSPropertyParserConsumer+ScrollSnap.cpp"
+#include "css/parser/CSSPropertyParserConsumer+Scrollbars.cpp"
+#include "css/parser/CSSPropertyParserConsumer+Shapes.cpp"

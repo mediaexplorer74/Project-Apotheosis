@@ -1,0 +1,8 @@
+#include "JSCompositeOperation.cpp"
+#include "JSCompositeOperationOrAuto.cpp"
+#include "JSCompositionEvent.cpp"
+#include "JSCompressionStream.cpp"
+#include "JSCompressionStreamEncoder.cpp"
+#include "JSComputedEffectTiming.cpp"
+#include "JSConstantSourceNode.cpp"
+#include "JSConstantSourceOptions.cpp"

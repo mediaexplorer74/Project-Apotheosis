@@ -1,0 +1,8 @@
+#include "GPUProcess/graphics/ImageBufferShareableAllocator.cpp"
+#include "GPUProcess/graphics/RemoteDisplayListRecorder.cpp"
+#include "GPUProcess/graphics/RemoteGraphicsContext.cpp"
+#include "GPUProcess/graphics/RemoteGraphicsContextGL.cpp"
+#include "GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.cpp"
+#include "GPUProcess/graphics/RemoteImageBuffer.cpp"
+#include "GPUProcess/graphics/RemoteImageBufferGraphicsContext.cpp"
+#include "GPUProcess/graphics/RemoteImageBufferSet.cpp"

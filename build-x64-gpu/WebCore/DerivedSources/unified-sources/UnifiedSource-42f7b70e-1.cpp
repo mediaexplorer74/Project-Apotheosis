@@ -1,0 +1,8 @@
+#include "xml/CustomXPathNSResolver.cpp"
+#include "xml/DOMParser.cpp"
+#include "xml/NativeXPathNSResolver.cpp"
+#include "xml/XMLErrors.cpp"
+#include "xml/XMLHttpRequest.cpp"
+#include "xml/XMLHttpRequestProgressEvent.cpp"
+#include "xml/XMLHttpRequestProgressEventThrottle.cpp"
+#include "xml/XMLHttpRequestUpload.cpp"

@@ -1,0 +1,8 @@
+#include "JSBackgroundFetchUIOptions.cpp"
+#include "JSBackgroundFetchUpdateUIEvent.cpp"
+#include "JSBarProp.cpp"
+#include "JSBarcodeDetector.cpp"
+#include "JSBarcodeDetectorOptions.cpp"
+#include "JSBarcodeFormat.cpp"
+#include "JSBaseAudioContext.cpp"
+#include "JSBasicCredential.cpp"

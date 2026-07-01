@@ -1,0 +1,8 @@
+#include "style/values/color/StyleContrastColor.cpp"
+#include "style/values/color/StyleCurrentColor.cpp"
+#include "style/values/color/StyleDynamicRangeLimit.cpp"
+#include "style/values/color/StyleDynamicRangeLimitMix.cpp"
+#include "style/values/color/StyleHexColor.cpp"
+#include "style/values/color/StyleKeywordColor.cpp"
+#include "style/values/color/StyleLightDarkColor.cpp"
+#include "style/values/color/StyleOpacity.cpp"

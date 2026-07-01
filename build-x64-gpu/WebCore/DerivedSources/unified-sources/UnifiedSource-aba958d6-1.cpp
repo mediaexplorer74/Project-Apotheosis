@@ -1,0 +1,8 @@
+#include "accessibility/AXAttachmentHelpers.cpp"
+#include "accessibility/AXAttributeCacheScope.cpp"
+#include "accessibility/AXComputedObjectAttributeCache.cpp"
+#include "accessibility/AXCoreObject.cpp"
+#include "accessibility/AXGeometryManager.cpp"
+#include "accessibility/AXImageMapHelpers.cpp"
+#include "accessibility/AXListHelpers.cpp"
+#include "accessibility/AXLiveRegionManager.cpp"

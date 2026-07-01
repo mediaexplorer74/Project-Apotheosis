@@ -1,0 +1,8 @@
+#include "style/values/inline/StyleVerticalAlign.cpp"
+#include "style/values/inline/StyleWebKitInitialLetter.cpp"
+#include "style/values/lists/StyleCounterIncrement.cpp"
+#include "style/values/lists/StyleCounterReset.cpp"
+#include "style/values/lists/StyleCounterSet.cpp"
+#include "style/values/lists/StyleListStyleType.cpp"
+#include "style/values/masking/StyleClip.cpp"
+#include "style/values/masking/StyleClipPath.cpp"

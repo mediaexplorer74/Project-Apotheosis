@@ -1,0 +1,8 @@
+#include "platform/graphics/iso/ISOSchemeTypeBox.cpp"
+#include "platform/graphics/iso/ISOTrackEncryptionBox.cpp"
+#include "platform/graphics/iso/ISOVTTCue.cpp"
+#include "platform/graphics/opentype/OpenTypeMathData.cpp"
+#include "platform/graphics/transforms/AffineTransform.cpp"
+#include "platform/graphics/transforms/IdentityTransformOperation.cpp"
+#include "platform/graphics/transforms/Matrix3DTransformOperation.cpp"
+#include "platform/graphics/transforms/MatrixTransformOperation.cpp"

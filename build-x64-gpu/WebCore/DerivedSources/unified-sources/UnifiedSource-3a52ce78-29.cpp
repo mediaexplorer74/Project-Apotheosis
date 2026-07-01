@@ -1,0 +1,8 @@
+#include "JSChannelMergerNode.cpp"
+#include "JSChannelMergerOptions.cpp"
+#include "JSChannelSplitterNode.cpp"
+#include "JSChannelSplitterOptions.cpp"
+#include "JSCharacterData.cpp"
+#include "JSCheckVisibilityOptions.cpp"
+#include "JSChildNode.cpp"
+#include "JSClipboard.cpp"

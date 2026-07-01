@@ -1,0 +1,8 @@
+#include "style/values/filter-effects/StyleBrightnessFunction.cpp"
+#include "style/values/filter-effects/StyleContrastFunction.cpp"
+#include "style/values/filter-effects/StyleDropShadowFunction.cpp"
+#include "style/values/filter-effects/StyleFilter.cpp"
+#include "style/values/filter-effects/StyleFilterReference.cpp"
+#include "style/values/filter-effects/StyleGrayscaleFunction.cpp"
+#include "style/values/filter-effects/StyleHueRotateFunction.cpp"
+#include "style/values/filter-effects/StyleInvertFunction.cpp"

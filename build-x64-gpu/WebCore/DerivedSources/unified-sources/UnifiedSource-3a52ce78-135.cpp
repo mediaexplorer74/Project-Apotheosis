@@ -1,0 +1,8 @@
+#include "JSRegistrationResponseJSON.cpp"
+#include "JSRemotePlayback.cpp"
+#include "JSRemotePlaybackAvailabilityCallback.cpp"
+#include "JSReport.cpp"
+#include "JSReportBody.cpp"
+#include "JSReportingObserver.cpp"
+#include "JSReportingObserverCallback.cpp"
+#include "JSRequestAnimationFrameCallback.cpp"

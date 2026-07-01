@@ -1,0 +1,8 @@
+#include "JSAesKeyParams.cpp"
+#include "JSAllAcceptedCredentialsOptions.cpp"
+#include "JSAnalyserNode.cpp"
+#include "JSAnalyserOptions.cpp"
+#include "JSAnimationEffect.cpp"
+#include "JSAnimationFrameRatePreset.cpp"
+#include "JSAnimationPlaybackEvent.cpp"
+#include "JSAnimationPlaybackEventInit.cpp"

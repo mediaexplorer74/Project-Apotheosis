@@ -1,0 +1,8 @@
+#include "RemoteAudioMediaStreamTrackRendererInternalUnitManagerMessageReceiver.cpp"
+#include "RemoteAudioVideoRendererProxyManagerMessageReceiver.cpp"
+#include "RemoteBarcodeDetectorMessageReceiver.cpp"
+#include "RemoteBindGroupLayoutMessageReceiver.cpp"
+#include "RemoteBindGroupMessageReceiver.cpp"
+#include "RemoteBufferMessageReceiver.cpp"
+#include "RemoteCommandBufferMessageReceiver.cpp"
+#include "RemoteCommandEncoderMessageReceiver.cpp"

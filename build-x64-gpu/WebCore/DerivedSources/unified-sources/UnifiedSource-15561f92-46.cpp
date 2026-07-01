@@ -1,0 +1,8 @@
+#include "Modules/streams/ReadableStreamReadRequest.cpp"
+#include "Modules/streams/ReadableStreamSource.cpp"
+#include "Modules/streams/ReadableStreamToSharedBufferSink.cpp"
+#include "Modules/streams/StreamTeeUtilities.cpp"
+#include "Modules/streams/TransformStream.cpp"
+#include "Modules/streams/WritableStream.cpp"
+#include "Modules/url-pattern/URLPattern.cpp"
+#include "Modules/url-pattern/URLPatternCanonical.cpp"

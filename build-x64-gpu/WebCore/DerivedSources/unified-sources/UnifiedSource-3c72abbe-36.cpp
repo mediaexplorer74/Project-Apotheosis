@@ -1,0 +1,8 @@
+#include "platform/graphics/NativeImageSource.cpp"
+#include "platform/graphics/NullImageBufferBackend.cpp"
+#include "platform/graphics/Path.cpp"
+#include "platform/graphics/PathImpl.cpp"
+#include "platform/graphics/PathSegment.cpp"
+#include "platform/graphics/PathSegmentData.cpp"
+#include "platform/graphics/PathStream.cpp"
+#include "platform/graphics/PathTraversalState.cpp"

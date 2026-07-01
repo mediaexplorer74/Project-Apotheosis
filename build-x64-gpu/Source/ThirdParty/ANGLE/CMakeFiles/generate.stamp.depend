@@ -1,0 +1,7 @@
+# CMake generation dependency list for this directory.
+C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/ThirdParty/ANGLE/CMakeLists.txt
+C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/ThirdParty/ANGLE/Compiler.cmake
+C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/ThirdParty/ANGLE/D3D.cmake
+C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/ThirdParty/ANGLE/GL.cmake
+C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/ThirdParty/ANGLE/GLESv2.cmake
+C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/ThirdParty/ANGLE/Metal.cmake

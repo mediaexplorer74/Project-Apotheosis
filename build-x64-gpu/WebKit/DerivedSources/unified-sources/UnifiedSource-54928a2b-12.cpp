@@ -1,0 +1,8 @@
+#include "WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp"
+#include "WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.cpp"
+#include "WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp"
+#include "WebProcess/GPU/webrtc/SampleBufferDisplayLayerManager.cpp"
+#include "WebProcess/Gamepad/WebGamepad.cpp"
+#include "WebProcess/Gamepad/WebGamepadProvider.cpp"
+#include "WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp"
+#include "WebProcess/Geolocation/WebGeolocationManager.cpp"

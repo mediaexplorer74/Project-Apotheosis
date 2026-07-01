@@ -1,0 +1,6 @@
+#include "domjit/DOMJITHelpers.cpp"
+#include "domjit/JSDocumentDOMJIT.cpp"
+#include "domjit/JSDocumentFragmentDOMJIT.cpp"
+#include "domjit/JSElementDOMJIT.cpp"
+#include "domjit/JSEventDOMJIT.cpp"
+#include "domjit/JSNodeDOMJIT.cpp"

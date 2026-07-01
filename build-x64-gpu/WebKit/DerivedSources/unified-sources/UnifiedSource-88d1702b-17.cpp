@@ -1,0 +1,8 @@
+#include "UIProcess/API/C/WKContext.cpp"
+#include "UIProcess/API/C/WKContextConfigurationRef.cpp"
+#include "UIProcess/API/C/WKCookieManager.cpp"
+#include "UIProcess/API/C/WKCredential.cpp"
+#include "UIProcess/API/C/WKDownloadRef.cpp"
+#include "UIProcess/API/C/WKFeature.cpp"
+#include "UIProcess/API/C/WKFormSubmissionListener.cpp"
+#include "UIProcess/API/C/WKFrame.cpp"

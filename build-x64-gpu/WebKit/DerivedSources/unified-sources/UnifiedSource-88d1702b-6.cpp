@@ -1,0 +1,8 @@
+#include "UIProcess/TextChecker.cpp"
+#include "UIProcess/TextCheckerCompletion.cpp"
+#include "UIProcess/TextExtractionAssertionScope.cpp"
+#include "UIProcess/UIProcessLogInitialization.cpp"
+#include "UIProcess/UserMediaPermissionCheckProxy.cpp"
+#include "UIProcess/UserMediaPermissionRequestManagerProxy.cpp"
+#include "UIProcess/UserMediaPermissionRequestProxy.cpp"
+#include "UIProcess/UserMediaProcessManager.cpp"

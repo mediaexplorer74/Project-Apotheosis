@@ -1,0 +1,8 @@
+#include "svg/SVGFECompositeElement.cpp"
+#include "svg/SVGFEConvolveMatrixElement.cpp"
+#include "svg/SVGFEDiffuseLightingElement.cpp"
+#include "svg/SVGFEDisplacementMapElement.cpp"
+#include "svg/SVGFEDistantLightElement.cpp"
+#include "svg/SVGFEDropShadowElement.cpp"
+#include "svg/SVGFEFloodElement.cpp"
+#include "svg/SVGFEFuncAElement.cpp"

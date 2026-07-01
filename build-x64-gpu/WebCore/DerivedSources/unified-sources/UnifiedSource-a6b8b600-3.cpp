@@ -1,0 +1,8 @@
+#include "animation/DocumentTimeline.cpp"
+#include "animation/EffectTiming.cpp"
+#include "animation/ElementAnimationRareData.cpp"
+#include "animation/FrameRateAligner.cpp"
+#include "animation/KeyframeEffect.cpp"
+#include "animation/KeyframeEffectStack.cpp"
+#include "animation/KeyframeInterpolation.cpp"
+#include "animation/ScrollAxis.cpp"

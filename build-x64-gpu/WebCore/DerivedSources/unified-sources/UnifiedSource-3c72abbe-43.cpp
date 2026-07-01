@@ -1,0 +1,8 @@
+#include "platform/graphics/filters/DistantLightSource.cpp"
+#include "platform/graphics/filters/FEBlend.cpp"
+#include "platform/graphics/filters/FEColorMatrix.cpp"
+#include "platform/graphics/filters/FEComponentTransfer.cpp"
+#include "platform/graphics/filters/FEComposite.cpp"
+#include "platform/graphics/filters/FEConvolveMatrix.cpp"
+#include "platform/graphics/filters/FEDiffuseLighting.cpp"
+#include "platform/graphics/filters/FEDisplacementMap.cpp"

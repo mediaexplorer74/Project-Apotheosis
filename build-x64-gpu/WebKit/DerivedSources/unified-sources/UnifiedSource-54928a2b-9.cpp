@@ -1,0 +1,8 @@
+#include "WebProcess/GPU/media/AudioTrackPrivateRemote.cpp"
+#include "WebProcess/GPU/media/AudioVideoRendererRemote.cpp"
+#include "WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp"
+#include "WebProcess/GPU/media/MediaSourcePrivateRemote.cpp"
+#include "WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp"
+#include "WebProcess/GPU/media/RemoteAudioHardwareListener.cpp"
+#include "WebProcess/GPU/media/RemoteAudioSession.cpp"
+#include "WebProcess/GPU/media/RemoteCDM.cpp"

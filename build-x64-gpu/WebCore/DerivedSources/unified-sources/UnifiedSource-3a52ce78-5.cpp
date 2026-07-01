@@ -1,0 +1,8 @@
+#include "JSAnimationTimeline.cpp"
+#include "JSAriaNotifyOptions.cpp"
+#include "JSAttestationConveyancePreference.cpp"
+#include "JSAttr.cpp"
+#include "JSAudioBuffer.cpp"
+#include "JSAudioBufferCallback.cpp"
+#include "JSAudioBufferOptions.cpp"
+#include "JSAudioBufferSourceNode.cpp"

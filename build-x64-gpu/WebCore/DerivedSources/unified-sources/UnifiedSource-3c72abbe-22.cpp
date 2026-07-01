@@ -1,0 +1,8 @@
+#include "platform/graphics/BitmapImage.cpp"
+#include "platform/graphics/BitmapImageDescriptor.cpp"
+#include "platform/graphics/BitmapImageSource.cpp"
+#include "platform/graphics/ByteArrayPixelBuffer.cpp"
+#include "platform/graphics/CachedSubimage.cpp"
+#include "platform/graphics/CodecUtilities.cpp"
+#include "platform/graphics/Color.cpp"
+#include "platform/graphics/ColorBlending.cpp"

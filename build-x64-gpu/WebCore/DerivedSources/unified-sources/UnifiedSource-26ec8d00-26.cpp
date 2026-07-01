@@ -1,0 +1,8 @@
+#include "style/values/masking/StyleMaskBorder.cpp"
+#include "style/values/masking/StyleMaskBorderOutset.cpp"
+#include "style/values/masking/StyleMaskBorderRepeat.cpp"
+#include "style/values/masking/StyleMaskBorderSlice.cpp"
+#include "style/values/masking/StyleMaskBorderSource.cpp"
+#include "style/values/masking/StyleMaskBorderWidth.cpp"
+#include "style/values/masking/StyleMaskLayer.cpp"
+#include "style/values/masking/StyleMaskMode.cpp"

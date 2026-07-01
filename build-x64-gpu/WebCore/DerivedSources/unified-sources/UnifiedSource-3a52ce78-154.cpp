@@ -1,0 +1,8 @@
+#include "JSSVGTitleElement.cpp"
+#include "JSSVGTransform.cpp"
+#include "JSSVGTransformList.cpp"
+#include "JSSVGURIReference.cpp"
+#include "JSSVGUnitTypes.cpp"
+#include "JSSVGUseElement.cpp"
+#include "JSSVGViewElement.cpp"
+#include "JSSVGViewSpec.cpp"

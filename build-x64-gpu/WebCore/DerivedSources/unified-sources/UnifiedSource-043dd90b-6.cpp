@@ -1,0 +1,8 @@
+#include "rendering/LegacyInlineIterator.cpp"
+#include "rendering/LegacyInlineTextBox.cpp"
+#include "rendering/LegacyLineLayout.cpp"
+#include "rendering/LegacyRootInlineBox.cpp"
+#include "rendering/MarkedText.cpp"
+#include "rendering/MotionPath.cpp"
+#include "rendering/NinePieceImagePainter.cpp"
+#include "rendering/OrderIterator.cpp"

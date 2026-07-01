@@ -1,0 +1,8 @@
+#include "Modules/compression/ZStream.cpp"
+#include "Modules/contact-picker/ContactsManager.cpp"
+#include "Modules/contact-picker/NavigatorContacts.cpp"
+#include "Modules/cookie-consent/NavigatorCookieConsent.cpp"
+#include "Modules/cookie-store/CookieChangeEvent.cpp"
+#include "Modules/cookie-store/CookieStore.cpp"
+#include "Modules/cookie-store/CookieStoreManager.cpp"
+#include "Modules/cookie-store/ExtendableCookieChangeEvent.cpp"

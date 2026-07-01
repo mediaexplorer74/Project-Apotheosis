@@ -1,0 +1,8 @@
+#include "style/values/animations/StyleSingleAnimationName.cpp"
+#include "style/values/animations/StyleSingleAnimationRange.cpp"
+#include "style/values/animations/StyleSingleAnimationRangeName.cpp"
+#include "style/values/animations/StyleSingleAnimationTimeline.cpp"
+#include "style/values/backgrounds/StyleBackgroundLayer.cpp"
+#include "style/values/backgrounds/StyleBackgroundSize.cpp"
+#include "style/values/backgrounds/StyleBorderImage.cpp"
+#include "style/values/backgrounds/StyleBorderImageOutset.cpp"

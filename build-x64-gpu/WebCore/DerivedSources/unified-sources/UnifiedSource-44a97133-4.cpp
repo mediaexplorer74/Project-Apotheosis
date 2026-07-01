@@ -1,0 +1,8 @@
+#include "crypto/algorithms/CryptoAlgorithmX25519.cpp"
+#include "crypto/keys/CryptoKeyAES.cpp"
+#include "crypto/keys/CryptoKeyEC.cpp"
+#include "crypto/keys/CryptoKeyHMAC.cpp"
+#include "crypto/keys/CryptoKeyOKP.cpp"
+#include "crypto/keys/CryptoKeyRSA.cpp"
+#include "crypto/keys/CryptoKeyRSAComponents.cpp"
+#include "crypto/keys/CryptoKeyRaw.cpp"

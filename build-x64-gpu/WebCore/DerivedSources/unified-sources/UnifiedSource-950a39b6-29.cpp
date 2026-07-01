@@ -1,0 +1,8 @@
+#include "html/canvas/PredefinedColorSpace.cpp"
+#include "html/canvas/WebGL2RenderingContext.cpp"
+#include "html/canvas/WebGLBlendFuncExtended.cpp"
+#include "html/canvas/WebGLBuffer.cpp"
+#include "html/canvas/WebGLClipCullDistance.cpp"
+#include "html/canvas/WebGLColorBufferFloat.cpp"
+#include "html/canvas/WebGLCompressedTextureASTC.cpp"
+#include "html/canvas/WebGLCompressedTextureETC.cpp"

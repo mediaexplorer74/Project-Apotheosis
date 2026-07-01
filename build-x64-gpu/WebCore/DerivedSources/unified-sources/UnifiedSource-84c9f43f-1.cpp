@@ -1,0 +1,8 @@
+#include "inspector/CommandLineAPIHost.cpp"
+#include "inspector/CommandLineAPIModule.cpp"
+#include "inspector/DOMEditor.cpp"
+#include "inspector/DOMPatchSupport.cpp"
+#include "inspector/FrameInspectorController.cpp"
+#include "inspector/InspectorAuditAccessibilityObject.cpp"
+#include "inspector/InspectorAuditDOMObject.cpp"
+#include "inspector/InspectorAuditResourcesObject.cpp"

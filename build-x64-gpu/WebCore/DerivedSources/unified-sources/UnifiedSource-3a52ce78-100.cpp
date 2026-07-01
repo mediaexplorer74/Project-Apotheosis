@@ -1,0 +1,8 @@
+#include "JSMediaList.cpp"
+#include "JSMediaMetadata.cpp"
+#include "JSMediaMetadataInit.cpp"
+#include "JSMediaPositionState.cpp"
+#include "JSMediaQueryList.cpp"
+#include "JSMediaQueryListEvent.cpp"
+#include "JSMediaRecorder.cpp"
+#include "JSMediaRecorderErrorEvent.cpp"

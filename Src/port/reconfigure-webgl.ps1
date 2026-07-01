@@ -4,8 +4,8 @@ $ErrorActionPreference = 'Continue'
 . "$PSScriptRoot\arm32-uwp-env.ps1" *> $null
 
 $Root   = Split-Path -Parent $PSScriptRoot
-$cmake  = "C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
-$ninja  = "C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\ninja.exe"
+$cmake  = "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
+$ninja  = "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\ninja.exe"
 $WebKit = Join-Path $Root 'WebKit'
 $Build  = Join-Path $Root 'build-clang-webcore'
 $Toolchain = Join-Path $PSScriptRoot 'Toolchain-ARM32-UWP-clang.cmake'

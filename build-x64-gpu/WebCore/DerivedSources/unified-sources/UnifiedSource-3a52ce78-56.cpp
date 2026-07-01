@@ -1,0 +1,8 @@
+#include "JSFocusEvent.cpp"
+#include "JSFocusOptions.cpp"
+#include "JSFontFace.cpp"
+#include "JSFontFaceSet.cpp"
+#include "JSFormDataEvent.cpp"
+#include "JSFragmentDirective.cpp"
+#include "JSFullscreenOptions.cpp"
+#include "JSGPU.cpp"

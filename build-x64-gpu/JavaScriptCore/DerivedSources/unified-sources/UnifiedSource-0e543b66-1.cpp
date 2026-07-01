@@ -1,0 +1,6 @@
+#include "interpreter/CLoopStack.cpp"
+#include "interpreter/CachedCall.cpp"
+#include "interpreter/CallFrame.cpp"
+#include "interpreter/Interpreter.cpp"
+#include "interpreter/ShadowChicken.cpp"
+#include "interpreter/StackVisitor.cpp"

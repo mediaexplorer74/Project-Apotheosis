@@ -1,0 +1,8 @@
+#include "platform/ScrollView.cpp"
+#include "platform/ScrollableArea.cpp"
+#include "platform/Scrollbar.cpp"
+#include "platform/ScrollbarTheme.cpp"
+#include "platform/ScrollbarThemeComposite.cpp"
+#include "platform/ScrollbarsController.cpp"
+#include "platform/ScrollingEffectsController.cpp"
+#include "platform/ScrollingMomentumCalculator.cpp"

@@ -1,0 +1,8 @@
+#include "JSGPUAdapter.cpp"
+#include "JSGPUAdapterInfo.cpp"
+#include "JSGPUAddressMode.cpp"
+#include "JSGPUAutoLayoutMode.cpp"
+#include "JSGPUBindGroup.cpp"
+#include "JSGPUBindGroupDescriptor.cpp"
+#include "JSGPUBindGroupEntry.cpp"
+#include "JSGPUBindGroupLayout.cpp"

@@ -1,0 +1,8 @@
+#include "editing/MarkupAccumulator.cpp"
+#include "editing/MergeIdenticalElementsCommand.cpp"
+#include "editing/ModifySelectionListLevel.cpp"
+#include "editing/MoveSelectionCommand.cpp"
+#include "editing/RemoveFormatCommand.cpp"
+#include "editing/RemoveNodeCommand.cpp"
+#include "editing/RemoveNodePreservingChildrenCommand.cpp"
+#include "editing/RenderedPosition.cpp"

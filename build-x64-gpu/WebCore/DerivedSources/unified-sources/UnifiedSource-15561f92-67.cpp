@@ -1,0 +1,8 @@
+#include "Modules/webxr/WebXRReferenceSpace.cpp"
+#include "Modules/webxr/WebXRRenderState.cpp"
+#include "Modules/webxr/WebXRRigidTransform.cpp"
+#include "Modules/webxr/WebXRSession.cpp"
+#include "Modules/webxr/WebXRSpace.cpp"
+#include "Modules/webxr/WebXRSystem.cpp"
+#include "Modules/webxr/WebXRTransientInputHitTestResult.cpp"
+#include "Modules/webxr/WebXRTransientInputHitTestSource.cpp"

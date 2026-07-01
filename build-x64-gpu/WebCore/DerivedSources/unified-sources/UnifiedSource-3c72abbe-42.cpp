@@ -1,0 +1,8 @@
+#include "platform/graphics/cpu/arm/filters/FEBlendNeonApplier.cpp"
+#include "platform/graphics/cpu/arm/filters/FECompositeNeonArithmeticApplier.cpp"
+#include "platform/graphics/cpu/arm/filters/FELightingNeonParallelApplier.cpp"
+#include "platform/graphics/displaylists/DisplayList.cpp"
+#include "platform/graphics/displaylists/DisplayListItem.cpp"
+#include "platform/graphics/displaylists/DisplayListItems.cpp"
+#include "platform/graphics/displaylists/DisplayListRecorder.cpp"
+#include "platform/graphics/displaylists/DisplayListRecorderImpl.cpp"

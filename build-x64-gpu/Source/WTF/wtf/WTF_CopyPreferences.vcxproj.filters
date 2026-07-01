@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\Scripts\GeneratePreferences.rb" />
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\Scripts\Preferences\UnifiedWebPreferences.yaml" />
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\b77c05b132ab4c8f48c23bbe9e6eb2d3\WTF_CopyPreferences.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WTF\wtf\CMakeFiles\WTF_CopyPreferences" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{2661AD7A-8425-36E0-9A39-9B7D055CBE23}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

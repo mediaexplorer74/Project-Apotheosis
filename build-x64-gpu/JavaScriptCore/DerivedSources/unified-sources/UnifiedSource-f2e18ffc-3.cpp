@@ -1,0 +1,8 @@
+#include "runtime/AsyncFunctionPrototype.cpp"
+#include "runtime/AsyncGeneratorFunctionConstructor.cpp"
+#include "runtime/AsyncGeneratorFunctionPrototype.cpp"
+#include "runtime/AsyncGeneratorPrototype.cpp"
+#include "runtime/AsyncIteratorPrototype.cpp"
+#include "runtime/AtomicsObject.cpp"
+#include "runtime/BasicBlockLocation.cpp"
+#include "runtime/BigIntConstructor.cpp"

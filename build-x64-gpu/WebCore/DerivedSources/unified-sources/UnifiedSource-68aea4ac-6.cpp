@@ -1,0 +1,8 @@
+#include "bindings/js/JSDOMPromiseDeferred.cpp"
+#include "bindings/js/JSDOMQuadCustom.cpp"
+#include "bindings/js/JSDOMSetLike.cpp"
+#include "bindings/js/JSDOMWindowBase.cpp"
+#include "bindings/js/JSDOMWindowCustom.cpp"
+#include "bindings/js/JSDOMWindowProperties.cpp"
+#include "bindings/js/JSDOMWrapper.cpp"
+#include "bindings/js/JSDOMWrapperCache.cpp"

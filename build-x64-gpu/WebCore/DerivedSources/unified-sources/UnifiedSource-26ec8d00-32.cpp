@@ -1,0 +1,8 @@
+#include "style/values/shapes/StyleInsetFunction.cpp"
+#include "style/values/shapes/StylePathFunction.cpp"
+#include "style/values/shapes/StylePathOperationWrappers.cpp"
+#include "style/values/shapes/StylePolygonFunction.cpp"
+#include "style/values/shapes/StyleRectFunction.cpp"
+#include "style/values/shapes/StyleShapeFunction.cpp"
+#include "style/values/shapes/StyleShapeOutside.cpp"
+#include "style/values/shapes/StyleXywhFunction.cpp"

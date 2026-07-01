@@ -1,0 +1,8 @@
+#include "css/typedom/color/CSSHWB.cpp"
+#include "css/typedom/color/CSSLCH.cpp"
+#include "css/typedom/color/CSSLab.cpp"
+#include "css/typedom/color/CSSOKLCH.cpp"
+#include "css/typedom/color/CSSOKLab.cpp"
+#include "css/typedom/color/CSSOMColor.cpp"
+#include "css/typedom/color/CSSOMColorValue.cpp"
+#include "css/typedom/color/CSSRGB.cpp"

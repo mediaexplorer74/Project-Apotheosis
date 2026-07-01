@@ -1,0 +1,8 @@
+#include "bindings/js/JSUndoItemCustom.cpp"
+#include "bindings/js/JSWebAnimationCustom.cpp"
+#include "bindings/js/JSWebCodecsAudioDecoderCustom.cpp"
+#include "bindings/js/JSWebCodecsAudioEncoderCustom.cpp"
+#include "bindings/js/JSWebCodecsVideoDecoderCustom.cpp"
+#include "bindings/js/JSWebCodecsVideoEncoderCustom.cpp"
+#include "bindings/js/JSWebGL2RenderingContextCustom.cpp"
+#include "bindings/js/JSWebGLRenderingContextCustom.cpp"

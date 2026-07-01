@@ -1,0 +1,8 @@
+#include "style/values/text/StyleTextAlign.cpp"
+#include "style/values/text/StyleTextAlignLast.cpp"
+#include "style/values/text/StyleTextAutospace.cpp"
+#include "style/values/text/StyleTextIndent.cpp"
+#include "style/values/text/StyleTextTransform.cpp"
+#include "style/values/text/StyleWordSpacing.cpp"
+#include "style/values/text-decoration/StyleTextDecorationLine.cpp"
+#include "style/values/text-decoration/StyleTextDecorationThickness.cpp"

@@ -1,0 +1,8 @@
+#include "crypto/algorithms/CryptoAlgorithmAESCTR.cpp"
+#include "crypto/algorithms/CryptoAlgorithmAESGCM.cpp"
+#include "crypto/algorithms/CryptoAlgorithmAESKW.cpp"
+#include "crypto/algorithms/CryptoAlgorithmECDH.cpp"
+#include "crypto/algorithms/CryptoAlgorithmECDSA.cpp"
+#include "crypto/algorithms/CryptoAlgorithmEd25519.cpp"
+#include "crypto/algorithms/CryptoAlgorithmHKDF.cpp"
+#include "crypto/algorithms/CryptoAlgorithmHMAC.cpp"

@@ -1,0 +1,8 @@
+#include "style/values/svg/StyleSVGPaint.cpp"
+#include "style/values/svg/StyleSVGPaintOrder.cpp"
+#include "style/values/svg/StyleSVGPathData.cpp"
+#include "style/values/svg/StyleSVGStrokeDasharray.cpp"
+#include "style/values/svg/StyleSVGStrokeDashoffset.cpp"
+#include "style/values/text/StyleHangingPunctuation.cpp"
+#include "style/values/text/StyleLetterSpacing.cpp"
+#include "style/values/text/StyleTabSize.cpp"

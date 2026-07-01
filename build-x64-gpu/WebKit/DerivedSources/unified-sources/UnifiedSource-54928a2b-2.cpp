@@ -1,0 +1,8 @@
+#include "WebProcess/DigitalCredentials/DigitalCredentialsCoordinator.cpp"
+#include "WebProcess/EncryptedMedia/MediaKeySystemPermissionRequestManager.cpp"
+#include "WebProcess/Extensions/WebExtensionContextProxy.cpp"
+#include "WebProcess/Extensions/WebExtensionControllerProxy.cpp"
+#include "WebProcess/FileAPI/BlobRegistryProxy.cpp"
+#include "WebProcess/FullScreen/WebFullScreenManager.cpp"
+#include "WebProcess/GPU/GPUProcessConnection.cpp"
+#include "WebProcess/GPU/RemoteSharedResourceCacheProxy.cpp"

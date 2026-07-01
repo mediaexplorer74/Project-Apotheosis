@@ -1,0 +1,8 @@
+#include "JSSVGSwitchElement.cpp"
+#include "JSSVGSymbolElement.cpp"
+#include "JSSVGTSpanElement.cpp"
+#include "JSSVGTests.cpp"
+#include "JSSVGTextContentElement.cpp"
+#include "JSSVGTextElement.cpp"
+#include "JSSVGTextPathElement.cpp"
+#include "JSSVGTextPositioningElement.cpp"

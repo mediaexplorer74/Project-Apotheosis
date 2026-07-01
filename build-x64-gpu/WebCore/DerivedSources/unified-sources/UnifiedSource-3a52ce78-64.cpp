@@ -1,0 +1,8 @@
+#include "JSGPUExternalTextureBindingLayout.cpp"
+#include "JSGPUExternalTextureDescriptor.cpp"
+#include "JSGPUFeatureName.cpp"
+#include "JSGPUFilterMode.cpp"
+#include "JSGPUFragmentState.cpp"
+#include "JSGPUFrontFace.cpp"
+#include "JSGPUImageCopyBuffer.cpp"
+#include "JSGPUImageCopyExternalImage.cpp"

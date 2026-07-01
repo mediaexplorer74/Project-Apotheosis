@@ -1,0 +1,8 @@
+#include "Modules/fetch/FetchLoader.cpp"
+#include "Modules/fetch/FetchRequest.cpp"
+#include "Modules/fetch/FetchResponse.cpp"
+#include "Modules/fetch/FormDataConsumer.cpp"
+#include "Modules/fetch/IPAddressSpace.cpp"
+#include "Modules/fetch/WindowOrWorkerGlobalScopeFetch.cpp"
+#include "Modules/filesystem/FileSystemDirectoryHandle.cpp"
+#include "Modules/filesystem/FileSystemFileHandle.cpp"

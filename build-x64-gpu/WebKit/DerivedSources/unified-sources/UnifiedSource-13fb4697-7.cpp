@@ -1,0 +1,8 @@
+#include "GPUProcess/graphics/WebGPU/RemoteTextureView.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteXRBinding.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteXRProjectionLayer.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteXRSubImage.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteXRView.cpp"
+#include "GPUProcess/graphics/WebGPU/WebGPUObjectHeap.cpp"
+#include "GPUProcess/media/RemoteAudioHardwareListenerProxy.cpp"
+#include "GPUProcess/media/RemoteAudioSessionProxy.cpp"

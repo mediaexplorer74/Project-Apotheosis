@@ -1,0 +1,8 @@
+#include "JSValidityState.cpp"
+#include "JSValidityStateFlags.cpp"
+#include "JSVideoColorPrimaries.cpp"
+#include "JSVideoColorSpace.cpp"
+#include "JSVideoColorSpaceInit.cpp"
+#include "JSVideoConfiguration.cpp"
+#include "JSVideoFrameMetadata.cpp"
+#include "JSVideoFrameRequestCallback.cpp"

@@ -14,8 +14,8 @@ $ErrorActionPreference = 'Stop'
 
 . "$PSScriptRoot\arm32-uwp-env.ps1"   # 注入 INCLUDE/LIB/PATH + ruby/perl/python(clang-cl 也读 INCLUDE/LIB)
 
-$cmake = "C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
-$ninja = "C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\ninja.exe"
+$cmake = "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
+$ninja = "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\ninja.exe"
 $WebKit = Join-Path $Root 'WebKit'
 if ($Clang) {
     $Build  = Join-Path $Root ('build-clang-' + $Config.ToLower())

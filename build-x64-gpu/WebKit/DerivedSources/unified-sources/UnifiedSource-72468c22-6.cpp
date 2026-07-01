@@ -1,0 +1,8 @@
+#include "NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementEphemeralStore.cpp"
+#include "NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp"
+#include "NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.cpp"
+#include "NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerProxy.cpp"
+#include "NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementNetworkLoader.cpp"
+#include "NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementPersistentStore.cpp"
+#include "NetworkProcess/ServiceWorker/ServiceWorkerDownloadTask.cpp"
+#include "NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp"

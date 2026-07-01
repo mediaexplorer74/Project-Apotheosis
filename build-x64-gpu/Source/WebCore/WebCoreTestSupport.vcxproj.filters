@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\CMakeFiles\WebCoreTestSupport.dir\cmake_pch.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\testing\EventTargetForTesting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\testing\GCObservation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\testing\InternalSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\testing\Internals.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\testing\InternalsMapLike.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\testing\InternalsSetLike.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\testing\MockCDMFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\testing\MockCaptionDisplaySettingsClientCallback.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\testing\MockGamepad.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\testing\MockGamepadProvider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\testing\MockLibWebRTCPeerConnection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\testing\MockPageOverlay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\testing\MockPageOverlayClient.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\testing\ServiceWorkerInternals.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\testing\js\WebCoreTestSupport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WebCore\DerivedSources\InternalSettingsGenerated.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WebCore\DerivedSources\JSGCObservation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WebCore\DerivedSources\JSInternalSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WebCore\DerivedSources\JSInternals.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WebCore\DerivedSources\JSInternalsMapLike.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WebCore\DerivedSources\JSInternalsSetLike.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WebCore\DerivedSources\JSMallocStatistics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WebCore\DerivedSources\JSMemoryInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WebCore\DerivedSources\JSMockCDMFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WebCore\DerivedSources\JSMockCaptionDisplaySettingsClientCallback.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WebCore\DerivedSources\JSMockContentFilterSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WebCore\DerivedSources\JSMockMediaDeviceRoute.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WebCore\DerivedSources\JSMockMediaDeviceRouteController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WebCore\DerivedSources\JSMockPageOverlay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WebCore\DerivedSources\JSMockWebAuthenticationConfiguration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WebCore\DerivedSources\JSServiceWorkerInternals.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WebCore\DerivedSources\JSTypeConversions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WebCore\DerivedSources\JSInternalSettingsGenerated.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\cmakeconfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\CMakeFiles\WebCoreTestSupport.dir\Debug\cmake_pch.hxx">
+      <Filter>Precompile Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\CMakeFiles\WebCoreTestSupport.dir\Release\cmake_pch.hxx">
+      <Filter>Precompile Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\CMakeFiles\WebCoreTestSupport.dir\MinSizeRel\cmake_pch.hxx">
+      <Filter>Precompile Header File</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\CMakeFiles\WebCoreTestSupport.dir\RelWithDebInfo\cmake_pch.hxx">
+      <Filter>Precompile Header File</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WebCore\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{BF66F9E0-6FF8-3040-8768-4A92287CF160}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Precompile Header File">
+      <UniqueIdentifier>{E29C5970-6D66-3792-84D0-497AA2CFAEA2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{98865446-B9C7-371B-AEAA-AFE46AD8BC02}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

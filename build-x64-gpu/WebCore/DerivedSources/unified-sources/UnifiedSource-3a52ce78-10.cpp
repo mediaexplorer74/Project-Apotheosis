@@ -1,0 +1,8 @@
+#include "JSAuthenticatorAssertionResponse.cpp"
+#include "JSAuthenticatorAttachment.cpp"
+#include "JSAuthenticatorAttestationResponse.cpp"
+#include "JSAuthenticatorResponse.cpp"
+#include "JSAuthenticatorSelectionCriteria.cpp"
+#include "JSAuthenticatorTransport.cpp"
+#include "JSAutomationRate.cpp"
+#include "JSAvcEncoderConfig.cpp"

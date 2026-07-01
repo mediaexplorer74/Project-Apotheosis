@@ -1,0 +1,8 @@
+#include "runtime/DirectArgumentsOffset.cpp"
+#include "runtime/DirectEvalExecutable.cpp"
+#include "runtime/DisposableStackConstructor.cpp"
+#include "runtime/DisposableStackPrototype.cpp"
+#include "runtime/DoublePredictionFuzzerAgent.cpp"
+#include "runtime/DumpContext.cpp"
+#include "runtime/ECMAMode.cpp"
+#include "runtime/Error.cpp"

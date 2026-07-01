@@ -1,0 +1,8 @@
+#include "bytecode/RecordedStatuses.cpp"
+#include "bytecode/ReduceWhitespace.cpp"
+#include "bytecode/Repatch.cpp"
+#include "bytecode/SetPrivateBrandStatus.cpp"
+#include "bytecode/SetPrivateBrandVariant.cpp"
+#include "bytecode/SharedJITStubSet.cpp"
+#include "bytecode/SpeculatedType.cpp"
+#include "bytecode/StructureSet.cpp"

@@ -1,0 +1,8 @@
+#include "css/parser/CSSPropertyParserConsumer+String.cpp"
+#include "css/parser/CSSPropertyParserConsumer+Symbol.cpp"
+#include "css/parser/CSSPropertyParserConsumer+Syntax.cpp"
+#include "css/parser/CSSPropertyParserConsumer+TextDecoration.cpp"
+#include "css/parser/CSSPropertyParserConsumer+Timeline.cpp"
+#include "css/parser/CSSPropertyParserConsumer+Transform.cpp"
+#include "css/parser/CSSPropertyParserConsumer+Transitions.cpp"
+#include "css/parser/CSSPropertyParserConsumer+UI.cpp"

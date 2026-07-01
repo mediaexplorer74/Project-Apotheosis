@@ -1,0 +1,8 @@
+#include "Shared/SessionState.cpp"
+#include "Shared/SharedStringHashStore.cpp"
+#include "Shared/SharedStringHashTable.cpp"
+#include "Shared/SharedStringHashTableReadOnly.cpp"
+#include "Shared/TextExtractionToStringConversion.cpp"
+#include "Shared/TextExtractionURLCache.cpp"
+#include "Shared/UserData.cpp"
+#include "Shared/WebBackForwardListFrameItem.cpp"

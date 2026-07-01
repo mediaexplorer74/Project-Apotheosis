@@ -1,0 +1,8 @@
+#include "wasm/WasmBBQDisassembler.cpp"
+#include "wasm/WasmBBQPlan.cpp"
+#include "wasm/WasmBinding.cpp"
+#include "wasm/WasmBranchHintsSectionParser.cpp"
+#include "wasm/WasmCallProfile.cpp"
+#include "wasm/WasmCallee.cpp"
+#include "wasm/WasmCalleeGroup.cpp"
+#include "wasm/WasmCallingConvention.cpp"

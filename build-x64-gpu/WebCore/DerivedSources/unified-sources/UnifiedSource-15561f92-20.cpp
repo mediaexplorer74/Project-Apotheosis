@@ -1,0 +1,8 @@
+#include "Modules/indexeddb/IDBObjectStore.cpp"
+#include "Modules/indexeddb/IDBOpenDBRequest.cpp"
+#include "Modules/indexeddb/IDBRequest.cpp"
+#include "Modules/indexeddb/IDBRequestCompletionEvent.cpp"
+#include "Modules/indexeddb/IDBTransaction.cpp"
+#include "Modules/indexeddb/IDBValue.cpp"
+#include "Modules/indexeddb/IDBVersionChangeEvent.cpp"
+#include "Modules/indexeddb/WindowOrWorkerGlobalScopeIndexedDatabase.cpp"

@@ -1,0 +1,8 @@
+#include "JSDataTransferItemList.cpp"
+#include "JSDatabase.cpp"
+#include "JSDatabaseCallback.cpp"
+#include "JSDatagramsReadableMode.cpp"
+#include "JSDecompressionStream.cpp"
+#include "JSDecompressionStreamDecoder.cpp"
+#include "JSDedicatedWorkerGlobalScope.cpp"
+#include "JSDelayNode.cpp"

@@ -1,0 +1,973 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{684BF30B-9E23-3BBB-B56B-A5B7A301EC81}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>ANGLE</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\lib\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ANGLE.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ANGLE</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\lib\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ANGLE.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ANGLE</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\lib\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">ANGLE.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">ANGLE</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\lib\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">ANGLE.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">ANGLE</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/vcpkg/installed/x64-uwp/include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;GL_GLES_PROTOTYPES=0;EGL_EGL_PROTOTYPES=0;LIBANGLE_IMPLEMENTATION;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;GL_GLES_PROTOTYPES=0;EGL_EGL_PROTOTYPES=0;LIBANGLE_IMPLEMENTATION;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;C:\vcpkg\installed\x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;C:\vcpkg\installed\x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/vcpkg/installed/x64-uwp/include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;GL_GLES_PROTOTYPES=0;EGL_EGL_PROTOTYPES=0;LIBANGLE_IMPLEMENTATION;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;GL_GLES_PROTOTYPES=0;EGL_EGL_PROTOTYPES=0;LIBANGLE_IMPLEMENTATION;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;C:\vcpkg\installed\x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;C:\vcpkg\installed\x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/vcpkg/installed/x64-uwp/include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;GL_GLES_PROTOTYPES=0;EGL_EGL_PROTOTYPES=0;LIBANGLE_IMPLEMENTATION;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;GL_GLES_PROTOTYPES=0;EGL_EGL_PROTOTYPES=0;LIBANGLE_IMPLEMENTATION;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;C:\vcpkg\installed\x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;C:\vcpkg\installed\x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/vcpkg/installed/x64-uwp/include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;GL_GLES_PROTOTYPES=0;EGL_EGL_PROTOTYPES=0;LIBANGLE_IMPLEMENTATION;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;GL_GLES_PROTOTYPES=0;EGL_EGL_PROTOTYPES=0;LIBANGLE_IMPLEMENTATION;ANGLE_ENABLE_ESSL;ANGLE_ENABLE_GLSL;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;C:\vcpkg\installed\x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\WebKit;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include;C:\vcpkg\installed\x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/ThirdParty/ANGLE/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/ThirdParty/ANGLE/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\Compiler.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\D3D.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\GL.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\GLESv2.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\Metal.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/ThirdParty/ANGLE/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/ThirdParty/ANGLE/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\Compiler.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\D3D.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\GL.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\GLESv2.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\Metal.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/ThirdParty/ANGLE/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/ThirdParty/ANGLE/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\Compiler.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\D3D.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\GL.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\GLESv2.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\Metal.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/ThirdParty/ANGLE/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/ThirdParty/ANGLE/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\Compiler.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\D3D.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\GL.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\GLESv2.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\Metal.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\BinaryStream.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\CircularBuffer.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\Color.h" />
+    <None Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\Color.inc">
+    </None>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\CompiledShaderState.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\FastVector.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\FixedQueue.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\FixedVector.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\MemoryBuffer.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\Optional.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\PackedEGLEnums_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\PackedEnums.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\PackedGLEnums_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\PackedCLEnums_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\PoolAlloc.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\SimpleMutex.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\SynchronizedValue.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\WorkerThread.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\aligned_memory.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\android_util.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\angleutils.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\apple_platform_utils.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\backtrace_utils.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\base_export.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\containers\mru_cache.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\logging.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\macros.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\no_destructor.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\numerics\checked_math.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\numerics\checked_math_impl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\numerics\clamped_math.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\numerics\clamped_math_impl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\numerics\math_constants.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\numerics\ranges.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\numerics\safe_conversions.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\numerics\safe_conversions_arm_impl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\numerics\safe_conversions_impl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\numerics\safe_math.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\numerics\safe_math_arm_impl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\numerics\safe_math_clang_gcc_impl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\numerics\safe_math_shared_impl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\sha1.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\sys_byteorder.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\bitset_utils.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\debug.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\entry_points_enum_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\event_tracer.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\hash_containers.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\hash_utils.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\log_utils.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\mathutil.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\matrix_utils.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\platform.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\platform_helpers.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\span.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\string_utils.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\system_utils.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\tls.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\uniform_type_info_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\unsafe_buffers.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\utilities.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\vector_utils.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\CLBitField.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\Float16ToFloat32.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\MemoryBuffer.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\PackedEGLEnums_autogen.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\PackedEnums.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\PackedGLEnums_autogen.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\PoolAlloc.cpp">
+      <ObjectFileName>$(IntDir)/src/common/PoolAlloc.cpp.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\SimpleMutex.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\WorkerThread.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\aligned_memory.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\android_util.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\angleutils.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\sha1.cc" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\debug.cpp">
+      <ObjectFileName>$(IntDir)/src/common/debug.cpp.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\entry_points_enum_autogen.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\event_tracer.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\mathutil.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\matrix_utils.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\platform_helpers.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\string_utils.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\system_utils.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\tls.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\uniform_type_info_autogen.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\utilities.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\backtrace_utils_noop.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\system_utils_win.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\system_utils_win32.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\CompiledShaderState.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\DiagnosticsBase.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\DiagnosticsBase.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\DirectiveHandlerBase.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\DirectiveHandlerBase.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\DirectiveParser.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\DirectiveParser.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\ExpressionParser.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\Input.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\Input.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\Lexer.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\Lexer.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\Macro.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\Macro.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\MacroExpander.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\MacroExpander.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\Preprocessor.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\Preprocessor.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\SourceLocation.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\Token.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\Token.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\Tokenizer.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\numeric_lex.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\preprocessor_lex_autogen.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\preprocessor\preprocessor_tab_autogen.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\glsl\OutputGLSLBase.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\glsl\OutputGLSLBase.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\glsl\OutputESSL.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\glsl\OutputESSL.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\glsl\TranslatorESSL.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ImmutableString_autogen.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\SymbolTable_autogen.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\glsl\OutputGLSL.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\glsl\OutputGLSL.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\glsl\BuiltInFunctionEmulatorGLSL.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\glsl\BuiltInFunctionEmulatorGLSL.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\glsl\ExtensionGLSL.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\glsl\ExtensionGLSL.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\glsl\TranslatorGLSL.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\glsl\VersionGLSL.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\glsl\RegenerateStructNames.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\glsl\RewriteRepeatedAssignToSwizzled.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\glsl\UseInterfaceBlockFields.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\EGL\egl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\EGL\eglext.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\EGL\eglplatform.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\GLES2\gl2.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\GLES2\gl2ext.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\GLES2\gl2platform.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\GLES3\gl3.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\GLES3\gl31.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\GLES3\gl32.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\GLES3\gl3platform.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\KHR\khrplatform.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\include\angle_gl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\AsNode.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\BaseTypes.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\BaseTypes.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\BuiltInFunctionEmulator.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\BuiltInFunctionEmulator.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\CallDAG.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\CallDAG.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\CodeGen.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\CollectVariables.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\CollectVariables.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\Common.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\Compiler.cpp">
+      <ObjectFileName>$(IntDir)/src/compiler/translator/Compiler.cpp.obj</ObjectFileName>
+    </ClCompile>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\Compiler.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ConstantUnion.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ConstantUnion.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\Declarator.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\Declarator.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\Diagnostics.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\Diagnostics.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\DirectiveHandler.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\DirectiveHandler.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ExtensionBehavior.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ExtensionBehavior.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\FlagStd140Structs.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\FlagStd140Structs.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\FunctionLookup.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\FunctionLookup.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\HashNames.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\HashNames.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ImmutableString.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ImmutableStringBuilder.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ImmutableStringBuilder.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\InfoSink.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\InfoSink.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\Initialize.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\Initialize.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\InitializeGlobals.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\IntermNode.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\IntermNode.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\IntermRebuild.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\IntermRebuild.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\IsASTDepthBelowLimit.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\IsASTDepthBelowLimit.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\Name.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\Name.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\NodeType.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\Operator.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\Operator_autogen.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\OutputTree.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\OutputTree.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ParseContext.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ParseContext.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\PoolAlloc.cpp">
+      <ObjectFileName>$(IntDir)/src/compiler/translator/PoolAlloc.cpp.obj</ObjectFileName>
+    </ClCompile>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\PoolAlloc.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\Pragma.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\QualifierTypes.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\QualifierTypes.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\Severity.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ShaderLang.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ShaderVars.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\SizeClipCullDistance.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\SizeClipCullDistance.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\StaticType.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\Symbol.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\Symbol.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\SymbolTable.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\SymbolTable.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\SymbolTable_autogen.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\SymbolUniqueId.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\SymbolUniqueId.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\Types.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\Types.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ValidateAST.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ValidateAST.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ValidateGlobalInitializer.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ValidateGlobalInitializer.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ValidateOutputs.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ValidateOutputs.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ValidateTypeSizeLimitations.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ValidateTypeSizeLimitations.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ValidateVaryingLocations.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\ValidateVaryingLocations.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\VariablePacker.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\VariablePacker.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\blocklayout.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\glsl\TranslatorESSL.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\glsl\TranslatorGLSL.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\glsl\VersionGLSL.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\glslang.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\glslang_lex_autogen.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\glslang_tab_autogen.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\glslang_tab_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\hlsl\TranslatorHLSL.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\length_limits.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\msl\DriverUniformMetal.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\msl\TranslatorMSL.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\null\TranslatorNULL.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\spirv\TranslatorSPIRV.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\ClampFragDepth.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\ClampFragDepth.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\ClampIndirectIndices.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\ClampIndirectIndices.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\ClampPointSize.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\ClampPointSize.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\DeclareAndInitBuiltinsForInstancedMultiview.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\DeclareAndInitBuiltinsForInstancedMultiview.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\DeclarePerVertexBlocks.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\DeclarePerVertexBlocks.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\DeferGlobalInitializers.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\DeferGlobalInitializers.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\EmulateGLFragColorBroadcast.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\EmulateGLFragColorBroadcast.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\EmulateMultiDrawShaderBuiltins.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\EmulateMultiDrawShaderBuiltins.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\FoldExpressions.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\FoldExpressions.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\ForcePrecisionQualifier.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\ForcePrecisionQualifier.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\GatherDefaultUniforms.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\GatherDefaultUniforms.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\InitializeVariables.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\InitializeVariables.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\MonomorphizeUnsupportedFunctions.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\MonomorphizeUnsupportedFunctions.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\PreTransformTextureCubeGradDerivatives.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\PreTransformTextureCubeGradDerivatives.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\PruneEmptyCases.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\PruneEmptyCases.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\PruneNoOps.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\PruneNoOps.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RecordConstantPrecision.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RecordConstantPrecision.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\ReduceInterfaceBlocks.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\ReduceInterfaceBlocks.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RemoveArrayLengthMethod.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RemoveArrayLengthMethod.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RemoveAtomicCounterBuiltins.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RemoveAtomicCounterBuiltins.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RemoveDynamicIndexing.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RemoveDynamicIndexing.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RemoveInactiveInterfaceVariables.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RemoveInactiveInterfaceVariables.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RemoveInvariantDeclaration.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RemoveInvariantDeclaration.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RemoveUnreferencedVariables.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RemoveUnreferencedVariables.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RemoveUnusedFramebufferFetch.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RemoveUnusedFramebufferFetch.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RescopeGlobalVariables.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RescopeGlobalVariables.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RewriteArrayOfArrayOfOpaqueUniforms.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RewriteArrayOfArrayOfOpaqueUniforms.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RewriteAtomicCounters.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RewriteAtomicCounters.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RewriteDfdy.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RewriteDfdy.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RewritePixelLocalStorage.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RewritePixelLocalStorage.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RewriteStructSamplers.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RewriteStructSamplers.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RewriteTexelFetchOffset.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\RewriteTexelFetchOffset.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\ScalarizeVecAndMatConstructorArgs.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\ScalarizeVecAndMatConstructorArgs.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\SeparateDeclarations.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\SeparateDeclarations.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\SeparateStructFromUniformDeclarations.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\SeparateStructFromUniformDeclarations.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\SimplifyLoopConditions.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\SimplifyLoopConditions.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\SplitSequenceOperator.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\SplitSequenceOperator.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\glsl\RegenerateStructNames.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\glsl\RewriteRepeatedAssignToSwizzled.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\glsl\UseInterfaceBlockFields.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\glsl\apple\AddAndTrueToLoopCondition.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\glsl\apple\RewriteRowMajorMatrices.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\glsl\apple\UnfoldShortCircuitAST.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_ops\msl\EnsureLoopForwardProgress.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\BuiltIn.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\BuiltIn_autogen.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\DriverUniform.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\DriverUniform.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\FindFunction.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\FindFunction.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\FindMain.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\FindMain.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\FindPreciseNodes.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\FindPreciseNodes.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\FindSymbolNode.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\FindSymbolNode.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\IntermNodePatternMatcher.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\IntermNodePatternMatcher.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\IntermNode_util.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\IntermNode_util.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\IntermTraverse.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\IntermTraverse.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\NodeSearch.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\ReplaceArrayOfMatrixVarying.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\ReplaceArrayOfMatrixVarying.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\ReplaceClipCullDistanceVariable.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\ReplaceClipCullDistanceVariable.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\ReplaceShadowingVariables.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\ReplaceShadowingVariables.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\ReplaceVariable.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\ReplaceVariable.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\RewriteSampleMaskVariable.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\RewriteSampleMaskVariable.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\RunAtTheBeginningOfShader.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\RunAtTheBeginningOfShader.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\RunAtTheEndOfShader.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\RunAtTheEndOfShader.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\SpecializationConstant.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\SpecializationConstant.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\tree_util\Visit.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\util.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\util.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\compiler\translator\wgsl\TranslatorWGSL.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\angle_version_info.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\capture\FrameCapture_mock.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\capture\serialize_mock.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\dxgi_format_map.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\dxgi_format_map_autogen.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\dxgi_support_table.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\dxgi_support_table_autogen.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\d3d_format.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\d3d_format.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\AttributeMap.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\BlobCache.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Buffer.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Caps.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Compiler.cpp">
+      <ObjectFileName>$(IntDir)/src/libANGLE/Compiler.cpp.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Config.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Context.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\ContextMutex.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Context_gles_1_0.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Debug.cpp">
+      <ObjectFileName>$(IntDir)/src/libANGLE/Debug.cpp.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Device.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Display.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\EGLSync.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Error.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Fence.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Framebuffer.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\FramebufferAttachment.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\GLES1Renderer.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\GLES1State.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\GlobalMutex.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\HandleAllocator.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Image.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\ImageIndex.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\IndexRangeCache.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\LoggingAnnotator.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\MemoryObject.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\MemoryProgramCache.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\MemoryShaderCache.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Observer.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Overlay.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\OverlayWidgets.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Overlay_autogen.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Overlay_font_autogen.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\PixelLocalStorage.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Platform.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Program.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\ProgramExecutable.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\ProgramLinkedResources.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\ProgramPipeline.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Query.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Renderbuffer.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\ResourceManager.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Sampler.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Semaphore.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Shader.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\ShareGroup.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\State.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Stream.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Surface.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Texture.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Thread.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\TransformFeedback.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Uniform.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\VaryingPacking.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\VertexArray.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\VertexAttribute.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\angletypes.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\es3_copy_conversion_table_autogen.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\format_map_autogen.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\formatutils.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\gles_extensions_autogen.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\queryconversions.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\queryutils.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\BufferImpl.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\ContextImpl.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\DeviceImpl.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\DisplayImpl.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\EGLReusableSync.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\EGLSyncImpl.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\Format_table_autogen.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\FramebufferImpl.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\ImageImpl.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\ProgramImpl.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\ProgramPipelineImpl.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\QueryImpl.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\RenderbufferImpl.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\ShaderImpl.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\SurfaceImpl.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\TextureImpl.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\TransformFeedbackImpl.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\VertexArrayImpl.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\driver_utils.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\load_functions_table_autogen.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\renderer_utils.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationEGL.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationES.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationES1.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationES2.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationES3.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationES31.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationES32.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationESEXT.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\frame_capture_binary_data.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\frame_capture_utils.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\frame_capture_utils_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\gl_enum_utils.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\gl_enum_utils_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\capture\FrameCapture.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\capture\capture_cl_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\capture\capture_egl_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\capture\capture_gles_1_0_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\capture\capture_gles_2_0_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\capture\capture_gles_3_0_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\capture\capture_gles_3_1_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\capture\capture_gles_3_2_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\capture\capture_gles_ext_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\capture\serialize.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\AttributeMap.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\BlobCache.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Buffer.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Caps.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\CLRefPointer.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Compiler.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Config.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Constants.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Context.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Context.inl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Context_gles_1_0_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Context_gles_2_0_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Context_gles_3_0_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Context_gles_3_1_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Context_gles_3_2_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Context_gles_ext_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Debug.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Device.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Display.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\EGLSync.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Error.h" />
+    <None Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Error.inc">
+    </None>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\ErrorStrings.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Fence.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Framebuffer.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\FramebufferAttachment.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\GLES1Renderer.h" />
+    <None Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\GLES1Shaders.inc">
+    </None>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\GLES1State.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\GlobalMutex.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\HandleAllocator.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Image.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\ImageIndex.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\IndexRangeCache.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\InfoLog.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\LoggingAnnotator.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\MemoryObject.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\MemoryProgramCache.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\MemoryShaderCache.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Observer.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Overlay.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\OverlayWidgets.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Overlay_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Overlay_font_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\PixelLocalStorage.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Program.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\ProgramExecutable.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\ProgramLinkedResources.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\ProgramPipeline.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Query.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\RefCountObject.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Renderbuffer.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\ResourceManager.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\ResourceMap.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Sampler.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Semaphore.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Shader.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\ShareGroup.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\ContextMutex.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\SizedMRUCache.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\State.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Stream.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Surface.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Texture.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Thread.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\TransformFeedback.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Uniform.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\VaryingPacking.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\Version.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\VertexArray.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\VertexAttribute.h" />
+    <None Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\VertexAttribute.inc">
+    </None>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\angletypes.h" />
+    <None Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\angletypes.inc">
+    </None>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\cl_types.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\context_private_call.inl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\context_private_call_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\entry_points_utils.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\features.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\formatutils.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\gles_extensions_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\histogram_macros.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\queryconversions.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\queryutils.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\trace.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\BufferImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\CompilerImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\ContextImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\driver_utils.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\DeviceImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\DisplayImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\EGLImplFactory.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\EGLReusableSync.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\EGLSyncImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\FenceNVImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\FormatID_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\Format.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\FramebufferAttachmentObjectImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\FramebufferImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\GLImplFactory.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\gl\functionsgl_enums.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\ImageImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\MemoryObjectImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\OverlayImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\ProgramImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\ProgramExecutableImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\ProgramPipelineImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\QueryImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\RenderbufferImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\RenderTargetCache.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\SamplerImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\SemaphoreImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\ShaderImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\ShareGroupImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\StreamProducerImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\SurfaceImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\SyncImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\TextureImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\TransformFeedbackImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\VertexArrayImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\vulkan\DisplayVk_api.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\copyvertex.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\copyvertex.inc.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\load_functions_table.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\renderer_utils.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\serial_utils.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationEGL.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationEGL_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationES.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationES1.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationES1_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationES2.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationES2_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationES3.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationES31.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationES31_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationES32.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationES32_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationES3_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationESEXT.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\validationESEXT_autogen.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\base\anglebase\trace_event\trace_event.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\CLPlatform.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\CLPlatformImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\CLObject.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\CLContextImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\CLDeviceImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\CLExtensions.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\CLCommandQueueImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\CLEventImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\CLMemoryImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\CLProgramImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\CLSamplerImpl.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\libANGLE\renderer\CLKernelImpl.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\image_util\copyimage.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\image_util\imageformats.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\image_util\loadimage.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\image_util\loadimage_astc.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\image_util\loadimage_etc.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\image_util\loadimage_paletted.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\image_util\storeimage_paletted.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\image_util\AstcDecompressorNoOp.cpp" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\image_util\AstcDecompressor.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\image_util\copyimage.h" />
+    <None Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\image_util\copyimage.inc">
+    </None>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\image_util\generatemip.h" />
+    <None Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\image_util\generatemip.inc">
+    </None>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\image_util\imageformats.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\image_util\loadimage.h" />
+    <None Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\image_util\loadimage.inc">
+    </None>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\image_util\storeimage.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash\xxhash.c" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\src\common\third_party\xxhash\xxhash.h" />
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google\compression_utils_portable.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\ThirdParty\ANGLE\third_party\zlib\google\compression_utils_portable.cc" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\ZERO_CHECK.vcxproj">
+      <Project>{8AEDA3F9-554F-3BC4-B70A-0E1A01F04A21}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

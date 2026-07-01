@@ -1,0 +1,8 @@
+#include "rendering/RenderText.cpp"
+#include "rendering/RenderTextControl.cpp"
+#include "rendering/RenderTextControlMultiLine.cpp"
+#include "rendering/RenderTextControlSingleLine.cpp"
+#include "rendering/RenderTextFragment.cpp"
+#include "rendering/RenderTextLineBoxes.cpp"
+#include "rendering/RenderTheme.cpp"
+#include "rendering/RenderTreeAsText.cpp"

@@ -1,0 +1,8 @@
+#include "css/values/motion/CSSRayFunction.cpp"
+#include "css/values/primitives/CSSPosition.cpp"
+#include "css/values/primitives/CSSPrimitiveNumericCategory.cpp"
+#include "css/values/primitives/CSSPrimitiveNumericTypes+Canonicalization.cpp"
+#include "css/values/primitives/CSSPrimitiveNumericTypes+ComputedStyleDependencies.cpp"
+#include "css/values/primitives/CSSPrimitiveNumericTypes+Serialization.cpp"
+#include "css/values/primitives/CSSPrimitiveNumericTypes+SymbolReplacement.cpp"
+#include "css/values/primitives/CSSPrimitiveNumericUnits.cpp"

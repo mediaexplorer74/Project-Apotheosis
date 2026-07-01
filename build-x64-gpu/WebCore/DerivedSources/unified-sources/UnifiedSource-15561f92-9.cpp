@@ -1,0 +1,8 @@
+#include "Modules/WebGPU/Implementation/WebGPUTextureViewImpl.cpp"
+#include "Modules/WebGPU/Implementation/WebGPUXRBindingImpl.cpp"
+#include "Modules/WebGPU/Implementation/WebGPUXRProjectionLayerImpl.cpp"
+#include "Modules/WebGPU/Implementation/WebGPUXRSubImageImpl.cpp"
+#include "Modules/WebGPU/Implementation/WebGPUXRViewImpl.cpp"
+#include "Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.cpp"
+#include "Modules/applicationmanifest/ApplicationManifestParser.cpp"
+#include "Modules/async-clipboard/Clipboard.cpp"

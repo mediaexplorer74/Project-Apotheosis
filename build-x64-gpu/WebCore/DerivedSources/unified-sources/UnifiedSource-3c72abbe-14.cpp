@@ -1,0 +1,8 @@
+#include "platform/animation/TimingFunction.cpp"
+#include "platform/animation/values/AcceleratedEffectOffsetAnchor.cpp"
+#include "platform/animation/values/AcceleratedEffectOffsetDistance.cpp"
+#include "platform/animation/values/AcceleratedEffectOffsetPosition.cpp"
+#include "platform/animation/values/AcceleratedEffectOffsetRotate.cpp"
+#include "platform/animation/values/AcceleratedEffectOpacity.cpp"
+#include "platform/animation/values/AcceleratedEffectTransformOrigin.cpp"
+#include "platform/audio/AudioBus.cpp"

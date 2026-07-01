@@ -1,0 +1,8 @@
+#include "jit/ICStats.cpp"
+#include "jit/JIT.cpp"
+#include "jit/JITAddGenerator.cpp"
+#include "jit/JITArithmetic.cpp"
+#include "jit/JITBitAndGenerator.cpp"
+#include "jit/JITBitOrGenerator.cpp"
+#include "jit/JITBitXorGenerator.cpp"
+#include "jit/JITCall.cpp"

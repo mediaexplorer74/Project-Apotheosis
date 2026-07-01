@@ -1,0 +1,8 @@
+#include "dom/DeviceMotionData.cpp"
+#include "dom/DeviceMotionEvent.cpp"
+#include "dom/DeviceOrientationAndMotionAccessController.cpp"
+#include "dom/DeviceOrientationController.cpp"
+#include "dom/DeviceOrientationData.cpp"
+#include "dom/DeviceOrientationEvent.cpp"
+#include "dom/Document.cpp"
+#include "dom/DocumentFontLoader.cpp"

@@ -1,0 +1,6 @@
+#include "contentextensions/DFAMinimizer.cpp"
+#include "contentextensions/DFANode.cpp"
+#include "contentextensions/NFA.cpp"
+#include "contentextensions/NFAToDFA.cpp"
+#include "contentextensions/SerializedNFA.cpp"
+#include "contentextensions/URLFilterParser.cpp"

@@ -1,0 +1,8 @@
+#include "loader/cache/CachedFont.cpp"
+#include "loader/cache/CachedImage.cpp"
+#include "loader/cache/CachedImageClient.cpp"
+#include "loader/cache/CachedRawResource.cpp"
+#include "loader/cache/CachedResource.cpp"
+#include "loader/cache/CachedResourceClient.cpp"
+#include "loader/cache/CachedResourceHandle.cpp"
+#include "loader/cache/CachedResourceLoader.cpp"

@@ -1,0 +1,8 @@
+#include "JSGPUPrimitiveTopology.cpp"
+#include "JSGPUProgrammablePassEncoder.cpp"
+#include "JSGPUProgrammableStage.cpp"
+#include "JSGPUQuerySet.cpp"
+#include "JSGPUQuerySetDescriptor.cpp"
+#include "JSGPUQueryType.cpp"
+#include "JSGPUQueue.cpp"
+#include "JSGPUQueueDescriptor.cpp"

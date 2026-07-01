@@ -1,0 +1,8 @@
+#include "svg/SVGPathAbsoluteConverter.cpp"
+#include "svg/SVGPathBlender.cpp"
+#include "svg/SVGPathBuilder.cpp"
+#include "svg/SVGPathByteStreamBuilder.cpp"
+#include "svg/SVGPathByteStreamSource.cpp"
+#include "svg/SVGPathElement.cpp"
+#include "svg/SVGPathParser.cpp"
+#include "svg/SVGPathSegListBuilder.cpp"

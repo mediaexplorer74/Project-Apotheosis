@@ -1,0 +1,8 @@
+#include "JSPerformanceObserverEntryList.cpp"
+#include "JSPerformancePaintTiming.cpp"
+#include "JSPerformanceResourceTiming.cpp"
+#include "JSPerformanceServerTiming.cpp"
+#include "JSPerformanceTiming.cpp"
+#include "JSPeriodicWave.cpp"
+#include "JSPeriodicWaveConstraints.cpp"
+#include "JSPeriodicWaveOptions.cpp"

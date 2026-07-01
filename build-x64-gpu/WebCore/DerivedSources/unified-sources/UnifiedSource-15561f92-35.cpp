@@ -1,0 +1,8 @@
+#include "Modules/mediastream/STUNMessageParsing.cpp"
+#include "Modules/mediastream/UserMediaController.cpp"
+#include "Modules/mediastream/UserMediaRequest.cpp"
+#include "Modules/mediastream/VideoTrackGenerator.cpp"
+#include "Modules/model-element/HTMLModelElement.cpp"
+#include "Modules/model-element/LazyLoadModelObserver.cpp"
+#include "Modules/model-element/ModelPlayer.cpp"
+#include "Modules/model-element/ModelPlayerAnimationState.cpp"

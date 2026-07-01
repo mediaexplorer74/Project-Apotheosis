@@ -1,0 +1,8 @@
+#include "platform/mock/MockRealtimeMediaSourceCenter.cpp"
+#include "platform/mock/MockRealtimeVideoSource.cpp"
+#include "platform/mock/PlatformSpeechSynthesizerMock.cpp"
+#include "platform/mock/RTCDataChannelHandlerMock.cpp"
+#include "platform/mock/RTCNotifiersMock.cpp"
+#include "platform/mock/ScrollbarThemeMock.cpp"
+#include "platform/mock/ScrollbarsControllerMock.cpp"
+#include "platform/mock/mediasource/MockBox.cpp"

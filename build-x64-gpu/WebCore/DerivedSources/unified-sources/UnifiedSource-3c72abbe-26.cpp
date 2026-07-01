@@ -1,0 +1,8 @@
+#include "platform/graphics/FloatPointGraph.cpp"
+#include "platform/graphics/FloatPolygon.cpp"
+#include "platform/graphics/FloatQuad.cpp"
+#include "platform/graphics/FloatRect.cpp"
+#include "platform/graphics/FloatRoundedRect.cpp"
+#include "platform/graphics/FloatSegment.cpp"
+#include "platform/graphics/FloatSize.cpp"
+#include "platform/graphics/Font.cpp"

@@ -1,0 +1,8 @@
+#include "loader/ApplicationManifestLoader.cpp"
+#include "loader/AttributionTriggerData.cpp"
+#include "loader/COEPInheritenceViolationReportBody.cpp"
+#include "loader/CORPViolationReportBody.cpp"
+#include "loader/CanvasActivityRecord.cpp"
+#include "loader/ContentFilter.cpp"
+#include "loader/CookieJar.cpp"
+#include "loader/CrossOriginAccessControl.cpp"

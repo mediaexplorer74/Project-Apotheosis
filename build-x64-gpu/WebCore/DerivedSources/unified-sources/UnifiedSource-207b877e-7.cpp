@@ -1,0 +1,8 @@
+#include "layout/formattingContexts/inline/display/InlineDisplayContent.cpp"
+#include "layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp"
+#include "layout/formattingContexts/inline/display/InlineDisplayLineBuilder.cpp"
+#include "layout/formattingContexts/inline/invalidation/InlineInvalidation.cpp"
+#include "layout/formattingContexts/inline/ruby/RubyFormattingContext.cpp"
+#include "layout/formattingContexts/inline/text/TextBreakingPositionCache.cpp"
+#include "layout/formattingContexts/inline/text/TextUtil.cpp"
+#include "layout/formattingContexts/table/TableFormattingContext.cpp"

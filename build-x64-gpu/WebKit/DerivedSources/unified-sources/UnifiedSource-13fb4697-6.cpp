@@ -1,0 +1,8 @@
+#include "GPUProcess/graphics/WebGPU/RemoteQueue.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteRenderBundle.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteRenderBundleEncoder.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteRenderPassEncoder.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteRenderPipeline.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteSampler.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteShaderModule.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteTexture.cpp"

@@ -1,0 +1,8 @@
+#include "WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp"
+#include "WebProcess/GPU/graphics/RemoteGraphicsContextGLProxyFunctionsGenerated.cpp"
+#include "WebProcess/GPU/graphics/RemoteGraphicsContextProxy.cpp"
+#include "WebProcess/GPU/graphics/RemoteImageBufferProxy.cpp"
+#include "WebProcess/GPU/graphics/RemoteImageBufferSetProxy.cpp"
+#include "WebProcess/GPU/graphics/RemoteNativeImageProxy.cpp"
+#include "WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp"
+#include "WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp"

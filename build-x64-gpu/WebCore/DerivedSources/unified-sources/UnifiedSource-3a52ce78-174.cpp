@@ -1,0 +1,8 @@
+#include "JSWebCodecsAlphaOption.cpp"
+#include "JSWebCodecsAudioData.cpp"
+#include "JSWebCodecsAudioDataOutputCallback.cpp"
+#include "JSWebCodecsAudioDecoder.cpp"
+#include "JSWebCodecsAudioDecoderConfig.cpp"
+#include "JSWebCodecsAudioDecoderSupport.cpp"
+#include "JSWebCodecsAudioEncoder.cpp"
+#include "JSWebCodecsAudioEncoderConfig.cpp"

@@ -1,0 +1,8 @@
+#include "dom/InternalObserverTake.cpp"
+#include "dom/KeyboardEvent.cpp"
+#include "dom/LiveNodeList.cpp"
+#include "dom/LoadableClassicScript.cpp"
+#include "dom/LoadableModuleScript.cpp"
+#include "dom/LoadableScript.cpp"
+#include "dom/LoadableSpeculationRules.cpp"
+#include "dom/MessageChannel.cpp"

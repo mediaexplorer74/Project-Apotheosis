@@ -1,0 +1,8 @@
+#include "JSSVGFilterPrimitiveStandardAttributes.cpp"
+#include "JSSVGFitToViewBox.cpp"
+#include "JSSVGForeignObjectElement.cpp"
+#include "JSSVGGElement.cpp"
+#include "JSSVGGeometryElement.cpp"
+#include "JSSVGGradientElement.cpp"
+#include "JSSVGGraphicsElement.cpp"
+#include "JSSVGImageElement.cpp"

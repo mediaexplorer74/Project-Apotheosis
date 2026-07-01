@@ -1,0 +1,8 @@
+#include "rendering/RenderImageResourceStyleImage.cpp"
+#include "rendering/RenderInline.cpp"
+#include "rendering/RenderLayer.cpp"
+#include "rendering/RenderLayerBacking.cpp"
+#include "rendering/RenderLayerCompositor.cpp"
+#include "rendering/RenderLayerFilters.cpp"
+#include "rendering/RenderLayerModelObject.cpp"
+#include "rendering/RenderLayerScrollableArea.cpp"

@@ -1,0 +1,8 @@
+#include "html/track/TrackBase.cpp"
+#include "html/track/TrackEvent.cpp"
+#include "html/track/TrackListBase.cpp"
+#include "html/track/VTTCue.cpp"
+#include "html/track/VTTRegion.cpp"
+#include "html/track/VTTRegionList.cpp"
+#include "html/track/VTTScanner.cpp"
+#include "html/track/VideoTrack.cpp"

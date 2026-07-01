@@ -1,0 +1,8 @@
+#include "html/shadow/DateTimeFieldElements.cpp"
+#include "html/shadow/DateTimeNumericFieldElement.cpp"
+#include "html/shadow/DateTimeSymbolicFieldElement.cpp"
+#include "html/shadow/MediaControlTextTrackContainerElement.cpp"
+#include "html/shadow/ProgressShadowElement.cpp"
+#include "html/shadow/SliderThumbElement.cpp"
+#include "html/shadow/SpinButtonElement.cpp"
+#include "html/shadow/TextControlInnerElements.cpp"

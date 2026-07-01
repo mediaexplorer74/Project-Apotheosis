@@ -1,0 +1,8 @@
+#include "Modules/url-pattern/URLPatternComponent.cpp"
+#include "Modules/url-pattern/URLPatternConstructorStringParser.cpp"
+#include "Modules/url-pattern/URLPatternParser.cpp"
+#include "Modules/url-pattern/URLPatternTokenizer.cpp"
+#include "Modules/web-locks/WebLock.cpp"
+#include "Modules/web-locks/WebLockManager.cpp"
+#include "Modules/web-locks/WebLockRegistry.cpp"
+#include "Modules/webaudio/AnalyserNode.cpp"

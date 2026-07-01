@@ -1,0 +1,8 @@
+#include "rendering/svg/legacy/LegacyRenderSVGResourceFilterPrimitive.cpp"
+#include "rendering/svg/legacy/LegacyRenderSVGResourceGradient.cpp"
+#include "rendering/svg/legacy/LegacyRenderSVGResourceLinearGradient.cpp"
+#include "rendering/svg/legacy/LegacyRenderSVGResourceMarker.cpp"
+#include "rendering/svg/legacy/LegacyRenderSVGResourceMasker.cpp"
+#include "rendering/svg/legacy/LegacyRenderSVGResourcePattern.cpp"
+#include "rendering/svg/legacy/LegacyRenderSVGResourceRadialGradient.cpp"
+#include "rendering/svg/legacy/LegacyRenderSVGResourceSolidColor.cpp"

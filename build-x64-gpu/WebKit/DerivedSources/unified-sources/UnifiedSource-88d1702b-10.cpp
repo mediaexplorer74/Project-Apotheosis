@@ -1,0 +1,8 @@
+#include "UIProcess/WebPageInjectedBundleClient.cpp"
+#include "UIProcess/WebPageProxy.cpp"
+#include "UIProcess/WebPageProxyMessageReceiverRegistration.cpp"
+#include "UIProcess/WebPageProxyTesting.cpp"
+#include "UIProcess/WebPasteboardProxy.cpp"
+#include "UIProcess/WebPermissionControllerProxy.cpp"
+#include "UIProcess/WebPreferences.cpp"
+#include "UIProcess/WebProcessActivityState.cpp"

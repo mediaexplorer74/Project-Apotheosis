@@ -1,0 +1,8 @@
+#include "UIProcess/API/C/WKFrameHandleRef.cpp"
+#include "UIProcess/API/C/WKFrameInfoRef.cpp"
+#include "UIProcess/API/C/WKFramePolicyListener.cpp"
+#include "UIProcess/API/C/WKGeolocationManager.cpp"
+#include "UIProcess/API/C/WKGeolocationPermissionRequest.cpp"
+#include "UIProcess/API/C/WKGeolocationPosition.cpp"
+#include "UIProcess/API/C/WKHTTPCookieStoreRef.cpp"
+#include "UIProcess/API/C/WKHitTestResult.cpp"

@@ -1,0 +1,8 @@
+#include "style/values/filter-effects/StyleOpacityFunction.cpp"
+#include "style/values/filter-effects/StyleSaturateFunction.cpp"
+#include "style/values/filter-effects/StyleSepiaFunction.cpp"
+#include "style/values/flexbox/StyleFlexBasis.cpp"
+#include "style/values/fonts/StyleFontFamily.cpp"
+#include "style/values/fonts/StyleFontFamilyName.cpp"
+#include "style/values/fonts/StyleFontFeatureSettings.cpp"
+#include "style/values/fonts/StyleFontPalette.cpp"

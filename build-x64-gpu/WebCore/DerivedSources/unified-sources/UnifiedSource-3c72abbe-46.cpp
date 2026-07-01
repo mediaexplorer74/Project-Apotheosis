@@ -1,0 +1,8 @@
+#include "platform/graphics/filters/FilterOperations.cpp"
+#include "platform/graphics/filters/FilterRenderingMode.cpp"
+#include "platform/graphics/filters/FilterResults.cpp"
+#include "platform/graphics/filters/PointLightSource.cpp"
+#include "platform/graphics/filters/SourceAlpha.cpp"
+#include "platform/graphics/filters/SourceGraphic.cpp"
+#include "platform/graphics/filters/SpotLightSource.cpp"
+#include "platform/graphics/filters/software/FEBlendSoftwareApplier.cpp"

@@ -1,0 +1,8 @@
+#include "JSUnknownCredentialOptions.cpp"
+#include "JSUserActivation.cpp"
+#include "JSUserMessageHandler.cpp"
+#include "JSUserMessageHandlersNamespace.cpp"
+#include "JSUserVerificationRequirement.cpp"
+#include "JSVTTCue.cpp"
+#include "JSVTTRegion.cpp"
+#include "JSVTTRegionList.cpp"

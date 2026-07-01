@@ -1,0 +1,8 @@
+#include "JSWebTransportDatagramsWritable.cpp"
+#include "JSWebTransportError.cpp"
+#include "JSWebTransportErrorOptions.cpp"
+#include "JSWebTransportErrorSource.cpp"
+#include "JSWebTransportHash.cpp"
+#include "JSWebTransportOptions.cpp"
+#include "JSWebTransportReceiveStream.cpp"
+#include "JSWebTransportReceiveStreamStats.cpp"

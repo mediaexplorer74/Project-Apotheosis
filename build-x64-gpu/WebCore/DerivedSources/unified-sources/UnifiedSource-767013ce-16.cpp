@@ -1,0 +1,8 @@
+#include "page/UserContentProvider.cpp"
+#include "page/UserContentURLPattern.cpp"
+#include "page/UserScript.cpp"
+#include "page/UserStyleSheet.cpp"
+#include "page/VisitedLinkStore.cpp"
+#include "page/VisualViewport.cpp"
+#include "page/WebKitBuffer.cpp"
+#include "page/WebKitBufferNamespace.cpp"

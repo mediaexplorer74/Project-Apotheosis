@@ -1,0 +1,8 @@
+#include "ftl/FTLAvailableRecovery.cpp"
+#include "ftl/FTLCapabilities.cpp"
+#include "ftl/FTLCommonValues.cpp"
+#include "ftl/FTLCompile.cpp"
+#include "ftl/FTLExceptionTarget.cpp"
+#include "ftl/FTLExitArgument.cpp"
+#include "ftl/FTLExitArgumentForOperand.cpp"
+#include "ftl/FTLExitPropertyValue.cpp"

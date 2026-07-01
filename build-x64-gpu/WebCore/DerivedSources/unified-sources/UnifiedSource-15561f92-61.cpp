@@ -1,0 +1,8 @@
+#include "Modules/webdatabase/SQLTransactionBackend.cpp"
+#include "Modules/webdatabase/SQLTransactionCoordinator.cpp"
+#include "Modules/webdatabase/SQLTransactionStateMachine.cpp"
+#include "Modules/webdriver/NavigatorWebDriver.cpp"
+#include "Modules/websockets/CloseEvent.cpp"
+#include "Modules/websockets/ThreadableWebSocketChannel.cpp"
+#include "Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp"
+#include "Modules/websockets/WebSocket.cpp"

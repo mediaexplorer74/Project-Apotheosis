@@ -1,0 +1,8 @@
+#include "WebProcess/GPU/graphics/RemoteSnapshotRecorderProxy.cpp"
+#include "WebProcess/GPU/graphics/Model/ModelDowncastConvertToBackingContext.cpp"
+#include "WebProcess/GPU/graphics/Model/RemoteDDMeshProxy.cpp"
+#include "WebProcess/GPU/graphics/WebGPU/RemoteAdapterProxy.cpp"
+#include "WebProcess/GPU/graphics/WebGPU/RemoteBindGroupLayoutProxy.cpp"
+#include "WebProcess/GPU/graphics/WebGPU/RemoteBindGroupProxy.cpp"
+#include "WebProcess/GPU/graphics/WebGPU/RemoteBufferProxy.cpp"
+#include "WebProcess/GPU/graphics/WebGPU/RemoteCommandBufferProxy.cpp"

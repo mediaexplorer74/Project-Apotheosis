@@ -1,0 +1,8 @@
+#include "UIProcess/EnhancedSecurityTracking.cpp"
+#include "UIProcess/FindStringCallbackAggregator.cpp"
+#include "UIProcess/FindTextMatchesCallbackAggregator.cpp"
+#include "UIProcess/FrameLoadState.cpp"
+#include "UIProcess/FrameProcess.cpp"
+#include "UIProcess/GeolocationPermissionRequestManagerProxy.cpp"
+#include "UIProcess/GeolocationPermissionRequestProxy.cpp"
+#include "UIProcess/LegacyGlobalSettings.cpp"

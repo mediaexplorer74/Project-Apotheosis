@@ -1,0 +1,8 @@
+#include "UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.cpp"
+#include "UIProcess/API/C/WKWebsiteDataStoreRef.cpp"
+#include "UIProcess/API/C/WKWebsitePolicies.cpp"
+#include "UIProcess/API/C/WKWindowFeaturesRef.cpp"
+#include "UIProcess/Authentication/AuthenticationChallengeProxy.cpp"
+#include "UIProcess/Authentication/AuthenticationDecisionListener.cpp"
+#include "UIProcess/Authentication/WebCredential.cpp"
+#include "UIProcess/Authentication/WebProtectionSpace.cpp"

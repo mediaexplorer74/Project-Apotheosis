@@ -1,0 +1,8 @@
+#include "JSMediaEncodingType.cpp"
+#include "JSMediaEncryptedEvent.cpp"
+#include "JSMediaError.cpp"
+#include "JSMediaImage.cpp"
+#include "JSMediaKeyEncryptionScheme.cpp"
+#include "JSMediaKeyMessageEvent.cpp"
+#include "JSMediaKeyMessageEventInit.cpp"
+#include "JSMediaKeyMessageType.cpp"

@@ -1,0 +1,8 @@
+#include "JSPaymentDetailsUpdate.cpp"
+#include "JSPaymentItem.cpp"
+#include "JSPaymentMethodChangeEvent.cpp"
+#include "JSPaymentMethodData.cpp"
+#include "JSPaymentOptions.cpp"
+#include "JSPaymentRequest.cpp"
+#include "JSPaymentRequestUpdateEvent.cpp"
+#include "JSPaymentRequestUpdateEventInit.cpp"

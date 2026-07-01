@@ -1,0 +1,8 @@
+#include "rendering/RenderFrameSet.cpp"
+#include "rendering/RenderGeometryMap.cpp"
+#include "rendering/RenderGrid.cpp"
+#include "rendering/RenderHTMLCanvas.cpp"
+#include "rendering/RenderHighlight.cpp"
+#include "rendering/RenderIFrame.cpp"
+#include "rendering/RenderImage.cpp"
+#include "rendering/RenderImageResource.cpp"

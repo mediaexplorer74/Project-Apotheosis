@@ -1,0 +1,8 @@
+#include "loader/cache/CachedResourceRequest.cpp"
+#include "loader/cache/CachedResourceRequestInitiatorTypes.cpp"
+#include "loader/cache/CachedSVGDocument.cpp"
+#include "loader/cache/CachedSVGDocumentReference.cpp"
+#include "loader/cache/CachedSVGFont.cpp"
+#include "loader/cache/CachedScript.cpp"
+#include "loader/cache/CachedTextTrack.cpp"
+#include "loader/cache/CachedXSLStyleSheet.cpp"

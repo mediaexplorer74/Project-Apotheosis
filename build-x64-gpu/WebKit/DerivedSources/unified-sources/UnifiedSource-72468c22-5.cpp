@@ -1,0 +1,8 @@
+#include "NetworkProcess/Downloads/PendingDownload.cpp"
+#include "NetworkProcess/Notifications/NetworkNotificationManager.cpp"
+#include "NetworkProcess/Notifications/WebPushDaemonConnection.cpp"
+#include "NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementClientImpl.cpp"
+#include "NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementConnection.cpp"
+#include "NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDaemonClient.cpp"
+#include "NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp"
+#include "NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDebugInfo.cpp"

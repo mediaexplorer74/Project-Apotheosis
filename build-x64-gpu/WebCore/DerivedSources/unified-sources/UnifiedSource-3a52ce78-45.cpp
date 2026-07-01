@@ -1,0 +1,8 @@
+#include "JSDigitalCredentialRequestOptions.cpp"
+#include "JSDistanceModelType.cpp"
+#include "JSDocument.cpp"
+#include "JSDocumentAndElementEventHandlers.cpp"
+#include "JSDocumentFragment.cpp"
+#include "JSDocumentOrShadowRoot.cpp"
+#include "JSDocumentTimeline.cpp"
+#include "JSDocumentTimelineOptions.cpp"

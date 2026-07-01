@@ -1,0 +1,8 @@
+#include "xml/XPathNodeSet.cpp"
+#include "xml/XPathParser.cpp"
+#include "xml/XPathPath.cpp"
+#include "xml/XPathPredicate.cpp"
+#include "xml/XPathResult.cpp"
+#include "xml/XPathStep.cpp"
+#include "xml/XPathUtil.cpp"
+#include "xml/XPathValue.cpp"

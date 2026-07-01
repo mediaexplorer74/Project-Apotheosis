@@ -1,0 +1,8 @@
+#include "Modules/webauthn/fido/FidoHidMessage.cpp"
+#include "Modules/webauthn/fido/FidoHidPacket.cpp"
+#include "Modules/webauthn/fido/FidoParsingUtils.cpp"
+#include "Modules/webauthn/fido/Pin.cpp"
+#include "Modules/webauthn/fido/U2fCommandConstructor.cpp"
+#include "Modules/webauthn/fido/U2fResponseConverter.cpp"
+#include "Modules/webcodecs/VideoColorSpace.cpp"
+#include "Modules/webcodecs/WebCodecsAudioData.cpp"

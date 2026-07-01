@@ -1,0 +1,7 @@
+#include "API/JSTypedArray.cpp"
+#include "API/JSValueRef.cpp"
+#include "API/JSWeakObjectMapRefPrivate.cpp"
+#include "API/JSWeakPrivate.cpp"
+#include "API/JSWeakValue.cpp"
+#include "API/MarkedJSValueRefArray.cpp"
+#include "API/OpaqueJSString.cpp"

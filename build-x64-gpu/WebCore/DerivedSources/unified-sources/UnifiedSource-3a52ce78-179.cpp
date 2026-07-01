@@ -1,0 +1,8 @@
+#include "JSWebGLCompressedTextureS3TCsRGB.cpp"
+#include "JSWebGLContextAttributes.cpp"
+#include "JSWebGLContextEvent.cpp"
+#include "JSWebGLDebugRendererInfo.cpp"
+#include "JSWebGLDebugShaders.cpp"
+#include "JSWebGLDepthTexture.cpp"
+#include "JSWebGLDrawBuffers.cpp"
+#include "JSWebGLDrawInstancedBaseVertexBaseInstance.cpp"

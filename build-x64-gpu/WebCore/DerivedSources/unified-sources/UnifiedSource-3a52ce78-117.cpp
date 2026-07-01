@@ -1,0 +1,8 @@
+#include "JSPerformanceMark.cpp"
+#include "JSPerformanceMarkOptions.cpp"
+#include "JSPerformanceMeasure.cpp"
+#include "JSPerformanceMeasureOptions.cpp"
+#include "JSPerformanceNavigation.cpp"
+#include "JSPerformanceNavigationTiming.cpp"
+#include "JSPerformanceObserver.cpp"
+#include "JSPerformanceObserverCallback.cpp"

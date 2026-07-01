@@ -1,0 +1,8 @@
+#include "Shared/API/c/WKURLRequest.cpp"
+#include "Shared/API/c/WKURLResponse.cpp"
+#include "Shared/API/c/WKUserContentURLPattern.cpp"
+#include "Shared/Databases/IndexedDB/IDBUtilities.cpp"
+#include "Shared/Extensions/WebExtensionFrameIdentifier.cpp"
+#include "Shared/Extensions/WebExtensionLocalization.cpp"
+#include "Shared/Extensions/WebExtensionPermission.cpp"
+#include "Shared/Extensions/WebExtensionRegisteredScriptsSQLiteStore.cpp"

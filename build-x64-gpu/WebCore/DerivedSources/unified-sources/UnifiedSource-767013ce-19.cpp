@@ -1,0 +1,8 @@
+#include "page/csp/ContentSecurityPolicySourceList.cpp"
+#include "page/csp/ContentSecurityPolicySourceListDirective.cpp"
+#include "page/csp/ContentSecurityPolicyTrustedTypesDirective.cpp"
+#include "page/scrolling/AsyncScrollingCoordinator.cpp"
+#include "page/scrolling/ScrollAnchoringController.cpp"
+#include "page/scrolling/ScrollLatchingController.cpp"
+#include "page/scrolling/ScrollSnapOffsetsInfo.cpp"
+#include "page/scrolling/ScrollingConstraints.cpp"

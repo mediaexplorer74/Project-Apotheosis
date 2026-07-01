@@ -1,0 +1,8 @@
+#include "bindings/js/JSWebXRRigidTransformCustom.cpp"
+#include "bindings/js/JSWebXRSessionCustom.cpp"
+#include "bindings/js/JSWebXRViewCustom.cpp"
+#include "bindings/js/JSWindowProxy.cpp"
+#include "bindings/js/JSWorkerGlobalScopeBase.cpp"
+#include "bindings/js/JSWorkerGlobalScopeCustom.cpp"
+#include "bindings/js/JSWorkerNavigatorCustom.cpp"
+#include "bindings/js/JSWorkletGlobalScopeBase.cpp"

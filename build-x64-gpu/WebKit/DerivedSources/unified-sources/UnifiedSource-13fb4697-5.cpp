@@ -1,0 +1,8 @@
+#include "GPUProcess/graphics/WebGPU/RemoteComputePassEncoder.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteComputePipeline.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteDevice.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteExternalTexture.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteGPU.cpp"
+#include "GPUProcess/graphics/WebGPU/RemotePipelineLayout.cpp"
+#include "GPUProcess/graphics/WebGPU/RemotePresentationContext.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteQuerySet.cpp"

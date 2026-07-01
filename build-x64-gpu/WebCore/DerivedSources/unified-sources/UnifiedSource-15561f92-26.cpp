@@ -1,0 +1,8 @@
+#include "Modules/mediacontrols/MediaControlsHost.cpp"
+#include "Modules/mediacontrols/MediaControlsUtils.cpp"
+#include "Modules/mediarecorder/BlobEvent.cpp"
+#include "Modules/mediarecorder/MediaRecorder.cpp"
+#include "Modules/mediarecorder/MediaRecorderErrorEvent.cpp"
+#include "Modules/mediasession/MediaMetadata.cpp"
+#include "Modules/mediasession/MediaSession.cpp"
+#include "Modules/mediasession/MediaSessionCoordinator.cpp"

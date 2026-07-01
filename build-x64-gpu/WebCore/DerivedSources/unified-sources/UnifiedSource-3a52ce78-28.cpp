@@ -1,0 +1,8 @@
+#include "JSCanvasTextDrawingStyles.cpp"
+#include "JSCanvasTransform.cpp"
+#include "JSCanvasUserInterface.cpp"
+#include "JSCaptionDisplaySettingsOptions.cpp"
+#include "JSCaretPosition.cpp"
+#include "JSCaretPositionFromPointOptions.cpp"
+#include "JSChannelCountMode.cpp"
+#include "JSChannelInterpretation.cpp"

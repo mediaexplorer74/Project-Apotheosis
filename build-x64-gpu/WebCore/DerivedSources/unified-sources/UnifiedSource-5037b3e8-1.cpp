@@ -1,0 +1,8 @@
+#include "contentextensions/CombinedFiltersAlphabet.cpp"
+#include "contentextensions/CombinedURLFilters.cpp"
+#include "contentextensions/CompiledContentExtension.cpp"
+#include "contentextensions/ContentExtension.cpp"
+#include "contentextensions/ContentExtensionActions.cpp"
+#include "contentextensions/ContentExtensionCompiler.cpp"
+#include "contentextensions/ContentExtensionError.cpp"
+#include "contentextensions/ContentExtensionParser.cpp"

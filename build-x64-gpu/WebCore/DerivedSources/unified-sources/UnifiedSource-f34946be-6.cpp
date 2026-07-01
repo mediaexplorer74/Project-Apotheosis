@@ -1,0 +1,8 @@
+#include "editing/ReplaceNodeWithSpanCommand.cpp"
+#include "editing/ReplaceRangeWithTextCommand.cpp"
+#include "editing/ReplaceSelectionCommand.cpp"
+#include "editing/SetNodeAttributeCommand.cpp"
+#include "editing/SetSelectionCommand.cpp"
+#include "editing/SimplifyMarkupCommand.cpp"
+#include "editing/SmartReplace.cpp"
+#include "editing/SpellChecker.cpp"

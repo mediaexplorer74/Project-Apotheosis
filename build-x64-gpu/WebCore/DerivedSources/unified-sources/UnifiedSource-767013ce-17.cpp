@@ -1,0 +1,8 @@
+#include "page/WebKitJSHandle.cpp"
+#include "page/WebKitSerializedNode.cpp"
+#include "page/WheelEventDeltaFilter.cpp"
+#include "page/WheelEventTestMonitor.cpp"
+#include "page/WindowFeatures.cpp"
+#include "page/WindowFocusAllowedIndicator.cpp"
+#include "page/WindowOrWorkerGlobalScope.cpp"
+#include "page/WorkerNavigator.cpp"

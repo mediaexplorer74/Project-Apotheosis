@@ -1,0 +1,8 @@
+#include "inspector/InspectorInstrumentationPublic.cpp"
+#include "inspector/InspectorInstrumentationWebKit.cpp"
+#include "inspector/InspectorNetworkIntercept.cpp"
+#include "inspector/InspectorNodeFinder.cpp"
+#include "inspector/InspectorOverlay.cpp"
+#include "inspector/InspectorOverlayLabel.cpp"
+#include "inspector/InspectorResourceUtilities.cpp"
+#include "inspector/InspectorShaderProgram.cpp"

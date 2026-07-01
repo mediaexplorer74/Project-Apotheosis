@@ -1,0 +1,8 @@
+#include "Modules/WebGPU/Implementation/WebGPUCreateImpl.cpp"
+#include "Modules/WebGPU/Implementation/WebGPUDeviceImpl.cpp"
+#include "Modules/WebGPU/Implementation/WebGPUDowncastConvertToBackingContext.cpp"
+#include "Modules/WebGPU/Implementation/WebGPUExternalTextureImpl.cpp"
+#include "Modules/WebGPU/Implementation/WebGPUImpl.cpp"
+#include "Modules/WebGPU/Implementation/WebGPUPipelineLayoutImpl.cpp"
+#include "Modules/WebGPU/Implementation/WebGPUPresentationContextImpl.cpp"
+#include "Modules/WebGPU/Implementation/WebGPUQuerySetImpl.cpp"

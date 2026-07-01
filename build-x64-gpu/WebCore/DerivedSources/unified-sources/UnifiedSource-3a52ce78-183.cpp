@@ -1,0 +1,8 @@
+#include "JSWebKitBufferNamespace.cpp"
+#include "JSWebKitJSHandle.cpp"
+#include "JSWebKitMediaKeyError.cpp"
+#include "JSWebKitMediaKeyMessageEvent.cpp"
+#include "JSWebKitMediaKeyNeededEvent.cpp"
+#include "JSWebKitMediaKeySession.cpp"
+#include "JSWebKitMediaKeys.cpp"
+#include "JSWebKitNamespace.cpp"

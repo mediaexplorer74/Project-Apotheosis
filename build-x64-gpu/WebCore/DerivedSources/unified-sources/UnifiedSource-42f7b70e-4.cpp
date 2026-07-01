@@ -1,0 +1,8 @@
+#include "xml/XPathVariableReference.cpp"
+#include "xml/XSLImportRule.cpp"
+#include "xml/XSLStyleSheetLibxslt.cpp"
+#include "xml/XSLTExtensions.cpp"
+#include "xml/XSLTProcessor.cpp"
+#include "xml/XSLTProcessorLibxslt.cpp"
+#include "xml/XSLTUnicodeSort.cpp"
+#include "xml/parser/XMLDocumentParser.cpp"

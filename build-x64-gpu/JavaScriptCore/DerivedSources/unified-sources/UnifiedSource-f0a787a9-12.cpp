@@ -1,0 +1,8 @@
+#include "bytecode/StructureStubClearingWatchpoint.cpp"
+#include "bytecode/StructureStubInfo.cpp"
+#include "bytecode/StubInfoSummary.cpp"
+#include "bytecode/SuperSampler.cpp"
+#include "bytecode/ToThisStatus.cpp"
+#include "bytecode/TrackedReferences.cpp"
+#include "bytecode/UnlinkedCodeBlock.cpp"
+#include "bytecode/UnlinkedCodeBlockGenerator.cpp"

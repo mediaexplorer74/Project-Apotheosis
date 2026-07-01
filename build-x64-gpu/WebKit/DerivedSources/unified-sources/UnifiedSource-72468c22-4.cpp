@@ -1,0 +1,8 @@
+#include "NetworkProcess/Authentication/AuthenticationManager.cpp"
+#include "NetworkProcess/Classifier/ITPThirdPartyData.cpp"
+#include "NetworkProcess/Classifier/ITPThirdPartyDataForSpecificFirstParty.cpp"
+#include "NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp"
+#include "NetworkProcess/Cookies/WebCookieManager.cpp"
+#include "NetworkProcess/Downloads/Download.cpp"
+#include "NetworkProcess/Downloads/DownloadManager.cpp"
+#include "NetworkProcess/Downloads/DownloadMonitor.cpp"

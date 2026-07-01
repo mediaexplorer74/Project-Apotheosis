@@ -1,0 +1,8 @@
+#include "platform/audio/FFTFrame.cpp"
+#include "platform/audio/HRTFDatabase.cpp"
+#include "platform/audio/HRTFDatabaseLoader.cpp"
+#include "platform/audio/HRTFElevation.cpp"
+#include "platform/audio/HRTFKernel.cpp"
+#include "platform/audio/HRTFPanner.cpp"
+#include "platform/audio/IIRFilter.cpp"
+#include "platform/audio/MediaSessionManagerInterface.cpp"

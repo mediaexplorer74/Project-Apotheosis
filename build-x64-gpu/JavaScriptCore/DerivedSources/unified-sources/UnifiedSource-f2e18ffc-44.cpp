@@ -1,0 +1,8 @@
+#include "runtime/TemporalInstantConstructor.cpp"
+#include "runtime/TemporalInstantPrototype.cpp"
+#include "runtime/TemporalNow.cpp"
+#include "runtime/TemporalObject.cpp"
+#include "runtime/TemporalPlainDate.cpp"
+#include "runtime/TemporalPlainDateConstructor.cpp"
+#include "runtime/TemporalPlainDatePrototype.cpp"
+#include "runtime/TemporalPlainDateTime.cpp"

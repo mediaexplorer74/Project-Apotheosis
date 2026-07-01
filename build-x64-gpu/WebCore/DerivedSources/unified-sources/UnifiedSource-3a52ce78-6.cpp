@@ -1,0 +1,8 @@
+#include "JSAudioBufferSourceOptions.cpp"
+#include "JSAudioConfiguration.cpp"
+#include "JSAudioContext.cpp"
+#include "JSAudioContextLatencyCategory.cpp"
+#include "JSAudioContextOptions.cpp"
+#include "JSAudioContextState.cpp"
+#include "JSAudioDestinationNode.cpp"
+#include "JSAudioListener.cpp"

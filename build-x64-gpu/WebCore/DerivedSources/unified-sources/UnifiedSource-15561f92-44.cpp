@@ -1,0 +1,8 @@
+#include "Modules/speech/SpeechRecognitionResultList.cpp"
+#include "Modules/speech/SpeechRecognitionUpdate.cpp"
+#include "Modules/speech/SpeechRecognizer.cpp"
+#include "Modules/speech/SpeechSynthesis.cpp"
+#include "Modules/speech/SpeechSynthesisErrorEvent.cpp"
+#include "Modules/speech/SpeechSynthesisEvent.cpp"
+#include "Modules/speech/SpeechSynthesisUtterance.cpp"
+#include "Modules/speech/SpeechSynthesisVoice.cpp"

@@ -1,0 +1,5 @@
+#include "html/track/VideoTrackConfiguration.cpp"
+#include "html/track/VideoTrackList.cpp"
+#include "html/track/WebVTTElement.cpp"
+#include "html/track/WebVTTParser.cpp"
+#include "html/track/WebVTTTokenizer.cpp"

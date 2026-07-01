@@ -1,0 +1,8 @@
+#include "platform/audio/AudioChannel.cpp"
+#include "platform/audio/AudioDSPKernelProcessor.cpp"
+#include "platform/audio/AudioDestinationResampler.cpp"
+#include "platform/audio/AudioHardwareListener.cpp"
+#include "platform/audio/AudioResampler.cpp"
+#include "platform/audio/AudioResamplerKernel.cpp"
+#include "platform/audio/AudioUtilities.cpp"
+#include "platform/audio/Biquad.cpp"

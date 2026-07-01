@@ -1,0 +1,8 @@
+#include "WebProcess/Inspector/RemoteWebInspectorUI.cpp"
+#include "WebProcess/Inspector/WasmDebuggerDispatcher.cpp"
+#include "WebProcess/Inspector/WebFrameInspectorTarget.cpp"
+#include "WebProcess/Inspector/WebFrameInspectorTargetFrontendChannel.cpp"
+#include "WebProcess/Inspector/WebInspectorBackend.cpp"
+#include "WebProcess/Inspector/WebInspectorBackendClient.cpp"
+#include "WebProcess/Inspector/WebInspectorInterruptDispatcher.cpp"
+#include "WebProcess/Inspector/WebInspectorUI.cpp"

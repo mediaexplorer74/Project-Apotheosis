@@ -1,0 +1,8 @@
+#include "runtime/JSDestructibleObjectHeapCellType.cpp"
+#include "runtime/JSDisposableStack.cpp"
+#include "runtime/JSFinalizationRegistry.cpp"
+#include "runtime/JSFunction.cpp"
+#include "runtime/JSFunctionWithFields.cpp"
+#include "runtime/JSGenerator.cpp"
+#include "runtime/JSGeneratorFunction.cpp"
+#include "runtime/JSGenericTypedArrayViewConstructor.cpp"

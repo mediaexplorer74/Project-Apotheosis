@@ -1,0 +1,8 @@
+#include "JSOscillatorNode.cpp"
+#include "JSOscillatorOptions.cpp"
+#include "JSOscillatorType.cpp"
+#include "JSOverSampleType.cpp"
+#include "JSOverconstrainedError.cpp"
+#include "JSOverconstrainedErrorEvent.cpp"
+#include "JSPageRevealEvent.cpp"
+#include "JSPageSwapEvent.cpp"

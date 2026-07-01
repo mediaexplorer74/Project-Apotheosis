@@ -1,0 +1,8 @@
+#include "WebProcess/WebCoreSupport/WebFileSystemStorageConnection.cpp"
+#include "WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp"
+#include "WebProcess/WebCoreSupport/WebGeolocationClient.cpp"
+#include "WebProcess/WebCoreSupport/WebLocalFrameLoaderClient.cpp"
+#include "WebProcess/WebCoreSupport/WebMediaKeySystemClient.cpp"
+#include "WebProcess/WebCoreSupport/WebMessagePortChannelProvider.cpp"
+#include "WebProcess/WebCoreSupport/WebNotificationClient.cpp"
+#include "WebProcess/WebCoreSupport/WebPasteboardOverrides.cpp"

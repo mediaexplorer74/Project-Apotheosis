@@ -1,0 +1,8 @@
+#include "rendering/svg/SVGTextLayoutEngineSpacing.cpp"
+#include "rendering/svg/SVGTextMetrics.cpp"
+#include "rendering/svg/SVGTextMetricsBuilder.cpp"
+#include "rendering/svg/SVGTextQuery.cpp"
+#include "rendering/svg/legacy/LegacyRenderSVGContainer.cpp"
+#include "rendering/svg/legacy/LegacyRenderSVGEllipse.cpp"
+#include "rendering/svg/legacy/LegacyRenderSVGForeignObject.cpp"
+#include "rendering/svg/legacy/LegacyRenderSVGHiddenContainer.cpp"

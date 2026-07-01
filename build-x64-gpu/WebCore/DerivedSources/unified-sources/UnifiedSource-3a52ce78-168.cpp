@@ -1,0 +1,8 @@
+#include "JSURLPatternResult.cpp"
+#include "JSURLSearchParams.cpp"
+#include "JSUnderlyingSource.cpp"
+#include "JSUnderlyingSourceCancelCallback.cpp"
+#include "JSUnderlyingSourcePullCallback.cpp"
+#include "JSUnderlyingSourceStartCallback.cpp"
+#include "JSUndoItem.cpp"
+#include "JSUndoManager.cpp"

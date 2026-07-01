@@ -1,0 +1,8 @@
+#include "Platform/IPC/MessageSender.cpp"
+#include "Platform/IPC/SharedBufferReference.cpp"
+#include "Platform/IPC/SharedFileHandle.cpp"
+#include "Platform/IPC/StreamClientConnection.cpp"
+#include "Platform/IPC/StreamConnectionBuffer.cpp"
+#include "Platform/IPC/StreamConnectionWorkQueue.cpp"
+#include "Platform/IPC/StreamServerConnection.cpp"
+#include "Platform/IPC/TransferString.cpp"

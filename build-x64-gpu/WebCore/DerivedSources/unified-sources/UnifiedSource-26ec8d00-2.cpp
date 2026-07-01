@@ -1,0 +1,8 @@
+#include "style/IdChangeInvalidation.cpp"
+#include "style/InlineTextBoxStyle.cpp"
+#include "style/InspectorCSSOMWrappers.cpp"
+#include "style/MatchResultCache.cpp"
+#include "style/MatchedDeclarationsCache.cpp"
+#include "style/PageRuleCollector.cpp"
+#include "style/PropertyAllowlist.cpp"
+#include "style/PropertyCascade.cpp"

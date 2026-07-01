@@ -1,0 +1,8 @@
+#include "Modules/webtransport/WebTransportError.cpp"
+#include "Modules/webtransport/WebTransportReceiveStream.cpp"
+#include "Modules/webtransport/WebTransportReceiveStreamSource.cpp"
+#include "Modules/webtransport/WebTransportSendGroup.cpp"
+#include "Modules/webtransport/WebTransportSendStream.cpp"
+#include "Modules/webtransport/WebTransportSendStreamSink.cpp"
+#include "Modules/webtransport/WebTransportSession.cpp"
+#include "Modules/webtransport/WorkerWebTransportSession.cpp"

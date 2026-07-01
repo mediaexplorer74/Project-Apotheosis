@@ -1,0 +1,8 @@
+#include "style/values/align/StyleJustifySelf.cpp"
+#include "style/values/anchor-position/StylePositionArea.cpp"
+#include "style/values/anchor-position/StylePositionAreaAxis.cpp"
+#include "style/values/anchor-position/StylePositionAreaSelf.cpp"
+#include "style/values/anchor-position/StylePositionAreaSpan.cpp"
+#include "style/values/anchor-position/StylePositionAreaTrack.cpp"
+#include "style/values/anchor-position/StylePositionTryFallback.cpp"
+#include "style/values/animations/StyleAnimation.cpp"

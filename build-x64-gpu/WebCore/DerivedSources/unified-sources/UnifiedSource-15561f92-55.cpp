@@ -1,0 +1,8 @@
+#include "Modules/webauthn/AuthenticatorAssertionResponse.cpp"
+#include "Modules/webauthn/AuthenticatorAttestationResponse.cpp"
+#include "Modules/webauthn/AuthenticatorCoordinator.cpp"
+#include "Modules/webauthn/AuthenticatorResponse.cpp"
+#include "Modules/webauthn/PublicKeyCredential.cpp"
+#include "Modules/webauthn/WebAuthenticationUtils.cpp"
+#include "Modules/webauthn/apdu/ApduCommand.cpp"
+#include "Modules/webauthn/apdu/ApduResponse.cpp"

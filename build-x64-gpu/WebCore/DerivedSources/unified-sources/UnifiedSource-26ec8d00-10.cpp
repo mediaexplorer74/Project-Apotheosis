@@ -1,0 +1,8 @@
+#include "style/computed/data/StyleInheritedData.cpp"
+#include "style/computed/data/StyleInheritedRareData.cpp"
+#include "style/computed/data/StyleMarqueeData.cpp"
+#include "style/computed/data/StyleMaskBorderData.cpp"
+#include "style/computed/data/StyleMultiColumnData.cpp"
+#include "style/computed/data/StyleNonInheritedData.cpp"
+#include "style/computed/data/StyleNonInheritedMiscData.cpp"
+#include "style/computed/data/StyleNonInheritedRareData.cpp"

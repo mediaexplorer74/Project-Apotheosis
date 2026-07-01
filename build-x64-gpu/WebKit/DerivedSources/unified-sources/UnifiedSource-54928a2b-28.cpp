@@ -1,0 +1,8 @@
+#include "WebProcess/WebPage/FindController.cpp"
+#include "WebProcess/WebPage/IPCTestingAPI.cpp"
+#include "WebProcess/WebPage/MomentumEventDispatcher.cpp"
+#include "WebProcess/WebPage/PageBanner.cpp"
+#include "WebProcess/WebPage/VisitedLinkTableController.cpp"
+#include "WebProcess/WebPage/WebBackForwardListProxy.cpp"
+#include "WebProcess/WebPage/WebContextMenu.cpp"
+#include "WebProcess/WebPage/WebCookieCache.cpp"

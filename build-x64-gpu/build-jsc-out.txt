@@ -1,0 +1,61 @@
+[1/209] Building CXX object Source\WTF\wtf\CMakeFiles\WTF.dir\text\win\TextBreakIteratorInternalICUWin.cpp.obj
+[2/209] Building CXX object Source\WTF\wtf\CMakeFiles\WTF.dir\win\CPUTimeWin.cpp.obj
+[3/209] Building CXX object Source\WTF\wtf\CMakeFiles\WTF.dir\text\win\StringWin.cpp.obj
+[4/209] Building CXX object Source\WTF\wtf\CMakeFiles\WTF.dir\unicode\icu\CollatorICU.cpp.obj
+[5/209] Building CXX object Source\WTF\wtf\CMakeFiles\WTF.dir\generic\WorkQueueGeneric.cpp.obj
+[6/209] Building CXX object Source\WTF\wtf\CMakeFiles\WTF.dir\win\DbgHelperWin.cpp.obj
+FAILED: [code=1] Source/WTF/wtf/CMakeFiles/WTF.dir/win/DbgHelperWin.cpp.obj 
+C:\PROGRA~1\LLVM\bin\clang-cl.exe --target=x86_64-unknown-windows-msvc  /nologo -TP -DBUILDING_WEBKIT=1 -DBUILDING_WITH_CMAKE=1 -DBUILDING_WTF -DHAVE_CONFIG_H=1 -DNOCRYPT -DNOMINMAX -DNTDDI_VERSION=0x0A000006 -DPAS_BMALLOC=1 -DSTATICALLY_LINKED_WITH_bmalloc -DUNICODE -DWIN32_LEAN_AND_MEAN -DWINAPI_FAMILY=WINAPI_FAMILY_APP -DWK_WINUWP=1 -D_CRT_NONSTDC_NO_DEPRECATE -D_SILENCE_CXX23_DENORM_DEPRECATION_WARNING -D_UNICODE -D_WIN32_WINNT=0x0A00 -D_WINDOWS -D_WINSOCKAPI_="" -D__WRL_NO_DEFAULT_LIB__ -Dgetpid=GetCurrentProcessId -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\DerivedSources -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\fast_float -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\persistence -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\simdutf -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\icu -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\threads -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\unicode -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers -imsvcC:\icu-x64-uwp\include -fdiagnostics-color=always -fcolor-diagnostics -Wno-character-conversion -Werror=undefined-internal -Werror=undefined-inline -Wno-noexcept-type -Wno-nullability-completeness -Wno-psabi -Wno-misleading-indentation -Wno-parentheses-equality -Qunused-arguments -Wundef -Wpointer-arith -Wmissing-format-attribute -Wformat-security -Wcast-align /DWIN32 /D_WINDOWS /DUNICODE /D_UNICODE /EHsc -fno-strict-aliasing /O2 /Ob2 /DNDEBUG -clang:-std=c++23 -MD /bigobj /O2 /showIncludes /FoSource\WTF\wtf\CMakeFiles\WTF.dir\win\DbgHelperWin.cpp.obj /FdSource\WTF\wtf\CMakeFiles\WTF.dir\ -c -- C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\DbgHelperWin.cpp
+In file included from C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\DbgHelperWin.cpp:26:
+C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf/win/DbgHelperWin.h(37,94): error: unknown type name 'SYMBOL_INFO'
+   37 | WTF_EXPORT_PRIVATE bool SymFromAddress(HANDLE hProc, DWORD64 address, DWORD64* displacement, SYMBOL_INFO*);
+      |                                                                                              ^
+C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\DbgHelperWin.cpp(63,48): error: unknown type name 'SYMBOL_INFO'
+   63 | bool SymFromAddress(HANDLE, DWORD64, DWORD64*, SYMBOL_INFO*)
+      |                                                ^
+2 errors generated.
+[7/209] Building CXX object Source\WTF\wtf\CMakeFiles\WTF.dir\win\FileHandleWin.cpp.obj
+[8/209] Building CXX object Source\WTF\wtf\CMakeFiles\WTF.dir\win\FileSystemWin.cpp.obj
+FAILED: [code=1] Source/WTF/wtf/CMakeFiles/WTF.dir/win/FileSystemWin.cpp.obj 
+C:\PROGRA~1\LLVM\bin\clang-cl.exe --target=x86_64-unknown-windows-msvc  /nologo -TP -DBUILDING_WEBKIT=1 -DBUILDING_WITH_CMAKE=1 -DBUILDING_WTF -DHAVE_CONFIG_H=1 -DNOCRYPT -DNOMINMAX -DNTDDI_VERSION=0x0A000006 -DPAS_BMALLOC=1 -DSTATICALLY_LINKED_WITH_bmalloc -DUNICODE -DWIN32_LEAN_AND_MEAN -DWINAPI_FAMILY=WINAPI_FAMILY_APP -DWK_WINUWP=1 -D_CRT_NONSTDC_NO_DEPRECATE -D_SILENCE_CXX23_DENORM_DEPRECATION_WARNING -D_UNICODE -D_WIN32_WINNT=0x0A00 -D_WINDOWS -D_WINSOCKAPI_="" -D__WRL_NO_DEFAULT_LIB__ -Dgetpid=GetCurrentProcessId -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\DerivedSources -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\fast_float -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\persistence -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\simdutf -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\icu -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\threads -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\unicode -IC:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers -imsvcC:\icu-x64-uwp\include -fdiagnostics-color=always -fcolor-diagnostics -Wno-character-conversion -Werror=undefined-internal -Werror=undefined-inline -Wno-noexcept-type -Wno-nullability-completeness -Wno-psabi -Wno-misleading-indentation -Wno-parentheses-equality -Qunused-arguments -Wundef -Wpointer-arith -Wmissing-format-attribute -Wformat-security -Wcast-align /DWIN32 /D_WINDOWS /DUNICODE /D_UNICODE /EHsc -fno-strict-aliasing /O2 /Ob2 /DNDEBUG -clang:-std=c++23 -MD /bigobj /O2 /showIncludes /FoSource\WTF\wtf\CMakeFiles\WTF.dir\win\FileSystemWin.cpp.obj /FdSource\WTF\wtf\CMakeFiles\WTF.dir\ -c -- C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\FileSystemWin.cpp
+C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\FileSystemWin.cpp(106,59): error: use of undeclared identifier 'CSIDL_FLAG_CREATE'
+  106 |     if (FAILED(SHGetFolderPathW(nullptr, pathIdentifier | CSIDL_FLAG_CREATE, nullptr, 0, wcharFrom(buffer.mutableSpan().data()))))
+      |                                                           ^~~~~~~~~~~~~~~~~
+C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\FileSystemWin.cpp(171,38): error: no member named 'CreateFileW' in the global namespace; did you mean 'CreateFile2'?
+  171 |         handle = FileHandle::adopt(::CreateFileW(proposedPath.wideCharacters().span().data(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nullptr));
+      |                                      ^~~~~~~~~~~
+      |                                      CreateFile2
+C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\um\fileapi.h(1260,1): note: 'CreateFile2' declared here
+ 1260 | CreateFile2(
+      | ^
+C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\FileSystemWin.cpp(171,149): error: too many arguments to function call, expected 5, have 7
+  171 |         handle = FileHandle::adopt(::CreateFileW(proposedPath.wideCharacters().span().data(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nullptr));
+      |                                    ~~~~~~~~~~~~~                                                                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\um\winnt.h(15312,45): note: expanded from macro 'FILE_ATTRIBUTE_NORMAL'
+ 15312 | #define FILE_ATTRIBUTE_NORMAL               0x00000080  
+       |                                             ^
+C:\Program Files (x86)\Windows Kits\10\\include\10.0.26100.0\\um\fileapi.h(1260,1): note: 'CreateFile2' declared here
+ 1260 | CreateFile2(
+      | ^
+ 1261 |     _In_ LPCWSTR lpFileName,
+      |          ~~~~~~~~~~~~~~~~~~~
+ 1262 |     _In_ DWORD dwDesiredAccess,
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1263 |     _In_ DWORD dwShareMode,
+      |     ~~~~~~~~~~~~~~~~~~~~~~~
+ 1264 |     _In_ DWORD dwCreationDisposition,
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1265 |     _In_opt_ LPCREATEFILE2_EXTENDED_PARAMETERS pCreateExParams
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\FileSystemWin.cpp(207,30): error: use of undeclared identifier 'CreateFile'
+  207 |     return FileHandle::adopt(CreateFile(destination.wideCharacters().span().data(), desiredAccess, shareMode, nullptr, creationDisposition, FILE_ATTRIBUTE_NORMAL, nullptr), lockMode);
+      |                              ^~~~~~~~~~
+C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\FileSystemWin.cpp(212,35): error: use of undeclared identifier 'CSIDL_LOCAL_APPDATA'
+  212 |     return cachedStorageDirectory(CSIDL_LOCAL_APPDATA);
+      |                                   ^~~~~~~~~~~~~~~~~~~
+C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\FileSystemWin.cpp(217,35): error: use of undeclared identifier 'CSIDL_APPDATA'
+  217 |     return cachedStorageDirectory(CSIDL_APPDATA);
+      |                                   ^~~~~~~~~~~~~
+6 errors generated.
+[9/209] Building CXX object Source\WTF\wtf\CMakeFiles\WTF.dir\win\LanguageWin.cpp.obj
+ninja: build stopped: subcommand failed.

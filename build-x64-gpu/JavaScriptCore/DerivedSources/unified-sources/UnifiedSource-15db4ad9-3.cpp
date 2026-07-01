@@ -1,0 +1,8 @@
+#include "wasm/WasmHandlerInfo.cpp"
+#include "wasm/WasmIPIntGenerator.cpp"
+#include "wasm/WasmIPIntPlan.cpp"
+#include "wasm/WasmIndexOrName.cpp"
+#include "wasm/WasmInliningDecision.cpp"
+#include "wasm/WasmInstanceAnchor.cpp"
+#include "wasm/WasmMachineThreads.cpp"
+#include "wasm/WasmMemory.cpp"

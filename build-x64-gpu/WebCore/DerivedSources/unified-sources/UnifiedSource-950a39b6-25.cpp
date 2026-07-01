@@ -1,0 +1,8 @@
+#include "html/canvas/EXTDisjointTimerQueryWebGL2.cpp"
+#include "html/canvas/EXTFloatBlend.cpp"
+#include "html/canvas/EXTFragDepth.cpp"
+#include "html/canvas/EXTPolygonOffsetClamp.cpp"
+#include "html/canvas/EXTRenderSnorm.cpp"
+#include "html/canvas/EXTShaderTextureLOD.cpp"
+#include "html/canvas/EXTTextureCompressionBPTC.cpp"
+#include "html/canvas/EXTTextureCompressionRGTC.cpp"

@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{8BA099CF-EFA7-3403-B8D3-E4A25E45B082}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>Bytecodes</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\main.rb">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating ../../JavaScriptCore/DerivedSources/Bytecodes.h, ../../JavaScriptCore/DerivedSources/InitBytecodes.asm, ../../JavaScriptCore/DerivedSources/BytecodeStructs.h, ../../JavaScriptCore/DerivedSources/BytecodeIndices.h, ../../JavaScriptCore/DerivedSources/BytecodeDumperGenerated.cpp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+C:\Ruby34-x64\bin\ruby.exe C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/generator/main.rb --bytecodes_h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources/Bytecodes.h --init_bytecodes_asm C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources/InitBytecodes.asm --bytecode_structs_h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources/BytecodeStructs.h --bytecode_indices_h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources/BytecodeIndices.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/bytecode/BytecodeList.rb --wasm_json C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/wasm/wasm.json --bytecode_dumper C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources/BytecodeDumperGenerated.cpp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Argument.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Assertion.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Checkpoints.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\DSL.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Fits.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\GeneratedFile.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Metadata.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Opcode.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\OpcodeGroup.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Options.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Section.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Template.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Type.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Wasm.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\bytecode\BytecodeList.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\wasm\wasm.json;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\Bytecodes.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\InitBytecodes.asm;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\BytecodeStructs.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\BytecodeIndices.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\BytecodeDumperGenerated.cpp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating ../../JavaScriptCore/DerivedSources/Bytecodes.h, ../../JavaScriptCore/DerivedSources/InitBytecodes.asm, ../../JavaScriptCore/DerivedSources/BytecodeStructs.h, ../../JavaScriptCore/DerivedSources/BytecodeIndices.h, ../../JavaScriptCore/DerivedSources/BytecodeDumperGenerated.cpp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+C:\Ruby34-x64\bin\ruby.exe C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/generator/main.rb --bytecodes_h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources/Bytecodes.h --init_bytecodes_asm C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources/InitBytecodes.asm --bytecode_structs_h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources/BytecodeStructs.h --bytecode_indices_h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources/BytecodeIndices.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/bytecode/BytecodeList.rb --wasm_json C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/wasm/wasm.json --bytecode_dumper C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources/BytecodeDumperGenerated.cpp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Argument.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Assertion.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Checkpoints.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\DSL.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Fits.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\GeneratedFile.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Metadata.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Opcode.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\OpcodeGroup.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Options.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Section.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Template.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Type.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Wasm.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\bytecode\BytecodeList.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\wasm\wasm.json;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\Bytecodes.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\InitBytecodes.asm;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\BytecodeStructs.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\BytecodeIndices.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\BytecodeDumperGenerated.cpp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Generating ../../JavaScriptCore/DerivedSources/Bytecodes.h, ../../JavaScriptCore/DerivedSources/InitBytecodes.asm, ../../JavaScriptCore/DerivedSources/BytecodeStructs.h, ../../JavaScriptCore/DerivedSources/BytecodeIndices.h, ../../JavaScriptCore/DerivedSources/BytecodeDumperGenerated.cpp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+C:\Ruby34-x64\bin\ruby.exe C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/generator/main.rb --bytecodes_h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources/Bytecodes.h --init_bytecodes_asm C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources/InitBytecodes.asm --bytecode_structs_h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources/BytecodeStructs.h --bytecode_indices_h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources/BytecodeIndices.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/bytecode/BytecodeList.rb --wasm_json C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/wasm/wasm.json --bytecode_dumper C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources/BytecodeDumperGenerated.cpp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Argument.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Assertion.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Checkpoints.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\DSL.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Fits.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\GeneratedFile.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Metadata.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Opcode.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\OpcodeGroup.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Options.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Section.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Template.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Type.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Wasm.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\bytecode\BytecodeList.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\wasm\wasm.json;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\Bytecodes.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\InitBytecodes.asm;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\BytecodeStructs.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\BytecodeIndices.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\BytecodeDumperGenerated.cpp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Generating ../../JavaScriptCore/DerivedSources/Bytecodes.h, ../../JavaScriptCore/DerivedSources/InitBytecodes.asm, ../../JavaScriptCore/DerivedSources/BytecodeStructs.h, ../../JavaScriptCore/DerivedSources/BytecodeIndices.h, ../../JavaScriptCore/DerivedSources/BytecodeDumperGenerated.cpp</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+C:\Ruby34-x64\bin\ruby.exe C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/generator/main.rb --bytecodes_h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources/Bytecodes.h --init_bytecodes_asm C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources/InitBytecodes.asm --bytecode_structs_h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources/BytecodeStructs.h --bytecode_indices_h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources/BytecodeIndices.h C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/bytecode/BytecodeList.rb --wasm_json C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/wasm/wasm.json --bytecode_dumper C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/JavaScriptCore/DerivedSources/BytecodeDumperGenerated.cpp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Argument.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Assertion.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Checkpoints.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\DSL.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Fits.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\GeneratedFile.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Metadata.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Opcode.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\OpcodeGroup.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Options.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Section.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Template.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Type.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\generator\Wasm.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\bytecode\BytecodeList.rb;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\wasm\wasm.json;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\Bytecodes.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\InitBytecodes.asm;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\BytecodeStructs.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\BytecodeIndices.h;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\BytecodeDumperGenerated.cpp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\d81eab6feb6208a9809e18fd988342b2\Bytecodes.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\Bytecodes.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\CMakeFiles\Bytecodes</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</VerifyInputsAndOutputsExist>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\Bytecodes.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\CMakeFiles\Bytecodes</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</VerifyInputsAndOutputsExist>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\Bytecodes.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\CMakeFiles\Bytecodes</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</VerifyInputsAndOutputsExist>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\DerivedSources\Bytecodes.h;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\CMakeFiles\Bytecodes</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+      <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</VerifyInputsAndOutputsExist>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/JavaScriptCore/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Sources.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/JavaScriptCore/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Sources.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/JavaScriptCore/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Sources.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/JavaScriptCore/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/JavaScriptCore/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Sources.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\CMakeFiles\Bytecodes">
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\ZERO_CHECK.vcxproj">
+      <Project>{8AEDA3F9-554F-3BC4-B70A-0E1A01F04A21}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

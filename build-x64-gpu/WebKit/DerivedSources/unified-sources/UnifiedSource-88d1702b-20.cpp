@@ -1,0 +1,8 @@
+#include "UIProcess/API/C/WKNavigationDataRef.cpp"
+#include "UIProcess/API/C/WKNavigationRef.cpp"
+#include "UIProcess/API/C/WKNavigationResponseRef.cpp"
+#include "UIProcess/API/C/WKNotification.cpp"
+#include "UIProcess/API/C/WKNotificationManager.cpp"
+#include "UIProcess/API/C/WKNotificationPermissionRequest.cpp"
+#include "UIProcess/API/C/WKOpenPanelParametersRef.cpp"
+#include "UIProcess/API/C/WKOpenPanelResultListener.cpp"

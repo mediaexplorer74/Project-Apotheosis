@@ -1,0 +1,8 @@
+#include "svg/SVGAnimateMotionElement.cpp"
+#include "svg/SVGAnimateTransformElement.cpp"
+#include "svg/SVGAnimationElement.cpp"
+#include "svg/SVGCircleElement.cpp"
+#include "svg/SVGClipPathElement.cpp"
+#include "svg/SVGComponentTransferFunctionElement.cpp"
+#include "svg/SVGCursorElement.cpp"
+#include "svg/SVGDefsElement.cpp"

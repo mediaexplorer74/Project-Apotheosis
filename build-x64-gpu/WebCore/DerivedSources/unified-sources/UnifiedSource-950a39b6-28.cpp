@@ -1,0 +1,8 @@
+#include "html/canvas/OESTextureFloatLinear.cpp"
+#include "html/canvas/OESTextureHalfFloat.cpp"
+#include "html/canvas/OESTextureHalfFloatLinear.cpp"
+#include "html/canvas/OESVertexArrayObject.cpp"
+#include "html/canvas/OffscreenCanvasRenderingContext2D.cpp"
+#include "html/canvas/PaintRenderingContext2D.cpp"
+#include "html/canvas/Path2D.cpp"
+#include "html/canvas/PlaceholderRenderingContext.cpp"

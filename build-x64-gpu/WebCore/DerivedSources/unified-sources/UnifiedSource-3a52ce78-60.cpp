@@ -1,0 +1,8 @@
+#include "JSGPUCanvasToneMapping.cpp"
+#include "JSGPUCanvasToneMappingMode.cpp"
+#include "JSGPUColorDict.cpp"
+#include "JSGPUColorTargetState.cpp"
+#include "JSGPUColorWrite.cpp"
+#include "JSGPUCommandBuffer.cpp"
+#include "JSGPUCommandBufferDescriptor.cpp"
+#include "JSGPUCommandEncoder.cpp"

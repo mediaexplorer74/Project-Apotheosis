@@ -1,0 +1,8 @@
+#include "JSImageBitmapOptions.cpp"
+#include "JSImageBitmapRenderingContext.cpp"
+#include "JSImageBitmapRenderingContextSettings.cpp"
+#include "JSImageCapture.cpp"
+#include "JSImageData.cpp"
+#include "JSImageDataPixelFormat.cpp"
+#include "JSImageDataSettings.cpp"
+#include "JSImageResource.cpp"

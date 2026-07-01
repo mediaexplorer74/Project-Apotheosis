@@ -1,0 +1,8 @@
+#include "html/HTMLFormControlsCollection.cpp"
+#include "html/HTMLFormElement.cpp"
+#include "html/HTMLFrameElement.cpp"
+#include "html/HTMLFrameElementBase.cpp"
+#include "html/HTMLFrameOwnerElement.cpp"
+#include "html/HTMLFrameSetElement.cpp"
+#include "html/HTMLHRElement.cpp"
+#include "html/HTMLHeadElement.cpp"

@@ -1,0 +1,8 @@
+#include "JSScrollOptions.cpp"
+#include "JSScrollTimeline.cpp"
+#include "JSScrollTimelineOptions.cpp"
+#include "JSScrollToOptions.cpp"
+#include "JSSecurityPolicyViolationEvent.cpp"
+#include "JSSecurityPolicyViolationEventDisposition.cpp"
+#include "JSServiceWorker.cpp"
+#include "JSServiceWorkerClient.cpp"

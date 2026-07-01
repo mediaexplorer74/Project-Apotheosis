@@ -1,0 +1,8 @@
+#include "JSPictureInPictureWindow.cpp"
+#include "JSPlaneLayout.cpp"
+#include "JSPlaybackDirection.cpp"
+#include "JSPoint2D.cpp"
+#include "JSPointerEvent.cpp"
+#include "JSPointerLockOptions.cpp"
+#include "JSPopStateEvent.cpp"
+#include "JSPositionCallback.cpp"

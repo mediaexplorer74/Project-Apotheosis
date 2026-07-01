@@ -1,0 +1,8 @@
+#include "loader/CrossOriginEmbedderPolicy.cpp"
+#include "loader/CrossOriginOpenerPolicy.cpp"
+#include "loader/CrossOriginPreflightChecker.cpp"
+#include "loader/CrossOriginPreflightResultCache.cpp"
+#include "loader/DefaultResourceLoadPriority.cpp"
+#include "loader/DocumentLoader.cpp"
+#include "loader/DocumentPrefetcher.cpp"
+#include "loader/DocumentThreadableLoader.cpp"

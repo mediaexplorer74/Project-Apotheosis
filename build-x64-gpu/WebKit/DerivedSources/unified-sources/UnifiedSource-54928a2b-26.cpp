@@ -1,0 +1,8 @@
+#include "WebProcess/WebCoreSupport/WebPerformanceLoggingClient.cpp"
+#include "WebProcess/WebCoreSupport/WebPermissionController.cpp"
+#include "WebProcess/WebCoreSupport/WebPlatformStrategies.cpp"
+#include "WebProcess/WebCoreSupport/WebPopupMenu.cpp"
+#include "WebProcess/WebCoreSupport/WebProgressTrackerClient.cpp"
+#include "WebProcess/WebCoreSupport/WebRemoteFrameClient.cpp"
+#include "WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp"
+#include "WebProcess/WebCoreSupport/WebScreenOrientationManager.cpp"

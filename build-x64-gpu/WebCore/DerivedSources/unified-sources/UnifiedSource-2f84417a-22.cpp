@@ -1,0 +1,8 @@
+#include "css/parser/CSSPropertyParser.cpp"
+#include "css/parser/CSSPropertyParserConsumer+Align.cpp"
+#include "css/parser/CSSPropertyParserConsumer+Anchor.cpp"
+#include "css/parser/CSSPropertyParserConsumer+Animations.cpp"
+#include "css/parser/CSSPropertyParserConsumer+Attr.cpp"
+#include "css/parser/CSSPropertyParserConsumer+Background.cpp"
+#include "css/parser/CSSPropertyParserConsumer+Box.cpp"
+#include "css/parser/CSSPropertyParserConsumer+Color.cpp"

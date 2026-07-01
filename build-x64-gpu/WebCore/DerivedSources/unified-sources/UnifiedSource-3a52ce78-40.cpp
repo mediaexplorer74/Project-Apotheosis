@@ -1,0 +1,8 @@
+#include "JSDOMPointReadOnly.cpp"
+#include "JSDOMQuad.cpp"
+#include "JSDOMQuadInit.cpp"
+#include "JSDOMRect.cpp"
+#include "JSDOMRectInit.cpp"
+#include "JSDOMRectList.cpp"
+#include "JSDOMRectReadOnly.cpp"
+#include "JSDOMSelection.cpp"

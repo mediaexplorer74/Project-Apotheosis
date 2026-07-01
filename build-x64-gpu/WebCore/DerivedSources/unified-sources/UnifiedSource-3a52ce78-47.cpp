@@ -1,0 +1,8 @@
+#include "JSEXTColorBufferHalfFloat.cpp"
+#include "JSEXTConservativeDepth.cpp"
+#include "JSEXTDepthClamp.cpp"
+#include "JSEXTDisjointTimerQuery.cpp"
+#include "JSEXTDisjointTimerQueryWebGL2.cpp"
+#include "JSEXTFloatBlend.cpp"
+#include "JSEXTFragDepth.cpp"
+#include "JSEXTPolygonOffsetClamp.cpp"

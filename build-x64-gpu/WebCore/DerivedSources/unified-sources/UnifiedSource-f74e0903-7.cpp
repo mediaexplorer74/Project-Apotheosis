@@ -1,0 +1,8 @@
+#include "workers/service/background-fetch/BackgroundFetchRecord.cpp"
+#include "workers/service/background-fetch/BackgroundFetchRegistration.cpp"
+#include "workers/service/background-fetch/BackgroundFetchUpdateUIEvent.cpp"
+#include "workers/service/background-fetch/ServiceWorkerRegistrationBackgroundFetchAPI.cpp"
+#include "workers/service/context/SWContextManager.cpp"
+#include "workers/service/context/ServiceWorkerDebuggable.cpp"
+#include "workers/service/context/ServiceWorkerFetch.cpp"
+#include "workers/service/context/ServiceWorkerInspectorProxy.cpp"

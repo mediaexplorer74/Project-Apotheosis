@@ -1,0 +1,8 @@
+#include "rendering/svg/legacy/LegacyRenderSVGRoot.cpp"
+#include "rendering/svg/legacy/LegacyRenderSVGShape.cpp"
+#include "rendering/svg/legacy/LegacyRenderSVGTransformableContainer.cpp"
+#include "rendering/svg/legacy/LegacyRenderSVGViewportContainer.cpp"
+#include "rendering/svg/legacy/SVGResources.cpp"
+#include "rendering/svg/legacy/SVGResourcesCache.cpp"
+#include "rendering/svg/legacy/SVGResourcesCycleSolver.cpp"
+#include "rendering/updating/RenderTreeBuilder.cpp"

@@ -1,0 +1,8 @@
+#include "JSWebXRWebGLLayer.cpp"
+#include "JSWheelEvent.cpp"
+#include "JSWindowEventHandlers+Gamepad.cpp"
+#include "JSWindowEventHandlers.cpp"
+#include "JSWindowOrWorkerGlobalScope.cpp"
+#include "JSWindowPostMessageOptions.cpp"
+#include "JSWorker.cpp"
+#include "JSWorkerGlobalScope.cpp"

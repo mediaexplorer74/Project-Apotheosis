@@ -1,0 +1,8 @@
+#include "Modules/webxr/NavigatorWebXR.cpp"
+#include "Modules/webxr/WebXRBoundedReferenceSpace.cpp"
+#include "Modules/webxr/WebXRFrame.cpp"
+#include "Modules/webxr/WebXRGamepad.cpp"
+#include "Modules/webxr/WebXRHand.cpp"
+#include "Modules/webxr/WebXRHitTestResult.cpp"
+#include "Modules/webxr/WebXRHitTestSource.cpp"
+#include "Modules/webxr/WebXRInputSource.cpp"

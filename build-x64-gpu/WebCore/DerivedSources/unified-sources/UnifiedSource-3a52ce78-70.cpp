@@ -1,0 +1,8 @@
+#include "JSGPURenderPassEncoder.cpp"
+#include "JSGPURenderPassLayout.cpp"
+#include "JSGPURenderPassTimestampWrites.cpp"
+#include "JSGPURenderPipeline.cpp"
+#include "JSGPURenderPipelineDescriptor.cpp"
+#include "JSGPURequestAdapterOptions.cpp"
+#include "JSGPUSampler.cpp"
+#include "JSGPUSamplerBindingLayout.cpp"

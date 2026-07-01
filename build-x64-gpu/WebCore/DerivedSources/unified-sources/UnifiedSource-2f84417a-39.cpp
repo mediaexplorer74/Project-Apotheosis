@@ -1,0 +1,8 @@
+#include "css/values/primitives/CSSRatio.cpp"
+#include "css/values/primitives/CSSSymbol.cpp"
+#include "css/values/primitives/CSSURL.cpp"
+#include "css/values/primitives/CSSURLModifiers.cpp"
+#include "css/values/primitives/CSSUnevaluatedCalc.cpp"
+#include "css/values/shapes/CSSCircleFunction.cpp"
+#include "css/values/shapes/CSSEllipseFunction.cpp"
+#include "css/values/shapes/CSSInsetFunction.cpp"

@@ -1,0 +1,8 @@
+#include "JSWebGLRenderSharedExponent.cpp"
+#include "JSWebGLRenderbuffer.cpp"
+#include "JSWebGLRenderingContext.cpp"
+#include "JSWebGLRenderingContextBase.cpp"
+#include "JSWebGLSampler.cpp"
+#include "JSWebGLShader.cpp"
+#include "JSWebGLShaderPrecisionFormat.cpp"
+#include "JSWebGLStencilTexturing.cpp"

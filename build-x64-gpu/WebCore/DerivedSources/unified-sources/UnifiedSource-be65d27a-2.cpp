@@ -1,0 +1,8 @@
+#include "dom/BeforeUnloadEvent.cpp"
+#include "dom/BoundaryPoint.cpp"
+#include "dom/BroadcastChannel.cpp"
+#include "dom/CDATASection.cpp"
+#include "dom/CaretPosition.cpp"
+#include "dom/CharacterData.cpp"
+#include "dom/ChildListMutationScope.cpp"
+#include "dom/ChildNodeList.cpp"

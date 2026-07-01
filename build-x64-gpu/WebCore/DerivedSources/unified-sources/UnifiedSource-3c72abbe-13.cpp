@@ -1,0 +1,8 @@
+#include "platform/VideoFrame.cpp"
+#include "platform/VideoPixelFormat.cpp"
+#include "platform/WebCoreMainThread.cpp"
+#include "platform/WebCorePersistentCoders.cpp"
+#include "platform/Widget.cpp"
+#include "platform/animation/AcceleratedEffect.cpp"
+#include "platform/animation/AcceleratedEffectValues.cpp"
+#include "platform/animation/AcceleratedTimeline.cpp"

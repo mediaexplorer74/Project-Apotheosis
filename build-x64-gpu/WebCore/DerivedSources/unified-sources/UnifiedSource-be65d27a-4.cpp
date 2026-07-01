@@ -1,0 +1,8 @@
+#include "dom/ContainerNode.cpp"
+#include "dom/ContainerNodeAlgorithms.cpp"
+#include "dom/ContentVisibilityAutoStateChangeEvent.cpp"
+#include "dom/ContentVisibilityDocumentState.cpp"
+#include "dom/ContextDestructionObserver.cpp"
+#include "dom/CustomElementDefaultARIA.cpp"
+#include "dom/CustomElementReactionQueue.cpp"
+#include "dom/CustomElementRegistry.cpp"

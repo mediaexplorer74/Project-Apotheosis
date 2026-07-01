@@ -1,0 +1,8 @@
+#include "runtime/ArrayConventions.cpp"
+#include "runtime/ArrayIteratorPrototype.cpp"
+#include "runtime/ArrayPrototype.cpp"
+#include "runtime/AssertInvariants.cpp"
+#include "runtime/AsyncDisposableStackConstructor.cpp"
+#include "runtime/AsyncDisposableStackPrototype.cpp"
+#include "runtime/AsyncFromSyncIteratorPrototype.cpp"
+#include "runtime/AsyncFunctionConstructor.cpp"

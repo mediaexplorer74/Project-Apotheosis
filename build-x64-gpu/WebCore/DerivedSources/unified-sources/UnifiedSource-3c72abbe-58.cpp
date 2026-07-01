@@ -1,0 +1,8 @@
+#include "platform/network/BlobResourceHandle.cpp"
+#include "platform/network/BlobResourceHandleBase.cpp"
+#include "platform/network/CacheValidation.cpp"
+#include "platform/network/Cookie.cpp"
+#include "platform/network/CredentialBase.cpp"
+#include "platform/network/CredentialStorage.cpp"
+#include "platform/network/DNS.cpp"
+#include "platform/network/DNSResolveQueue.cpp"

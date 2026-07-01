@@ -1,0 +1,8 @@
+#include "JSRTCDataChannelEvent.cpp"
+#include "JSRTCDegradationPreference.cpp"
+#include "JSRTCDtlsTransport.cpp"
+#include "JSRTCDtlsTransportState.cpp"
+#include "JSRTCEncodedAudioFrame.cpp"
+#include "JSRTCEncodedStreams.cpp"
+#include "JSRTCEncodedVideoFrame.cpp"
+#include "JSRTCError.cpp"

@@ -1,0 +1,8 @@
+#include "bindings/js/JSPerformanceObserverCustom.cpp"
+#include "bindings/js/JSPluginElementFunctions.cpp"
+#include "bindings/js/JSPopStateEventCustom.cpp"
+#include "bindings/js/JSPromiseRejectionEventCustom.cpp"
+#include "bindings/js/JSRTCRtpSFrameTransformCustom.cpp"
+#include "bindings/js/JSRangeCustom.cpp"
+#include "bindings/js/JSReadableStreamSourceCustom.cpp"
+#include "bindings/js/JSReportBodyCustom.cpp"

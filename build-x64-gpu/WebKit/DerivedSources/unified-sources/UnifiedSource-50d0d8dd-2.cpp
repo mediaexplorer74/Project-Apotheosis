@@ -1,0 +1,8 @@
+#include "Shared/FrameInfoData.cpp"
+#include "Shared/IPCConnectionTester.cpp"
+#include "Shared/IPCStreamTester.cpp"
+#include "Shared/IPCTester.cpp"
+#include "Shared/IPCTesterReceiver.cpp"
+#include "Shared/InspectorExtensionTypes.cpp"
+#include "Shared/JSHandleInfo.cpp"
+#include "Shared/JavaScriptEvaluationResult.cpp"

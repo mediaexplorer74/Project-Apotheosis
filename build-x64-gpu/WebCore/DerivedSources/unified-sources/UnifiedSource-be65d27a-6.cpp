@@ -1,0 +1,8 @@
+#include "dom/DOMStringList.cpp"
+#include "dom/DOMTZoneImpls.cpp"
+#include "dom/DataTransfer.cpp"
+#include "dom/DataTransferItem.cpp"
+#include "dom/DataTransferItemList.cpp"
+#include "dom/DatasetDOMStringMap.cpp"
+#include "dom/DecodedDataDocumentParser.cpp"
+#include "dom/DeviceMotionController.cpp"

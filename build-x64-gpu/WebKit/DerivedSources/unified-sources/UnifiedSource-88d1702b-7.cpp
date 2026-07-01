@@ -1,0 +1,8 @@
+#include "UIProcess/VisitedLinkStore.cpp"
+#include "UIProcess/WebBackForwardCache.cpp"
+#include "UIProcess/WebBackForwardCacheEntry.cpp"
+#include "UIProcess/WebBackForwardList.cpp"
+#include "UIProcess/WebColorPicker.cpp"
+#include "UIProcess/WebContextClient.cpp"
+#include "UIProcess/WebContextInjectedBundleClient.cpp"
+#include "UIProcess/WebContextMenuListenerProxy.cpp"

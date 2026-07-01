@@ -1,0 +1,8 @@
+#include "page/Screen.cpp"
+#include "page/ScreenOrientation.cpp"
+#include "page/ScriptTrackingPrivacyCategory.cpp"
+#include "page/ScrollBehavior.cpp"
+#include "page/SecurityOrigin.cpp"
+#include "page/SecurityOriginData.cpp"
+#include "page/SecurityPolicy.cpp"
+#include "page/SettingsBase.cpp"

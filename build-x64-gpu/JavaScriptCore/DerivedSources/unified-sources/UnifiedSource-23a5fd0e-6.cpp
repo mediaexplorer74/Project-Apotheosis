@@ -1,0 +1,8 @@
+#include "b3/B3Kind.cpp"
+#include "b3/B3LegalizeMemoryOffsets.cpp"
+#include "b3/B3LowerInt64.cpp"
+#include "b3/B3LowerMacros.cpp"
+#include "b3/B3LowerMacrosAfterOptimizations.cpp"
+#include "b3/B3LowerToAir.cpp"
+#include "b3/B3LowerToAir32_64.cpp"
+#include "b3/B3MathExtras.cpp"

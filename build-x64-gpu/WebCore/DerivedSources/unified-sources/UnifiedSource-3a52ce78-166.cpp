@@ -1,0 +1,8 @@
+#include "JSTransformStream.cpp"
+#include "JSTransformStreamDefaultController.cpp"
+#include "JSTreeWalker.cpp"
+#include "JSTrustedHTML.cpp"
+#include "JSTrustedScript.cpp"
+#include "JSTrustedScriptURL.cpp"
+#include "JSTrustedTypePolicy.cpp"
+#include "JSTrustedTypePolicyFactory.cpp"

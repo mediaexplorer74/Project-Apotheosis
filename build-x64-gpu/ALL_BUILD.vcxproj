@@ -1,0 +1,327 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ResolveNugetPackages>false</ResolveNugetPackages>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{8AAA634D-21A4-3BA8-B7C1-CAD183D5933C}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>ALL_BUILD</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeCheckCompilerFlagCommonPatterns.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeDependentOption.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeFindDependencyMacro.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeParseArguments.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakePushCheckState.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CPack.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CPackComponent.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckCCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckCXXCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckCXXSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckStructHasMember.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckSymbolExists.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckTypeSize.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FeatureSummary.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindCURL.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindCygwin.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindICU.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindJPEG.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindLibXml2.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindMsys.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindOpenSSL.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPNG.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPerl.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPkgConfig.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPython.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPython\Support.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindRuby.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindSQLite3.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindZLIB.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CMakeCLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CMakeCXXLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CheckCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CheckFlagCommonConfig.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Linker\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Linker\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Linker\MSVC.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Linker\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Linker\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Linker\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\ProcessorCount.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\SelectLibraryConfigurations.cmake;C:\Program Files\CMake\share\cmake-4.0\Templates\CPackConfig.cmake.in;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\FindCairo.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\FindGperf.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\FindPerlModules.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\FindWebP.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\OptionsCommon.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\OptionsWinUWP.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitCCache.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitCommon.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitCompilerFlags.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitFS.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitFeatures.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitFindPackage.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitMacros.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitPackaging.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitStaticAnalysis.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\4.0.3\CMakeCCompiler.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\4.0.3\CMakeCXXCompiler.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\4.0.3\CMakeRCCompiler.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\4.0.3\CMakeSystem.cmake;C:\vcpkg\installed\x64-uwp\share\curl\CURLConfig.cmake;C:\vcpkg\installed\x64-uwp\share\curl\CURLConfigVersion.cmake;C:\vcpkg\installed\x64-uwp\share\curl\CURLTargets-debug.cmake;C:\vcpkg\installed\x64-uwp\share\curl\CURLTargets-release.cmake;C:\vcpkg\installed\x64-uwp\share\curl\CURLTargets.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeCheckCompilerFlagCommonPatterns.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeDependentOption.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeFindDependencyMacro.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeParseArguments.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakePushCheckState.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CPack.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CPackComponent.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckCCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckCXXCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckCXXSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckStructHasMember.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckSymbolExists.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckTypeSize.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FeatureSummary.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindCURL.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindCygwin.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindICU.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindJPEG.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindLibXml2.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindMsys.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindOpenSSL.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPNG.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPerl.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPkgConfig.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPython.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPython\Support.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindRuby.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindSQLite3.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindZLIB.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CMakeCLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CMakeCXXLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CheckCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CheckFlagCommonConfig.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Linker\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Linker\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Linker\MSVC.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Linker\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Linker\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Linker\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\ProcessorCount.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\SelectLibraryConfigurations.cmake;C:\Program Files\CMake\share\cmake-4.0\Templates\CPackConfig.cmake.in;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\FindCairo.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\FindGperf.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\FindPerlModules.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\FindWebP.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\OptionsCommon.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\OptionsWinUWP.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitCCache.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitCommon.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitCompilerFlags.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitFS.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitFeatures.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitFindPackage.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitMacros.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitPackaging.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitStaticAnalysis.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\4.0.3\CMakeCCompiler.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\4.0.3\CMakeCXXCompiler.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\4.0.3\CMakeRCCompiler.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\4.0.3\CMakeSystem.cmake;C:\vcpkg\installed\x64-uwp\share\curl\CURLConfig.cmake;C:\vcpkg\installed\x64-uwp\share\curl\CURLConfigVersion.cmake;C:\vcpkg\installed\x64-uwp\share\curl\CURLTargets-debug.cmake;C:\vcpkg\installed\x64-uwp\share\curl\CURLTargets-release.cmake;C:\vcpkg\installed\x64-uwp\share\curl\CURLTargets.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeCheckCompilerFlagCommonPatterns.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeDependentOption.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeFindDependencyMacro.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeParseArguments.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakePushCheckState.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CPack.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CPackComponent.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckCCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckCXXCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckCXXSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckStructHasMember.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckSymbolExists.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckTypeSize.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FeatureSummary.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindCURL.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindCygwin.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindICU.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindJPEG.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindLibXml2.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindMsys.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindOpenSSL.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPNG.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPerl.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPkgConfig.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPython.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPython\Support.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindRuby.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindSQLite3.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindZLIB.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CMakeCLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CMakeCXXLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CheckCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CheckFlagCommonConfig.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Linker\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Linker\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Linker\MSVC.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Linker\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Linker\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Linker\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\ProcessorCount.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\SelectLibraryConfigurations.cmake;C:\Program Files\CMake\share\cmake-4.0\Templates\CPackConfig.cmake.in;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\FindCairo.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\FindGperf.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\FindPerlModules.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\FindWebP.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\OptionsCommon.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\OptionsWinUWP.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitCCache.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitCommon.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitCompilerFlags.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitFS.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitFeatures.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitFindPackage.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitMacros.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitPackaging.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitStaticAnalysis.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\4.0.3\CMakeCCompiler.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\4.0.3\CMakeCXXCompiler.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\4.0.3\CMakeRCCompiler.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\4.0.3\CMakeSystem.cmake;C:\vcpkg\installed\x64-uwp\share\curl\CURLConfig.cmake;C:\vcpkg\installed\x64-uwp\share\curl\CURLConfigVersion.cmake;C:\vcpkg\installed\x64-uwp\share\curl\CURLTargets-debug.cmake;C:\vcpkg\installed\x64-uwp\share\curl\CURLTargets-release.cmake;C:\vcpkg\installed\x64-uwp\share\curl\CURLTargets.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeCheckCompilerFlagCommonPatterns.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeDependentOption.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeFindDependencyMacro.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeParseArguments.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakePushCheckState.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CPack.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CPackComponent.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckCCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckCXXCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckCXXSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckStructHasMember.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckSymbolExists.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\CheckTypeSize.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FeatureSummary.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindCURL.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindCygwin.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindICU.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindJPEG.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindLibXml2.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindMsys.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindOpenSSL.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPNG.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPerl.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPkgConfig.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPython.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindPython\Support.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindRuby.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindSQLite3.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\FindZLIB.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CMakeCLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CMakeCXXLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CheckCompilerFlag.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CheckFlagCommonConfig.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Internal\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Linker\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Linker\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Linker\MSVC.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Linker\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Linker\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Linker\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\ProcessorCount.cmake;C:\Program Files\CMake\share\cmake-4.0\Modules\SelectLibraryConfigurations.cmake;C:\Program Files\CMake\share\cmake-4.0\Templates\CPackConfig.cmake.in;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\FindCairo.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\FindGperf.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\FindPerlModules.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\FindWebP.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\OptionsCommon.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\OptionsWinUWP.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitCCache.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitCommon.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitCompilerFlags.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitFS.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitFeatures.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitFindPackage.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitMacros.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitPackaging.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\cmake\WebKitStaticAnalysis.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\4.0.3\CMakeCCompiler.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\4.0.3\CMakeCXXCompiler.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\4.0.3\CMakeRCCompiler.cmake;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\4.0.3\CMakeSystem.cmake;C:\vcpkg\installed\x64-uwp\share\curl\CURLConfig.cmake;C:\vcpkg\installed\x64-uwp\share\curl\CURLConfigVersion.cmake;C:\vcpkg\installed\x64-uwp\share\curl\CURLTargets-debug.cmake;C:\vcpkg\installed\x64-uwp\share\curl\CURLTargets-release.cmake;C:\vcpkg\installed\x64-uwp\share\curl\CURLTargets.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\ZERO_CHECK.vcxproj">
+      <Project>{8AEDA3F9-554F-3BC4-B70A-0E1A01F04A21}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\ANGLE.vcxproj">
+      <Project>{684BF30B-9E23-3BBB-B56B-A5B7A301EC81}</Project>
+      <Name>ANGLE</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include\ANGLEHeaders.vcxproj">
+      <Project>{10FF9A89-4B10-3EC0-A15E-E920A2F08F32}</Project>
+      <Name>ANGLEHeaders</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\Copy_WebCoreTestSupportPrivateHeaders.vcxproj">
+      <Project>{1AF2371B-742B-3636-B647-4B71DA76E286}</Project>
+      <Name>Copy_WebCoreTestSupportPrivateHeaders</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\EGL.vcxproj">
+      <Project>{469895CA-E780-3B4F-8BE9-E838B109E784}</Project>
+      <Name>EGL</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\GLESv2.vcxproj">
+      <Project>{DD3BDFF0-ED59-3205-9CAA-627F64CA7535}</Project>
+      <Name>GLESv2</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\ThirdParty\ANGLE\include\GLSLANGHeaders.vcxproj">
+      <Project>{EE3B82A7-0B5F-399F-9AED-CB914A10FD22}</Project>
+      <Name>GLSLANGHeaders</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\JavaScriptCore.vcxproj">
+      <Project>{0D330A1D-49CD-35F3-9A08-B073000A76AB}</Project>
+      <Name>JavaScriptCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\JavaScriptCore_CopyHeaders.vcxproj">
+      <Project>{A688E90F-904D-37D9-8DF8-51ED3B27BCB8}</Project>
+      <Name>JavaScriptCore_CopyHeaders</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\JavaScriptCore_CopyPrivateHeaders.vcxproj">
+      <Project>{B1C3EE68-3637-3930-B685-6871FA740BE9}</Project>
+      <Name>JavaScriptCore_CopyPrivateHeaders</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\JavaScriptCore_c.vcxproj">
+      <Project>{2B44940D-4C90-3483-8CD6-A5D0BB700A99}</Project>
+      <Name>JavaScriptCore_c</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\LLIntOffsetsExtractor.vcxproj">
+      <Project>{29E5D43D-81DA-30CB-A2D4-7CE3D8C3BC8D}</Project>
+      <Name>LLIntOffsetsExtractor</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\LLIntSettingsExtractor.vcxproj">
+      <Project>{D50C1917-D1AC-33C3-8A3B-E2F92E39F065}</Project>
+      <Name>LLIntSettingsExtractor</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\LowLevelInterpreterLib.vcxproj">
+      <Project>{1CA95444-E105-3521-B222-6B1D36F7FAB7}</Project>
+      <Name>LowLevelInterpreterLib</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebKit\NetworkProcess.vcxproj">
+      <Project>{1C6D6C75-57F5-3207-A959-143FC2781290}</Project>
+      <Name>NetworkProcess</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\PAL\pal\PAL.vcxproj">
+      <Project>{9B8FCA4F-39E3-3DF2-9B79-18DFBFFBEF10}</Project>
+      <Name>PAL</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\PAL\pal\PAL_CopyHeaders.vcxproj">
+      <Project>{0202BDC8-812B-3BF4-830A-46F225F264E3}</Project>
+      <Name>PAL_CopyHeaders</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WTF\wtf\WTF.vcxproj">
+      <Project>{B8207DEF-273E-3D8F-BC65-0CD46D508ADC}</Project>
+      <Name>WTF</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WTF\wtf\WTF_CopyHeaders.vcxproj">
+      <Project>{1E338372-D193-334F-82E5-E84F2A8396A4}</Project>
+      <Name>WTF_CopyHeaders</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WTF\wtf\WTF_CopyPreferences.vcxproj">
+      <Project>{73F76EBE-8CB3-3501-9326-5F80743F0DD2}</Project>
+      <Name>WTF_CopyPreferences</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\WebCore.vcxproj">
+      <Project>{AEBB2AA5-1374-3256-A221-C65675E0ED06}</Project>
+      <Name>WebCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\WebCoreTestSupport.vcxproj">
+      <Project>{DDA05AB6-F8F5-31D5-B855-005FE3612BAC}</Project>
+      <Name>WebCoreTestSupport</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebCore\WebCore_CopyPrivateHeaders.vcxproj">
+      <Project>{AC159B11-4086-39AA-A786-D0F294783DEE}</Project>
+      <Name>WebCore_CopyPrivateHeaders</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebKit\WebKit.vcxproj">
+      <Project>{76CE0488-ED95-355C-B17D-AB168548CEC4}</Project>
+      <Name>WebKit</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WebKit\WebProcess.vcxproj">
+      <Project>{3B76222F-1698-3E2C-A226-77E3648EA4E4}</Project>
+      <Name>WebProcess</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\bmalloc\bmalloc.vcxproj">
+      <Project>{D08B5A4B-14D6-3AF3-982F-EFD6E72D430C}</Project>
+      <Name>bmalloc</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\bmalloc\bmalloc_CopyHeaders.vcxproj">
+      <Project>{FBE2B53D-EB41-3A39-B720-138E343FF8F7}</Project>
+      <Name>bmalloc_CopyHeaders</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\bmalloc\bmalloc_c.vcxproj">
+      <Project>{92DBEF3B-0D12-3229-A4A6-9B25EEEB7BD8}</Project>
+      <Name>bmalloc_c</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\shell\jsc.vcxproj">
+      <Project>{16556489-A612-3F8A-9124-6921F53D2E38}</Project>
+      <Name>jsc</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

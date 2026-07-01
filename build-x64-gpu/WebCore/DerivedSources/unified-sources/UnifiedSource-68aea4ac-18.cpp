@@ -1,0 +1,8 @@
+#include "bindings/js/JSXMLHttpRequestCustom.cpp"
+#include "bindings/js/JSXPathResultCustom.cpp"
+#include "bindings/js/ReadableStreamDefaultController.cpp"
+#include "bindings/js/ScheduledAction.cpp"
+#include "bindings/js/ScriptCachedFrameData.cpp"
+#include "bindings/js/ScriptController.cpp"
+#include "bindings/js/ScriptModuleLoader.cpp"
+#include "bindings/js/ScriptWrappable.cpp"

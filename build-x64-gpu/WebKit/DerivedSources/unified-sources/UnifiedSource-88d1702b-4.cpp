@@ -1,0 +1,8 @@
+#include "UIProcess/ProvisionalFrameProxy.cpp"
+#include "UIProcess/ProvisionalPageProxy.cpp"
+#include "UIProcess/RemotePageDrawingAreaProxy.cpp"
+#include "UIProcess/RemotePageFullscreenManagerProxy.cpp"
+#include "UIProcess/RemotePagePlaybackSessionManagerProxy.cpp"
+#include "UIProcess/RemotePageProxy.cpp"
+#include "UIProcess/RemotePageScreenOrientationManagerProxy.cpp"
+#include "UIProcess/RemotePageVideoPresentationManagerProxy.cpp"

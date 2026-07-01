@@ -1,0 +1,8 @@
+#include "JSXRInteractionMode.cpp"
+#include "JSXRLayerEvent.cpp"
+#include "JSXRLayerLayout.cpp"
+#include "JSXRLayerQuality.cpp"
+#include "JSXRProjectionLayer.cpp"
+#include "JSXRProjectionLayerInit.cpp"
+#include "JSXRQuadLayer.cpp"
+#include "JSXRQuadLayerInit.cpp"

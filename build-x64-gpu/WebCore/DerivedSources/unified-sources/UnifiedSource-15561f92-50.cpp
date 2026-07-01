@@ -1,0 +1,8 @@
+#include "Modules/webaudio/AudioSummingJunction.cpp"
+#include "Modules/webaudio/AudioWorklet.cpp"
+#include "Modules/webaudio/AudioWorkletGlobalScope.cpp"
+#include "Modules/webaudio/AudioWorkletMessagingProxy.cpp"
+#include "Modules/webaudio/AudioWorkletNode.cpp"
+#include "Modules/webaudio/AudioWorkletProcessor.cpp"
+#include "Modules/webaudio/AudioWorkletThread.cpp"
+#include "Modules/webaudio/BaseAudioContext.cpp"

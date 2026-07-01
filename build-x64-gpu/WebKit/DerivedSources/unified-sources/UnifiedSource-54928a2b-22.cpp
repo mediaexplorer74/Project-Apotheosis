@@ -1,0 +1,8 @@
+#include "WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp"
+#include "WebProcess/Storage/WebServiceWorkerProvider.cpp"
+#include "WebProcess/Storage/WebSharedWorkerContextManagerConnection.cpp"
+#include "WebProcess/Storage/WebSharedWorkerObjectConnection.cpp"
+#include "WebProcess/Storage/WebSharedWorkerProvider.cpp"
+#include "WebProcess/UserContent/SharedMemoryJSBuffer.cpp"
+#include "WebProcess/UserContent/WebUserContentController.cpp"
+#include "WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp"

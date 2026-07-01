@@ -1,0 +1,8 @@
+#include "Shared/ActivityAssertion.cpp"
+#include "Shared/AuxiliaryProcess.cpp"
+#include "Shared/BlobDataFileReferenceWithSandboxExtension.cpp"
+#include "Shared/CacheModel.cpp"
+#include "Shared/ContextMenuContextData.cpp"
+#include "Shared/DebuggableInfoData.cpp"
+#include "Shared/EditingRange.cpp"
+#include "Shared/EditorState.cpp"

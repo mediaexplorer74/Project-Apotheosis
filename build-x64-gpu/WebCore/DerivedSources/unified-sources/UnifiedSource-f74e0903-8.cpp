@@ -1,0 +1,8 @@
+#include "workers/service/context/ServiceWorkerThread.cpp"
+#include "workers/service/context/ServiceWorkerThreadProxy.cpp"
+#include "workers/service/server/SWOriginStore.cpp"
+#include "workers/service/server/SWRegistrationDatabase.cpp"
+#include "workers/service/server/SWScriptStorage.cpp"
+#include "workers/service/server/SWServer.cpp"
+#include "workers/service/server/SWServerJobQueue.cpp"
+#include "workers/service/server/SWServerRegistration.cpp"

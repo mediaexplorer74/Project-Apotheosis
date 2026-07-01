@@ -1,0 +1,8 @@
+#include "WebProcess/WebPage/WebPageOverlay.cpp"
+#include "WebProcess/WebPage/WebPageTesting.cpp"
+#include "WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp"
+#include "WebProcess/WebPage/WebURLSchemeTaskProxy.cpp"
+#include "WebProcess/WebPage/WebUndoStep.cpp"
+#include "WebProcess/WebStorage/StorageAreaImpl.cpp"
+#include "WebProcess/WebStorage/StorageAreaMap.cpp"
+#include "WebProcess/WebStorage/StorageNamespaceImpl.cpp"

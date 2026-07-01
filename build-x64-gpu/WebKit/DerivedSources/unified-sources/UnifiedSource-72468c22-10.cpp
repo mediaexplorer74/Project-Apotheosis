@@ -1,0 +1,8 @@
+#include "NetworkProcess/storage/CacheStorageManager.cpp"
+#include "NetworkProcess/storage/CacheStorageMemoryStore.cpp"
+#include "NetworkProcess/storage/CacheStorageRecord.cpp"
+#include "NetworkProcess/storage/CacheStorageRegistry.cpp"
+#include "NetworkProcess/storage/FileSystemStorageHandle.cpp"
+#include "NetworkProcess/storage/FileSystemStorageHandleRegistry.cpp"
+#include "NetworkProcess/storage/FileSystemStorageManager.cpp"
+#include "NetworkProcess/storage/IDBStorageConnectionToClient.cpp"

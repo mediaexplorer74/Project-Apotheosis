@@ -1,0 +1,8 @@
+#include "xml/XMLSerializer.cpp"
+#include "xml/XMLTreeViewer.cpp"
+#include "xml/XPathEvaluator.cpp"
+#include "xml/XPathExpression.cpp"
+#include "xml/XPathExpressionNode.cpp"
+#include "xml/XPathFunctions.cpp"
+#include "xml/XPathGrammar.cpp"
+#include "xml/XPathNSResolver.cpp"

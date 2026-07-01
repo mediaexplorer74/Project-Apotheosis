@@ -1,0 +1,8 @@
+#include "dom/PointerEvent.cpp"
+#include "dom/PointerEventTypeNames.cpp"
+#include "dom/PopStateEvent.cpp"
+#include "dom/PopoverData.cpp"
+#include "dom/Position.cpp"
+#include "dom/PositionIterator.cpp"
+#include "dom/ProcessingInstruction.cpp"
+#include "dom/ProgressEvent.cpp"

@@ -1,0 +1,8 @@
+#include "JSDetectedBarcode.cpp"
+#include "JSDetectedFace.cpp"
+#include "JSDetectedText.cpp"
+#include "JSDeviceMotionEvent.cpp"
+#include "JSDeviceOrientationEvent.cpp"
+#include "JSDeviceOrientationOrMotionPermissionState.cpp"
+#include "JSDigitalCredential.cpp"
+#include "JSDigitalCredentialGetRequest.cpp"

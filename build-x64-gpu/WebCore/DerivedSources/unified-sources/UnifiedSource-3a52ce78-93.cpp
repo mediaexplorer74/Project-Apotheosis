@@ -1,0 +1,8 @@
+#include "JSInstallEvent.cpp"
+#include "JSIntegrityPolicyViolationReportBody.cpp"
+#include "JSIntersectionObserver.cpp"
+#include "JSIntersectionObserverCallback.cpp"
+#include "JSIntersectionObserverEntry.cpp"
+#include "JSIsLoggedIn.cpp"
+#include "JSIterationCompositeOperation.cpp"
+#include "JSJsonWebKey.cpp"

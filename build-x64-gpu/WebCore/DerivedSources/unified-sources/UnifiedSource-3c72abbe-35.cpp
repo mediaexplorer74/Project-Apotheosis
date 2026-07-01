@@ -1,0 +1,8 @@
+#include "platform/graphics/MediaPlayerPrivateWirelessPlayback.cpp"
+#include "platform/graphics/MediaResourceSniffer.cpp"
+#include "platform/graphics/MediaSampleConverter.cpp"
+#include "platform/graphics/MediaSourcePrivate.cpp"
+#include "platform/graphics/Model.cpp"
+#include "platform/graphics/ModelContext.cpp"
+#include "platform/graphics/NamedImageGeneratedImage.cpp"
+#include "platform/graphics/NativeImage.cpp"

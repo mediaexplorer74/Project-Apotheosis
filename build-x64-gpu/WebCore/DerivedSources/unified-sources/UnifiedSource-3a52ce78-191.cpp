@@ -1,0 +1,8 @@
+#include "JSWorkerLocation.cpp"
+#include "JSWorkerNavigator.cpp"
+#include "JSWorkerOptions.cpp"
+#include "JSWorkerType.cpp"
+#include "JSWorklet.cpp"
+#include "JSWorkletGlobalScope.cpp"
+#include "JSWorkletOptions.cpp"
+#include "JSWritableStream.cpp"

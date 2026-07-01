@@ -1,0 +1,492 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{B8207DEF-273E-3D8F-BC65-0CD46D508ADC}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>WTF</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">WTF.dir\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">WTF.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">WTF</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">WTF.dir\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">WTF.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">WTF</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">WTF.dir\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">WTF.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">WTF</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">WTF.dir\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">WTF.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">WTF</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\fast_float;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\persistence;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\simdutf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\icu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\threads;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\unicode;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/icu-x64-uwp/include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BUILDING_WTF;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;STATICALLY_LINKED_WITH_bmalloc;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;BUILDING_WTF;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;STATICALLY_LINKED_WITH_bmalloc;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\fast_float;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\persistence;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\simdutf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\icu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\threads;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\unicode;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;C:\icu-x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\fast_float;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\persistence;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\simdutf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\icu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\threads;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\unicode;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;C:\icu-x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\fast_float;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\persistence;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\simdutf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\icu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\threads;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\unicode;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/icu-x64-uwp/include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BUILDING_WTF;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;STATICALLY_LINKED_WITH_bmalloc;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BUILDING_WTF;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;STATICALLY_LINKED_WITH_bmalloc;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\fast_float;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\persistence;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\simdutf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\icu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\threads;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\unicode;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;C:\icu-x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\fast_float;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\persistence;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\simdutf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\icu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\threads;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\unicode;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;C:\icu-x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\fast_float;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\persistence;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\simdutf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\icu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\threads;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\unicode;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/icu-x64-uwp/include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BUILDING_WTF;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;STATICALLY_LINKED_WITH_bmalloc;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BUILDING_WTF;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;STATICALLY_LINKED_WITH_bmalloc;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\fast_float;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\persistence;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\simdutf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\icu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\threads;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\unicode;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;C:\icu-x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\fast_float;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\persistence;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\simdutf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\icu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\threads;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\unicode;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;C:\icu-x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\fast_float;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\persistence;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\simdutf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\icu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\threads;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\unicode;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/icu-x64-uwp/include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MinimalRebuild></MinimalRebuild>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BUILDING_WTF;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;STATICALLY_LINKED_WITH_bmalloc;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BUILDING_WTF;BUILDING_WITH_CMAKE=1;BUILDING_WEBKIT=1;HAVE_CONFIG_H=1;PAS_BMALLOC=1;NTDDI_VERSION=0x0A000006;_WIN32_WINNT=0x0A00;NOMINMAX;UNICODE;_UNICODE;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_SILENCE_CXX23_DENORM_DEPRECATION_WARNING;_WINSOCKAPI_=;WK_WINUWP=1;getpid=GetCurrentProcessId;STATICALLY_LINKED_WITH_bmalloc;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\fast_float;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\persistence;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\simdutf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\icu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\threads;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\unicode;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;C:\icu-x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\WTF\DerivedSources;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\fast_float;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\persistence;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\simdutf;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\icu;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\threads;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\unicode;C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\bmalloc\Headers;C:\icu-x64-uwp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WTF/wtf/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/WTF/wtf/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\PlatformWin.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WTF\wtf\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WTF/wtf/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/WTF/wtf/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\PlatformWin.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WTF\wtf\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WTF/wtf/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/WTF/wtf/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\PlatformWin.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WTF\wtf\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit/Source/WTF/wtf/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Admin/source/repos/!OpenCode/Apotheosis/WebKit -BC:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu --check-stamp-file C:/Users/Admin/source/repos/!OpenCode/Apotheosis/build-x64-gpu/Source/WTF/wtf/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\PlatformWin.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\WTF\wtf\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\cmakeconfig.h" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\ASCIICType.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\ApproximateTime.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\Assertions.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\AutomaticThread.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\BitVector.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\BloomFilter.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\CPUTime.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\ClockType.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\CodePtr.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\CompactPtr.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\CompilationThread.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\ConcurrentBuffer.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\ConcurrentPtrHashSet.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\ContinuousApproximateTime.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\ContinuousTime.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\CountingLock.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\CrossThreadCopier.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\CrossThreadTaskHandler.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\CryptographicUtilities.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\CryptographicallyRandomNumber.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\CurrentTime.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\DataLog.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\DateMath.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\DebugHeap.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\EmbeddedFixedVector.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\FastBitVector.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\FastFloat.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\FastMalloc.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\FileHandle.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\FilePrintStream.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\FileSystem.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\FunctionDispatcher.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\Gigacage.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\GlobalVersion.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\GregorianDateTime.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\HashTable.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\HexNumber.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\Int128.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\JSONValues.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\Language.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\LikelyDenseUnsignedIntegerSet.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\Lock.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\LockedPrintStream.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\LogChannels.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\LogInitialization.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\Logger.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\Logging.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\MainThread.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\MainThreadDispatcher.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\MallocCommon.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\MediaTime.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\MemoryPressureHandler.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\MetaAllocator.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\MonotonicTime.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\NativePromise.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\NumberOfCores.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\OSRandomSource.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\ObjectIdentifier.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\PageBlock.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\ParallelHelperPool.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\ParallelJobsGeneric.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\ParkingLot.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\PreciseSum.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\PrintStream.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\ProcessPrivilege.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\RAMSize.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\RandomDevice.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\ReadWriteLock.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\RefCountDebugger.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\RefTrackerMixin.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\RunLoop.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\RuntimeApplicationChecks.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\SHA1.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\SIMDUTF.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\SafeStrerror.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\Seconds.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\SegmentedVector.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\SequesteredAllocator.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\SequesteredImmortalHeap.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\SequesteredMalloc.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\SixCharacterHash.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\SmallSet.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\StackBounds.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\StackCheck.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\StackPointer.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\StackStats.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\StackTrace.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\StatisticsManager.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\StringPrintStream.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\SuspendableWorkQueue.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\ThreadGroup.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\ThreadMessage.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\Threading.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\TimeWithDynamicClockType.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\TimingScope.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\URL.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\URLHelpers.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\URLParser.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\UUID.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\UniqueArray.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\Vector.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\WTFAssertions.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\WTFConfig.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\WTFProcess.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\WallTime.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\WeakPtr.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\WeakRandomNumber.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\WordLock.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\WorkQueue.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\WorkerPool.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dragonbox\dragonbox_to_chars.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa\bignum-dtoa.cc" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa\bignum.cc" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa\cached-powers.cc" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa\diy-fp.cc" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa\double-conversion.cc" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa\fast-dtoa.cc" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa\fixed-dtoa.cc" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\dtoa\strtod.cc" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\persistence\PersistentCoders.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\persistence\PersistentDecoder.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\persistence\PersistentEncoder.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\ASCIILiteral.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\AtomString.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\AtomStringImpl.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\AtomStringTable.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\Base64.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\CString.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\CStringView.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\ExternalStringImpl.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\LineEnding.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\StringBuffer.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\StringBuilder.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\StringBuilderJSON.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\StringCommon.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\StringImpl.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\StringView.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\SymbolImpl.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\SymbolRegistry.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\TextBreakIterator.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\TextStream.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\WTFString.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\icu\UnicodeExtras.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\icu\UTextProvider.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\icu\UTextProviderLatin1.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\icu\UTextProviderUTF16.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\threads\BinarySemaphore.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\threads\Signals.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\unicode\CollatorDefault.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\unicode\UTF8Conversion.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\unicode\icu\CollatorICU.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\unicode\icu\ICUHelpers.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\generic\WorkQueueGeneric.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\win\StringWin.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\text\win\TextBreakIteratorInternalICUWin.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\CPUTimeWin.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\DbgHelperWin.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\FileHandleWin.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\FileSystemWin.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\LanguageWin.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\LoggingWin.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\MainThreadWin.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\MappedFileDataWin.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\MemoryFootprintWin.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\MemoryPressureHandlerWin.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\OSAllocatorWin.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\PathWalker.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\RunLoopWin.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\SignalsWin.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\ThreadingWin.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\WTFCRTDebug.cpp" />
+    <ClCompile Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\WTF\wtf\win\Win32Handle.cpp" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\ZERO_CHECK.vcxproj">
+      <Project>{8AEDA3F9-554F-3BC4-B70A-0E1A01F04A21}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\bmalloc\bmalloc.vcxproj">
+      <Project>{D08B5A4B-14D6-3AF3-982F-EFD6E72D430C}</Project>
+      <Name>bmalloc</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\bmalloc\bmalloc_CopyHeaders.vcxproj">
+      <Project>{FBE2B53D-EB41-3A39-B720-138E343FF8F7}</Project>
+      <Name>bmalloc_CopyHeaders</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\bmalloc\bmalloc_c.vcxproj">
+      <Project>{92DBEF3B-0D12-3229-A4A6-9B25EEEB7BD8}</Project>
+      <Name>bmalloc_c</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

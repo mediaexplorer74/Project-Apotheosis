@@ -1,0 +1,8 @@
+#include "platform/encryptedmedia/clearkey/CDMClearKey.cpp"
+#include "platform/gamepad/EmptyGamepadProvider.cpp"
+#include "platform/gamepad/GamepadConstants.cpp"
+#include "platform/gamepad/GamepadProvider.cpp"
+#include "platform/graphics/AV1Utilities.cpp"
+#include "platform/graphics/AlphaPremultiplication.cpp"
+#include "platform/graphics/AnimationFrameRate.cpp"
+#include "platform/graphics/BifurcatedGraphicsContext.cpp"

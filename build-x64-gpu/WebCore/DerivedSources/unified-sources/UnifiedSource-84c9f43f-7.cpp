@@ -1,0 +1,8 @@
+#include "inspector/agents/InspectorTimelineAgent.cpp"
+#include "inspector/agents/InspectorWorkerAgent.cpp"
+#include "inspector/agents/WebConsoleAgent.cpp"
+#include "inspector/agents/WebDebuggerAgent.cpp"
+#include "inspector/agents/WebHeapAgent.cpp"
+#include "inspector/agents/page/PageAuditAgent.cpp"
+#include "inspector/agents/page/PageCanvasAgent.cpp"
+#include "inspector/agents/page/PageConsoleAgent.cpp"

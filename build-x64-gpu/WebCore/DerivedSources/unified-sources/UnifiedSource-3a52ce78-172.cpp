@@ -1,0 +1,8 @@
+#include "JSViewTimeline.cpp"
+#include "JSViewTimelineOptions.cpp"
+#include "JSViewTransition.cpp"
+#include "JSViewTransitionTypeSet.cpp"
+#include "JSViewTransitionUpdateCallback.cpp"
+#include "JSVisibilityState.cpp"
+#include "JSVisitorCallback.cpp"
+#include "JSVisualViewport.cpp"

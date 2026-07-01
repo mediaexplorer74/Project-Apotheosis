@@ -1,0 +1,8 @@
+#include "JSWebSocket.cpp"
+#include "JSWebTransport.cpp"
+#include "JSWebTransportBidirectionalStream.cpp"
+#include "JSWebTransportCloseInfo.cpp"
+#include "JSWebTransportCongestionControl.cpp"
+#include "JSWebTransportConnectionStats.cpp"
+#include "JSWebTransportDatagramDuplexStream.cpp"
+#include "JSWebTransportDatagramStats.cpp"

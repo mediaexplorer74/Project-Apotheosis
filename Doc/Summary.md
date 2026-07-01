@@ -1,6 +1,6 @@
 # Project Apotheosis — Engineering Research Summary
 
-> Compiled by an AI code agent during a deep-dive session (June 28, 2026).
+> Compiled by an AI code agent during deep-dive sessions (June 28 - July 1, 2026).
 > Original repo: [Jimmyxiao2009/Project-Apotheosis](https://github.com/Jimmyxiao2009/Project-Apotheosis)
 > Reddit thread: [r/windowsphone — Porting WebKitGTK 2.52.4 to Windows 10 Mobile](https://www.reddit.com/r/windowsphone/comments/1ugn2kn/porting_webkitgtk_2524_to_windows_10_mobile/)
 
@@ -16,64 +16,54 @@
 |---------|--------|-------|
 | WTF + JSC CLoop | ✅ | Phase 0 — engine core runs on device |
 | WebCore + Cairo SW render | ✅ | Bing, GitHub, Apple, MS sites render correctly |
-| Live interactive session | ✅ | Real mouse events, form input, scroll, keyboard |
-| JSC JIT | ✅ | `codeGeneration` capability enables JIT (~5-50×) |
+| Live interactive session | ✅ | Mouse events, form input, scroll, keyboard |
+| JSC JIT | ✅ | ~5-50× speedup over CLoop |
 | GPU compositing (ANGLE + TextureMapper) | ✅ | Direct present to SwapChainPanel |
-| Smooth scroll / pinch-zoom | ✅ | GPU-backed, real-time scale + re-rasterize |
+| Smooth scroll / pinch-zoom | ✅ | GPU-backed, real-time |
 | Browser shell (tabs, URL bar, settings) | ✅ | Version 0.1.8+ |
-| Multi-language UI (en/ru/cn) | 🆕 **Added** | See `PLAN.md` |
+| Multi-language UI (en/ru/cn) | ✅ | `.resw` + fallback table |
+| **x64-uwp build (PC debug)** | 🆕 **In progress** | WTF/bmalloc/PAL headers compiled |
 
 ---
 
 ## 2. Source & Origin
 
 - **GitHub:** [Jimmyxiao2009/Project-Apotheosis](https://github.com/Jimmyxiao2009/Project-Apotheosis)
-- **Reddit announcement:** [r/windowsphone](https://www.reddit.com/r/windowsphone/comments/1ugn2kn/porting_webkitgtk_2524_to_windows_10_mobile/)
+- **Reddit:** [r/windowsphone](https://www.reddit.com/r/windowsphone/comments/1ugn2kn/porting_webkitgtk_2524_to_windows_10_mobile/)
 - **Author:** Jimmy Xiao (GitHub: `Jimmyxiao2009`)
 - **License:** MIT (port layer); LGPL-2.1/BSD (upstream WebKit + dependencies)
 
-The upstream WebKit source is **webkitgtk-2.52.4** (released June 2, 2026), available at:
-- GitHub tag: [`webkitgtk-2.52.4`](https://github.com/WebKit/WebKit/tree/webkitgtk-2.52.4) (commit `7acdf5e`)
-- Tarball: `https://github.com/WebKit/WebKit/archive/refs/tags/webkitgtk-2.52.4.tar.gz`
-- webkitgtk.org: [Stable tarball](https://webkitgtk.org/)
+The upstream WebKit source is **webkitgtk-2.52.4** (released June 2, 2026), GitHub tag: `webkitgtk-2.52.4` (commit `7acdf5e`).
 
 ---
 
-## 3. Architecture Overview
+## 3. Architecture
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│  Harness — UWP App (C++/CX, MSVC v143 ARM)                    │
-│   · MainPage: toolbar, address bar, gestures → engine         │
-│   · GpuPanel (SwapChainPanel) ← GPU | RenderImage ← SW fallback│
-└────────────────────────────┬─────────────────────────────────┘
-                             │  C ABI (WebCoreDriver.h)
-┌────────────────────────────▼─────────────────────────────────┐
-│  WebCoreDriver (clang-cl → WebCoreDriver-gpu.lib/.dll)        │
-│   · Resident Page/Frame session, event dispatch               │
-│   · Cairo paintToRGBA | TextureMapper GPU composite           │
-│   · PortChromeClient / FrameLoaderClient / Strategies         │
-└────────────────────────────┬─────────────────────────────────┘
-                             │
-┌────────────────────────────▼─────────────────────────────────┐
-│  WebKit / WebCore / JSC / WTF (clang-cl, thumbv7-windows-msvc)│
-│   · ARM32/App Container patches guarded by WK_WINUWP          │
-│   · Source: webkitgtk-2.52.4 (not in repo, GB-scale)          │
-└──────────────────────────────────────────────────────────────┘
+Harness — UWP App (C++/CX, MSVC v143)
+   · MainPage: toolbar, gestures → engine
+   · GpuPanel (SwapChainPanel) ← GPU | RenderImage ← SW fallback
+        │  C ABI (WebCoreDriver.h)
+WebCoreDriver (clang-cl → WebCoreDriver-gpu.dll)
+   · Resident Page/Frame session, event dispatch
+   · Cairo paintToRGBA | TextureMapper GPU composite
+   · PortChromeClient / FrameLoaderClient / Strategies
+        │
+WebKit / WebCore / JSC / WTF (clang-cl, WK_WINUWP patches)
 ```
 
-**Key architectural decisions:**
+**Key decisions:**
 - Three layers decoupled by a stable **C ABI** (`WebCoreDriver.h`)
-- Engine thread: **all WebCore/JSC calls serialized** on a single background thread
-- UI thread: **never** synchronously waits on the engine (deadlock prevention)
-- **Two paint paths**: Cairo software (universal fallback) | TextureMapper GPU (runtime switch via `g_gpuActive`)
-- ANGLE (D3D11 FL9_3) as the OpenGL ES 2.0 wrapper for UWP App Container
+- Engine thread: all calls serialized on single background thread
+- UI thread: never synchronously waits on engine (deadlock prevention)
+- Two paint paths: Cairo SW (fallback) | TextureMapper GPU (runtime switch)
+- ANGLE (D3D11 FL9_3) as OpenGL ES 2.0 wrapper for UWP App Container
 
 ---
 
-## 4. Build System Deep Dive
+## 4. Build System
 
-### 4.1 Three Toolchains (must keep separate)
+### 4.1 Three Toolchains
 
 | Layer | Compiler | Target | Output |
 |-------|----------|--------|--------|
@@ -81,212 +71,194 @@ The upstream WebKit source is **webkitgtk-2.52.4** (released June 2, 2026), avai
 | Port driver | **clang-cl** + **lld-link** | ARM32 UWP | `WebCoreDriver-gpu.dll` |
 | Harness (UWP app) | **MSVC v143** (14.44.35207) | ARM | `Harness.appx` |
 
-**Critical constraint:** VS2022+ removed ARM32 vcvars. The project uses `arm32-uwp-env.ps1` to manually set INCLUDE/LIB/PATH from SDK 22621 (the last SDK with ARM32 libraries — SDK 26100 deleted them).
+### 4.2 Build Configurations
 
-### 4.2 WebKit Build Configuration
+| Dir | JIT | GPU (ANGLE) | Purpose |
+|-----|-----|-------------|---------|
+| `build-clang-webcore` | ❌ (CLoop) | ❌ (Cairo) | Phase 1b baseline |
+| `build-clang-jit` | ✅ | ❌ (Cairo) | JIT line |
+| `build-clang-gpu` | ✅ | ✅ | **Active dev line (gpu-path1, ARM32)** |
+| `build-x64-gpu` | ✅ | ✅ | **New: PC debug (x64-uwp)** |
 
-Three parallel build directories from one patched WebKit tree:
+### 4.3 Ninja Build Target Structure
 
-| Dir | CMake Flags | Purpose |
-|-----|-------------|---------|
-| `build-clang-webcore` | Cairo only, no JIT | Phase 1b SW baseline |
-| `build-clang-jit` | JSC JIT ON | JIT line |
-| `build-clang-gpu` | JIT + TextureMapper + ANGLE | **Active dev line (gpu-path1)** |
+Key discovery: **PAL is an OBJECT library** — no `PAL.lib` produced. PAL `.obj` files are compiled and linked directly into `WebCore.dll`. The top-level ninja targets:
 
-### 4.3 The Complete Dependency Chain
-
-```
-webkitgtk-2.52.4 source (E:\Apotheosis\WebKit\)
-  │
-  ├── WTF.lib  ──┐
-  ├── JavaScriptCore.lib ─┤
-  ├── PAL.lib ────────────┤
-  └── WebCore.lib ────────┤
-                          │
-port/*.cpp (12 source files) ──┐
-                               │
-  ANGLE (libEGL.lib, libGLESv2.lib) ──┤
-  Cairo + pixman ──────────────────────┤
-  FreeType + fontconfig + HarfBuzz ────┤
-  libcurl + OpenSSL ───────────────────┤
-  ICU 78 (icuuc.lib, icuin.lib, icudt.lib) ──┤
-  libxml2, sqlite3, zlib, bzip2, brotli ─────┤
-  libjpeg-turbo, libpng, libwebp ─────────────┤
-  WindowsApp.lib ─────────────────────────────┤
-                                               │
-                    lld-link /DLL /MACHINE:ARM
-                               │
-                    WebCoreDriver-gpu.dll
-                          (the product)
-                               │
-                    Harness.appx (UWP app)
-```
-
-### 4.4 Dependencies: Where Each Comes From
-
-| Dependency | Source | Location |
-|------------|--------|----------|
-| Cairo, pixman, FreeType, fontconfig, expat, HarfBuzz, libjpeg-turbo, libpng, libwebp, libxml2, sqlite3, zlib, bzip2, brotli, libcurl, OpenSSL | **vcpkg** (`arm-uwp` triplet, VS2017 v141) | `C:\vcpkg\installed\arm-uwp\` |
-| ICU 78 | **Custom cross-build** (manually assembled) | `C:\icu-arm-uwp\` |
-| ANGLE (libEGL, libGLESv2) | **Pre-built** (Windows Store ANGLE NuGet / manual build) | `E:\Apotheosis\angle\arm\` |
-| WebKit source (WTF/JSC/PAL/WebCore) | **Git sparse checkout** of webkitgtk-2.52.4 | `E:\Apotheosis\WebKit\` (gitignored) |
+| Ninja Target | Produces | Status |
+|---|---|---|
+| `ninja bmalloc` | Object lib objects | ✅ Compiled |
+| `ninja WTF` | Object lib objects | ✅ Compiled |
+| `ninja PAL` | Headers only | ✅ Header gen complete (1203 steps) |
+| `ninja JavaScriptCore` | `bin/JavaScriptCore.dll` | ❌ Not yet |
+| `ninja WebCore` | `bin/WebCore.dll` (includes PAL objs) | ❌ Not yet |
+| `ninja all` | Everything | ❌ |
 
 ---
 
 ## 5. Key Engineering Discoveries
 
-### 5.1 The Critical Patches
-
-All upstream WebKit modifications use `#if defined(WK_WINUWP)` guards with `Apotheosis:` comments. The key categories:
+### 5.1 Critical Patches (WK_WINUWP)
 
 | Area | Changes |
 |------|---------|
-| **Memory allocation** | `VirtualAlloc` → `VirtualAllocFromApp` (App Container sandbox) |
-| **File I/O** | `CreateFileW` → `CreateFile2` (App Container allowed API) |
-| **Crypto** | `CryptGenRandom` → `BCryptGenRandom` |
-| **Threading** | Remove SEH `__try` (clang ARM can't lower `cleanupret`), remove VEH |
-| **Networking** | Stub out `DNSResolveQueuePlatform`, use generic `RunLoop`/`MainThread` |
-| **Graphics** | Cairo over DirectWrite (fontconfig+FreeType+HarfBuzz for font shaping) |
-| **C++ exception** | `_HAS_EXCEPTIONS=0` + `/EHs-c-` — clang ARM can't lower Windows EH |
-| **mpark::variant** | Replaced with `std::variant` (clang MS-ABI mangler can't handle pack expansion in mpark::variant) |
+| Memory allocation | `VirtualAlloc` → `VirtualAllocFromApp` |
+| File I/O | `CreateFileW` → `CreateFile2` |
+| Crypto | `CryptGenRandom` → `BCryptGenRandom` |
+| Threading | Remove SEH `__try` (clang ARM can't lower `cleanupret`) |
+| Networking | Stub `DNSResolveQueuePlatform` |
+| Graphics | Cairo over DirectWrite (FreeType+Fontconfig+HarfBuzz) |
+| C++ exceptions | `_HAS_EXCEPTIONS=0` + `/EHs-c-` |
+| mpark::variant | Replaced with `std::variant` |
+| Window APIs | `SHGetValueW`/`GetWindowLongPtr`/`SetWindowLongPtr` guarded in `WindowsExtras.h` |
+| Debug Help | `#include <dbghelp.h>` + `SymFromAddress` guarded in `DbgHelperWin.h/.cpp`; UWP stub returns `false` |
+| Filesystem (UWP) | `SHGetFolderPathW` → `GetEnvironmentVariableW`; `CreateFileW` → `CreateFile2` in `FileSystemWin.cpp` |
+| Memory unlock | `VirtualUnlock` guarded in `OSAllocatorWin.cpp` |
+| Memory pressure | `CreateMemoryResourceNotification`/`QueryMemoryResourceNotification` guarded in `MemoryPressureHandlerWin.cpp` |
+| Signals | `AddVectoredExceptionHandler` guarded in `SignalsWin.cpp` |
+| Event loop | RunLoopWin.cpp rewritten for UWP: HWND messaging → generic condition-variable loop (`USE(GENERIC_EVENT_LOOP)`) |
 
 ### 5.2 The "Pack Expansion" Compiler Wall
 
-The **hardest bug** in the project: clang's `thumbv7-windows-msvc` backend cannot mangle variadic pack expansions in function template signatures when using `mpark::variant`. The fix was to replace `WTF::Variant` (= `mpark::variant`) with `std::variant` under `WK_WINUWP` guard. This was blocking ~80% of WebCore compilation.
+clang's `thumbv7-windows-msvc` backend cannot mangle variadic pack expansions in function template signatures when using `mpark::variant`. Fix: replace `WTF::Variant` (= `mpark::variant`) with `std::variant` under `WK_WINUWP` guard. This unblocked ~80% of WebCore compilation.
 
-### 5.3 Why x64 Build Doesn't Work Yet
+### 5.3 GNU Driver for Assembly Files
 
-The project has **no x64-uwp dependencies**. All third-party libraries were cross-compiled for ARM32 only:
+LowLevelInterpreter.cpp and MacroAssemblerX86_64.cpp contain AT&T-syntax inline assembly (`asm("...%rsi...")`) that clang-cl cannot parse. Solution: compile these two files with **clang++ (GNU driver)** while everything else uses clang-cl. Two custom ninja rules (`_gnu_Release`) added to `rules.ninja`:
+
+```
+rule _gnu_Release
+  command = clang++.exe --target=x86_64-unknown-windows-msvc -x c++ $DEFINES $INCLUDES $FLAGS -MD -MF $out.d -o $out -c -- $in
+  deps = gcc
+  depfile = $out.d
+```
+
+Key differences from clang-cl rules: `deps = gcc` (not msvc), `-MD -MF $out.d` (not `/showIncludes`), `-o $out -c -- $in` (not `/Fo$out /c $in`), no `/Fd` for PDB. The `FLAGS` must use `-D` defines (not `/D`), `-I` includes (not `/I`). The `-imsvc` paths in `INCLUDES` must be replaced with `-isystem` for the GNU rule, since clang++ doesn't understand `-imsvc`.
+
+**Current status (x64):** Both LowLevelInterpreter.cpp and MacroAssemblerX86_64.cpp compile cleanly with the GNU driver. The `-imsvc`→`-isystem` conversion is handled by `patch-build-ninja-gnu.ps1` for both files' `INCLUDES`. The only warnings are the harmless `[[no_unique_address]]` attribute ignored by clang-cl.
+
+### 5.4 CMake 4.0 Missing Rules Workaround
+
+CMake 4.0's Ninja generator has a quirk: **not all compiler/linker rules are emitted into `rules.ninja`**. Fresh builds produce only ~10 rules (bmalloc, unifdef, WTF, LLInt*), leaving ~24+ rules missing — including `JavaScriptCore`, `WebCore`, `WebKit`, `jsc`, `ANGLE`, `PAL`, and all utility rules (`CLEAN`, `HELP`, `RERUN_CMAKE`).
+
+**Solution:** `patch-build-ninja-gnu.ps1` now scans `build.ninja` for all unique rule names used in `build` statements, cross-references against `rules.ninja`, and auto-generates any missing rules with correct command templates (C/CXX compiler, executable/shared-library/static-library linker, utility rules). This is a fully generalized workaround — it handles any future CMake re-generation without hardcoded target lists.
+
+### 5.5 x64 Build Progress
 
 | Component | ARM32 | x64-uwp |
 |-----------|-------|---------|
-| vcpkg deps | ✅ `arm-uwp` triplet | ❌ Need `x64-uwp` triplet |
-| ICU 78 | ✅ Custom cross-build | ❌ Need x64 ICU |
-| ANGLE | ✅ Pre-built ARM | ❌ Need x64 ANGLE Windows Store |
-| WebKit source | ✅ Same source tree | ✅ Same source works |
-| WebCore config | ✅ `build-clang-gpu` | ❌ Need `build-x64-gpu` |
-| Port driver | ✅ `link-driver-gpu.ps1` (ARM) | ❌ Need x64 link script |
-| Harness appx | ✅ ARM | ❌ Need x64 appx packaging |
-
-**The WebKit source itself is the same** — only the toolchain target triple changes to `x86_64-unknown-windows-msvc`.
+| vcpkg deps (16 pkgs) | ✅ | ✅ ALL INSTALLED |
+| ICU 78 | ✅ Custom cross-build | ✅ Built at `C:\icu-x64-uwp\` |
+| SQLite3 UWP | ❌ Not bundled | ✅ Manually built (amalgamation) |
+| ANGLE | ✅ Pre-built ARM | ✅ x64 from NuGet at `Src\angle\x64\` |
+| WebKit source | ✅ Same source | ✅ Same source |
+| WebCore config | ✅ `build-clang-gpu` | ✅ `build-x64-gpu` configured |
+| WTF build | ✅ | ✅ COMPILED (x64, clang-cl, Release; 12+ WK_WINUWP patches) |
+| bmalloc build | ✅ | ✅ COMPILED |
+| LLIntOffsetsExtractor | ✅ | ✅ LINKED |
+| PAL build | ✅ | ✅ Header gen complete (object lib — .objs in WebCore) |
+| JSC LowLevelInterpreter.cpp | ✅ | ✅ GNU driver (AT&T assembly, `deps = gcc`, `-MD -MF`) |
+| JSC MacroAssemblerX86_64.cpp | ✅ | ✅ GNU driver (`-imsvc`→`-isystem` via patch script) |
+| **JavaScriptCore** (overall) | ✅ (ARM) | 🔄 **Compiling** — JSC unified sources at ~8/111 steps, only warnings |
+| **CMake 4.0 rules workaround** | N/A | ✅ `patch-build-ninja-gnu.ps1` auto-scans for missing rules |
+| Port driver | ✅ | ❌ Not yet |
+| Harness appx | ✅ | ❌ Not yet |
 
 ---
 
-## 6. Multi-Language UI Implementation
+## 6. Multi-Language UI
 
-**Status:** Complete. Dual-source: `.resw` (primary) + hardcoded table (fallback).
+**Status:** Complete. Three languages:
 
 | Language | Code | ID |
 |----------|------|----|
-| 中文 (Chinese, original) | `zh-Hans` | 0 |
+| 中文 (Chinese) | `zh-Hans` | 0 |
 | English | `en-US` | 1 |
 | Русский (Russian) | `ru-RU` | 2 |
 
-**Resource files created:**
-- `Src/harness/Resources/en-US/Resources.resw`
-- `Src/harness/Resources/zh-Hans/Resources.resw`
-- `Src/harness/Resources/ru-RU/Resources.resw`
-
-**Key design decision:** `GetStr(int lang, int id)` tries `ResourceLoader::GetString()` first (from .resw), falls back to `kStr[lang][id]` table. This ensures operation on Win10M even if UWP resource lookup fails.
-
-**All hardcoded Chinese toasts replaced:** Every user-visible string (loading, timeout, cancelled, bookmarked, copied, cleared, find, share, download status, update check, export) now uses `GetStr(m_uiLang, S_XXX)`.
-
-**6 new string IDs added:** `S_TOAST_BOOKMARKED`, `S_TOAST_UNBOOKMARKED`, `S_TOAST_HIST_CLEARED`, `S_TOAST_FAV_CLEARED`, `S_TOAST_DL_CLEARED`, `S_TOAST_CANNOT_FIND` (~78 total).
-
-**Files modified:**
-- `Package.appxmanifest` — resource declarations for en-US, ru-RU, zh-Hans
-- `MainPage.xaml` — ComboBox language selector in Settings
-- `MainPage.xaml.h` — `m_uiLang`, `ApplyLanguage()`, `OnLangChanged()`
-- `MainPage.xaml.cpp` — complete string table, dual-resource loading, language persistence
-
-**Future:** Migrate static XAML labels to `x:Uid` binding; auto-detect system language.
+**Dual-source loading:** `GetStr()` tries `.resw` first, falls back to `kStr[lang][id]` table.
 
 ---
 
-## 7. x64 Build Infrastructure
+## 7. x64 Build Infrastructure ✅
 
-Created during this session to support x64 UWP builds:
+All dependencies installed and verified during June 28-30 sessions:
 
-| File | Purpose |
-|------|---------|
-| `Src/port/Toolchain-x64-UWP-clang.cmake` | clang-cl targeting `x86_64-unknown-windows-msvc` |
-| `Src/port/vcpkg-triplets/x64-uwp.cmake` | vcpkg overlay triplet (VS2022 v143, WinStore) |
-| `Src/port/configure-gpu-x64.ps1` | CMake configure for `build-x64-gpu` |
-| `Src/port/link-driver-gpu-x64.ps1` | lld-link → `WebCoreDriver-x64.dll` |
+| Dependency | Status | Notes |
+|------------|--------|-------|
+| Toolchain | ✅ `Toolchain-x64-UWP-clang.cmake` | clang-cl `x86_64-unknown-windows-msvc` |
+| vcpkg x64-uwp (16 pkgs) | ✅ ALL INSTALLED | Community triplet workaround |
+| ICU x64-uwp | ✅ `C:\icu-x64-uwp\` | libs + DLLs |
+| SQLite3 UWP | ✅ Manually built | `SQLITE_OS_WINRT=1` |
+| CMake configure | ✅ FIRST SUCCESS (June 29) | |
+| WTF compiled | ✅ | 12+ WK_WINUWP patches applied |
+| bmalloc compiled | ✅ | getpid→GetCurrentProcessId |
+| PAL headers | ✅ | 1203 ninja steps completed |
 
-**Prerequisites:** Install x64-uwp deps via vcpkg (same set as ARM), build ICU 78 for x64-uwp, acquire x64 ANGLE binaries.
+**Build environment quirks:**
+- C++23 confirmed: `build.ninja` emits `-clang:-std=c++23`
+- Perl must be on PATH for Python codegen scripts
+- `ninja` locks: always delete `.ninja_lock` + `.ninja_log` after interrupted builds
+- Long builds must use `[System.Diagnostics.Process]::Start()` — tool's bash wrapper kills subprocesses
 
-## 8. WebKit Upgrade Research
+---
 
-WebKitGTK 2.53.4 (June 23, 2026) analyzed against our TextureMapper-based port:
+## 8. Repository Layout
 
-- **Mostly Skia-focussed** — low impact on our `USE_TEXTURE_MAPPER` path
-- **Thread sync fixes** for scrolling — potentially relevant, needs commit review
-- **Overall effort:** Low-Medium (~2-3 days)
-- Full report in `Doc/WEBKIT-UPGRADE.md`
+```
+Apotheosis\
+├── WebKit\               ← webkitgtk-2.52.4 (gitignored)
+├── build-x64-gpu\        ← x64 build output (gitignored)
+├── Src\
+│   ├── port\             ← Port layer + build scripts (tracked)
+│   │   ├── WebCoreDriver.{cpp,h}
+│   │   ├── PortChromeClient.{h,cpp}
+│   │   ├── LoadingFrameLoaderClient.{h,cpp}
+│   │   ├── stubs-*.cpp
+│   │   ├── Toolchain-*.cmake (ARM32 + x64)
+│   │   ├── configure-gpu*.ps1 / link-driver-gpu*.ps1
+│   │   ├── compile-driver-gpu*.ps1
+│   │   └── build-harness.ps1
+│   ├── harness\           ← UWP app (C++/CX, XAML)
+│   │   └── Resources/{en-US,zh-Hans,ru-RU}/Resources.resw
+│   ├── tools\             ← Deploy/diagnostic scripts
+│   ├── angle\include\     ← ANGLE headers (tracked)
+│   └── setenv.ps1         ← Environment setup
+├── Doc\                   ← Documentation (tracked)
+│   ├── PLAN.md            ← Development plan
+│   ├── Summary.md         ← This file
+│   ├── WIKI_EN.md         ← English wiki
+│   ├── WIKI_RU.md         ← Russian wiki
+│   ├── WIKI_CN.md         ← Chinese wiki
+│   ├── HANDOFF.md         ← Phase 0 handoff
+│   ├── M2-HANDOFF.md      ← GPU rendering details
+│   ├── MEDIA-PLAN.md      ← Video/audio roadmap
+│   ├── WEBKIT-UPGRADE.md  ← 2.52.4→2.53.4 analysis
+│   └── MORNING-STATUS*, NIGHT-LOG*
+├── AGENTS.md              ← Codex guidance
+├── README.md / _CN.md / _RU.md
+```
+
+---
 
 ## 9. Recommended Next Steps
 
-### Short-term (days)
-1. **Finish x64 build**: install vcpkg x64-uwp deps, build ICU + ANGLE for x64-uwp, configure + build WebKit for x64 (scripts created: `Toolchain-x64-UWP-clang.cmake`, `vcpkg-triplets/x64-uwp.cmake`, `configure-gpu-x64.ps1`, `link-driver-gpu-x64.ps1`)
-2. **Clean up repo**: remove repro/experiment files from `port/`
-3. **Translate `L"文本文件"` in filer picker** and remaining static XAML strings
+### Short-term — Complete x64 Build
+1. **Complete JavaScriptCore**: `ninja -C build-x64-gpu JavaScriptCore -j2` → `bin/JavaScriptCore.dll` (currently compiling, ~8/111 steps)
+2. **Fix UWP API errors in JSC**: As unified sources compile, remaining UWP-incompatible APIs will surface — patch with `#if !defined(WK_WINUWP)` gates on-the-fly
+3. **Build PAL (objects)**: PAL `.obj` files compile as part of `WebCore.dll` — `ninja WebCore` covers it
+4. **Build WebCore**: `ninja -C build-x64-gpu WebCore -j2` → `bin/WebCore.dll` (includes PAL .objs). Many UWP patches needed for WebCore sources
+5. **Link port driver**: `pwsh Src/port/link-driver-gpu-x64.ps1` → `WebCoreDriver-x64.dll`
+6. **Build+run harness**: x64 UWP appx for local debugging
 
-### Medium-term (weeks)
-1. **Upgrade to webkitgtk-2.53.4** (released June 23, 2026) — see `WEBKIT-UPGRADE.md` for analysis (Low-Medium effort, mostly Skia-focused)
-2. **Refactor the port layer** — consolidate stubs, reduce code duplication between ARM/x64
-3. **Add CI** — build verification for both ARM and x64
+### Medium-term
+1. Upgrade to webkitgtk-2.53.4
+2. Refactor port layer — consolidate stubs, reduce duplication
+3. Add CI
 
-### Long-term (months)
-1. **Upstream the WinUWP port** — submit `WK_WINUWP` patches to WebKit project
-2. **Add WebGL support** — already partially working through ANGLE
-3. **Service Worker / PWA support** — needed for modern web apps
-
----
-
-## 8. Repository Layout (Simplified)
-
-```
-E:\Apotheosis\              ← ASCII path only! (Ruby/meson break on non-ASCII)
-├── WebKit\                 ← webkitgtk-2.52.4 sparse checkout (gitignored)
-├── port\                   ← Port layer sources + build scripts (tracked)
-│   ├── WebCoreDriver.{cpp,h}
-│   ├── PortChromeClient.{h,cpp}
-│   ├── LoadingFrameLoaderClient.{h,cpp}
-│   ├── PortPlatformStrategies.cpp
-│   ├── PortNetworkStorageSession.{cpp,h}
-│   ├── stubs-*.cpp         ← 146 platform stubs
-│   ├── Toolchain-ARM32-UWP-clang.cmake
-│   ├── Toolchain-x64-UWP-clang.cmake            ← New: x64 toolchain
-│   ├── vcpkg-triplets/
-│   │   ├── arm-uwp.cmake
-│   │   └── x64-uwp.cmake                        ← New: x64 triplet
-│   ├── arm32-uwp-env.ps1
-│   ├── configure-gpu.ps1 / link-driver-gpu.ps1 / configure-gpu-x64.ps1 / link-driver-gpu-x64.ps1
-│   └── *.repro* / *.bat    ← Debug artifacts (can be cleaned)
-├── harness\                ← UWP host app (tracked)
-│   ├── MainPage.xaml / .h / .cpp
-│   ├── Package.appxmanifest
-│   ├── Resources/
-│   │   ├── en-US/Resources.resw                  ← New: English strings
-│   │   ├── zh-Hans/Resources.resw                ← New: Chinese strings
-│   │   └── ru-RU/Resources.resw                  ← New: Russian strings
-│   └── Generated Files\
-├── tools\                  ← WDP deploy / diagnostics (tracked)
-├── angle\include\          ← ANGLE headers (tracked)
-├── build-clang-*/          ← Build outputs (gitignored)
-├── Doc\                    ← Documentation
-│   ├── HANDOFF.md
-│   ├── M2-HANDOFF.md
-│   ├── PLAN.md
-│   ├── Summary.md              ← This file
-│   └── WEBKIT-UPGRADE.md       ← New: 2.52.4→2.53.4 analysis
-├── AGENTS.md               ← Codex/Copilot guidance
-├── CLAUDE.md               ← Legacy agent notes
-├── README.md               ← Expanded English README
-├── README-CN.md            ← Chinese README
-└── README-RU.md            ← Russian README
-```
+### Long-term
+1. Upstream WK_WINUWP patches to WebKit
+2. WebGL, Service Worker, PWA support
+3. Video/audio playback
 
 ---
 

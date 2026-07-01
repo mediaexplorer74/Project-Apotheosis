@@ -1,0 +1,8 @@
+#include "inspector/WebInjectedScriptHost.cpp"
+#include "inspector/WebInjectedScriptManager.cpp"
+#include "inspector/WorkerDebugger.cpp"
+#include "inspector/WorkerInspectorController.cpp"
+#include "inspector/agents/InspectorAnimationAgent.cpp"
+#include "inspector/agents/InspectorCPUProfilerAgent.cpp"
+#include "inspector/agents/InspectorCSSAgent.cpp"
+#include "inspector/agents/InspectorCanvasAgent.cpp"

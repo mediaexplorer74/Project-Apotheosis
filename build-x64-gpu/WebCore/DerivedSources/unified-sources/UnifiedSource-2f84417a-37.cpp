@@ -1,0 +1,8 @@
+#include "css/values/color/CSSHexColor.cpp"
+#include "css/values/color/CSSKeywordColor.cpp"
+#include "css/values/color/CSSLightDarkColor.cpp"
+#include "css/values/color/CSSPlatformColorResolutionState.cpp"
+#include "css/values/color/CSSResolvedColor.cpp"
+#include "css/values/color-adjust/CSSColorScheme.cpp"
+#include "css/values/grid/CSSGridNamedAreaMap.cpp"
+#include "css/values/images/CSSGradient.cpp"

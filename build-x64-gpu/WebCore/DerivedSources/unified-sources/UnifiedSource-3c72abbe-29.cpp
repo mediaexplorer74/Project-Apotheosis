@@ -1,0 +1,8 @@
+#include "platform/graphics/GeneratedImage.cpp"
+#include "platform/graphics/GeometryUtilities.cpp"
+#include "platform/graphics/Gradient.cpp"
+#include "platform/graphics/GradientColorStop.cpp"
+#include "platform/graphics/GradientColorStops.cpp"
+#include "platform/graphics/GradientImage.cpp"
+#include "platform/graphics/GraphicsContext.cpp"
+#include "platform/graphics/GraphicsContextGL.cpp"

@@ -1,0 +1,8 @@
+#include "JSDOMStringList.cpp"
+#include "JSDOMStringMap.cpp"
+#include "JSDOMTokenList.cpp"
+#include "JSDOMURL.cpp"
+#include "JSDOMWindow.cpp"
+#include "JSDataCue.cpp"
+#include "JSDataTransfer.cpp"
+#include "JSDataTransferItem.cpp"

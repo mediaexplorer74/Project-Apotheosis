@@ -1,0 +1,8 @@
+#include "Modules/cache/CacheStorageConnection.cpp"
+#include "Modules/cache/DOMCache.cpp"
+#include "Modules/cache/DOMCacheEngine.cpp"
+#include "Modules/cache/DOMCacheStorage.cpp"
+#include "Modules/cache/WindowOrWorkerGlobalScopeCaches.cpp"
+#include "Modules/compression/CompressionStream.cpp"
+#include "Modules/compression/CompressionStreamEncoder.cpp"
+#include "Modules/compression/DecompressionStreamDecoder.cpp"

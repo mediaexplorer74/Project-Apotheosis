@@ -1,0 +1,8 @@
+#include "JSPermissionDescriptor.cpp"
+#include "JSPermissionName.cpp"
+#include "JSPermissionState.cpp"
+#include "JSPermissionStatus.cpp"
+#include "JSPermissions.cpp"
+#include "JSPhotoCapabilities.cpp"
+#include "JSPhotoSettings.cpp"
+#include "JSPictureInPictureEvent.cpp"

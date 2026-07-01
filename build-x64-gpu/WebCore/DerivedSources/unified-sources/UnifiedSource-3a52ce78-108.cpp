@@ -1,0 +1,8 @@
+#include "JSNodeList.cpp"
+#include "JSNonDocumentTypeChildNode.cpp"
+#include "JSNonElementParentNode.cpp"
+#include "JSNotification.cpp"
+#include "JSNotificationDirection.cpp"
+#include "JSNotificationEvent.cpp"
+#include "JSNotificationOptions.cpp"
+#include "JSNotificationPermission.cpp"

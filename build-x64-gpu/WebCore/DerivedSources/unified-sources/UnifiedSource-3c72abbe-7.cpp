@@ -1,0 +1,8 @@
+#include "platform/ProcessIdentifier.cpp"
+#include "platform/ProcessIdentity.cpp"
+#include "platform/PublicSuffixStore.cpp"
+#include "platform/ReferrerPolicy.cpp"
+#include "platform/RemoteCommandListener.cpp"
+#include "platform/RunLoopObserver.cpp"
+#include "platform/ScreenOrientationManager.cpp"
+#include "platform/ScrollAlignment.cpp"

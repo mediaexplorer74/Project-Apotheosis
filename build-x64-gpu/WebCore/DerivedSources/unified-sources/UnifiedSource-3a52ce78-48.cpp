@@ -1,0 +1,8 @@
+#include "JSEXTRenderSnorm.cpp"
+#include "JSEXTShaderTextureLOD.cpp"
+#include "JSEXTTextureCompressionBPTC.cpp"
+#include "JSEXTTextureCompressionRGTC.cpp"
+#include "JSEXTTextureFilterAnisotropic.cpp"
+#include "JSEXTTextureMirrorClampToEdge.cpp"
+#include "JSEXTTextureNorm16.cpp"
+#include "JSEXTsRGB.cpp"

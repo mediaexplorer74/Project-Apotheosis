@@ -1,0 +1,8 @@
+#include "rendering/RenderSelectionGeometry.cpp"
+#include "rendering/RenderSlider.cpp"
+#include "rendering/RenderTable.cpp"
+#include "rendering/RenderTableCaption.cpp"
+#include "rendering/RenderTableCell.cpp"
+#include "rendering/RenderTableCol.cpp"
+#include "rendering/RenderTableRow.cpp"
+#include "rendering/RenderTableSection.cpp"

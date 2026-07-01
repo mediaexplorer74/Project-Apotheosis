@@ -1,0 +1,8 @@
+#include "NetworkProcess/storage/ServiceWorkerStorageManager.cpp"
+#include "NetworkProcess/storage/SessionStorageManager.cpp"
+#include "NetworkProcess/storage/StorageAreaBase.cpp"
+#include "NetworkProcess/storage/StorageAreaRegistry.cpp"
+#include "NetworkProcess/webrtc/NetworkMDNSRegister.cpp"
+#include "NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.cpp"
+#include "NetworkProcess/webtransport/NetworkTransportSession.cpp"
+#include "NetworkProcess/webtransport/NetworkTransportStream.cpp"

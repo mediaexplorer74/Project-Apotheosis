@@ -1,0 +1,8 @@
+#include "JSNotificationPermissionCallback.cpp"
+#include "JSOESDrawBuffersIndexed.cpp"
+#include "JSOESElementIndexUint.cpp"
+#include "JSOESFBORenderMipmap.cpp"
+#include "JSOESSampleVariables.cpp"
+#include "JSOESShaderMultisampleInterpolation.cpp"
+#include "JSOESStandardDerivatives.cpp"
+#include "JSOESTextureFloat.cpp"

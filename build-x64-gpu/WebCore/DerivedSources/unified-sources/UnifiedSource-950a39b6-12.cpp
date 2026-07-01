@@ -1,0 +1,8 @@
+#include "html/HTMLOutputElement.cpp"
+#include "html/HTMLParagraphElement.cpp"
+#include "html/HTMLParamElement.cpp"
+#include "html/HTMLPictureElement.cpp"
+#include "html/HTMLPlugInElement.cpp"
+#include "html/HTMLPreElement.cpp"
+#include "html/HTMLProgressElement.cpp"
+#include "html/HTMLQuoteElement.cpp"

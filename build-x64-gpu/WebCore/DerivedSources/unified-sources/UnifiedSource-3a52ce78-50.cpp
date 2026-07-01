@@ -1,0 +1,8 @@
+#include "JSEndingType.cpp"
+#include "JSErrorCallback.cpp"
+#include "JSErrorEvent.cpp"
+#include "JSEvent.cpp"
+#include "JSEventCounts.cpp"
+#include "JSEventInit.cpp"
+#include "JSEventListenerOptions.cpp"
+#include "JSEventModifierInit.cpp"

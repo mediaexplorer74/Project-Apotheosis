@@ -1,0 +1,8 @@
+#include "platform/graphics/filters/software/FETurbulenceSoftwareApplier.cpp"
+#include "platform/graphics/filters/software/SourceAlphaSoftwareApplier.cpp"
+#include "platform/graphics/filters/software/SourceGraphicSoftwareApplier.cpp"
+#include "platform/graphics/iso/ISOBox.cpp"
+#include "platform/graphics/iso/ISOOriginalFormatBox.cpp"
+#include "platform/graphics/iso/ISOProtectionSchemeInfoBox.cpp"
+#include "platform/graphics/iso/ISOProtectionSystemSpecificHeaderBox.cpp"
+#include "platform/graphics/iso/ISOSchemeInformationBox.cpp"

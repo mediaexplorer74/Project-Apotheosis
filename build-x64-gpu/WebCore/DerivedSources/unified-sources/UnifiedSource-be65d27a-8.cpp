@@ -1,0 +1,8 @@
+#include "dom/DocumentFragment.cpp"
+#include "dom/DocumentFullscreen.cpp"
+#include "dom/DocumentImmersive.cpp"
+#include "dom/DocumentMarkerController.cpp"
+#include "dom/DocumentMediaElement.cpp"
+#include "dom/DocumentOrShadowRootFullscreen.cpp"
+#include "dom/DocumentParser.cpp"
+#include "dom/DocumentSharedObjectPool.cpp"

@@ -1,0 +1,8 @@
+#include "platform/graphics/ContentTypeUtilities.cpp"
+#include "platform/graphics/ContentsFormat.cpp"
+#include "platform/graphics/CornerRadii.cpp"
+#include "platform/graphics/CrossfadeGeneratedImage.cpp"
+#include "platform/graphics/DestinationColorSpace.cpp"
+#include "platform/graphics/DisplayRefreshMonitor.cpp"
+#include "platform/graphics/DisplayRefreshMonitorClient.cpp"
+#include "platform/graphics/DisplayRefreshMonitorManager.cpp"

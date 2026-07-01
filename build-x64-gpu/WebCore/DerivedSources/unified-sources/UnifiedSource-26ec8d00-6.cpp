@@ -1,0 +1,8 @@
+#include "style/StyleResolveForFont.cpp"
+#include "style/StyleResolver.cpp"
+#include "style/StyleScope.cpp"
+#include "style/StyleScopeRuleSets.cpp"
+#include "style/StyleSheetContentsCache.cpp"
+#include "style/StyleTransformResolver.cpp"
+#include "style/StyleTreeResolver.cpp"
+#include "style/StyleUpdate.cpp"

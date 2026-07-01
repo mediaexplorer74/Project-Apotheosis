@@ -1,0 +1,8 @@
+#include "platform/mediastream/RTCIceCandidateDescriptor.cpp"
+#include "platform/mediastream/RTCSessionDescriptionDescriptor.cpp"
+#include "platform/mediastream/RealtimeIncomingAudioSource.cpp"
+#include "platform/mediastream/RealtimeIncomingVideoSource.cpp"
+#include "platform/mediastream/RealtimeMediaSource.cpp"
+#include "platform/mediastream/RealtimeMediaSourceCenter.cpp"
+#include "platform/mediastream/RealtimeMediaSourceSettings.cpp"
+#include "platform/mediastream/RealtimeMediaSourceSupportedConstraints.cpp"

@@ -9,19 +9,30 @@ $LibDirs = @(
     "$BuildDir\lib"
     "C:\vcpkg\installed\x64-uwp\lib"
     "C:\icu-x64-uwp\lib"
-    "$Root\angle\x64"       # Pre-built x64 ANGLE binaries
+    "$Root\Src\angle\x64"   # Pre-built x64 ANGLE binaries
 )
 
-# Port layer objects (parallel to ARM)
+# Port layer sources — compile then link
 $PortDir = "$Root\port"
-$Objs = @(
-    "$PortDir\WebCoreDriver.gpu.obj"
-    "$PortDir\PortChromeClient.obj"
-    "$PortDir\LoadingFrameLoaderClient.obj"
-    "$PortDir\PortPlatformStrategies.obj"
-    "$PortDir\PortNetworkStorageSession.obj"
-    # Add new objs as needed
+$Srcs = @(
+    'WebCoreDriver','PortChromeClient','LoadingFrameLoaderClient',
+    'PortPlatformStrategies','PortNetworkStorageSession',
+    'webcore-driver-stubs','stubs-crypto','stubs-pasteboard',
+    'stubs-network','stubs-ax','stubs-other','stubs-loader'
 )
+$CompileScript = Join-Path $PSScriptRoot 'compile-driver-gpu-x64.ps1'
+foreach ($s in $Srcs) {
+    $srcFile = "$PortDir\$s.cpp"
+    if (-not (Test-Path $srcFile)) { Write-Host "  SKIP (no source): $s" -ForegroundColor Yellow; continue }
+    Write-Host "  compile $s.cpp ..." -NoNewline
+    & pwsh -NoProfile -File $CompileScript $srcFile "$PortDir\$s.x64.obj" *> $null
+    if (-not (Test-Path "$PortDir\$s.x64.obj")) {
+        Write-Host " FAILED" -ForegroundColor Red
+        Get-Content "$PortDir\compile-x64-gpu.log" -Tail 15; exit 1
+    }
+    Write-Host " OK" -ForegroundColor Green
+}
+$Objs = $Srcs | ForEach-Object { "$PortDir\$_.x64.obj" }
 
 # WebKit static libs (from build-x64-gpu)
 $WebKitLibs = @(
@@ -70,7 +81,7 @@ foreach ($o in $Objs) { if (Test-Path $o) { $flags += $o } }
 foreach ($l in $WebKitLibs) { if (Test-Path $l) { $flags += $l } }
 foreach ($l in $LinkLibs) { $flags += $l }
 
-$lld = "lld-link.exe"
+$lld = "C:\Program Files\LLVM\bin\lld-link.exe"
 Write-Host "==> linking WebCoreDriver-x64.dll" -ForegroundColor Cyan
 Write-Host "    flags: $($flags -join ' ')" -ForegroundColor Gray
 & $lld $flags

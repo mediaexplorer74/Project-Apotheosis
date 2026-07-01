@@ -1,0 +1,8 @@
+#include "dom/InlineClassicScript.cpp"
+#include "dom/InlineStyleSheetOwner.cpp"
+#include "dom/InputEvent.cpp"
+#include "dom/InternalObserver.cpp"
+#include "dom/InternalObserverDrop.cpp"
+#include "dom/InternalObserverEvery.cpp"
+#include "dom/InternalObserverFilter.cpp"
+#include "dom/InternalObserverFind.cpp"

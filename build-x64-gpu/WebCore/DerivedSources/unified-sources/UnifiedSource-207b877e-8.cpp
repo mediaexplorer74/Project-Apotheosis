@@ -1,0 +1,8 @@
+#include "layout/formattingContexts/table/TableFormattingGeometry.cpp"
+#include "layout/formattingContexts/table/TableFormattingQuirks.cpp"
+#include "layout/formattingContexts/table/TableFormattingState.cpp"
+#include "layout/formattingContexts/table/TableGrid.cpp"
+#include "layout/formattingContexts/table/TableLayout.cpp"
+#include "layout/integration/LayoutIntegrationBoxGeometryUpdater.cpp"
+#include "layout/integration/LayoutIntegrationBoxTreeUpdater.cpp"
+#include "layout/integration/LayoutIntegrationCoverage.cpp"

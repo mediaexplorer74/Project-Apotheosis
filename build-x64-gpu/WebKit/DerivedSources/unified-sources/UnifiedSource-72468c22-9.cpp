@@ -1,0 +1,8 @@
+#include "NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp"
+#include "NetworkProcess/cache/NetworkCacheStorage.cpp"
+#include "NetworkProcess/cache/NetworkCacheSubresourcesEntry.cpp"
+#include "NetworkProcess/cache/PrefetchCache.cpp"
+#include "NetworkProcess/storage/BackgroundFetchStoreImpl.cpp"
+#include "NetworkProcess/storage/BackgroundFetchStoreManager.cpp"
+#include "NetworkProcess/storage/CacheStorageCache.cpp"
+#include "NetworkProcess/storage/CacheStorageDiskStore.cpp"

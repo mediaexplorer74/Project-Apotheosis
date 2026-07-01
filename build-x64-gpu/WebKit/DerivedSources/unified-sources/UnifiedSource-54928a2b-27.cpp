@@ -1,0 +1,8 @@
+#include "WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp"
+#include "WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.cpp"
+#include "WebProcess/WebCoreSupport/WebSpeechSynthesisClient.cpp"
+#include "WebProcess/WebCoreSupport/WebStorageConnection.cpp"
+#include "WebProcess/WebCoreSupport/WebUserMediaClient.cpp"
+#include "WebProcess/WebCoreSupport/WebWorkerClient.cpp"
+#include "WebProcess/WebPage/DrawingArea.cpp"
+#include "WebProcess/WebPage/EventDispatcher.cpp"

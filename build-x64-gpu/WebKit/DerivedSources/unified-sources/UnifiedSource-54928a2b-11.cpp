@@ -1,0 +1,8 @@
+#include "WebProcess/GPU/media/RemoteMediaResourceProxy.cpp"
+#include "WebProcess/GPU/media/RemoteRemoteCommandListener.cpp"
+#include "WebProcess/GPU/media/RemoteVideoCodecFactory.cpp"
+#include "WebProcess/GPU/media/RemoteVideoFrameProxy.cpp"
+#include "WebProcess/GPU/media/SourceBufferPrivateRemote.cpp"
+#include "WebProcess/GPU/media/TextTrackPrivateRemote.cpp"
+#include "WebProcess/GPU/media/VideoTrackPrivateRemote.cpp"
+#include "WebProcess/GPU/media/WebMediaStrategy.cpp"

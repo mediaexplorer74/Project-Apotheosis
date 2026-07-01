@@ -1,0 +1,8 @@
+#include "Modules/webxr/XRGPUBinding.cpp"
+#include "Modules/webxr/XRGPUSubImage.cpp"
+#include "Modules/webxr/XRInputSourceEvent.cpp"
+#include "Modules/webxr/XRInputSourcesChangeEvent.cpp"
+#include "Modules/webxr/XRLayerEvent.cpp"
+#include "Modules/webxr/XRProjectionLayer.cpp"
+#include "Modules/webxr/XRQuadLayer.cpp"
+#include "Modules/webxr/XRReferenceSpaceEvent.cpp"

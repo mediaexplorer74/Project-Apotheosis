@@ -1,0 +1,8 @@
+#include "WebProcess/Network/webrtc/LibWebRTCSocket.cpp"
+#include "WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp"
+#include "WebProcess/Network/webrtc/RTCDataChannelRemoteManager.cpp"
+#include "WebProcess/Network/webrtc/WebMDNSRegister.cpp"
+#include "WebProcess/Network/webrtc/WebRTCMonitor.cpp"
+#include "WebProcess/Network/webrtc/WebRTCNetworkBase.cpp"
+#include "WebProcess/Network/webrtc/WebRTCResolver.cpp"
+#include "WebProcess/Notifications/NotificationPermissionRequestManager.cpp"

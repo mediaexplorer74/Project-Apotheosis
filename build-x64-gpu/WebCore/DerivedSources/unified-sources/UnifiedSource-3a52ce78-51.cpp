@@ -1,0 +1,8 @@
+#include "JSEventSource.cpp"
+#include "JSEventTarget.cpp"
+#include "JSExtendableCookieChangeEvent.cpp"
+#include "JSExtendableCookieChangeEventInit.cpp"
+#include "JSExtendableEvent.cpp"
+#include "JSExtendableEventInit.cpp"
+#include "JSExtendableMessageEvent.cpp"
+#include "JSFaceDetector.cpp"

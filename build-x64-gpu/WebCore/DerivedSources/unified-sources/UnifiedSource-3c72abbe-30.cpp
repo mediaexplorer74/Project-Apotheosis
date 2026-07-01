@@ -1,0 +1,8 @@
+#include "platform/graphics/GraphicsContextGLImageExtractor.cpp"
+#include "platform/graphics/GraphicsContextState.cpp"
+#include "platform/graphics/GraphicsContextSwitcher.cpp"
+#include "platform/graphics/GraphicsLayer.cpp"
+#include "platform/graphics/GraphicsLayerAnimation.cpp"
+#include "platform/graphics/GraphicsLayerContentsDisplayDelegate.cpp"
+#include "platform/graphics/GraphicsLayerKeyframeValueList.cpp"
+#include "platform/graphics/GraphicsLayerTransform.cpp"

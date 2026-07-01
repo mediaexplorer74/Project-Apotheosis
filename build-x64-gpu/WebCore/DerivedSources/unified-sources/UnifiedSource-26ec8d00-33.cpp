@@ -1,0 +1,8 @@
+#include "style/values/size-adjust/StyleTextSizeAdjust.cpp"
+#include "style/values/sizing/StyleAspectRatio.cpp"
+#include "style/values/sizing/StyleContainIntrinsicSize.cpp"
+#include "style/values/sizing/StylePreferredSize.cpp"
+#include "style/values/speech/StyleSpeakAs.cpp"
+#include "style/values/svg/StyleSVGBaselineShift.cpp"
+#include "style/values/svg/StyleSVGGlyphOrientationHorizontal.cpp"
+#include "style/values/svg/StyleSVGGlyphOrientationVertical.cpp"

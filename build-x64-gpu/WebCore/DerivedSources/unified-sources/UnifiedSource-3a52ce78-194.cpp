@@ -1,0 +1,8 @@
+#include "JSXRCubeLayerInit.cpp"
+#include "JSXRCylinderLayer.cpp"
+#include "JSXRCylinderLayerInit.cpp"
+#include "JSXREnvironmentBlendMode.cpp"
+#include "JSXREquirectLayer.cpp"
+#include "JSXREquirectLayerInit.cpp"
+#include "JSXREye.cpp"
+#include "JSXRFrameRequestCallback.cpp"

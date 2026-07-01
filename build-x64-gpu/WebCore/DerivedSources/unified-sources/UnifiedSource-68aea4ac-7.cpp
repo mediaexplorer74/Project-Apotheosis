@@ -1,0 +1,8 @@
+#include "bindings/js/JSDeprecatedCSSOMValueCustom.cpp"
+#include "bindings/js/JSDocumentCustom.cpp"
+#include "bindings/js/JSElementCustom.cpp"
+#include "bindings/js/JSElementInternalsCustom.cpp"
+#include "bindings/js/JSErrorEventCustom.cpp"
+#include "bindings/js/JSErrorHandler.cpp"
+#include "bindings/js/JSEventCustom.cpp"
+#include "bindings/js/JSEventListener.cpp"

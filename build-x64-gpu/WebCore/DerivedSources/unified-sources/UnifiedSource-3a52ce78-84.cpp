@@ -1,0 +1,8 @@
+#include "JSHTMLParamElement.cpp"
+#include "JSHTMLPictureElement.cpp"
+#include "JSHTMLPreElement.cpp"
+#include "JSHTMLProgressElement.cpp"
+#include "JSHTMLQuoteElement.cpp"
+#include "JSHTMLScriptElement.cpp"
+#include "JSHTMLSelectElement.cpp"
+#include "JSHTMLSelectedContentElement.cpp"

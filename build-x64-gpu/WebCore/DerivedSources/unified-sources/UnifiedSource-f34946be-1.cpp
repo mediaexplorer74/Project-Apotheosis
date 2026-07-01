@@ -1,0 +1,8 @@
+#include "editing/AlternativeTextController.cpp"
+#include "editing/AppendNodeCommand.cpp"
+#include "editing/ApplyBlockElementCommand.cpp"
+#include "editing/ApplyStyleCommand.cpp"
+#include "editing/BreakBlockquoteCommand.cpp"
+#include "editing/ChangeListTypeCommand.cpp"
+#include "editing/CharacterRange.cpp"
+#include "editing/CompositeEditCommand.cpp"

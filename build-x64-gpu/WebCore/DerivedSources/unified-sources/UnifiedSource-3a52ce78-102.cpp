@@ -1,0 +1,8 @@
+#include "JSMediaSettingsRange.cpp"
+#include "JSMediaSource.cpp"
+#include "JSMediaSourceHandle.cpp"
+#include "JSMediaSourceInit.cpp"
+#include "JSMediaStream.cpp"
+#include "JSMediaStreamAudioDestinationNode.cpp"
+#include "JSMediaStreamAudioSourceNode.cpp"
+#include "JSMediaStreamAudioSourceOptions.cpp"

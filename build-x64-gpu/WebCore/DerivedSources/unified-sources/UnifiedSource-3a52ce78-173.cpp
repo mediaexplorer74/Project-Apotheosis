@@ -1,0 +1,8 @@
+#include "JSVoidCallback.cpp"
+#include "JSWGSLLanguageFeatures.cpp"
+#include "JSWakeLock.cpp"
+#include "JSWakeLockSentinel.cpp"
+#include "JSWakeLockType.cpp"
+#include "JSWaveShaperNode.cpp"
+#include "JSWaveShaperOptions.cpp"
+#include "JSWebAnimation.cpp"

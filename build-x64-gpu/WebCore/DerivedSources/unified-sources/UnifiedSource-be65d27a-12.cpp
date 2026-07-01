@@ -1,0 +1,8 @@
+#include "dom/FragmentDirectiveUtilities.cpp"
+#include "dom/GCReachableRef.cpp"
+#include "dom/HashChangeEvent.cpp"
+#include "dom/IdTargetObserver.cpp"
+#include "dom/IdTargetObserverRegistry.cpp"
+#include "dom/IdleCallbackController.cpp"
+#include "dom/IdleDeadline.cpp"
+#include "dom/ImageOverlay.cpp"

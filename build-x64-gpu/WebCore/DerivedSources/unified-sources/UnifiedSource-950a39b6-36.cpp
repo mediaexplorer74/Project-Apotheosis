@@ -1,0 +1,8 @@
+#include "html/parser/HTMLMetaCharsetParser.cpp"
+#include "html/parser/HTMLNameCache.cpp"
+#include "html/parser/HTMLParserIdioms.cpp"
+#include "html/parser/HTMLParserOptions.cpp"
+#include "html/parser/HTMLParserScheduler.cpp"
+#include "html/parser/HTMLPreloadScanner.cpp"
+#include "html/parser/HTMLResourcePreloader.cpp"
+#include "html/parser/HTMLScriptRunner.cpp"

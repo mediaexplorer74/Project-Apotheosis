@@ -1,0 +1,8 @@
+#include "platform/mock/mediasource/MockMediaPlayerMediaSource.cpp"
+#include "platform/mock/mediasource/MockMediaSourcePrivate.cpp"
+#include "platform/mock/mediasource/MockSourceBufferPrivate.cpp"
+#include "platform/network/AuthenticationChallengeBase.cpp"
+#include "platform/network/BlobData.cpp"
+#include "platform/network/BlobDataFileReference.cpp"
+#include "platform/network/BlobRegistry.cpp"
+#include "platform/network/BlobRegistryImpl.cpp"

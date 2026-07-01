@@ -1,0 +1,8 @@
+#include "JSMathMLMathElement.cpp"
+#include "JSMediaCapabilities.cpp"
+#include "JSMediaCapabilitiesDecodingInfo.cpp"
+#include "JSMediaCapabilitiesEncodingInfo.cpp"
+#include "JSMediaCapabilitiesInfo.cpp"
+#include "JSMediaController.cpp"
+#include "JSMediaControlsContextMenuItem.cpp"
+#include "JSMediaControlsHost.cpp"

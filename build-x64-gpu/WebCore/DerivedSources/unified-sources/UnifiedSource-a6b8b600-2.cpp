@@ -1,0 +1,8 @@
+#include "animation/AnimationTimelinesController.cpp"
+#include "animation/BlendingKeyframes.cpp"
+#include "animation/CSSAnimation.cpp"
+#include "animation/CSSAnimationEvent.cpp"
+#include "animation/CSSTransition.cpp"
+#include "animation/CSSTransitionEvent.cpp"
+#include "animation/CompositeOperation.cpp"
+#include "animation/CustomEffect.cpp"

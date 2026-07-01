@@ -1,0 +1,8 @@
+#include "bindings/js/JSStylePropertyMapReadOnlyCustom.cpp"
+#include "bindings/js/JSStyleSheetCustom.cpp"
+#include "bindings/js/JSSubscriberCustom.cpp"
+#include "bindings/js/JSTextTrackCueCustom.cpp"
+#include "bindings/js/JSTrackCustom.cpp"
+#include "bindings/js/JSTreeWalkerCustom.cpp"
+#include "bindings/js/JSTrustedTypePolicyCustom.cpp"
+#include "bindings/js/JSTrustedTypePolicyFactoryCustom.cpp"

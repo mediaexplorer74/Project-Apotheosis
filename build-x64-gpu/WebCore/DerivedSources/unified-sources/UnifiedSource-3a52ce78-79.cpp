@@ -1,0 +1,8 @@
+#include "JSHTMLDivElement.cpp"
+#include "JSHTMLDocument.cpp"
+#include "JSHTMLElement.cpp"
+#include "JSHTMLElementWrapperFactory.cpp"
+#include "JSHTMLEmbedElement.cpp"
+#include "JSHTMLFieldSetElement.cpp"
+#include "JSHTMLFontElement.cpp"
+#include "JSHTMLFormControlsCollection.cpp"

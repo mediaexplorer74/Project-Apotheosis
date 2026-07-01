@@ -1,0 +1,8 @@
+#include "Modules/WebGPU/GPUBuffer.cpp"
+#include "Modules/WebGPU/GPUCommandBuffer.cpp"
+#include "Modules/WebGPU/GPUCommandEncoder.cpp"
+#include "Modules/WebGPU/GPUCompilationInfo.cpp"
+#include "Modules/WebGPU/GPUCompilationMessage.cpp"
+#include "Modules/WebGPU/GPUCompositorIntegration.cpp"
+#include "Modules/WebGPU/GPUComputePassEncoder.cpp"
+#include "Modules/WebGPU/GPUComputePipeline.cpp"

@@ -1,0 +1,8 @@
+#include "JSMessageEvent.cpp"
+#include "JSMessagePort.cpp"
+#include "JSMeteringMode.cpp"
+#include "JSMobileDocumentRequest.cpp"
+#include "JSMouseEvent.cpp"
+#include "JSMouseEventInit.cpp"
+#include "JSMultiCacheQueryOptions.cpp"
+#include "JSMutationCallback.cpp"

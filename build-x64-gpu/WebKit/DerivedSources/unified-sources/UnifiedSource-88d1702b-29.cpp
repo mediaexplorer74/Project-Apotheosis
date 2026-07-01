@@ -1,0 +1,8 @@
+#include "UIProcess/Notifications/WebNotificationProvider.cpp"
+#include "UIProcess/UserContent/WebScriptMessageHandler.cpp"
+#include "UIProcess/UserContent/WebUserContentControllerProxy.cpp"
+#include "UIProcess/WebAuthentication/Authenticator.cpp"
+#include "UIProcess/WebAuthentication/AuthenticatorTransportService.cpp"
+#include "UIProcess/WebAuthentication/WebAuthenticationRequestData.cpp"
+#include "UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp"
+#include "UIProcess/WebAuthentication/Mock/MockAuthenticatorManager.cpp"

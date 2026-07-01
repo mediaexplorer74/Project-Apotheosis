@@ -1,0 +1,8 @@
+#include "JSCanvasCaptureMediaStreamTrack.cpp"
+#include "JSCanvasCompositing.cpp"
+#include "JSCanvasDirection.cpp"
+#include "JSCanvasDrawImage.cpp"
+#include "JSCanvasDrawPath.cpp"
+#include "JSCanvasFillRule.cpp"
+#include "JSCanvasFillStrokeStyles.cpp"
+#include "JSCanvasFilters.cpp"

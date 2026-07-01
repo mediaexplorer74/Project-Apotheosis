@@ -1,330 +1,293 @@
-# Project Apotheosis — Phase 2: Repo Reorganization & Build-from-Scratch
+# Project Apotheosis — Engineering Research Summary
 
-> Updated: June 28, 2026
-> Author: AI-assisted refactoring session
-> See also: `Summary.md` (architecture & origins), `PLAN.md` (development plan)
-
----
-
-## 1. What Was Done
-
-This document covers the **repo reorganization and path migration** work — making the project **buildable from scratch on a new machine** without depending on the original author's `E:\Apotheosis\` layout, pre-built binaries, or existing build directories.
-
-### 1.1 Repository Cleanup
-
-The `port/` directory contained ~60+ debug/repro artifacts from the original author's compiler-triage sessions:
-
-| Category | Examples | Count |
-|----------|----------|-------|
-| Reproducers | `repro_class_template_alts_*.cpp`, `repro_odr_address_*.cpp`, `repro_variant_return_*.cpp` | ~46 |
-| Mangle tests | `mangle-repro*.cpp` | ~5 |
-| Batch scripts | `_repro_*.bat`, `_driver_compile*.bat` | ~19 |
-| Debug logs | `undef-*.txt`, `*.obj`, `*.log` | ~15 |
-| Draft code | `draft-*.cpp` | ~3 |
-
-**All removed.** The `port/` directory now contains only source files, build scripts, and configuration files.
-
-### 1.2 Path Migration: `E:\Apotheosis\` → `$env:APOTHEOSIS_ROOT`
-
-The original author used a flat layout at `E:\Apotheosis\` with all paths hardcoded:
-
-```
-E:\Apotheosis\port\       →  <repo>\Src\port\
-E:\Apotheosis\harness\    →  <repo>\Src\harness\
-E:\Apotheosis\tools\      →  <repo>\Src\tools\
-E:\Apotheosis\angle\      →  <repo>\Src\angle\
-E:\Apotheosis\WebKit\     →  <repo>\WebKit\
-E:\Apotheosis\build-*     →  <repo>\build-*
-E:\Apotheosis\crash\      →  <repo>\crash\
-```
-
-A systematic migration was performed:
-
-1. **`Src/setenv.ps1`** created — sets `$env:APOTHEOSIS_ROOT` and sub-variables (`APOTHEOSIS_PORT`, `APOTHEOSIS_HARNESS`, `APOTHEOSIS_TOOLS`, `APOTHEOSIS_ANGLE`, `APOTHEOSIS_CRASH`). All scripts should source this before use.
-
-2. **87 path replacements** across all `.ps1` scripts — `E:\Apotheosis\` → `$env:APOTHEOSIS_*` using appropriate sub-variable:
-   - `E:\Apotheosis\port\` → `$env:APOTHEOSIS_PORT\`
-   - `E:\Apotheosis\tools\` → `$env:APOTHEOSIS_TOOLS\`
-   - `E:\Apotheosis\harness\` → `$env:APOTHEOSIS_HARNESS\`
-   - `E:\Apotheosis\angle\` → `$env:APOTHEOSIS_ANGLE\`
-   - `E:\Apotheosis\crash\` → `$env:APOTHEOSIS_CRASH\`
-   - Everything else → `$env:APOTHEOSIS_ROOT\`
-
-3. **83 quoting fixes** — all `'$env:APOTHEOSIS_*'` changed to `"$env:APOTHEOSIS_*"` so PowerShell expands environment variables at runtime.
-
-4. **`harness-cmd.bat`** fixed — uses `%APOTHEOSIS_ROOT%` (CMD variable syntax) since it's executed by `cmd.exe`, not PowerShell.
-
-5. **`Harness.vcxproj`** fixed — all `E:\Apotheosis\` paths replaced with `$(ProjectDir)..\` relative paths:
-   - `E:\Apotheosis\angle\include` → `$(ProjectDir)..\angle\include`
-   - `E:\Apotheosis\angle\arm` → `$(ProjectDir)..\angle\arm`
-   - `E:\Apotheosis\port` → `$(ProjectDir)..\port`
-   - Added `$(APOTHEOSIS_BUILD_GPU)` conditional for build output directory
-
-**Result:** Zero `E:\Apotheosis\` references remain in any `.ps1`, `.bat`, `.cmake`, or `.vcxproj` file.
-
-### 1.3 Files Created/Modified
-
-| File | Change |
-|------|--------|
-| `Src/setenv.ps1` | **New** — root env var setting + validation |
-| `Src/harness/Harness.vcxproj` | Fixed paths, added `APOTHEOSIS_BUILD_GPU` conditional |
-| `Src/port/harness-cmd.bat` | Changed to `%APOTHEOSIS_ROOT%` for cmd.exe |
-| `Src/port/*.ps1` (22 files) | All `E:\Apotheosis\` → `$env:APOTHEOSIS_*` |
-| `Src/tools/*.ps1` (17 files) | All `E:\Apotheosis\` → `$env:APOTHEOSIS_*` |
-| `AGENTS.md` | Rewritten in Russian, path system documentation |
-| `Doc/PLAN.md` | Updated with migration, multilingual, x64 sections |
-| `Doc/Summary.md` | Updated with all new sections |
-| `Doc/WEBKIT-UPGRADE.md` | **New** — 2.52.4→2.53.4 analysis |
+> Compiled by an AI code agent during a deep-dive session (June 28, 2026).
+> Original repo: [Jimmyxiao2009/Project-Apotheosis](https://github.com/Jimmyxiao2009/Project-Apotheosis)
+> Reddit thread: [r/windowsphone — Porting WebKitGTK 2.52.4 to Windows 10 Mobile](https://www.reddit.com/r/windowsphone/comments/1ugn2kn/porting_webkitgtk_2524_to_windows_10_mobile/)
 
 ---
 
-## 2. Current Build Status
+## 1. What Is This Project?
 
-### 2.1 What's Present (Already in Repo)
+**Apotheosis** (codename "EdgeHTML Reborn") ports the modern **WebKit/WebCore** rendering engine (webkitgtk-2.52.4) to **Windows 10 Mobile on ARM32 (UWP, App Container)**, targeting the **Lumia 950** family. It brings JIT-accelerated JavaScript and GPU-composited rendering to a platform abandoned by Microsoft years ago.
 
-| Component | Status |
-|-----------|--------|
-| Port layer source (`WebCoreDriver.cpp`, stubs, clients) | ✅ Complete |
-| Harness UWP app (C++/CX + XAML) | ✅ Complete |
-| ANGLE headers (`Src/angle/include/`) | ✅ Present |
-| CMake toolchains (ARM32 + x64) | ✅ Created |
-| vcpkg triplets (arm-uwp + x64-uwp) | ✅ Created |
-| Build/link scripts (ARM32 + x64) | ✅ Created |
-| `.resw` files (en, zh, ru) | ✅ Created |
-| x64 precompiled harness objects | ✅ Present |
+**Status (real device, Lumia 950, Win10M 15254):**
 
-### 2.2 What's Missing (Must Be Installed/Built)
-
-| Component | How to Get | Status |
-|-----------|------------|--------|
-| **WebKit source** (webkitgtk-2.52.4) | `git clone --branch webkitgtk-2.52.4 https://github.com/WebKit/WebKit.git` | ❌ |
-| **LLVM/clang-cl** | `winget install LLVM.LLVM` | ❌ |
-| **vcpkg** | `git clone https://github.com/microsoft/vcpkg C:\vcpkg; bootstrap-vcpkg.bat` | ❌ |
-| **Ruby** (JSC offlineasm) | `winget install Ruby` | ❌ |
-| **Strawberry Perl** (create_hash_table) | `winget install StrawberryPerl.StrawberryPerl` | ❌ |
-| **Ninja** (WebKit build) | `winget install Ninja-build.Ninja` | ❌ |
-| **ICU 78** for target arch | Custom cross-build | ❌ |
-| **ANGLE binaries** (libEGL, libGLESv2) | Windows Store ANGLE NuGet or build from source | ❌ |
-| **vcpkg deps** for target arch | `vcpkg install cairo pixman freetype harfbuzz fontconfig expat libcurl openssl libxml2 sqlite3 ...` | ❌ |
-| **WebKit build output** (WTF.lib, JSC.lib, PAL.lib, WebCore.lib) | CMake + Ninja build | ❌ |
-| **Port driver** (WebCoreDriver-gpu.dll) | clang-cl + lld-link | ❌ |
-| **Harness appx** | MSBuild | ❌ |
-
-### 2.3 Machine Environment
-
-The build machine is a **x64 Windows PC** with VS2022 Community, MSVC v143 (14.44.35207), Windows SDK 19041 (ARM32 libs present). ARM32 cross-compiler (`cl.exe` for ARM) is available.
+| Feature | Status | Notes |
+|---------|--------|-------|
+| WTF + JSC CLoop | ✅ | Phase 0 — engine core runs on device |
+| WebCore + Cairo SW render | ✅ | Bing, GitHub, Apple, MS sites render correctly |
+| Live interactive session | ✅ | Real mouse events, form input, scroll, keyboard |
+| JSC JIT | ✅ | `codeGeneration` capability enables JIT (~5-50×) |
+| GPU compositing (ANGLE + TextureMapper) | ✅ | Direct present to SwapChainPanel |
+| Smooth scroll / pinch-zoom | ✅ | GPU-backed, real-time scale + re-rasterize |
+| Browser shell (tabs, URL bar, settings) | ✅ | Version 0.1.8+ |
+| Multi-language UI (en/ru/cn) | 🆕 **Added** | See `PLAN.md` |
 
 ---
 
-## 3. Build-from-Scratch Procedure
+## 2. Source & Origin
 
-### Step 1: Install Prerequisites
+- **GitHub:** [Jimmyxiao2009/Project-Apotheosis](https://github.com/Jimmyxiao2009/Project-Apotheosis)
+- **Reddit announcement:** [r/windowsphone](https://www.reddit.com/r/windowsphone/comments/1ugn2kn/porting_webkitgtk_2524_to_windows_10_mobile/)
+- **Author:** Jimmy Xiao (GitHub: `Jimmyxiao2009`)
+- **License:** MIT (port layer); LGPL-2.1/BSD (upstream WebKit + dependencies)
 
-```powershell
-winget install LLVM.LLVM Ninja-build.Ninja Ruby StrawberryPerl.StrawberryPerl
+The upstream WebKit source is **webkitgtk-2.52.4** (released June 2, 2026), available at:
+- GitHub tag: [`webkitgtk-2.52.4`](https://github.com/WebKit/WebKit/tree/webkitgtk-2.52.4) (commit `7acdf5e`)
+- Tarball: `https://github.com/WebKit/WebKit/archive/refs/tags/webkitgtk-2.52.4.tar.gz`
+- webkitgtk.org: [Stable tarball](https://webkitgtk.org/)
+
+---
+
+## 3. Architecture Overview
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  Harness — UWP App (C++/CX, MSVC v143 ARM)                    │
+│   · MainPage: toolbar, address bar, gestures → engine         │
+│   · GpuPanel (SwapChainPanel) ← GPU | RenderImage ← SW fallback│
+└────────────────────────────┬─────────────────────────────────┘
+                             │  C ABI (WebCoreDriver.h)
+┌────────────────────────────▼─────────────────────────────────┐
+│  WebCoreDriver (clang-cl → WebCoreDriver-gpu.lib/.dll)        │
+│   · Resident Page/Frame session, event dispatch               │
+│   · Cairo paintToRGBA | TextureMapper GPU composite           │
+│   · PortChromeClient / FrameLoaderClient / Strategies         │
+└────────────────────────────┬─────────────────────────────────┘
+                             │
+┌────────────────────────────▼─────────────────────────────────┐
+│  WebKit / WebCore / JSC / WTF (clang-cl, thumbv7-windows-msvc)│
+│   · ARM32/App Container patches guarded by WK_WINUWP          │
+│   · Source: webkitgtk-2.52.4 (not in repo, GB-scale)          │
+└──────────────────────────────────────────────────────────────┘
 ```
 
-### Step 2: Set up vcpkg
+**Key architectural decisions:**
+- Three layers decoupled by a stable **C ABI** (`WebCoreDriver.h`)
+- Engine thread: **all WebCore/JSC calls serialized** on a single background thread
+- UI thread: **never** synchronously waits on the engine (deadlock prevention)
+- **Two paint paths**: Cairo software (universal fallback) | TextureMapper GPU (runtime switch via `g_gpuActive`)
+- ANGLE (D3D11 FL9_3) as the OpenGL ES 2.0 wrapper for UWP App Container
 
-```powershell
-git clone https://github.com/microsoft/vcpkg C:\vcpkg
-C:\vcpkg\bootstrap-vcpkg.bat
-# Install for target arch (choose one):
-C:\vcpkg\vcpkg install cairo pixman freetype harfbuzz fontconfig expat libcurl openssl libxml2 sqlite3 libpng libjpeg-turbo libwebp zlib bzip2 brotli --triplet arm-uwp --overlay-triplets=Src/port/vcpkg-triplets
+---
+
+## 4. Build System Deep Dive
+
+### 4.1 Three Toolchains (must keep separate)
+
+| Layer | Compiler | Target | Output |
+|-------|----------|--------|--------|
+| WTF/JSC/WebCore | **clang-cl** (LLVM 22.1.7) | `thumbv7-unknown-windows-msvc` | Static `.lib` |
+| Port driver | **clang-cl** + **lld-link** | ARM32 UWP | `WebCoreDriver-gpu.dll` |
+| Harness (UWP app) | **MSVC v143** (14.44.35207) | ARM | `Harness.appx` |
+
+**Critical constraint:** VS2022+ removed ARM32 vcvars. The project uses `arm32-uwp-env.ps1` to manually set INCLUDE/LIB/PATH from SDK 22621 (the last SDK with ARM32 libraries — SDK 26100 deleted them).
+
+### 4.2 WebKit Build Configuration
+
+Three parallel build directories from one patched WebKit tree:
+
+| Dir | CMake Flags | Purpose |
+|-----|-------------|---------|
+| `build-clang-webcore` | Cairo only, no JIT | Phase 1b SW baseline |
+| `build-clang-jit` | JSC JIT ON | JIT line |
+| `build-clang-gpu` | JIT + TextureMapper + ANGLE | **Active dev line (gpu-path1)** |
+
+### 4.3 The Complete Dependency Chain
+
+```
+webkitgtk-2.52.4 source (E:\Apotheosis\WebKit\)
+  │
+  ├── WTF.lib  ──┐
+  ├── JavaScriptCore.lib ─┤
+  ├── PAL.lib ────────────┤
+  └── WebCore.lib ────────┤
+                          │
+port/*.cpp (12 source files) ──┐
+                               │
+  ANGLE (libEGL.lib, libGLESv2.lib) ──┤
+  Cairo + pixman ──────────────────────┤
+  FreeType + fontconfig + HarfBuzz ────┤
+  libcurl + OpenSSL ───────────────────┤
+  ICU 78 (icuuc.lib, icuin.lib, icudt.lib) ──┤
+  libxml2, sqlite3, zlib, bzip2, brotli ─────┤
+  libjpeg-turbo, libpng, libwebp ─────────────┤
+  WindowsApp.lib ─────────────────────────────┤
+                                               │
+                    lld-link /DLL /MACHINE:ARM
+                               │
+                    WebCoreDriver-gpu.dll
+                          (the product)
+                               │
+                    Harness.appx (UWP app)
 ```
 
-### Step 3: Fetch WebKit
+### 4.4 Dependencies: Where Each Comes From
 
-```powershell
-git clone --branch webkitgtk-2.52.4 --depth 1 --filter=blob:none https://github.com/WebKit/WebKit.git
+| Dependency | Source | Location |
+|------------|--------|----------|
+| Cairo, pixman, FreeType, fontconfig, expat, HarfBuzz, libjpeg-turbo, libpng, libwebp, libxml2, sqlite3, zlib, bzip2, brotli, libcurl, OpenSSL | **vcpkg** (`arm-uwp` triplet, VS2017 v141) | `C:\vcpkg\installed\arm-uwp\` |
+| ICU 78 | **Custom cross-build** (manually assembled) | `C:\icu-arm-uwp\` |
+| ANGLE (libEGL, libGLESv2) | **Pre-built** (Windows Store ANGLE NuGet / manual build) | `E:\Apotheosis\angle\arm\` |
+| WebKit source (WTF/JSC/PAL/WebCore) | **Git sparse checkout** of webkitgtk-2.52.4 | `E:\Apotheosis\WebKit\` (gitignored) |
+
+---
+
+## 5. Key Engineering Discoveries
+
+### 5.1 The Critical Patches
+
+All upstream WebKit modifications use `#if defined(WK_WINUWP)` guards with `Apotheosis:` comments. The key categories:
+
+| Area | Changes |
+|------|---------|
+| **Memory allocation** | `VirtualAlloc` → `VirtualAllocFromApp` (App Container sandbox) |
+| **File I/O** | `CreateFileW` → `CreateFile2` (App Container allowed API) |
+| **Crypto** | `CryptGenRandom` → `BCryptGenRandom` |
+| **Threading** | Remove SEH `__try` (clang ARM can't lower `cleanupret`), remove VEH |
+| **Networking** | Stub out `DNSResolveQueuePlatform`, use generic `RunLoop`/`MainThread` |
+| **Graphics** | Cairo over DirectWrite (fontconfig+FreeType+HarfBuzz for font shaping) |
+| **C++ exception** | `_HAS_EXCEPTIONS=0` + `/EHs-c-` — clang ARM can't lower Windows EH |
+| **mpark::variant** | Replaced with `std::variant` (clang MS-ABI mangler can't handle pack expansion in mpark::variant) |
+
+### 5.2 The "Pack Expansion" Compiler Wall
+
+The **hardest bug** in the project: clang's `thumbv7-windows-msvc` backend cannot mangle variadic pack expansions in function template signatures when using `mpark::variant`. The fix was to replace `WTF::Variant` (= `mpark::variant`) with `std::variant` under `WK_WINUWP` guard. This was blocking ~80% of WebCore compilation.
+
+### 5.3 Why x64 Build Doesn't Work Yet
+
+The project has **no x64-uwp dependencies**. All third-party libraries were cross-compiled for ARM32 only:
+
+| Component | ARM32 | x64-uwp |
+|-----------|-------|---------|
+| vcpkg deps | ✅ `arm-uwp` triplet | ❌ Need `x64-uwp` triplet |
+| ICU 78 | ✅ Custom cross-build | ❌ Need x64 ICU |
+| ANGLE | ✅ Pre-built ARM | ❌ Need x64 ANGLE Windows Store |
+| WebKit source | ✅ Same source tree | ✅ Same source works |
+| WebCore config | ✅ `build-clang-gpu` | ❌ Need `build-x64-gpu` |
+| Port driver | ✅ `link-driver-gpu.ps1` (ARM) | ❌ Need x64 link script |
+| Harness appx | ✅ ARM | ❌ Need x64 appx packaging |
+
+**The WebKit source itself is the same** — only the toolchain target triple changes to `x86_64-unknown-windows-msvc`.
+
+---
+
+## 6. Multi-Language UI Implementation
+
+**Status:** Complete. Dual-source: `.resw` (primary) + hardcoded table (fallback).
+
+| Language | Code | ID |
+|----------|------|----|
+| 中文 (Chinese, original) | `zh-Hans` | 0 |
+| English | `en-US` | 1 |
+| Русский (Russian) | `ru-RU` | 2 |
+
+**Resource files created:**
+- `Src/harness/Resources/en-US/Resources.resw`
+- `Src/harness/Resources/zh-Hans/Resources.resw`
+- `Src/harness/Resources/ru-RU/Resources.resw`
+
+**Key design decision:** `GetStr(int lang, int id)` tries `ResourceLoader::GetString()` first (from .resw), falls back to `kStr[lang][id]` table. This ensures operation on Win10M even if UWP resource lookup fails.
+
+**All hardcoded Chinese toasts replaced:** Every user-visible string (loading, timeout, cancelled, bookmarked, copied, cleared, find, share, download status, update check, export) now uses `GetStr(m_uiLang, S_XXX)`.
+
+**6 new string IDs added:** `S_TOAST_BOOKMARKED`, `S_TOAST_UNBOOKMARKED`, `S_TOAST_HIST_CLEARED`, `S_TOAST_FAV_CLEARED`, `S_TOAST_DL_CLEARED`, `S_TOAST_CANNOT_FIND` (~78 total).
+
+**Files modified:**
+- `Package.appxmanifest` — resource declarations for en-US, ru-RU, zh-Hans
+- `MainPage.xaml` — ComboBox language selector in Settings
+- `MainPage.xaml.h` — `m_uiLang`, `ApplyLanguage()`, `OnLangChanged()`
+- `MainPage.xaml.cpp` — complete string table, dual-resource loading, language persistence
+
+**Future:** Migrate static XAML labels to `x:Uid` binding; auto-detect system language.
+
+---
+
+## 7. x64 Build Infrastructure
+
+Created during this session to support x64 UWP builds:
+
+| File | Purpose |
+|------|---------|
+| `Src/port/Toolchain-x64-UWP-clang.cmake` | clang-cl targeting `x86_64-unknown-windows-msvc` |
+| `Src/port/vcpkg-triplets/x64-uwp.cmake` | vcpkg overlay triplet (VS2022 v143, WinStore) |
+| `Src/port/configure-gpu-x64.ps1` | CMake configure for `build-x64-gpu` |
+| `Src/port/link-driver-gpu-x64.ps1` | lld-link → `WebCoreDriver-x64.dll` |
+
+**Prerequisites:** Install x64-uwp deps via vcpkg (same set as ARM), build ICU 78 for x64-uwp, acquire x64 ANGLE binaries.
+
+## 8. WebKit Upgrade Research
+
+WebKitGTK 2.53.4 (June 23, 2026) analyzed against our TextureMapper-based port:
+
+- **Mostly Skia-focussed** — low impact on our `USE_TEXTURE_MAPPER` path
+- **Thread sync fixes** for scrolling — potentially relevant, needs commit review
+- **Overall effort:** Low-Medium (~2-3 days)
+- Full report in `Doc/WEBKIT-UPGRADE.md`
+
+## 9. Recommended Next Steps
+
+### Short-term (days)
+1. **Finish x64 build**: install vcpkg x64-uwp deps, build ICU + ANGLE for x64-uwp, configure + build WebKit for x64 (scripts created: `Toolchain-x64-UWP-clang.cmake`, `vcpkg-triplets/x64-uwp.cmake`, `configure-gpu-x64.ps1`, `link-driver-gpu-x64.ps1`)
+2. **Clean up repo**: remove repro/experiment files from `port/`
+3. **Translate `L"文本文件"` in filer picker** and remaining static XAML strings
+
+### Medium-term (weeks)
+1. **Upgrade to webkitgtk-2.53.4** (released June 23, 2026) — see `WEBKIT-UPGRADE.md` for analysis (Low-Medium effort, mostly Skia-focused)
+2. **Refactor the port layer** — consolidate stubs, reduce code duplication between ARM/x64
+3. **Add CI** — build verification for both ARM and x64
+
+### Long-term (months)
+1. **Upstream the WinUWP port** — submit `WK_WINUWP` patches to WebKit project
+2. **Add WebGL support** — already partially working through ANGLE
+3. **Service Worker / PWA support** — needed for modern web apps
+
+---
+
+## 8. Repository Layout (Simplified)
+
 ```
-
-### Step 4: Build ICU
-
-Cross-build ICU 78 for target arch (ARM32 or x64-uwp). Place at `C:\icu-arm-uwp\` or `C:\icu-x64-uwp\`.
-
-### Step 5: Acquire ANGLE
-
-Get `libEGL.lib` + `libGLESv2.lib` + `libEGL.dll` + `libGLESv2.dll` for target arch. Place in `Src/angle/arm/` or `Src/angle/x64/`.
-
-### Step 6: Configure + Build WebKit
-
-```powershell
-. .\Src\setenv.ps1
-pwsh -File Src/port/configure-gpu.ps1    # ARM32
-# or
-pwsh -File Src/port/configure-gpu-x64.ps1 # x64
-
-ninja -C build-clang-gpu WTF JavaScriptCore PAL WebCore
-```
-
-### Step 7: Link Port Driver
-
-```powershell
-pwsh -File Src/port/link-driver-gpu.ps1    # ARM32 → WebCoreDriver-gpu.dll
-# or
-pwsh -File Src/port/link-driver-gpu-x64.ps1 # x64 → WebCoreDriver-x64.dll
-```
-
-### Step 8: Build Harness Appx
-
-```powershell
-pwsh -File Src/port/build-harness.ps1
-# Output: Src/harness/AppPackages/Harness/Harness_<ver>_<arch>_Test/
+Apotheosis\              ← ASCII path only! (Ruby/meson break on non-ASCII)
+├── Src\WebKit\                 ← webkitgtk-2.52.4 sparse checkout (gitignored)
+├── Src\port\                   ← Port layer sources + build scripts (tracked)
+│   ├── WebCoreDriver.{cpp,h}
+│   ├── PortChromeClient.{h,cpp}
+│   ├── LoadingFrameLoaderClient.{h,cpp}
+│   ├── PortPlatformStrategies.cpp
+│   ├── PortNetworkStorageSession.{cpp,h}
+│   ├── stubs-*.cpp         ← 146 platform stubs
+│   ├── Toolchain-ARM32-UWP-clang.cmake
+│   ├── Toolchain-x64-UWP-clang.cmake            ← New: x64 toolchain
+│   ├── vcpkg-triplets/
+│   │   ├── arm-uwp.cmake
+│   │   └── x64-uwp.cmake                        ← New: x64 triplet
+│   ├── arm32-uwp-env.ps1
+│   ├── configure-gpu.ps1 / link-driver-gpu.ps1 / configure-gpu-x64.ps1 / link-driver-gpu-x64.ps1
+│   └── *.repro* / *.bat    ← Debug artifacts (can be cleaned)
+├── Src\harness\                ← UWP host app (tracked)
+│   ├── MainPage.xaml / .h / .cpp
+│   ├── Package.appxmanifest
+│   ├── Resources/
+│   │   ├── en-US/Resources.resw                  ← New: English strings
+│   │   ├── zh-Hans/Resources.resw                ← New: Chinese strings
+│   │   └── ru-RU/Resources.resw                  ← New: Russian strings
+│   └── Generated Files\
+├── Src\tools\                  ← WDP deploy / diagnostics (tracked)
+├── Src\angle\include\          ← ANGLE headers (tracked)
+├── Src\build-clang-*/          ← Build outputs (gitignored)
+├── Doc\                    ← Documentation
+│   ├── HANDOFF.md
+│   ├── M2-HANDOFF.md
+│   ├── PLAN.md
+│   ├── Summary.md              ← This file
+│   └── WEBKIT-UPGRADE.md       ← New: 2.52.4→2.53.4 analysis
+├── AGENTS.md               ← Codex/Copilot guidance
+├── CLAUDE.md               ← Legacy agent notes
+├── README.md               ← Expanded English README
+├── README-CN.md            ← Chinese README
+└── README-RU.md            ← Russian README
 ```
 
 ---
 
-## 4. Path System Reference
-
-### Environment Variables (set by `Src/setenv.ps1`)
-
-| Variable | Points To | Example |
-|----------|-----------|---------|
-| `APOTHEOSIS_ROOT` | Repo root | `C:\...\Apotheosis` |
-| `APOTHEOSIS_PORT` | `Src\port\` | `$APOTHEOSIS_ROOT\Src\port` |
-| `APOTHEOSIS_HARNESS` | `Src\harness\` | `$APOTHEOSIS_ROOT\Src\harness` |
-| `APOTHEOSIS_TOOLS` | `Src\tools\` | `$APOTHEOSIS_ROOT\Src\tools` |
-| `APOTHEOSIS_ANGLE` | `Src\angle\` | `$APOTHEOSIS_ROOT\Src\angle` |
-| `APOTHEOSIS_CRASH` | `crash\` | `$APOTHEOSIS_ROOT\crash` |
-| `APOTHEOSIS_VCPKG` | `C:\vcpkg` | — |
-| `APOTHEOSIS_ICU` | `C:\icu-arm-uwp` | — |
-| `APOTHEOSIS_ARCH` | Target arch | `x64` (default) or `arm` |
-| `APOTHEOSIS_BUILD_GPU` | Build output dir | Used in vcxproj conditional |
-
-### Usage in Scripts
-
-```powershell
-# In PowerShell scripts (double quotes for expansion):
-. "$env:APOTHEOSIS_PORT\arm32-uwp-env.ps1"
-$cmd = (Get-Content "$env:APOTHEOSIS_PORT\harness-cmd.bat" -Raw).Trim()
-
-# In batch files (CMD variable syntax):
-%APOTHEOSIS_ROOT%\build-clang-webcore\...
-%APOTHEOSIS_PORT%\harness-cmd.bat
-
-# In vcxproj (MSBuild properties):
-$(ProjectDir)..\angle\include
-$(APOTHEOSIS_BUILD_GPU)   # conditional for build output
-```
-
-### External Dependencies (Absolute Paths)
-
-These remain absolute as they are system-wide installs:
-
-| Path | Contents |
-|------|----------|
-| `C:\vcpkg\installed\arm-uwp\lib\` | vcpkg ARM32 libs |
-| `C:\icu-arm-uwp\lib\` | ICU 78 ARM32 libs |
-| `C:\Program Files\Microsoft Visual Studio\2022\Community\` | VS2022 |
-| `C:\Program Files (x86)\Windows Kits\10\` | Windows SDK |
-| `%ProgramFiles%\LLVM\` | LLVM/clang-cl |
-
----
-
-## 5. Repository Layout (Current)
-
-```
-<repo>\                 ← APOTHEOSIS_ROOT
-├── WebKit\             ← webkitgtk-2.52.4 (to be cloned, gitignored)
-├── build-*\            ← Build outputs (to be created, gitignored)
-├── crash\              ← Crash dumps (to be created, gitignored)
-├── Src\
-│   ├── port\           ← Port layer + build scripts (tracked)
-│   │   ├── WebCoreDriver.{cpp,h}
-│   │   ├── PortChromeClient.{h,cpp}
-│   │   ├── LoadingFrameLoaderClient.{h,cpp}
-│   │   ├── PortPlatformStrategies.cpp
-│   │   ├── PortNetworkStorageSession.{cpp,h}
-│   │   ├── stubs-*.cpp
-│   │   ├── Toolchain-ARM32-UWP-clang.cmake
-│   │   ├── Toolchain-x64-UWP-clang.cmake
-│   │   ├── configure-gpu.ps1 / configure-gpu-x64.ps1
-│   │   ├── link-driver-gpu.ps1 / link-driver-gpu-x64.ps1
-│   │   ├── compile-driver-gpu.ps1 / compile-driver-gpu-x64.ps1
-│   │   ├── build-harness.ps1
-│   │   ├── arm32-uwp-env.ps1
-│   │   └── vcpkg-triplets/
-│   │       ├── arm-uwp.cmake
-│   │       └── x64-uwp.cmake
-│   ├── harness\        ← UWP app (tracked)
-│   │   ├── MainPage.xaml / .h / .cpp
-│   │   ├── Package.appxmanifest
-│   │   ├── Resources/{en-US,zh-Hans,ru-RU}/Resources.resw
-│   │   └── *.pfx, *.cer (signing certs)
-│   ├── tools\          ← WDP deploy/diag scripts (tracked)
-│   ├── angle\include\  ← ANGLE headers (tracked)
-│   ├── setenv.ps1      ← **New** — env var setup
-├── Doc\                ← Documentation (tracked)
-│   ├── Summary.md          ← Architecture & origins
-│   ├── Summary_2.md        ← **New** — This file
-│   ├── PLAN.md             ← Development plan
-│   ├── WEBKIT-UPGRADE.md   ← 2.52.4→2.53.4 analysis
-│   ├── HANDOFF.md          ← Phase 0 handoff
-│   └── M2-HANDOFF.md       ← GPU rendering details
-├── AGENTS.md           ← Codex/Copilot guidance
-├── README*.md          ← Russian/Chinese/English READMEs
-```
-
----
-
-## 6. Lessons Learned
-
-### Path Migration
-
-1. **`E:\Apotheosis\` was everywhere** — 127 occurrences in scripts, config files, docs, and code comments. Systematic grep + replace pattern worked but required two passes (path replacement + quoting fix).
-
-2. **PowerShell quoting matters** — `'$env:VAR'` is a literal string; `"$env:VAR"` expands the variable. The migration script's naive string replacement didn't account for this, requiring a second pass.
-
-3. **`.bat` files need `%VAR%` syntax** — `cmd.exe` doesn't understand `$env:VAR`. The bat file content is read by PowerShell scripts and written to temp bats, but final execution is via `cmd /c`.
-
-4. **`.vcxproj` uses MSBuild properties** — `$(ProjectDir)`, `$(SolutionDir)`, etc. Can't use PowerShell env vars here; must use relative paths or MSBuild properties.
-
-5. **Sub-variables reduce typing** — `$env:APOTHEOSIS_PORT\` is clearer than `$env:APOTHEOSIS_ROOT\Src\port\` and makes the intent explicit.
-
-### Build Flow Understanding
-
-- The `harness-cmd.bat` file is a template containing the clang-cl invocation with all WebKit include paths. It's read by the compile scripts, extended with target-file-specific flags, written to temp `_driver_compile*.bat`, and executed.
-- Three parallel WebKit builds (sw-only, JIT, GPU) share the same source tree with different CMake configurations.
-- The port layer compiles with clang-cl (same as WebKit) but links with lld-link (not CMake) into a separate DLL loaded by the harness.
-
----
-
-## 7. Next Steps
-
-### Immediate (when laptop is available)
-1. Install LLVM/clang-cl, Ninja, Ruby, Strawberry Perl via winget
-2. Set up vcpkg
-3. Clone WebKit source
-4. Build ICU and ANGLE for target arch
-5. Configure + build WebKit libs
-6. Link port driver
-7. Build harness appx
-8. Deploy to device (ARM) or test locally (x64)
-
-### Short-term
-1. Upgrade to webkitgtk-2.53.4 (Low-Medium effort, mostly Skia)
-2. Build ARM32 version for Lumia 950 testing
-3. Refactor port layer — consolidate stubs, reduce ARM/x64 duplication
-4. Add CI for build verification
-
----
-## 8. Upstream Sync (gpu-path1, June 28 2026)
-
-The upstream repository received 14 new commits after our fork. Key changes:
-
-| Commit | Impact |
-|--------|--------|
-| `CryptoDigest → real SHA` | **Critical** — fixed all-zero digest that broke Subresource Integrity. Patched to `Src/port/stubs-crypto.cpp`. |
-| `Anti-OOM` | Added BackForwardCache disable + MemoryCache caps + `WebCoreReleaseMemory()`. Patched to `WebCoreDriver.cpp/.h`. |
-| `MinVersion 14393` | Lowered minimum Windows version for broader device support. Patched to `Package.appxmanifest`. |
-| `Version bump 0.1.8.5` | Updated version. |
-| `MEDIA-PLAN.md` | Video/audio playback roadmap — copied to `Doc/`. |
-| `OOBE language selection` | Upstream added en/zh OOBE. Our 3-language i18n (.resw + GetStr()) is more advanced. |
-| `XAML codegen workaround` | Upstream bypasses broken XamlCompiler. Our harness doesn't build yet, so deferred. |
-
-**Files patched:** `stubs-crypto.cpp`, `Package.appxmanifest`, `WebCoreDriver.cpp`, `WebCoreDriver.h`
-
----
-
-*"One `E:\Apotheosis\` at a time."*
+*"Reviving the Windows Phone web for the people who never let it die."*

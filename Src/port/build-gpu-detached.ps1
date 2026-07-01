@@ -4,7 +4,7 @@
 $ErrorActionPreference = 'Continue'
 . "$env:APOTHEOSIS_PORT\arm32-uwp-env.ps1" *> $null
 $build = "$env:APOTHEOSIS_ROOT\build-clang-gpu"
-$ninja = 'C:\Program Files\Microsoft Visual Studio\18\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\ninja.exe'
+$ninja = 'C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\ninja.exe'
 $marker = "$env:APOTHEOSIS_ROOT\gpu-build-status.txt"
 $log = "$env:APOTHEOSIS_ROOT\build-gpu.log"
 Set-Content $marker "BUILDING since $(Get-Date -Format 'MM-dd HH:mm:ss')"

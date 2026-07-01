@@ -1,0 +1,8 @@
+#include "html/parser/CSSPreloadScanner.cpp"
+#include "html/parser/HTMLConstructionSite.cpp"
+#include "html/parser/HTMLDocumentParser.cpp"
+#include "html/parser/HTMLDocumentParserFastPath.cpp"
+#include "html/parser/HTMLElementStack.cpp"
+#include "html/parser/HTMLEntityParser.cpp"
+#include "html/parser/HTMLEntitySearch.cpp"
+#include "html/parser/HTMLFormattingElementList.cpp"

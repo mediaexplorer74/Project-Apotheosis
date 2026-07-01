@@ -1,0 +1,8 @@
+#include "style/computed/data/StyleSVGData.cpp"
+#include "style/computed/data/StyleSVGFillData.cpp"
+#include "style/computed/data/StyleSVGLayoutData.cpp"
+#include "style/computed/data/StyleSVGMarkerResourceData.cpp"
+#include "style/computed/data/StyleSVGNonInheritedMiscData.cpp"
+#include "style/computed/data/StyleSVGShadowData.cpp"
+#include "style/computed/data/StyleSVGStopData.cpp"
+#include "style/computed/data/StyleSVGStrokeData.cpp"

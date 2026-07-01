@@ -1,0 +1,8 @@
+#include "svg/SVGPathSegListSource.cpp"
+#include "svg/SVGPathStringBuilder.cpp"
+#include "svg/SVGPathStringViewSource.cpp"
+#include "svg/SVGPathTraversalStateBuilder.cpp"
+#include "svg/SVGPathUtilities.cpp"
+#include "svg/SVGPatternElement.cpp"
+#include "svg/SVGPointList.cpp"
+#include "svg/SVGPolyElement.cpp"

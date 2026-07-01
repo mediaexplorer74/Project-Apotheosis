@@ -1,0 +1,8 @@
+#include "Shared/API/c/WKDeprecatedFunctions.cpp"
+#include "Shared/API/c/WKDictionary.cpp"
+#include "Shared/API/c/WKErrorRef.cpp"
+#include "Shared/API/c/WKGeometry.cpp"
+#include "Shared/API/c/WKImage.cpp"
+#include "Shared/API/c/WKMutableArray.cpp"
+#include "Shared/API/c/WKMutableDictionary.cpp"
+#include "Shared/API/c/WKNumber.cpp"

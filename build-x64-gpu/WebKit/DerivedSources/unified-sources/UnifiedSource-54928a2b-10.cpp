@@ -1,0 +1,8 @@
+#include "WebProcess/GPU/media/RemoteCDMFactory.cpp"
+#include "WebProcess/GPU/media/RemoteCDMInstance.cpp"
+#include "WebProcess/GPU/media/RemoteCDMInstanceSession.cpp"
+#include "WebProcess/GPU/media/RemoteLegacyCDM.cpp"
+#include "WebProcess/GPU/media/RemoteLegacyCDMFactory.cpp"
+#include "WebProcess/GPU/media/RemoteLegacyCDMSession.cpp"
+#include "WebProcess/GPU/media/RemoteMediaEngineConfigurationFactory.cpp"
+#include "WebProcess/GPU/media/RemoteMediaPlayerManager.cpp"

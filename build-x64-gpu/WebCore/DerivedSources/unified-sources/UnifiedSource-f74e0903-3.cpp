@@ -1,0 +1,8 @@
+#include "workers/WorkerOrWorkletThread.cpp"
+#include "workers/WorkerRunLoop.cpp"
+#include "workers/WorkerScriptLoader.cpp"
+#include "workers/WorkerThread.cpp"
+#include "workers/service/ExtendableEvent.cpp"
+#include "workers/service/ExtendableMessageEvent.cpp"
+#include "workers/service/FetchEvent.cpp"
+#include "workers/service/InstallEvent.cpp"

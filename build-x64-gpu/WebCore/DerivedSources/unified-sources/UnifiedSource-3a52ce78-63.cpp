@@ -1,0 +1,8 @@
+#include "JSGPUDeviceError.cpp"
+#include "JSGPUDeviceLost.cpp"
+#include "JSGPUDeviceLostInfo.cpp"
+#include "JSGPUDeviceLostReason.cpp"
+#include "JSGPUDeviceUncapturedError.cpp"
+#include "JSGPUErrorFilter.cpp"
+#include "JSGPUExtent3DDict.cpp"
+#include "JSGPUExternalTexture.cpp"

@@ -1,0 +1,8 @@
+#include "platform/Cursor.cpp"
+#include "platform/DateComponents.cpp"
+#include "platform/Decimal.cpp"
+#include "platform/DragData.cpp"
+#include "platform/DragImage.cpp"
+#include "platform/EventTrackingRegions.cpp"
+#include "platform/FileChooser.cpp"
+#include "platform/FileMonitor.cpp"

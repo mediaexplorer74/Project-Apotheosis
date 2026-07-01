@@ -1,0 +1,8 @@
+#include "UIProcess/Media/RemoteMediaSessionManagerProxy.cpp"
+#include "UIProcess/Media/RemoteMediaSessionProxy.cpp"
+#include "UIProcess/Model/ModelProcessProxy.cpp"
+#include "UIProcess/Network/NetworkProcessProxy.cpp"
+#include "UIProcess/Notifications/ServiceWorkerNotificationHandler.cpp"
+#include "UIProcess/Notifications/WebNotification.cpp"
+#include "UIProcess/Notifications/WebNotificationManagerMessageHandler.cpp"
+#include "UIProcess/Notifications/WebNotificationManagerProxy.cpp"

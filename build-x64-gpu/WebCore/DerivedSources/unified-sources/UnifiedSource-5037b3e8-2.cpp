@@ -1,0 +1,8 @@
+#include "contentextensions/ContentExtensionRule.cpp"
+#include "contentextensions/ContentExtensionStringSerialization.cpp"
+#include "contentextensions/ContentExtensionStyleSheet.cpp"
+#include "contentextensions/ContentExtensionsBackend.cpp"
+#include "contentextensions/DFA.cpp"
+#include "contentextensions/DFABytecodeCompiler.cpp"
+#include "contentextensions/DFABytecodeInterpreter.cpp"
+#include "contentextensions/DFACombiner.cpp"

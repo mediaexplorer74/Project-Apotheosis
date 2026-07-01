@@ -1,0 +1,8 @@
+#include "style/Styleable.cpp"
+#include "style/UserAgentStyle.cpp"
+#include "style/calc/StyleCalculationTree+Conversion.cpp"
+#include "style/calc/StyleCalculationTree+Copy.cpp"
+#include "style/calc/StyleCalculationTree+Evaluation.cpp"
+#include "style/calc/StyleCalculationTree.cpp"
+#include "style/calc/StyleCalculationValue.cpp"
+#include "style/calc/StyleCalculationValueMap.cpp"

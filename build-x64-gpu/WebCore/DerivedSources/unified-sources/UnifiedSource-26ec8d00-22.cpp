@@ -1,0 +1,8 @@
+#include "style/values/fonts/StyleFontSizeAdjust.cpp"
+#include "style/values/fonts/StyleFontStyle.cpp"
+#include "style/values/fonts/StyleFontVariantAlternates.cpp"
+#include "style/values/fonts/StyleFontVariantEastAsian.cpp"
+#include "style/values/fonts/StyleFontVariantLigatures.cpp"
+#include "style/values/fonts/StyleFontVariantNumeric.cpp"
+#include "style/values/fonts/StyleFontVariationSettings.cpp"
+#include "style/values/fonts/StyleFontWeight.cpp"

@@ -1,0 +1,8 @@
+#include "rendering/RenderTreeMutationDisallowedScope.cpp"
+#include "rendering/RenderVTTCue.cpp"
+#include "rendering/RenderVideo.cpp"
+#include "rendering/RenderView.cpp"
+#include "rendering/RenderViewTransitionCapture.cpp"
+#include "rendering/RenderWidget.cpp"
+#include "rendering/StyledMarkedText.cpp"
+#include "rendering/TableLayout.cpp"

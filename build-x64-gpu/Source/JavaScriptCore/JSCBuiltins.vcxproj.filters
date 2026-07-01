@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\generate-js-builtins.py" />
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_generate_combined_header.py" />
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_generate_combined_implementation.py" />
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_generate_internals_wrapper_header.py" />
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_generate_internals_wrapper_implementation.py" />
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_generate_separate_header.py" />
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_generate_separate_implementation.py" />
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_generate_wrapper_header.py" />
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_generate_wrapper_implementation.py" />
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_generator.py" />
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_model.py" />
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\builtins_templates.py" />
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\lazywriter.py" />
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\Scripts\wkbuiltins\wkbuiltins.py" />
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\JavaScriptCore\Scripts\generate-js-builtins.py" />
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\CMakeFiles\d81eab6feb6208a9809e18fd988342b2\JSCBuiltins.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\WebKit\Source\JavaScriptCore\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\Admin\source\repos\!OpenCode\Apotheosis\build-x64-gpu\Source\JavaScriptCore\CMakeFiles\JSCBuiltins" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{2661AD7A-8425-36E0-9A39-9B7D055CBE23}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

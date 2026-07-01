@@ -1,0 +1,8 @@
+#include "GPUProcess/media/RemoteAudioSessionProxyManager.cpp"
+#include "GPUProcess/media/RemoteAudioTrackProxy.cpp"
+#include "GPUProcess/media/RemoteAudioVideoRendererProxyManager.cpp"
+#include "GPUProcess/media/RemoteCDMFactoryProxy.cpp"
+#include "GPUProcess/media/RemoteCDMInstanceProxy.cpp"
+#include "GPUProcess/media/RemoteCDMInstanceSessionProxy.cpp"
+#include "GPUProcess/media/RemoteCDMProxy.cpp"
+#include "GPUProcess/media/RemoteLegacyCDMFactoryProxy.cpp"

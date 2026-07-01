@@ -1,0 +1,8 @@
+#include "platform/mediastream/CaptureDeviceManager.cpp"
+#include "platform/mediastream/MediaConstraintType.cpp"
+#include "platform/mediastream/MediaConstraints.cpp"
+#include "platform/mediastream/MediaEndpointConfiguration.cpp"
+#include "platform/mediastream/MediaStreamPrivate.cpp"
+#include "platform/mediastream/MediaStreamTrackDataHolder.cpp"
+#include "platform/mediastream/MediaStreamTrackPrivate.cpp"
+#include "platform/mediastream/RTCDataChannelHandlerClient.cpp"

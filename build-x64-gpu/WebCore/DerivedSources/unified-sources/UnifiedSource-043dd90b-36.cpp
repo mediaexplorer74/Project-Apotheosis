@@ -1,0 +1,8 @@
+#include "rendering/updating/RenderTreeBuilderMultiColumn.cpp"
+#include "rendering/updating/RenderTreeBuilderRuby.cpp"
+#include "rendering/updating/RenderTreeBuilderSVG.cpp"
+#include "rendering/updating/RenderTreeBuilderTable.cpp"
+#include "rendering/updating/RenderTreePosition.cpp"
+#include "rendering/updating/RenderTreeUpdater.cpp"
+#include "rendering/updating/RenderTreeUpdaterGeneratedContent.cpp"
+#include "rendering/updating/RenderTreeUpdaterViewTransition.cpp"

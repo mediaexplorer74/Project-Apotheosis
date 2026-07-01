@@ -1,0 +1,8 @@
+#include "JSSubscriptionObserver.cpp"
+#include "JSSubscriptionObserverCallback.cpp"
+#include "JSSubtleCrypto.cpp"
+#include "JSTestReportBody.cpp"
+#include "JSText.cpp"
+#include "JSTextDecoder.cpp"
+#include "JSTextDecoderStream.cpp"
+#include "JSTextDecoderStreamDecoder.cpp"

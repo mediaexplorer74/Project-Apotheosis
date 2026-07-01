@@ -1,0 +1,8 @@
+#include "bytecode/UnlinkedEvalCodeBlock.cpp"
+#include "bytecode/UnlinkedFunctionCodeBlock.cpp"
+#include "bytecode/UnlinkedFunctionExecutable.cpp"
+#include "bytecode/UnlinkedMetadataTable.cpp"
+#include "bytecode/UnlinkedModuleProgramCodeBlock.cpp"
+#include "bytecode/UnlinkedProgramCodeBlock.cpp"
+#include "bytecode/ValueRecovery.cpp"
+#include "bytecode/VariableWriteFireDetail.cpp"

@@ -1,0 +1,5 @@
+#include "fileapi/FileReaderLoader.cpp"
+#include "fileapi/FileReaderSync.cpp"
+#include "fileapi/NetworkSendQueue.cpp"
+#include "fileapi/ThreadableBlobRegistry.cpp"
+#include "fileapi/URLKeepingBlobAlive.cpp"

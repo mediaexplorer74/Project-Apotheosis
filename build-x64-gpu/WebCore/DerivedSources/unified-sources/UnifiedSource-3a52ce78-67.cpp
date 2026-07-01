@@ -1,0 +1,8 @@
+#include "JSGPUPipelineError.cpp"
+#include "JSGPUPipelineErrorInit.cpp"
+#include "JSGPUPipelineErrorReason.cpp"
+#include "JSGPUPipelineLayout.cpp"
+#include "JSGPUPipelineLayoutDescriptor.cpp"
+#include "JSGPUPowerPreference.cpp"
+#include "JSGPUPredefinedColorSpace.cpp"
+#include "JSGPUPrimitiveState.cpp"

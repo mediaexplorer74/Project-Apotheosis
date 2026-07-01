@@ -1,0 +1,8 @@
+#include "UIProcess/WebFullScreenManagerProxy.cpp"
+#include "UIProcess/WebGeolocationManagerProxy.cpp"
+#include "UIProcess/WebGeolocationProvider.cpp"
+#include "UIProcess/WebLockRegistryProxy.cpp"
+#include "UIProcess/WebNavigationState.cpp"
+#include "UIProcess/WebOpenPanelResultListenerProxy.cpp"
+#include "UIProcess/WebPageDiagnosticLoggingClient.cpp"
+#include "UIProcess/WebPageGroup.cpp"

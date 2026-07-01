@@ -1,0 +1,8 @@
+#include "html/canvas/NVShaderNoperspectiveInterpolation.cpp"
+#include "html/canvas/OESDrawBuffersIndexed.cpp"
+#include "html/canvas/OESElementIndexUint.cpp"
+#include "html/canvas/OESFBORenderMipmap.cpp"
+#include "html/canvas/OESSampleVariables.cpp"
+#include "html/canvas/OESShaderMultisampleInterpolation.cpp"
+#include "html/canvas/OESStandardDerivatives.cpp"
+#include "html/canvas/OESTextureFloat.cpp"

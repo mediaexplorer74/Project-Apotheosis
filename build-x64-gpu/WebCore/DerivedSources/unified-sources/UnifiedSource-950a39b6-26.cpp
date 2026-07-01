@@ -1,0 +1,8 @@
+#include "html/canvas/EXTTextureFilterAnisotropic.cpp"
+#include "html/canvas/EXTTextureMirrorClampToEdge.cpp"
+#include "html/canvas/EXTTextureNorm16.cpp"
+#include "html/canvas/EXTsRGB.cpp"
+#include "html/canvas/GPUBasedCanvasRenderingContext.cpp"
+#include "html/canvas/GPUCanvasContext.cpp"
+#include "html/canvas/ImageBitmapRenderingContext.cpp"
+#include "html/canvas/KHRParallelShaderCompile.cpp"

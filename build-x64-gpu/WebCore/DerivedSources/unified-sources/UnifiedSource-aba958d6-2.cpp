@@ -1,0 +1,8 @@
+#include "accessibility/AXLocalFrame.cpp"
+#include "accessibility/AXLogger.cpp"
+#include "accessibility/AXLoggerBase.cpp"
+#include "accessibility/AXObjectCache.cpp"
+#include "accessibility/AXObjectRareData.cpp"
+#include "accessibility/AXRemoteFrame.cpp"
+#include "accessibility/AXSearchManager.cpp"
+#include "accessibility/AXStitchUtilities.cpp"

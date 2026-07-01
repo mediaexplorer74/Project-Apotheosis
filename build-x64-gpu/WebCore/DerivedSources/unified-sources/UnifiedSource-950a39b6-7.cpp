@@ -1,0 +1,8 @@
+#include "html/HTMLDirectoryElement.cpp"
+#include "html/HTMLDivElement.cpp"
+#include "html/HTMLDocument.cpp"
+#include "html/HTMLElement.cpp"
+#include "html/HTMLEmbedElement.cpp"
+#include "html/HTMLFieldSetElement.cpp"
+#include "html/HTMLFontElement.cpp"
+#include "html/HTMLFormControlElement.cpp"

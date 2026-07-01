@@ -1,0 +1,8 @@
+#include "GPUProcess/graphics/Model/RemoteDDMesh.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteAdapter.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteBindGroup.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteBindGroupLayout.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteBuffer.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteCommandBuffer.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteCommandEncoder.cpp"
+#include "GPUProcess/graphics/WebGPU/RemoteCompositorIntegration.cpp"
