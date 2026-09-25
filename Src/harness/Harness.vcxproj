@@ -18,8 +18,39 @@
     <AppContainerApplication>true</AppContainerApplication>
     <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
+    <!-- Apotheosis: ONE SDK for both architectures since 2026-08-17, and it has to be 19041.
+         Never "upgrade" it: SDK 10.0.26100.0 ships NO `um\arm` / `ucrt\arm` (verified: arm64/x64/x86
+         only), so a Release|ARM build would resolve WindowsApp.lib to nothing. 19041 is the last SDK
+         carrying all four target arches, and it is what `Src\port\arm32-uwp-env.ps1:12` pins for the
+         ARM32 engine line.
+         Two myths are buried here, both measured rather than assumed. First, Doc/Summary.md records
+         "19041 is missing the XAML compiler DLL" as the reason x64 moved to 26100; that is wrong, the
+         DLL is present and full size in bin\10.0.19041.0\XamlCompiler, alongside the UAP platform,
+         Windows.winmd and 88 contract references. Second, an attempt to move x64 to 19041 earlier the
+         same day did fail, but for a real and different reason: 19041 guards LoadLibraryExA,
+         LoadLibraryA, GetModuleHandleA and GetModuleHandleW out of WINAPI_PARTITION_APP, while 26100
+         declares them unguarded, and the harness called all four (the ICU 75 probe, the module base
+         log, the EGL probe). Those call sites now use LoadPackagedLibrary and the linker-provided
+         __ImageBase, so the harness is 19041 clean. The CompileXaml MSB4181 failure seen in that first
+         attempt was a cascade of those compile errors, not an SDK defect: with the call sites fixed,
+         a full 19041 build of every harness translation unit produces a byte-identical-sized appx
+         (51.21 MB, 50 payload files) that installs and runs.
+         The payoff is that both architectures finally run the SAME XAML compiler, so the generated
+         MainPage.g.hpp is correct for both. It must still be included and never frozen, for the
+         reasons in CLAUDE.md and Doc/UNIFICATION.md section C.
+         Note that the x64 *engine* line is still on 26100 (`Src\setenv.ps1` APOTHEOSIS_SDK_VER,
+         `Src\port\x64-uwp-env.ps1`, and build-x64-gpu's CMakeCache), so 26100 cannot be uninstalled
+         until those are reconfigured. See Doc/UNIFICATION.md Track B.
+         (XML comments cannot contain a double dash, which is why this one has none.) -->
     <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.14393.0</WindowsTargetPlatformMinVersion>
+    <!-- Apotheosis: pin the MSVC toolset so adding the ARM32 component in the VS Installer
+         (which may drop a NEWER v143 toolset next to this one and flip the default stamp in
+         VC\Auxiliary\Build\Microsoft.VCToolsVersion.v143.default.props) cannot silently move the
+         x64 harness onto a different STL/CRT. Both build lines already hardcode 14.44.35207
+         (setenv.ps1:21, arm32-uwp-env.ps1) — MSBuild was the only unpinned consumer.
+         Today this equals the installed default, so it is a provable no-op. -->
+    <VCToolsVersion>14.44.35207</VCToolsVersion>
     <ProjectName>Harness</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -38,6 +69,13 @@
     <PackageCertificatePassword>apotheosis</PackageCertificatePassword>
     <GenerateAppxPackageOnBuild>true</GenerateAppxPackageOnBuild>
     <AppxAutoIncrementPackageRevision>false</AppxAutoIncrementPackageRevision>
+    <DisableEmbeddedXbf>true</DisableEmbeddedXbf>
+    <XamlMarkupCompileEnabled>true</XamlMarkupCompileEnabled>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Set MinimalTest=true to build without engine DLLs/linking (crash isolation) -->
+    <MinimalTest Condition="'$(MinimalTest)'==''">false</MinimalTest>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -46,15 +84,30 @@
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\angle\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 /bigobj %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
+      <PreprocessorDefinitions Condition="'$(MinimalTest)'=='true'">MINIMAL_TEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <!-- Phase 1b: 链接 build-clang-webcore 的 4 个引擎库 + 驱动/stub 库 + 全部软渲染依赖。
+      <!-- Phase 1b: 链接 build-arm32-webcore 的 4 个引擎库 + 驱动/stub 库 + 全部软渲染依赖。
            顺序 WebCore->JSC->PAL->WTF(被依赖者在后);MS link.exe 多遍解析,顺序容错。 -->
-      <AdditionalDependencies>libEGL.lib;libGLESv2.lib;WebCoreDriver-gpu.lib;WebCore.lib;JavaScriptCore.lib;PAL.lib;WTF.lib;JavaScriptCore.lib;WTF.lib;libcurl.lib;libssl.lib;libcrypto.lib;cairo.lib;pixman-1.lib;freetype.lib;fontconfig.lib;libexpat.lib;harfbuzz.lib;jpeg.lib;libpng16.lib;libwebp.lib;libwebpdemux.lib;libsharpyuv.lib;libxml2.lib;sqlite3.lib;z.lib;bz2.lib;brotlidec.lib;brotlicommon.lib;icuuc.lib;icuin.lib;icudt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Platform)'=='x64' And '$(MinimalTest)'!='true'">libEGL.lib;libGLESv2.lib;libcurl.lib;libssl.lib;libcrypto.lib;psl.lib;WebCoreDriver-gpu-x64.lib;WebCore.lib;JavaScriptCore.lib;cairo-complete-x64-uwp.lib;pixman-1.lib;freetype.lib;libexpat.lib;harfbuzz.lib;jpeg.lib;libpng16.lib;libwebp.lib;libwebpdemux.lib;libsharpyuv.lib;libxml2.lib;sqlite3.lib;z.lib;bz2.lib;brotlidec.lib;brotlicommon.lib;icuuc.lib;icuin.lib;icudt.lib;windowsapp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Platform)'=='ARM' And '$(MinimalTest)'!='true'">libEGL.lib;libGLESv2.lib;WebCoreDriver-gpu-arm32.lib;WebCore.lib;JavaScriptCore.lib;PAL.lib;WTF.lib;JavaScriptCore.lib;WTF.lib;libcurl.lib;libssl.lib;libcrypto.lib;cairo.lib;pixman-1.lib;freetype.lib;fontconfig.lib;libexpat.lib;harfbuzz.lib;jpeg.lib;libpng16.lib;libwebp.lib;libwebpdemux.lib;libsharpyuv.lib;libxml2.lib;sqlite3.lib;z.lib;bz2.lib;brotlidec.lib;brotlicommon.lib;icuuc.lib;icuin.lib;icudt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories Condition="'$(APOTHEOSIS_BUILD_GPU)'!=''">$(APOTHEOSIS_BUILD_GPU);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories>$(ProjectDir)..\port;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalLibraryDirectories Condition="'$(Platform)'=='ARM'">$(ProjectDir)..\angle\arm;C:\vcpkg\installed\arm-uwp\lib;C:\icu-arm-uwp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalLibraryDirectories Condition="'$(Platform)'=='x64'">$(ProjectDir)..\angle\x64;C:\vcpkg\installed\x64-uwp\lib;C:\icu-x64-uwp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <!-- Apotheosis: the ARM entry used to list only ANGLE and vcpkg, leaving build-arm32-gpu\lib to
+           arrive through the APOTHEOSIS_BUILD_GPU environment variable on line 94. That works only if
+           whoever starts the build remembers to export it: a plain
+           `msbuild /p:Platform=ARM` from a clean shell died with
+             LINK : fatal error LNK1181: cannot open input file 'WebCore.lib'
+           even though build-arm32-gpu\lib\WebCore.lib was sitting right there. The engine directories
+           are now named explicitly, symmetrically with the x64 line below, so an unattended build does
+           not depend on ambient state. APOTHEOSIS_BUILD_GPU still wins when set, for pointing at an
+           alternative tree. The C:\icu-arm-uwp entry that used to sit at the end of the ARM list is
+           gone as of 2026-08-21: it was there "for symmetry with the x64 ICU path" and pointed at a
+           directory that does not exist on this machine, and now that x64 takes ICU from the vcpkg
+           prefix too there is nothing left to be symmetric with. Both lines find ICU in
+           C:\vcpkg\installed\<triplet>\lib, already listed. -->
+      <AdditionalLibraryDirectories Condition="'$(Platform)'=='ARM'">$(ProjectDir)..\..\build-arm32-gpu\lib;$(ProjectDir)..\..\build-arm32-gpu\bin;$(ProjectDir)..\angle\arm;C:\vcpkg\installed\arm-uwp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(Platform)'=='x64'">$(ProjectDir)..\..\build-x64-gpu\lib;$(ProjectDir)..\..\build-x64-gpu\bin;$(ProjectDir)..\..\build-x64-gpu\libs;$(ProjectDir)..\angle\x64;C:\vcpkg\installed\x64-uwp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <!-- 与 lld-link 验证一致:/OPT:REF 死剥未引用代码,只保留渲染路径闭包(146 stub 覆盖之)。 -->
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>false</EnableCOMDATFolding>
@@ -62,6 +115,8 @@
            线程栈 → 栈溢出闪退(且无 dump)。把 exe 默认栈预留调到 16MB,std::thread 用
            的就是这个 PE 默认栈大小。 -->
       <StackReserveSize>16777216</StackReserveSize>
+      <AdditionalOptions>/FORCE:MULTIPLE /NODEFAULTLIB:libcmt.lib %(AdditionalOptions)</AdditionalOptions>
+      <!-- <AdditionalOptions>/DELAYLOAD:WebCore.dll %(AdditionalOptions)</AdditionalOptions> -->
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -77,12 +132,24 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="App.xaml.cpp" />
-    <ClCompile Include="MainPage.xaml.cpp" />
+    <ClCompile Include="MainPage.xaml.cpp" Condition="'$(MinimalTest)'!='true'" />
+    <ClCompile Include="MainPage.minimal.cpp" Condition="'$(MinimalTest)'=='true'">
+      <PrecompiledHeader>Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="JitProbe.cpp">
       <CompileAsWinRT>false</CompileAsWinRT>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="GpuProbe.cpp">
+    <ClCompile Include="GpuProbe.cpp" Condition="'$(MinimalTest)'!='true'">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="wtf-string-stubs.cpp" Condition="'$(MinimalTest)'!='true'">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="gdi-stubs.cpp" Condition="'$(MinimalTest)'!='true'">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="XamlGimpl.cpp" Condition="'false'">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
@@ -102,21 +169,32 @@
   <!-- 运行期动态依赖 DLL:全部随 appx 打包(设备无对应版本)。软渲染栈 + ICU。
         ARM / x64 各走各自的三方库路径。 -->
   <ItemGroup Condition="'$(Platform)'=='ARM'">
-    <None Include="C:\icu-arm-uwp\bin\icuuc78.dll"><DeploymentContent>true</DeploymentContent><Link>icuuc78.dll</Link></None>
-    <None Include="C:\icu-arm-uwp\bin\icuin78.dll"><DeploymentContent>true</DeploymentContent><Link>icuin78.dll</Link></None>
-    <None Include="C:\icu-arm-uwp\bin\icudt78.dll"><DeploymentContent>true</DeploymentContent><Link>icudt78.dll</Link></None>
-    <None Include="C:\vcpkg\installed\arm-uwp\bin\cairo-2.dll"><DeploymentContent>true</DeploymentContent><Link>cairo-2.dll</Link></None>
+    <!-- Apotheosis: ICU **78**, vcpkg-installed (C:\vcpkg\installed\arm-uwp). The ARM engine is compiled
+         against vcpkg's ICU 78 headers and the import libs are bound to icuuc78.dll, so these three DLLs
+         are the matching runtime. Data lives inside icudt78.dll; vcpkg ships no separate .dat. -->
+    <None Include="C:\vcpkg\installed\arm-uwp\bin\icuuc78.dll"><DeploymentContent>true</DeploymentContent><Link>icuuc78.dll</Link></None>
+    <None Include="C:\vcpkg\installed\arm-uwp\bin\icuin78.dll"><DeploymentContent>true</DeploymentContent><Link>icuin78.dll</Link></None>
+    <None Include="C:\vcpkg\installed\arm-uwp\bin\icudt78.dll"><DeploymentContent>true</DeploymentContent><Link>icudt78.dll</Link></None>
+    <!-- Apotheosis 2026-08-18: cairo-2.dll is GONE from the ARM package. The vcpkg arm-uwp cairo
+         DLL binds desktop GDI32/USER32/MSIMG32/api-ms-win-ntuser-sysparams, which do not resolve on
+         Windows 10 Mobile -> LoadPackagedLibrary fails with 126 and the whole app dies at process
+         start (empty LocalState, no WER). Fixed by linking STATIC cairo instead: the engine was
+         already compiled with -DCAIRO_WIN32_STATIC_BUILD=1, and C:\vcpkg\installed\arm-uwp\lib\
+         cairo.lib is now the static archive (meson build, see k32test\build-cairo-static-arm32.ps1;
+         the import lib is saved as cairo.lib.importlib.bak). -->
     <None Include="C:\vcpkg\installed\arm-uwp\bin\pixman-1-0.dll"><DeploymentContent>true</DeploymentContent><Link>pixman-1-0.dll</Link></None>
     <None Include="C:\vcpkg\installed\arm-uwp\bin\freetype.dll"><DeploymentContent>true</DeploymentContent><Link>freetype.dll</Link></None>
     <None Include="C:\vcpkg\installed\arm-uwp\bin\fontconfig-1.dll"><DeploymentContent>true</DeploymentContent><Link>fontconfig-1.dll</Link></None>
     <None Include="C:\vcpkg\installed\arm-uwp\bin\libexpat.dll"><DeploymentContent>true</DeploymentContent><Link>libexpat.dll</Link></None>
     <None Include="C:\vcpkg\installed\arm-uwp\bin\harfbuzz.dll"><DeploymentContent>true</DeploymentContent><Link>harfbuzz.dll</Link></None>
+<None Include="C:\vcpkg\installed\arm-uwp\bin\harfbuzz-icu.dll"><DeploymentContent>true</DeploymentContent><Link>harfbuzz-icu.dll</Link></None>
     <None Include="C:\vcpkg\installed\arm-uwp\bin\jpeg62.dll"><DeploymentContent>true</DeploymentContent><Link>jpeg62.dll</Link></None>
     <None Include="C:\vcpkg\installed\arm-uwp\bin\libpng16.dll"><DeploymentContent>true</DeploymentContent><Link>libpng16.dll</Link></None>
     <None Include="C:\vcpkg\installed\arm-uwp\bin\libwebp.dll"><DeploymentContent>true</DeploymentContent><Link>libwebp.dll</Link></None>
     <None Include="C:\vcpkg\installed\arm-uwp\bin\libwebpdemux.dll"><DeploymentContent>true</DeploymentContent><Link>libwebpdemux.dll</Link></None>
     <None Include="C:\vcpkg\installed\arm-uwp\bin\libsharpyuv.dll"><DeploymentContent>true</DeploymentContent><Link>libsharpyuv.dll</Link></None>
     <None Include="C:\vcpkg\installed\arm-uwp\bin\libxml2.dll"><DeploymentContent>true</DeploymentContent><Link>libxml2.dll</Link></None>
+    <None Include="C:\vcpkg\installed\arm-uwp\bin\iconv-2.dll"><DeploymentContent>true</DeploymentContent><Link>iconv-2.dll</Link></None>
     <None Include="C:\vcpkg\installed\arm-uwp\bin\z.dll"><DeploymentContent>true</DeploymentContent><Link>z.dll</Link></None>
     <None Include="C:\vcpkg\installed\arm-uwp\bin\bz2.dll"><DeploymentContent>true</DeploymentContent><Link>bz2.dll</Link></None>
     <None Include="C:\vcpkg\installed\arm-uwp\bin\brotlidec.dll"><DeploymentContent>true</DeploymentContent><Link>brotlidec.dll</Link></None>
@@ -126,17 +204,30 @@
     <None Include="C:\vcpkg\installed\arm-uwp\bin\libcrypto-3-arm.dll"><DeploymentContent>true</DeploymentContent><Link>libcrypto-3-arm.dll</Link></None>
     <None Include="$(ProjectDir)..\angle\arm\libEGL.dll"><DeploymentContent>true</DeploymentContent><Link>libEGL.dll</Link></None>
     <None Include="$(ProjectDir)..\angle\arm\libGLESv2.dll"><DeploymentContent>true</DeploymentContent><Link>libGLESv2.dll</Link></None>
+    <None Include="..\..\build-arm32-gpu\bin\WebCore.dll" Condition="Exists('..\..\build-arm32-gpu\bin\WebCore.dll')"><DeploymentContent>true</DeploymentContent><Link>WebCore.dll</Link></None>
+    <None Include="..\..\build-arm32-gpu\bin\JavaScriptCore.dll" Condition="Exists('..\..\build-arm32-gpu\bin\JavaScriptCore.dll')"><DeploymentContent>true</DeploymentContent><Link>JavaScriptCore.dll</Link></None>
   </ItemGroup>
-  <ItemGroup Condition="'$(Platform)'=='x64'">
-    <None Include="C:\icu-x64-uwp\bin\icuuc78.dll"><DeploymentContent>true</DeploymentContent><Link>icuuc78.dll</Link></None>
-    <None Include="C:\icu-x64-uwp\bin\icuin78.dll"><DeploymentContent>true</DeploymentContent><Link>icuin78.dll</Link></None>
-    <None Include="C:\icu-x64-uwp\bin\icudt78.dll"><DeploymentContent>true</DeploymentContent><Link>icudt78.dll</Link></None>
-    <None Include="C:\vcpkg\installed\x64-uwp\bin\cairo-2.dll"><DeploymentContent>true</DeploymentContent><Link>cairo-2.dll</Link></None>
+  <ItemGroup Condition="'$(Platform)'=='x64' And '$(MinimalTest)'!='true'">
+    <!-- Apotheosis 2026-08-21: ICU 78 from vcpkg, same as ARM. This block used to package ICU 75.1
+         out of the hand-built C:\icu-x64-uwp, which put the two build lines three major ICU versions
+         apart and, because that tree ships no pkg-config files, also forced harfbuzz to be built
+         without ICU on x64 only. Both consequences are described in Doc/HARFBUZZ-ICU-DIVERGENCE.md.
+         Data lives inside icudt78.dll; vcpkg ships no separate .dat, so icudt75l.dat is gone. -->
+    <None Include="C:\vcpkg\installed\x64-uwp\bin\icuuc78.dll"><DeploymentContent>true</DeploymentContent><Link>icuuc78.dll</Link></None>
+    <None Include="C:\vcpkg\installed\x64-uwp\bin\icuin78.dll"><DeploymentContent>true</DeploymentContent><Link>icuin78.dll</Link></None>
+    <None Include="C:\vcpkg\installed\x64-uwp\bin\icudt78.dll"><DeploymentContent>true</DeploymentContent><Link>icudt78.dll</Link></None>
+
     <None Include="C:\vcpkg\installed\x64-uwp\bin\pixman-1-0.dll"><DeploymentContent>true</DeploymentContent><Link>pixman-1-0.dll</Link></None>
     <None Include="C:\vcpkg\installed\x64-uwp\bin\freetype.dll"><DeploymentContent>true</DeploymentContent><Link>freetype.dll</Link></None>
-    <None Include="C:\vcpkg\installed\x64-uwp\bin\fontconfig-1.dll"><DeploymentContent>true</DeploymentContent><Link>fontconfig-1.dll</Link></None>
     <None Include="C:\vcpkg\installed\x64-uwp\bin\libexpat.dll"><DeploymentContent>true</DeploymentContent><Link>libexpat.dll</Link></None>
     <None Include="C:\vcpkg\installed\x64-uwp\bin\harfbuzz.dll"><DeploymentContent>true</DeploymentContent><Link>harfbuzz.dll</Link></None>
+    <!-- Apotheosis 2026-08-22: harfbuzz-icu.dll, mirroring the ARM list above. Once USE_HARFBUZZ
+         turned on for x64, WebCore.dll gained an import of harfbuzz-icu.dll (vcpkg builds it as a
+         separate shared library, so harfbuzz-icu.lib is only its import lib). Without the DLL in the
+         package the app died in the loader before reaching main: LocalState came back holding nothing
+         but settings.ini, not even stage-1-main.txt. That empty-LocalState signature always means a
+         missing dependency, never a crash in our code. -->
+    <None Include="C:\vcpkg\installed\x64-uwp\bin\harfbuzz-icu.dll"><DeploymentContent>true</DeploymentContent><Link>harfbuzz-icu.dll</Link></None>
     <None Include="C:\vcpkg\installed\x64-uwp\bin\jpeg62.dll"><DeploymentContent>true</DeploymentContent><Link>jpeg62.dll</Link></None>
     <None Include="C:\vcpkg\installed\x64-uwp\bin\libpng16.dll"><DeploymentContent>true</DeploymentContent><Link>libpng16.dll</Link></None>
     <None Include="C:\vcpkg\installed\x64-uwp\bin\libwebp.dll"><DeploymentContent>true</DeploymentContent><Link>libwebp.dll</Link></None>
@@ -147,13 +238,47 @@
     <None Include="C:\vcpkg\installed\x64-uwp\bin\bz2.dll"><DeploymentContent>true</DeploymentContent><Link>bz2.dll</Link></None>
     <None Include="C:\vcpkg\installed\x64-uwp\bin\brotlidec.dll"><DeploymentContent>true</DeploymentContent><Link>brotlidec.dll</Link></None>
     <None Include="C:\vcpkg\installed\x64-uwp\bin\brotlicommon.dll"><DeploymentContent>true</DeploymentContent><Link>brotlicommon.dll</Link></None>
+    <None Include="C:\vcpkg\installed\x64-uwp\bin\iconv-2.dll"><DeploymentContent>true</DeploymentContent><Link>iconv-2.dll</Link></None>
     <None Include="C:\vcpkg\installed\x64-uwp\bin\libcurl.dll"><DeploymentContent>true</DeploymentContent><Link>libcurl.dll</Link></None>
     <None Include="C:\vcpkg\installed\x64-uwp\bin\libssl-3-x64.dll"><DeploymentContent>true</DeploymentContent><Link>libssl-3-x64.dll</Link></None>
     <None Include="C:\vcpkg\installed\x64-uwp\bin\libcrypto-3-x64.dll"><DeploymentContent>true</DeploymentContent><Link>libcrypto-3-x64.dll</Link></None>
     <None Include="$(ProjectDir)..\angle\x64\libEGL.dll"><DeploymentContent>true</DeploymentContent><Link>libEGL.dll</Link></None>
     <None Include="$(ProjectDir)..\angle\x64\libGLESv2.dll"><DeploymentContent>true</DeploymentContent><Link>libGLESv2.dll</Link></None>
+    <!-- Engine DLLs -->
+    <None Include="..\..\build-x64-gpu\bin\WebCore.dll"><DeploymentContent>true</DeploymentContent><Link>WebCore.dll</Link></None>
+    <None Include="..\..\build-x64-gpu\bin\JavaScriptCore.dll"><DeploymentContent>true</DeploymentContent><Link>JavaScriptCore.dll</Link></None>
+    <!-- Desktop CRT (WebKit JSC/WebCore linked against MSVCP140.dll not MSVCP140_APP.dll) -->
+    <!-- MSBuild is 32-bit x86 → C:\Windows\System32 redirects to SysWOW64 (which lacks VCRUNTIME140_1.dll) -->
+    <!-- Use Sysnative alias for 32-bit processes to access the real 64-bit System32 -->
+    <None Include="C:\Windows\System32\MSVCP140.dll" Condition="Exists('C:\Windows\System32\MSVCP140.dll')"><DeploymentContent>true</DeploymentContent><Link>MSVCP140.dll</Link></None>
+    <None Include="C:\Windows\System32\MSVCP140_2.dll" Condition="Exists('C:\Windows\System32\MSVCP140_2.dll')"><DeploymentContent>true</DeploymentContent><Link>MSVCP140_2.dll</Link></None>
+    <None Include="C:\Windows\System32\VCRUNTIME140.dll" Condition="Exists('C:\Windows\System32\VCRUNTIME140.dll')"><DeploymentContent>true</DeploymentContent><Link>VCRUNTIME140.dll</Link></None>
+    <None Include="Assets\VCRUNTIME140_1.dll"><DeploymentContent>true</DeploymentContent><Link>VCRUNTIME140_1.dll</Link></None>
+  </ItemGroup>
+  <!-- Engine DLLs test: include even for MinimalTest to isolate DLL static init crash.
+       Apotheosis: MUST stay x64-gated — without the Platform guard an ARM build silently packages
+       the x64 WebCore.dll/JavaScriptCore.dll + amd64 desktop CRT from C:\Windows\System32 into the
+       ARM appx (build-x64-gpu exists on the dev machine, so Exists() alone is always true). -->
+  <ItemGroup Condition="'$(Platform)'=='x64' And Exists('$(ProjectDir)..\..\build-x64-gpu\bin\WebCore.dll')">
+    <None Include="..\..\build-x64-gpu\bin\WebCore.dll"><DeploymentContent>true</DeploymentContent><Link>WebCore.dll</Link></None>
+    <None Include="..\..\build-x64-gpu\bin\JavaScriptCore.dll"><DeploymentContent>true</DeploymentContent><Link>JavaScriptCore.dll</Link></None>
+    <None Include="C:\Windows\System32\MSVCP140.dll" Condition="Exists('C:\Windows\System32\MSVCP140.dll')"><DeploymentContent>true</DeploymentContent><Link>MSVCP140.dll</Link></None>
+    <None Include="C:\Windows\System32\MSVCP140_2.dll" Condition="Exists('C:\Windows\System32\MSVCP140_2.dll')"><DeploymentContent>true</DeploymentContent><Link>MSVCP140_2.dll</Link></None>
+    <None Include="C:\Windows\System32\VCRUNTIME140.dll" Condition="Exists('C:\Windows\System32\VCRUNTIME140.dll')"><DeploymentContent>true</DeploymentContent><Link>VCRUNTIME140.dll</Link></None>
+    <None Include="Assets\VCRUNTIME140_1.dll"><DeploymentContent>true</DeploymentContent><Link>VCRUNTIME140_1.dll</Link></None>
   </ItemGroup>
   <ItemGroup>
+    <!-- Apotheosis: a navigation sequence played through the harness path on startup. It ships inside the
+         package because Device Portal on the Lumia can read LocalState but cannot write to it (every
+         upload form answers HTTP 500), so the appx is the only channel that reaches the device. The
+         on/off switch is the `enabled=` line inside the file itself, for the same reason: a marker file
+         in LocalState could not be delivered. A release build sets enabled=0 and the player stays
+         silent. Format and rationale: Src\harness\Assets\navseq.txt.
+         (No double dash anywhere in this comment: XML forbids it, and that has broken this file twice.) -->
+    <None Include="Assets\navseq.txt">
+      <DeploymentContent>true</DeploymentContent>
+      <Link>Assets\navseq.txt</Link>
+    </None>
     <None Include="Assets\cacert.pem">
       <DeploymentContent>true</DeploymentContent>
       <Link>cacert.pem</Link>
@@ -186,4 +311,45 @@
     <Image Include="Assets\SplashScreen.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <!-- Pre-build: copy all runtime DLLs to output dir for Appx packaging (x64 only) -->
+  <PropertyGroup Condition="'$(Platform)'=='x64'">
+    <PreBuildEvent>
+      if not exist "$(OutDir)WebCore.dll" copy /Y "$(ProjectDir)..\..\build-x64-gpu\bin\WebCore.dll" "$(OutDir)WebCore.dll"
+      if not exist "$(OutDir)JavaScriptCore.dll" copy /Y "$(ProjectDir)..\..\build-x64-gpu\bin\JavaScriptCore.dll" "$(OutDir)JavaScriptCore.dll"
+
+      if not exist "$(OutDir)icuuc78.dll" copy /Y "C:\vcpkg\installed\x64-uwp\bin\icuuc78.dll" "$(OutDir)icuuc78.dll"
+      if not exist "$(OutDir)icuin78.dll" copy /Y "C:\vcpkg\installed\x64-uwp\bin\icuin78.dll" "$(OutDir)icuin78.dll"
+      if not exist "$(OutDir)icudt78.dll" copy /Y "C:\vcpkg\installed\x64-uwp\bin\icudt78.dll" "$(OutDir)icudt78.dll"
+      if not exist "$(OutDir)libEGL.dll" copy /Y "$(ProjectDir)..\angle\x64\libEGL.dll" "$(OutDir)libEGL.dll"
+      if not exist "$(OutDir)libGLESv2.dll" copy /Y "$(ProjectDir)..\angle\x64\libGLESv2.dll" "$(OutDir)libGLESv2.dll"
+    </PreBuildEvent>
+  </PropertyGroup>
+  <!-- Loose XBF files: DisableEmbeddedXbf=true → .xbf in intermediate output; copy to appx package payload -->
+  <Target Name="InjectXbfForPackaging" AfterTargets="MarkupCompilePass2" BeforeTargets="PrepareForAppxPackage">
+    <ItemGroup>
+      <XbfToCopy Include="$(IntermediateOutputPath)XamlG\*.xbf" />
+    </ItemGroup>
+    <Copy SourceFiles="@(XbfToCopy)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+    <ItemGroup>
+      <AppxPackagedFile Include="@(XbfToCopy->'$(OutDir)%(Filename)%(Extension)')" Condition="'%(Extension)'=='.xbf'" />
+    </ItemGroup>
+  </Target>
+  <!-- Apotheosis: fail the build if MainPage.g.hpp has drifted from MainPage.xaml, rather than
+       shipping an appx that builds cleanly and then dies at startup. That is not hypothetical: a
+       stale Connect() bound x:Name fields to the wrong controls and left ContentArea null in
+       0.1.8.64 through 0.1.8.67, and a null ^ handle in C++/CX is an access violation that
+       catch (...) cannot catch, so four builds in a row died with an empty LocalState and no WER
+       report. The check needs MainPage.g.h, which MarkupCompilePass1 generates, hence the ordering;
+       it skips itself if that file is not there yet. See Src\tools\verify-xaml-connect.ps1. -->
+  <!-- Apotheosis 2026-08-25: moved from AfterTargets="MarkupCompilePass1" to Pass2. The check reads
+       BOTH generated files, and MainPage.g.hpp is written by Pass2, so hooking Pass1 meant the guard
+       could run before the file it needs exists and fail the build. That is exactly what happened when
+       a Clean removed MainPage.g.hpp: the guard then blocked the very build that would have
+       regenerated it. BeforeTargets="ClCompile" is kept as well, so the guard still runs even if the
+       Pass2 target name is absent in some SDK, because a silently skipped guard is worse than a noisy
+       one. (No double dashes in this comment: they terminate an XML comment early and MSBuild answers
+       with MSB4025. That trap has now cost this file three separate edits.) -->
+  <Target Name="VerifyXamlConnect" AfterTargets="MarkupCompilePass2" BeforeTargets="ClCompile">
+    <Exec Command="pwsh -NoProfile -File &quot;$(MSBuildThisFileDirectory)..\tools\verify-xaml-connect.ps1&quot;" />
+  </Target>
 </Project>

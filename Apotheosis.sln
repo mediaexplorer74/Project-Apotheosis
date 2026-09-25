@@ -1,0 +1,46 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37328.6 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+
+# Apotheosis 2026-08-22: rewritten. This solution used to list two projects and could not load at all:
+# its paths were written as if the file lived in Src\ ("port\WebCoreDriver.vcxproj",
+# "Apotheosis\Apotheosis.csproj"), while it sits at the repository root -- so both references pointed
+# at directories that do not exist. Being the first file a newcomer opens, that was the worst possible
+# place for a broken reference.
+#
+# It now contains the one project that produces the browser: the C++/CX harness. Two things it
+# deliberately does NOT contain:
+#
+#   * Src\Apotheosis\Apotheosis.csproj -- an abandoned C# UI experiment. See its own README.md. Kept in
+#     the tree on purpose, kept out of here so nobody builds it expecting a browser.
+#   * Src\port\WebCoreDriver.vcxproj -- the driver is NOT built by msbuild. It is compiled by clang-cl
+#     and archived by lld-link through Src\port\link-driver-gpu-{x64,arm32}.ps1, because upstream WebKit
+#     cannot be built with pure MSVC. That vcxproj is not the real build path.
+#
+# Nothing builds *through* this solution in any case: Src\tools\_build-appx-{x64,arm}.bat invoke msbuild
+# on Harness.vcxproj directly. The solution exists so the project opens in Visual Studio with editing
+# and IntelliSense working. Read CLAUDE.md before building anything.
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Harness", "Src\harness\Harness.vcxproj", "{705893F6-EDD2-4AB7-D8A0-8255711AA77F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release|ARM = Release|ARM
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{705893F6-EDD2-4AB7-D8A0-8255711AA77F}.Release|ARM.ActiveCfg = Release|ARM
+		{705893F6-EDD2-4AB7-D8A0-8255711AA77F}.Release|ARM.Build.0 = Release|ARM
+		{705893F6-EDD2-4AB7-D8A0-8255711AA77F}.Release|ARM.Deploy.0 = Release|ARM
+		{705893F6-EDD2-4AB7-D8A0-8255711AA77F}.Release|x64.ActiveCfg = Release|x64
+		{705893F6-EDD2-4AB7-D8A0-8255711AA77F}.Release|x64.Build.0 = Release|x64
+		{705893F6-EDD2-4AB7-D8A0-8255711AA77F}.Release|x64.Deploy.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C53F7AC9-450D-4E84-92DF-DE7B273E7BA3}
+	EndGlobalSection
+EndGlobal

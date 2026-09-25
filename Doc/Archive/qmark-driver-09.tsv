@@ -1,0 +1,42 @@
+# Chunk 09 - Src/port/WebCoreDriver.cpp lines 4584-5420
+4584	C	// M4 pinch: set the page scale (clamped to [0.5, 6.0]) around the focal point, so the
+4585	C	// content under the fingers stays put. setPageScaleFactor also updates the compositor's
+4586	C	// backing-store contentsScale (pageScaleFactor * deviceScale). outRGBA may be null, and
+4587	C	// the return is 0; the harness sends a scale plus a focal point per gesture step.
+4615	C	// document-space focal point = (scroll + focal)/oldScale; new scroll = it * newScale - focal
+4628	C	// g_gpuScrollFast stays clear here: a scale change must not skip the dirty-tree pass
+4636	C	// M4: the page scale as a per-mille integer (1000 = 1.0x, 2500 = 2.5x), for the harness
+4730	C	// The mobile-vs-desktop UA switch exposed to the host UI
+4731	C	// UA: mobile=1 -> iPhone UA, 0 -> the Windows desktop UA. Set from the harness, not here.
+4737	C	// Custom UA override for userAgent(); empty means fall back to the built-in mobile/desktop UA
+4747	C	// M1: is the GPU path armed? True when PortChromeClient has a root GraphicsLayer
+4748	C	// (i.e. compositing is possible for this session): 1 = armed, 0 = not.
+4757	C	// M2: bring up the GPU -- GL context, TextureMapper, and the globals they need
+4986	C	// M2: dump the FrameView's scroll/contents/view/document-background numbers plus the
+4987	C	// layer tree (GraphicsLayer::layerTreeAsText) into out, for the GPU diagnostics.
+5019	C	// Scroll round-trip probe: push the view to y=300, run frameViewDidScroll, read it back.
+5020	C	// A read-back of 0 means maxScroll is 0; scrolled contents should show at (0,-300).
+5035	C	// the layer fields worth grepping: paintsIntoWindow/tileCache/drawsContent/backingStoreAttached
+5041	C	// restore the original scroll -- the probe must not move the page
+5059	C	// Is an editable focused? A text input, a textarea or a contenteditable element
+5060	C	// counts; canEdit() alone is unreliable headless, so the element is checked first.
+5074	C	// Insert text into the focused editable, pump so its JS runs, then repaint
+5090	C	// Why write straight into the DOM's value: measured (see the imedebug line) a focused
+5091	C	// input can report canEditAfter=1, inserted=1 and still end up with valueLen=0 -- headless
+5092	C	// editor().canEdit()/FrameSelection cannot be trusted for input elements, and
+5093	C	// insertTextWithoutSendingTextEvent does not update .value. So: set the value and dispatch
+5094	C	// input (no change event, exactly like any programmatic set); contenteditable falls
+5095	C	// through to the editor's own insertText below.
+5105	C	// append without firing an event; the input event is dispatched just below
+5116	C	// contenteditable or no element at all: go through the editor
+5121	C	// last resort: a raw Char key event into the editor
+5133	C	// read the value back out of the DOM (not from our own bookkeeping) for the diag line
+5150	C	// Read back the last WebCoreTypeText diagnostic (the "IME debug" line in LocalState)
+5159	C	// Key action: 0 = backspace, 1 = Enter (submit for an input, newline for a textarea)
+5173	C	// reset the load state so the pump can wait for whatever this key triggers
+5186	C	// As in WebCoreTypeText: for input/textarea trim the value directly (the harness sets it
+5187	C	// that way), and use the editor's DeleteBackward only for contenteditable.
+5207	C	// As in WebCoreTypeText: pump with its ~0.8 s quiet window before repainting
+5213	C	// RawKeyDown + Char (charCode 13, so keypress handlers see Enter) + KeyUp
+5227	C	// Repaint the session as it stands (no input, no pump); 0 on success
+# end

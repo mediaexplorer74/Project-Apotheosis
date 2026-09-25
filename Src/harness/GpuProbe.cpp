@@ -1,7 +1,7 @@
-// GpuProbe.cpp — 见 GpuProbe.h。用老 Microsoft ANGLE.WindowsStore(ms-master)的 PropertySet 范式:
-// SwapChainPanel 经 PropertySet(EGLNativeWindowTypeProperty)交给 eglCreateWindowSurface;
-// D3D11 后端按 FL9_3 初始化(MAX_VERSION 9.3 = D3D feature level,覆盖 1020 等老设备下限)。
-// CompileAsWinRT=true(用到 PropertySet/SwapChainPanel),但不挂 PCH(独立编译)。
+// GpuProbe.cpp — see GpuProbe.h. Uses the legacy Microsoft ANGLE.WindowsStore (ms-master) PropertySet pattern:
+// the SwapChainPanel is handed to eglCreateWindowSurface via a PropertySet (EGLNativeWindowTypeProperty);
+// the D3D11 backend initializes at FL9_3 (MAX_VERSION 9.3 = D3D feature level, covering the lower bound of
+// old devices like the 1020). CompileAsWinRT=true (PropertySet/SwapChainPanel are used), but no PCH (standalone).
 #include <windows.h>
 #include <inspectable.h>
 #include <agile.h>            // Platform::Agile<>
@@ -9,7 +9,7 @@
 #include <string>
 #include <thread>
 #include <fstream>
-// 这版 ms-master ANGLE 的 gl2.h 把核心 GL 函数原型放在 GL_GLEXT_PROTOTYPES 之下(否则 C3861 找不到 glClear 等)。
+// This ms-master ANGLE's gl2.h puts core GL function prototypes under GL_GLEXT_PROTOTYPES (otherwise C3861: glClear not found).
 #define GL_GLEXT_PROTOTYPES
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
@@ -52,12 +52,12 @@ void Harness::RunGpuProbe(SwapChainPanel^ panel, Platform::String^ localStateDir
             if (f) f.write(log.data(), log.size());
         };
 
-        step("=== GPU 探针:ANGLE(D3D11 FL9_3)+ SwapChainPanel + GL ES2 画三角形 ===");
+        step("=== GPU probe: ANGLE(D3D11 FL9_3) + SwapChainPanel + GL ES2 triangle ===");
 
         auto getPlatDisp = (PFNEGLGETPLATFORMDISPLAYEXTPROC)eglGetProcAddress("eglGetPlatformDisplayEXT");
-        if (!getPlatDisp) { step("FAIL: eglGetPlatformDisplayEXT 未找到(libEGL 没加载?)"); write(); return; }
+        if (!getPlatDisp) { step("FAIL: eglGetPlatformDisplayEXT not found (libEGL not loaded?)"); write(); return; }
 
-        // MAX_VERSION 9.3 = 请求 D3D11 feature level 9_3(老 ms-master ANGLE 语义),验老设备下限。
+        // MAX_VERSION 9.3 = request D3D11 feature level 9_3 (legacy ms-master ANGLE semantics), verifying the old-device lower bound.
         const EGLint dattr[] = {
             EGL_PLATFORM_ANGLE_TYPE_ANGLE,              EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE,
             EGL_PLATFORM_ANGLE_MAX_VERSION_MAJOR_ANGLE, 9,
@@ -77,12 +77,12 @@ void Harness::RunGpuProbe(SwapChainPanel^ panel, Platform::String^ localStateDir
             EGL_NONE
         };
         EGLConfig cfg; EGLint nc = 0;
-        if (!eglChooseConfig(dpy, cattr, &cfg, 1, &nc) || nc < 1) { step("FAIL: eglChooseConfig(无 ES2/RGBA8/D16S8 config)"); write(); return; }
+        if (!eglChooseConfig(dpy, cattr, &cfg, 1, &nc) || nc < 1) { step("FAIL: eglChooseConfig (no ES2/RGBA8/D16S8 config)"); write(); return; }
         step("OK: eglChooseConfig");
 
         SwapChainPanel^ p = agile.Get();
-        if (!p) { step("FAIL: SwapChainPanel agile 为空"); write(); return; }
-        // ms-master ANGLE.WindowsStore:native window = PropertySet(含 SwapChainPanel + 固定渲染尺寸)。
+        if (!p) { step("FAIL: SwapChainPanel agile is null"); write(); return; }
+        // ms-master ANGLE.WindowsStore: native window = PropertySet (holds the SwapChainPanel + fixed render size).
         PropertySet^ props = ref new PropertySet();
         props->Insert(L"EGLNativeWindowTypeProperty", p);
         props->Insert(L"EGLRenderSurfaceSizeProperty", PropertyValue::CreateSize(Size(720, 1080)));
@@ -95,13 +95,13 @@ void Harness::RunGpuProbe(SwapChainPanel^ panel, Platform::String^ localStateDir
         EGLContext ctx = eglCreateContext(dpy, cfg, EGL_NO_CONTEXT, ctxattr);
         if (ctx == EGL_NO_CONTEXT) { sprintf_s(buf, "FAIL: eglCreateContext err=0x%x", eglGetError()); step(buf); write(); return; }
         if (!eglMakeCurrent(dpy, surf, surf, ctx)) { sprintf_s(buf, "FAIL: eglMakeCurrent err=0x%x", eglGetError()); step(buf); write(); return; }
-        step("OK: GL ES2 上下文 current");
+        step("OK: GL ES2 context current");
 
         const char* vendor   = (const char*)glGetString(GL_VENDOR);
         const char* renderer = (const char*)glGetString(GL_RENDERER);
         const char* version  = (const char*)glGetString(GL_VERSION);
         sprintf_s(buf, "GL_VENDOR=%s",   vendor   ? vendor   : "?"); step(buf);
-        sprintf_s(buf, "GL_RENDERER=%s", renderer ? renderer : "?"); step(buf);   // ★ D3D11 适配器名:证明真硬件
+        sprintf_s(buf, "GL_RENDERER=%s", renderer ? renderer : "?"); step(buf);   // D3D11 adapter name: proves real hardware
         sprintf_s(buf, "GL_VERSION=%s",  version  ? version  : "?"); step(buf);
 
         GLuint vs = CompileShader(GL_VERTEX_SHADER,   "attribute vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}");
@@ -111,7 +111,7 @@ void Harness::RunGpuProbe(SwapChainPanel^ panel, Platform::String^ localStateDir
         glBindAttribLocation(prog, 0, "p");
         glLinkProgram(prog);
         GLint linked = 0; glGetProgramiv(prog, GL_LINK_STATUS, &linked);
-        if (!linked) { step("FAIL: shader program link 失败"); write(); return; }
+        if (!linked) { step("FAIL: shader program link failed"); write(); return; }
         glUseProgram(prog);
         GLint tloc = glGetUniformLocation(prog, "t");
 
@@ -120,19 +120,20 @@ void Harness::RunGpuProbe(SwapChainPanel^ panel, Platform::String^ localStateDir
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, tri);
         glViewport(0, 0, 720, 1080);
 
-        // ~48 帧动画(三角形从橙到黄渐变),证明持续 GPU 渲染 + 交换链 Present 正常。
+        // ~48 frames of animation (triangle fading orange -> yellow), proving sustained GPU rendering +
+        // swapchain Present work.
         for (int i = 0; i < 48; ++i) {
             float t = (float)i / 48.0f;
-            glClearColor(0.05f, 0.12f, 0.22f, 1.0f);   // 深蓝底
+            glClearColor(0.05f, 0.12f, 0.22f, 1.0f);   // dark-blue background
             glClear(GL_COLOR_BUFFER_BIT);
             glUniform1f(tloc, t);
             glDrawArrays(GL_TRIANGLES, 0, 3);
             eglSwapBuffers(dpy, surf);
         }
         GLenum gl = glGetError();
-        sprintf_s(buf, "SUCCESS: 三角形已画 48 帧,glError=0x%x", gl); step(buf);
-        step("★ 若设备上看到深蓝底 + 橙黄三角形 = GPU 管线在 App Container 通!");
+        sprintf_s(buf, "SUCCESS: drew triangle for 48 frames, glError=0x%x", gl); step(buf);
+        step("* If you see a dark-blue background + orange/yellow triangle on the device = GPU pipeline works in the App Container!");
         write();
-        // 保留上下文/最后一帧(三角形留在屏上)。探针进程退出由 app 生命周期管。
+        // Keep the context/last frame (the triangle stays on screen). Probe-process exit is managed by the app lifecycle.
     }).detach();
 }

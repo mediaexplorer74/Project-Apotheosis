@@ -1,95 +1,31 @@
-# Project Apotheosis — EdgeHTML Reborn
+﻿# Project Apotheosis — EdgeHTML Reborn
 
-> Porting modern **WebKit/WebCore** (webkitgtk-2.52.4) to **Windows 10 Mobile (ARM32, UWP)**.
-> Bringing JIT-accelerated, GPU-composited web browsing back to the Lumia 950.
+> Start here: [Doc/INDEX.md](Doc/INDEX.md) · [MVP](Doc/MVP.md) · [Plan](Doc/PLAN.md)
+> Historical investigations are preserved in [Doc/Archive/](Doc/Archive/).
 
-## Status
+Apotheosis ports modern WebKit/WebCore to Windows 10 Mobile (ARM32, UWP) for the Lumia 950.
+The MVP is intentionally small: an address bar, Back, a painted page, scrolling, and useful navigation.
 
-### Real device (Lumia 950, Win10M 15254)
-
-| Feature | Status |
-|---------|--------|
-| WTF + JavaScriptCore CLoop | ✅ |
-| WebCore + Cairo software rendering | ✅ |
-| Live interactive session (click, form, scroll, keyboard) | ✅ |
-| JSC JIT (~5-50× speedup) | ✅ |
-| GPU compositing (ANGLE D3D11 FL9.3 + TextureMapper) | ✅ |
-| Smooth scrolling / pinch-zoom | ✅ |
-| Browser shell (tabs, URL bar, settings) | ✅ |
-| Multi-language UI (en/ru/zh) | ✅ |
-
-### x64 PC Debug Build (in progress)
-
-| Component | Status |
-|-----------|--------|
-| Dependencies (vcpkg 16 pkgs, ICU, SQLite, ANGLE) | ✅ Installed |
-| WebKit CMake configure | ✅ First success (June 29) |
-| WTF + bmalloc compilation | ✅ Compiled (12+ WK_WINUWP patches) |
-| PAL headers | ✅ Generated |
-| GNU driver (clang++) for AT&T asm files | ✅ Both LowLevelInterpreter.cpp & MacroAssemblerX86_64.cpp ✅ |
-| JavaScriptCore → `bin/JavaScriptCore.dll` | 🔄 Compiling; ~8/111 unified sources, warnings only |
-| CMake 4.0 missing rules workaround | ✅ Auto-scanner in `patch-build-ninja-gnu.ps1` |
-| WebCore → `bin/WebCore.dll` | ❌ Blocked by JSC |
-| Port driver → `WebCoreDriver-x64.dll` | ❌ |
-| Harness.appx | ❌ |
-| WebCore → `bin/WebCore.dll` | ❌ |
-| Port driver → `WebCoreDriver-x64.dll` | ❌ |
-
-## Architecture
-
-```
-Harness (UWP C++/CX App)
-   · SwapChainPanel ← GPU | WriteableBitmap ← SW fallback
-        │  C ABI (WebCoreDriver.h)
-WebCoreDriver (port layer)
-   · Page/frame management, event dispatch
-   · Cairo software | TextureMapper GPU rendering
-        │
-WebKit / WebCore / JSC / WTF
-   · WK_WINUWP patches for ARM32 UWP App Container
-```
-
-## Repository
-
-This repo tracks only the **port layer and harness** — not the GB-scale upstream WebKit source.
-
-```
-Src/
-├── port/        ← WebCore driver, stubs, build scripts, toolchains
-├── harness/     ← UWP host app (C++/CX, XAML)
-├── tools/       ← WDP deploy + diagnostics
-├── angle/include/ ← ANGLE headers
-└── setenv.ps1   ← Environment setup
-Doc/             ← Documentation (PLAN, Summary, Wiki in 3 languages)
-```
+The x64 Release harness is the daily verification line. The ARM32 Lumia 950 remains the target device.
+Software presentation is the current safe path; GPU presentation work is deferred.
 
 ## Build
 
-```powershell
-. .\Src\setenv.ps1
-pwsh -File Src/port/link-driver-gpu.ps1       # ARM32
-pwsh -File Src/port/build-harness.ps1          # Appx
-pwsh -File Src/tools/deploy-launch.ps1 -Ip ... # Deploy to Lumia
-```
+- [x64 build notes](Doc/BUILD-NOTES-X64.md)
+- [ARM32 build guide](Doc/ARM32-BUILD-GUIDE.md)
+- [GPU liveness notes](Doc/GPU-LIVENESS.md)
+- [Repository constraints](CLAUDE.md)
 
-For x64 debugging:
-```powershell
-. .\Src\setenv.ps1
-Set-Item -Path env:APOTHEOSIS_ARCH -Value x64
-ninja -C build-x64-gpu JavaScriptCore WebCore
-pwsh -File Src/port/link-driver-gpu-x64.ps1
-```
+## Publish
 
-## Credits
+Read [Doc/GITHUB.md](Doc/GITHUB.md) before publishing. The first publication is a reviewed checkpoint,
+not a force push. The external backup should remain intact until the new remote commit is verified.
 
-- [Jimmyxiao2009/Project-Apotheosis](https://github.com/Jimmyxiao2009/Project-Apotheosis) — original project
-- [Reddit: Porting WebKitGTK 2.52.4 to Windows 10 Mobile](https://www.reddit.com/r/windowsphone/comments/1ugn2kn/porting_webkitgtk_2524_to_windows_10_mobile/)
-- WebKitGTK team — upstream engine
+## Scope
+
+See [Doc/MVP.md](Doc/MVP.md) for the acceptance checklist. GPU repair, subframes, authentication, video,
+MSE, and broad performance work are not MVP blockers.
 
 ## License
 
-MIT (port layer); LGPL-2.1/BSD (upstream WebKit + dependencies).
-
----
-
-*As is. No support. RnD only. DIY.*
+MIT for the port and harness; upstream WebKit and dependencies retain their own licenses.

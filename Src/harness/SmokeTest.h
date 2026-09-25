@@ -1,8 +1,9 @@
-// SmokeTest.h  —  Phase 0 验证: 用 JSC C API 执行 "1+1", 返回结果字符串。
-// 只依赖 JavaScriptCore 的 C API(JavaScript.h, 纯 C), 与 clang-cl 编的 .lib 链接兼容。
+// SmokeTest.h — Phase 0 check: run "1+1" via the JSC C API and return the result string.
+// Depends only on JavaScriptCore's C API (JavaScript.h, pure C), so it links against the
+// clang-cl-built .lib cleanly.
 #pragma once
 #include <string>
 
-// 运行时设 JSC 单线程 GC(规避 App Container 下 SuspendThread/GetThreadContext)。
-// 返回如 "1+1 = 2" 的结果, 或出错信息。
+// Sets JSC single-threaded GC at runtime (avoids SuspendThread/GetThreadContext in the
+// App Container). Returns a result such as "1+1 = 2", or an error message.
 std::wstring RunJscSmokeTest();

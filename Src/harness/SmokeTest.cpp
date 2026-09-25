@@ -1,4 +1,4 @@
-// SmokeTest.cpp  —  调 JavaScriptCore C API 执行 JS, 验证移植到 ARM32 UWP 的 JSC 能跑。
+// SmokeTest.cpp — drive the JavaScriptCore C API to run JS, verifying the JSC port runs on ARM32 UWP.
 #include "pch.h"
 #include "SmokeTest.h"
 
@@ -9,7 +9,7 @@ static std::wstring toWide(JSStringRef s)
 {
     size_t len = JSStringGetLength(s);
     std::wstring out(len, L'\0');
-    // JSChar 是 UTF-16, 与 Windows wchar_t 一致
+    // JSChar is UTF-16, matching Windows wchar_t.
     const JSChar* chars = JSStringGetCharactersPtr(s);
     for (size_t i = 0; i < len; ++i)
         out[i] = static_cast<wchar_t>(chars[i]);
@@ -20,7 +20,7 @@ std::wstring RunJscSmokeTest()
 {
     JSGlobalContextRef ctx = JSGlobalContextCreate(nullptr);
     if (!ctx)
-        return L"JSGlobalContextCreate 失败";
+        return L"JSGlobalContextCreate FAILED";
 
     JSStringRef script = JSStringCreateWithUTF8CString("1 + 1");
     JSValueRef exception = nullptr;
@@ -30,11 +30,11 @@ std::wstring RunJscSmokeTest()
     std::wstring text;
     if (exception) {
         JSStringRef es = JSValueToStringCopy(ctx, exception, nullptr);
-        text = L"JS 异常: " + toWide(es);
+        text = L"JS exception: " + toWide(es);
         JSStringRelease(es);
     } else {
         double n = JSValueToNumber(ctx, result, nullptr);
-        // 同时跑一段稍复杂的, 证明解释器真的在工作
+        // Also run something slightly more complex to prove the interpreter really works.
         JSStringRef s2 = JSStringCreateWithUTF8CString("(function(){var s=0;for(var i=1;i<=100;i++)s+=i;return s;})()");
         JSValueRef r2 = JSEvaluateScript(ctx, s2, nullptr, nullptr, 0, nullptr);
         JSStringRelease(s2);

@@ -1,0 +1,25 @@
+# Chunk 06 - Src/port/WebCoreDriver.cpp lines 2500-3414
+2500	C	// DOM Storage: window.localStorage / sessionStorage only exist when the
+2501	C	//   LocalStorageEnabled / SessionStorageEnabled settings are on. Without them the
+2502	C	//   property is absent, so an SPA bundle dies on "Can't find variable: localStorage".
+2548	C	// A headless page has to be active AND focused, or EventHandler drops input and the
+2549	C	// focus APIs (focus events, document.hasFocus()) misreport. This must come after
+2550	C	// setView()+init(): setActiveInternal calls selection().pageActivationChanged(), which
+2551	C	// faults on a null document/view at null+0x858 (0.1.0.9, RVA 0x1E9309 -- measured).
+2879	C	// WebKit can replace the LocalFrameView during the parse, so re-read it here
+2893	C	// SPA probe: kick the module import so a bundle that only runs on that promise
+2894	C	// starts (React and friends). It can replace frame/view/document -- re-read below.
+2937	C	// Repaint after an interaction (click/scroll/resize) and hand back the new frame
+3094	C	// Evaluate JS in the page and copy the string result into out; 0 or an error code
+3107	C	// how many links the current table holds
+3113	C	// link i: viewport-relative rect plus its URL; 1 on success, 0 if out of range
+3136	C	// Download to a .part file and rename on success, so a partial transfer never looks
+3137	C	// like a complete one. "wb" truncates any leftover .part from a previous attempt.
+3172	C	// HTTP error: drop the partial file
+3176	C	// .part -> final rename; a failure here leaves the previous file untouched
+3308	C	// refresh the link table before painting
+3393	C	// reset the (dead) load counters
+3412	C	// Apotheosis: didFinishLoad can return while JS work is still running (bilibili is the
+3413	C	// case that forced this), so "loaded" is not "done". Keep pumping while
+3414	C	// isLoadingInAPISense reports outstanding resources/XHR, with an 8 s hard ceiling.
+# end

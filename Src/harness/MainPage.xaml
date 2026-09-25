@@ -5,13 +5,15 @@
     RequestedTheme="Dark">
 
     <!-- ============================================================================
-         视觉改版(向 LBrowser):底部单栏  [标签] | 🔒地址 | ⋯   + 滑出动作菜单 + 全屏抽屉。
-         约束:保留全部 x:Name 与事件 handler(2132 行 code-behind 直接引用,改名=编译/运行崩);
-               WinRT 契约 ≤5.0 → 不用 Button.CornerRadius/StackPanel.Spacing,圆角用 Border 包裹。
+         Visual redesign (LBrowser-like): bottom single bar [Tabs] | 🔒URL | ⋯
+         + slide-out action menu + fullscreen drawers.
+         Constraints: keep all x:Name and event handlers (2132-line code-behind directly
+         references them — renaming = compile/run break);
+         WinRT contract ≤5.0 → no Button.CornerRadius / StackPanel.Spacing, use Border for rounding.
          ============================================================================ -->
 
     <Page.Resources>
-        <!-- 统一深色调(贴近 LBrowser 暗色 chrome;不依赖 ThemeResource 解析,设备上确定一致) -->
+        <!-- Unified dark theme (close to LBrowser dark chrome; no ThemeResource dependency, consistent on device) -->
         <SolidColorBrush x:Key="PageBg"   Color="#FF161618"/>
         <SolidColorBrush x:Key="Chrome"   Color="#FF2A2A2C"/>
         <SolidColorBrush x:Key="Surface"  Color="#FF323234"/>
@@ -22,7 +24,7 @@
         <SolidColorBrush x:Key="Accent"   Color="#FF3AA0FF"/>
         <SolidColorBrush x:Key="Scrim"    Color="#B3000000"/>
 
-        <!-- 底栏图标键:大触摸目标,透明底 -->
+        <!-- Bottom bar icon buttons: large touch targets, transparent background -->
         <Style x:Key="NavBtn" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{StaticResource TxtHi}"/>
@@ -34,7 +36,7 @@
             <Setter Property="Padding" Value="0"/>
             <Setter Property="VerticalAlignment" Value="Stretch"/>
         </Style>
-        <!-- 小图标键(查找条/抽屉关闭等) -->
+        <!-- Small icon buttons (find bar / drawer close, etc.) -->
         <Style x:Key="IconBtn" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{StaticResource TxtHi}"/>
@@ -53,7 +55,7 @@
             <Setter Property="Height" Value="42"/>
             <Setter Property="Padding" Value="10,0"/>
         </Style>
-        <!-- 动作面板:顶部快捷图标列 -->
+        <!-- Action panel: top quick icon row -->
         <Style x:Key="QuickBtn" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -61,7 +63,7 @@
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="Padding" Value="0,10"/>
         </Style>
-        <!-- 动作面板:整行菜单项 -->
+        <!-- Action panel: full-row menu items -->
         <Style x:Key="MenuRow" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -71,7 +73,7 @@
             <Setter Property="FontSize" Value="17"/>
             <Setter Property="Padding" Value="18,13"/>
         </Style>
-        <!-- 设置页的整行按钮 -->
+        <!-- Settings page full-row button -->
         <Style x:Key="SetRow" TargetType="Button">
             <Setter Property="Background" Value="{StaticResource Surface}"/>
             <Setter Property="Foreground" Value="{StaticResource TxtHi}"/>
@@ -83,21 +85,21 @@
     </Page.Resources>
 
     <Grid x:Name="RootGrid" Background="{StaticResource PageBg}">
-        <!-- 软键盘弹出时整体上移(仅地址栏聚焦时,见 code-behind InputPane 处理) -->
+        <!-- Shift up when soft keyboard appears (only when URL bar is focused, see code-behind InputPane handling) -->
         <Grid.RenderTransform>
             <TranslateTransform x:Name="RootShift" Y="0"/>
         </Grid.RenderTransform>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>      <!-- 内容(网页) -->
-            <RowDefinition Height="Auto"/>   <!-- 底部 chrome -->
+            <RowDefinition Height="*"/>      <!-- Content (web page) -->
+            <RowDefinition Height="Auto"/>   <!-- Bottom chrome -->
         </Grid.RowDefinitions>
 
-        <!-- ===== 内容区:网页渲染 + 浮层 ===== -->
+        <!-- ===== Content area: web rendering + overlays ===== -->
         <Grid Grid.Row="0">
-            <Border Background="White">
-                <!-- 自由滚动:内容区直接接 ManipulationDelta(单指拖→引擎滚动+惯性,捏合→Scale)。
-                     点击走 Tapped;坐标用 GetPosition(ContentArea) 映回引擎像素(MapTapToEngine)。 -->
-                <Grid x:Name="ContentArea" Background="White"
+            <Border Background="#F0F0F0">
+                <!-- Free scrolling: ContentArea handles ManipulationDelta directly (one-finger drag → engine scroll + inertia, pinch → Scale).
+                     Taps go through Tapped; coordinates use GetPosition(ContentArea) mapped back to engine pixels (MapTapToEngine). -->
+                <Grid x:Name="ContentArea" Background="#F0F0F0"
                       ManipulationMode="TranslateX,TranslateY,TranslateInertia,Scale"
                       IsTapEnabled="True" Tapped="OnPageTapped"
                       ManipulationDelta="OnImageManipDelta"
@@ -106,21 +108,21 @@
                 </Grid>
             </Border>
 
-            <!-- GPU 直呈现面(SwapChainPanel);GPU 起来后承载 TextureMapper 合成输出。 -->
+            <!-- GPU direct rendering surface (SwapChainPanel); after GPU initializes, hosts TextureMapper compositing output. -->
             <SwapChainPanel x:Name="GpuPanel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                             IsHitTestVisible="False" Visibility="Collapsed"/>
 
-            <!-- 输入法捕获框:1×1 透明,聚焦唤起键盘;键入转发给引擎活会话。 -->
+            <!-- IME capture box: 1×1 transparent, focus invokes keyboard; input forwarded to engine live session. -->
             <TextBox x:Name="ImeBox" Width="1" Height="1" Opacity="0" Margin="0" Padding="0"
                      BorderThickness="0" MinWidth="0" MinHeight="0"
                      HorizontalAlignment="Left" VerticalAlignment="Top" IsTabStop="True"
                      TextChanged="OnImeTextChanged" KeyDown="OnImeKeyDown"/>
 
-            <!-- 顶部加载进度条 -->
+            <!-- Top loading progress bar -->
             <ProgressBar x:Name="Progress" Height="2.5" VerticalAlignment="Top" Foreground="{StaticResource Accent}"
                          Background="Transparent" IsIndeterminate="False" Visibility="Collapsed"/>
 
-            <!-- 悬浮翻页键(触发懒加载/看下方内容)。仅有会话时显示。 -->
+            <!-- Floating scroll buttons (triggers lazy load / view below content). Shown only when session is active. -->
             <StackPanel x:Name="ScrollFab" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Bottom"
                         Margin="0,0,14,16" Visibility="Collapsed">
                 <Border Width="48" Height="48" CornerRadius="24" Background="#CC2A2A2C" Margin="0,0,0,10">
@@ -133,7 +135,7 @@
                 </Border>
             </StackPanel>
 
-            <!-- 页内查找条(顶部浮条) -->
+            <!-- Find in page bar (top floating bar) -->
             <Border x:Name="FindBar" VerticalAlignment="Top" HorizontalAlignment="Stretch"
                     Background="{StaticResource Chrome}" BorderBrush="{StaticResource Sep}" BorderThickness="0,0,0,1" Visibility="Collapsed">
                 <Grid Margin="8,6">
@@ -147,7 +149,7 @@
                     <Border Grid.Column="0" Background="{StaticResource Inset}" CornerRadius="8">
                         <TextBox x:Name="FindBox" FontSize="15" Height="36" BorderThickness="0" Background="Transparent"
                                  Foreground="{StaticResource TxtHi}" VerticalContentAlignment="Center" Padding="10,0"
-                                 PlaceholderText="页内查找" KeyDown="OnFindKeyDown" TextChanged="OnFindChanged"/>
+                                 PlaceholderText="Find in page" KeyDown="OnFindKeyDown" TextChanged="OnFindChanged"/>
                     </Border>
                     <TextBlock x:Name="FindCount" Grid.Column="1" Text="" Foreground="{StaticResource TxtLo}" FontSize="13" VerticalAlignment="Center" Margin="10,0"/>
                     <Button x:Name="FindPrev" Grid.Column="2" Style="{StaticResource IconBtn}" Content="&#x25B2;" FontSize="13" Click="OnFindPrev"/>
@@ -156,7 +158,7 @@
                 </Grid>
             </Border>
 
-            <!-- 地址栏建议下拉:锚定内容区底部 → 浮在底栏正上方。点项即导航。 -->
+            <!-- URL bar suggestions dropdown: anchored to content area bottom → floats above bottom bar. Click item to navigate. -->
             <Border x:Name="SuggestPanel" VerticalAlignment="Bottom" HorizontalAlignment="Stretch"
                     Background="#F22A2A2C" BorderBrush="{StaticResource Sep}" BorderThickness="0,1,0,0" Visibility="Collapsed">
                 <ScrollViewer MaxHeight="340" VerticalScrollBarVisibility="Auto">
@@ -165,20 +167,20 @@
             </Border>
         </Grid>
 
-        <!-- ===== 底部 chrome:状态行 + 导航栏 ===== -->
+        <!-- ===== Bottom chrome: status bar + navigation bar ===== -->
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- 细状态行:页面标题 / 临时提示(code 大量写 TitleText 当 toast) -->
+            <!-- Thin status bar: page title / temporary notifications (code writes TitleText as toast extensively) -->
             <Border Grid.Row="0" Background="{StaticResource Chrome}">
                 <TextBlock x:Name="TitleText" Text="EdgeHTML Reborn" Foreground="{StaticResource TxtLo}" FontSize="11"
                            HorizontalAlignment="Center" Margin="14,3,14,2" TextTrimming="CharacterEllipsis"/>
             </Border>
 
-            <!-- 导航栏:[标签数] | 🔒 地址 [Go/⟳/✕] | ⋯ -->
+            <!-- Navigation bar: [tab count] | 🔒 URL [Go/⟳/✕] | ⋯ -->
             <Grid Grid.Row="1" Height="54" Background="{StaticResource Chrome}" BorderBrush="{StaticResource Sep}" BorderThickness="0,1,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -188,7 +190,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- 标签键:方框数字,点开标签切换器 -->
+                <!-- Tab button: boxed number, opens tab switcher -->
                 <Button x:Name="TabsBtn" Grid.Column="0" Background="Transparent" BorderThickness="0" Width="50" Height="54" Padding="0" Click="OnTabs">
                     <Border BorderBrush="{StaticResource TxtHi}" BorderThickness="2" CornerRadius="5" Width="24" Height="24">
                         <TextBlock x:Name="TabCountText" Text="1" Foreground="{StaticResource TxtHi}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -197,7 +199,7 @@
 
                 <Rectangle Grid.Column="1" Fill="{StaticResource Sep}" Width="1" Height="22" VerticalAlignment="Center"/>
 
-                <!-- 地址胶囊:锁标 + 地址输入 + 上下文键(Go/刷新/停止)。三者统一 38 高、垂直居中。 -->
+                <!-- URL capsule: lock icon + URL input + context button (Go/Reload/Stop). All three are unified 38 height, vertically centered. -->
                 <Border Grid.Column="2" Background="{StaticResource Inset}" CornerRadius="9" Margin="6,8" Padding="0" Height="38">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -205,13 +207,13 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <!-- 锁标:固定居中槽,glyph 与地址文字同基线 -->
+                        <!-- Lock icon: fixed centered slot, glyph same baseline as URL text -->
                         <TextBlock x:Name="LockIcon" Grid.Column="0" Text="" FontFamily="Segoe MDL2 Assets"
                                    FontSize="14" Foreground="{StaticResource TxtLo}" TextLineBounds="Tight"
                                    VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,0,2,0"/>
                         <TextBox x:Name="UrlBox" Grid.Column="1" FontSize="15" Height="38" BorderThickness="0" Background="Transparent"
                                  Foreground="{StaticResource TxtHi}" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="6,0"
-                                 InputScope="Url" Text="" PlaceholderText="搜索或输入网址"
+                                 InputScope="Url" Text="" PlaceholderText="Search or enter URL"
                                  KeyDown="OnUrlKeyDown" TextChanged="OnUrlChanged"
                                  GotFocus="OnUrlGotFocus" LostFocus="OnUrlLostFocus"/>
                         <Button x:Name="UrlActionBtn" Grid.Column="2" Background="Transparent" BorderThickness="0"
@@ -223,24 +225,24 @@
 
                 <Rectangle Grid.Column="3" Fill="{StaticResource Sep}" Width="1" Height="22" VerticalAlignment="Center"/>
 
-                <!-- 菜单(More):弹出底部动作面板 -->
+                <!-- Menu (More): opens bottom action panel -->
                 <Button x:Name="MenuBtn" Grid.Column="4" Style="{StaticResource NavBtn}" Content="&#xE712;" Click="OnMenu"/>
             </Grid>
         </Grid>
 
         <!-- ============================================================================
-             以下为全屏/底部浮层。Grid.RowSpan=2 覆盖内容+底栏。
+             Full-screen / bottom overlays. Grid.RowSpan=2 covers content+bottom bar.
              ============================================================================ -->
 
-        <!-- ===== 动作面板(⋯ 弹出的底部 sheet)===== -->
+        <!-- ===== Action menu (⋯ popup bottom sheet) ===== -->
         <Grid x:Name="ActionMenu" Grid.Row="0" Grid.RowSpan="2" Background="{StaticResource Scrim}" Visibility="Collapsed" Tapped="OnActionScrimTap">
             <Border VerticalAlignment="Bottom" Background="{StaticResource Surface}" CornerRadius="16,16,0,0" Tapped="OnSheetTap">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="520">
                     <StackPanel Margin="0,10,0,16">
-                        <!-- 抓手条 -->
+                        <!-- Grip bar -->
                         <Border Width="40" Height="4" CornerRadius="2" Background="#55FFFFFF" Margin="0,0,0,12"/>
 
-                        <!-- 快捷:后退 / 前进 / 刷新 / 收藏 -->
+                        <!-- Quick: back / forward / refresh / bookmark -->
                         <Grid Margin="6,2,6,6">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/><ColumnDefinition Width="*"/>
@@ -249,25 +251,25 @@
                             <Button x:Name="BackBtn" Grid.Column="0" Click="OnBack" Style="{StaticResource QuickBtn}" IsEnabled="False">
                                 <StackPanel>
                                     <TextBlock Text="&#xE72B;" FontFamily="Segoe MDL2 Assets" FontSize="22" HorizontalAlignment="Center" Foreground="{StaticResource TxtHi}"/>
-                                    <TextBlock Text="后退" FontSize="12" HorizontalAlignment="Center" Foreground="{StaticResource TxtLo}" Margin="0,5,0,0"/>
+                                    <TextBlock Text="" FontSize="12" HorizontalAlignment="Center" Foreground="{StaticResource TxtLo}" Margin="0,5,0,0"/>
                                 </StackPanel>
                             </Button>
                             <Button x:Name="FwdBtn" Grid.Column="1" Click="OnForward" Style="{StaticResource QuickBtn}" IsEnabled="False">
                                 <StackPanel>
                                     <TextBlock Text="&#xE72A;" FontFamily="Segoe MDL2 Assets" FontSize="22" HorizontalAlignment="Center" Foreground="{StaticResource TxtHi}"/>
-                                    <TextBlock Text="前进" FontSize="12" HorizontalAlignment="Center" Foreground="{StaticResource TxtLo}" Margin="0,5,0,0"/>
+                                    <TextBlock Text="" FontSize="12" HorizontalAlignment="Center" Foreground="{StaticResource TxtLo}" Margin="0,5,0,0"/>
                                 </StackPanel>
                             </Button>
                             <Button Grid.Column="2" Tag="reload" Click="OnAction" Style="{StaticResource QuickBtn}">
                                 <StackPanel>
                                     <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="22" HorizontalAlignment="Center" Foreground="{StaticResource TxtHi}"/>
-                                    <TextBlock Text="刷新" FontSize="12" HorizontalAlignment="Center" Foreground="{StaticResource TxtLo}" Margin="0,5,0,0"/>
+                                    <TextBlock Text="" FontSize="12" HorizontalAlignment="Center" Foreground="{StaticResource TxtLo}" Margin="0,5,0,0"/>
                                 </StackPanel>
                             </Button>
                             <Button Grid.Column="3" Tag="bookmark" Click="OnAction" Style="{StaticResource QuickBtn}">
                                 <StackPanel>
                                     <TextBlock Text="&#xE734;" FontFamily="Segoe MDL2 Assets" FontSize="22" HorizontalAlignment="Center" Foreground="#FFFFD24A"/>
-                                    <TextBlock x:Name="ActFavLabel" Text="收藏" FontSize="12" HorizontalAlignment="Center" Foreground="{StaticResource TxtLo}" Margin="0,5,0,0"/>
+                                    <TextBlock x:Name="ActFavLabel" Text="" FontSize="12" HorizontalAlignment="Center" Foreground="{StaticResource TxtLo}" Margin="0,5,0,0"/>
                                 </StackPanel>
                             </Button>
                         </Grid>
@@ -277,43 +279,43 @@
                         <Button Tag="newtab" Click="OnAction" Style="{StaticResource MenuRow}">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="17" Width="34" VerticalAlignment="Center" Foreground="{StaticResource TxtLo}"/>
-                                <TextBlock Text="新标签页" VerticalAlignment="Center"/>
+                                <TextBlock Text="New tab" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
                         <Button Tag="home" Click="OnAction" Style="{StaticResource MenuRow}">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="&#xE80F;" FontFamily="Segoe MDL2 Assets" FontSize="17" Width="34" VerticalAlignment="Center" Foreground="{StaticResource TxtLo}"/>
-                                <TextBlock Text="主页" VerticalAlignment="Center"/>
+                                <TextBlock Text="Home page" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
                         <Button Tag="ua" Click="OnAction" Style="{StaticResource MenuRow}">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="&#xE7F4;" FontFamily="Segoe MDL2 Assets" FontSize="17" Width="34" VerticalAlignment="Center" Foreground="{StaticResource TxtLo}"/>
-                                <TextBlock x:Name="ActUaLabel" Text="桌面版网站" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="ActUaLabel" Text="Desktop site" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
                         <Button Tag="find" Click="OnAction" Style="{StaticResource MenuRow}">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets" FontSize="17" Width="34" VerticalAlignment="Center" Foreground="{StaticResource TxtLo}"/>
-                                <TextBlock Text="页内查找" VerticalAlignment="Center"/>
+                                <TextBlock Text="Find in page" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
                         <Button Tag="share" Click="OnAction" Style="{StaticResource MenuRow}">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="&#xE72D;" FontFamily="Segoe MDL2 Assets" FontSize="17" Width="34" VerticalAlignment="Center" Foreground="{StaticResource TxtLo}"/>
-                                <TextBlock Text="分享" VerticalAlignment="Center"/>
+                                <TextBlock Text="Share" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
                         <Button Tag="copylink" Click="OnAction" Style="{StaticResource MenuRow}">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="&#xE8C8;" FontFamily="Segoe MDL2 Assets" FontSize="17" Width="34" VerticalAlignment="Center" Foreground="{StaticResource TxtLo}"/>
-                                <TextBlock Text="复制链接" VerticalAlignment="Center"/>
+                                <TextBlock Text="Copy link" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
                         <Button Tag="download" Click="OnAction" Style="{StaticResource MenuRow}">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="&#xE896;" FontFamily="Segoe MDL2 Assets" FontSize="17" Width="34" VerticalAlignment="Center" Foreground="{StaticResource TxtLo}"/>
-                                <TextBlock Text="下载此页" VerticalAlignment="Center"/>
+                                <TextBlock Text="Download this page" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
 
@@ -322,19 +324,19 @@
                         <Button Tag="bookmarks" Click="OnAction" Style="{StaticResource MenuRow}">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="&#xE734;" FontFamily="Segoe MDL2 Assets" FontSize="17" Width="34" VerticalAlignment="Center" Foreground="{StaticResource TxtLo}"/>
-                                <TextBlock Text="书签" VerticalAlignment="Center"/>
+                                <TextBlock Text="Bookmarks" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
                         <Button Tag="history" Click="OnAction" Style="{StaticResource MenuRow}">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="&#xE81C;" FontFamily="Segoe MDL2 Assets" FontSize="17" Width="34" VerticalAlignment="Center" Foreground="{StaticResource TxtLo}"/>
-                                <TextBlock Text="历史记录" VerticalAlignment="Center"/>
+                                <TextBlock Text="History" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
                         <Button Tag="downloads" Click="OnAction" Style="{StaticResource MenuRow}">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="&#xE7B8;" FontFamily="Segoe MDL2 Assets" FontSize="17" Width="34" VerticalAlignment="Center" Foreground="{StaticResource TxtLo}"/>
-                                <TextBlock Text="下载内容" VerticalAlignment="Center"/>
+                                <TextBlock Text="Downloads" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
 
@@ -343,7 +345,7 @@
                         <Button Tag="settings" Click="OnAction" Style="{StaticResource MenuRow}">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="17" Width="34" VerticalAlignment="Center" Foreground="{StaticResource TxtLo}"/>
-                                <TextBlock Text="设置" VerticalAlignment="Center"/>
+                                <TextBlock Text="Settings" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
                     </StackPanel>
@@ -351,7 +353,7 @@
             </Border>
         </Grid>
 
-        <!-- ===== 抽屉:收藏/历史/下载 ===== -->
+        <!-- ===== Drawer: bookmarks / history / downloads ===== -->
         <Grid x:Name="Drawer" Grid.Row="0" Grid.RowSpan="2" Background="{StaticResource PageBg}" Visibility="Collapsed">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -366,11 +368,11 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="菜单" Foreground="{StaticResource TxtHi}" FontSize="22" FontWeight="SemiBold" Margin="16,0" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="0" Text="Menu" Foreground="{StaticResource TxtHi}" FontSize="22" FontWeight="SemiBold" Margin="16,0" VerticalAlignment="Center"/>
                 <Button x:Name="GpuBtn" Grid.Column="1" Style="{StaticResource TabBtn}" Foreground="{StaticResource TxtLo}"
                         Content="&#x1F5A5; GPU" Click="OnToggleGpu" VerticalAlignment="Center"/>
                 <Button x:Name="UaBtn" Grid.Column="2" Style="{StaticResource TabBtn}" Foreground="{StaticResource Accent}"
-                        Content="&#x1F4F1; 手机UA" Click="OnToggleUA" VerticalAlignment="Center"/>
+                        Content="&#x1F4F1; Mobile UA" Click="OnToggleUA" VerticalAlignment="Center"/>
                 <Button Grid.Column="3" Style="{StaticResource IconBtn}" Content="&#x2715;" Click="OnDrawerClose"/>
             </Grid>
 
@@ -381,10 +383,10 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Button x:Name="TabFav"  Grid.Column="0" Style="{StaticResource TabBtn}" Content="&#x2605; 收藏" Click="OnTabFav"/>
-                <Button x:Name="TabHist" Grid.Column="1" Style="{StaticResource TabBtn}" Content="&#x1F551; 历史" Click="OnTabHist"/>
-                <Button x:Name="TabDl"   Grid.Column="2" Style="{StaticResource TabBtn}" Content="&#x2193; 下载" Click="OnTabDl"/>
-                <Button x:Name="ActionBtn" Grid.Column="3" Style="{StaticResource TabBtn}" Foreground="{StaticResource Accent}" Content="&#x2605; 收藏此页" Click="OnPrimaryAction"/>
+                <Button x:Name="TabFav"  Grid.Column="0" Style="{StaticResource TabBtn}" Content="&#x2605; Favorites" Click="OnTabFav"/>
+                <Button x:Name="TabHist" Grid.Column="1" Style="{StaticResource TabBtn}" Content="&#x1F551; History" Click="OnTabHist"/>
+                <Button x:Name="TabDl"   Grid.Column="2" Style="{StaticResource TabBtn}" Content="&#x2193; Downloads" Click="OnTabDl"/>
+                <Button x:Name="ActionBtn" Grid.Column="3" Style="{StaticResource TabBtn}" Foreground="{StaticResource Accent}" Content="&#x2605; Bookmark this page" Click="OnPrimaryAction"/>
             </Grid>
 
             <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
@@ -392,7 +394,7 @@
             </ScrollViewer>
         </Grid>
 
-        <!-- ===== 设置页(全屏)===== -->
+        <!-- ===== Settings page (full-screen) ===== -->
         <Grid x:Name="SettingsPage" Grid.Row="0" Grid.RowSpan="2" Background="{StaticResource PageBg}" Visibility="Collapsed">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -404,58 +406,60 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0" Style="{StaticResource IconBtn}" FontFamily="Segoe MDL2 Assets" Content="&#xE72B;" Click="OnSettingsBack"/>
-                <TextBlock Grid.Column="1" Text="设置" Foreground="{StaticResource TxtHi}" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center" Margin="6,0"/>
+                <TextBlock Grid.Column="1" Text="Settings" Foreground="{StaticResource TxtHi}" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center" Margin="6,0"/>
             </Grid>
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="18,12">
-                    <TextBlock Text="默认搜索引擎" Foreground="{StaticResource TxtLo}" FontSize="13" Margin="0,8,0,4"/>
+                    <TextBlock Text="Default search engine" Foreground="{StaticResource TxtLo}" FontSize="13" Margin="0,8,0,4"/>
                     <ComboBox x:Name="SetSearchCombo" HorizontalAlignment="Stretch">
                         <ComboBoxItem Content="Bing"/>
                         <ComboBoxItem Content="Google"/>
                         <ComboBoxItem Content="DuckDuckGo"/>
-                        <ComboBoxItem Content="百度"/>
+                        <ComboBoxItem Content="Baidu"/>
                     </ComboBox>
 
-                    <TextBlock Text="界面语言" Foreground="{StaticResource TxtLo}" FontSize="13" Margin="0,18,0,4"/>
+                    <TextBlock Text="Interface language" Foreground="{StaticResource TxtLo}" FontSize="13" Margin="0,18,0,4"/>
                     <ComboBox x:Name="SetLangCombo" HorizontalAlignment="Stretch" SelectionChanged="OnLangChanged">
                         <ComboBoxItem Content="中文"/>
                         <ComboBoxItem Content="English"/>
                         <ComboBoxItem Content="Русский"/>
                     </ComboBox>
 
-                    <TextBlock Text="主页(URL,留空用内置主页)" Foreground="{StaticResource TxtLo}" FontSize="13" Margin="0,18,0,4"/>
+                    <TextBlock Text="Home page (URL, leave empty for built-in home)" Foreground="{StaticResource TxtLo}" FontSize="13" Margin="0,18,0,4"/>
                     <TextBox x:Name="SetHomeBox" HorizontalAlignment="Stretch" InputScope="Url" PlaceholderText="about:home"/>
 
-                    <ToggleSwitch x:Name="SetUaSwitch" Header="启动请求桌面版网站" Foreground="{StaticResource TxtHi}" Margin="0,18,0,0"/>
+                    <ToggleSwitch x:Name="SetUaSwitch" Header="Request desktop site on startup" Foreground="{StaticResource TxtHi}" Margin="0,18,0,0"/>
 
-                    <TextBlock Text="自定义 User-Agent(留空=用上面的开关;改后刷新网页生效)" Foreground="{StaticResource TxtLo}" FontSize="13" Margin="0,16,0,4"/>
+                    <TextBlock Text="Custom User-Agent (leave empty = use toggle above; applies on page refresh)" Foreground="{StaticResource TxtLo}" FontSize="13" Margin="0,16,0,4"/>
                     <TextBox x:Name="SetUaCustomBox" HorizontalAlignment="Stretch" TextWrapping="Wrap" AcceptsReturn="False"
                              PlaceholderText="Mozilla/5.0 (Windows NT 10.0; Win64; x64) ... Chrome/120 Safari/537.36 Edg/120"/>
 
                     <Grid Margin="0,16,0,0">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="默认缩放" Foreground="{StaticResource TxtHi}" FontSize="16" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="0" Text="Default zoom" Foreground="{StaticResource TxtHi}" FontSize="16" VerticalAlignment="Center"/>
                         <TextBlock Grid.Column="1" x:Name="SetZoomLabel" Text="100%" Foreground="{StaticResource TxtLo}" FontSize="14" VerticalAlignment="Center"/>
                     </Grid>
                     <Slider x:Name="SetZoomSlider" Minimum="50" Maximum="200" StepFrequency="10" Value="100" ValueChanged="OnZoomChanged"/>
 
-                    <ToggleSwitch x:Name="SetTabModeSwitch" Header="并发多引擎标签(暂搁置,后续实现)" IsEnabled="False" Foreground="{StaticResource TxtHi}" Margin="0,4,0,0"/>
+                    <ToggleSwitch x:Name="SetTabModeSwitch" Header="Concurrent multi-engine tabs (paused, future)" IsEnabled="False" Foreground="{StaticResource TxtHi}" Margin="0,4,0,0"/>
+
 
                     <TextBlock Text="GPU" Foreground="{StaticResource TxtLo}" FontSize="13" Margin="0,18,0,4"/>
-                    <ToggleSwitch x:Name="SetGpuSwitch" Header="默认启用 GPU 渲染(加载首个网页后自动开)" Foreground="{StaticResource TxtHi}" Margin="0,0,0,6"/>
-                    <Button Tag="gpu" Click="OnSettingsBtn" Style="{StaticResource SetRow}" Content="立即开启 GPU 合成(重启回软件)"/>
+                    <ToggleSwitch x:Name="SetGpuSwitch" Header="Enable GPU rendering by default (auto-activates after first page load)" Foreground="{StaticResource TxtHi}" Margin="0,0,0,6"/>
+                    <Button Tag="gpu" Click="OnSettingsBtn" Style="{StaticResource SetRow}" Content="Enable GPU compositing now (resets to software on restart)"/>
 
-                    <TextBlock Text="清除数据" Foreground="{StaticResource TxtLo}" FontSize="13" Margin="0,18,0,4"/>
-                    <Button Tag="clearhist" Click="OnSettingsBtn" Style="{StaticResource SetRow}" Content="清除历史记录" Margin="0,0,0,6"/>
-                    <Button Tag="clearfav" Click="OnSettingsBtn" Style="{StaticResource SetRow}" Content="清除全部收藏" Margin="0,0,0,6"/>
-                    <Button Tag="cleardl" Click="OnSettingsBtn" Style="{StaticResource SetRow}" Content="清除下载记录"/>
+                    <TextBlock Text="Clear data" Foreground="{StaticResource TxtLo}" FontSize="13" Margin="0,18,0,4"/>
+                    <Button Tag="clearhist" Click="OnSettingsBtn" Style="{StaticResource SetRow}" Content="Clear history" Margin="0,0,0,6"/>
+                    <Button Tag="clearfav" Click="OnSettingsBtn" Style="{StaticResource SetRow}" Content="Clear all bookmarks" Margin="0,0,0,6"/>
+                    <Button Tag="cleardl" Click="OnSettingsBtn" Style="{StaticResource SetRow}" Content="Clear download history"/>
 
-                    <TextBlock Text="诊断" Foreground="{StaticResource TxtLo}" FontSize="13" Margin="0,18,0,4"/>
-                    <Button Tag="export" Click="OnSettingsBtn" Style="{StaticResource SetRow}" Content="导出调试日志 / 崩溃 dump"/>
+                    <TextBlock x:Name="SetDiagHdr" Text="Diagnostics" Foreground="{StaticResource TxtLo}" FontSize="13" Margin="0,18,0,4"/>
+                    <Button x:Name="SetViewLogsBtn" Tag="viewlogs" Click="OnSettingsBtn" Style="{StaticResource SetRow}" Content="View debug logs" Margin="0,0,0,6"/>
+                    <Button x:Name="SetExportBtn" Tag="export" Click="OnSettingsBtn" Style="{StaticResource SetRow}" Content="Export debug logs / crash dumps"/>
 
-                    <TextBlock Text="关于 / 更新" Foreground="{StaticResource TxtLo}" FontSize="13" Margin="0,18,0,4"/>
-                    <TextBlock x:Name="VersionText" Text="版本 —" Foreground="{StaticResource TxtHi}" FontSize="15" Margin="0,0,0,8"/>
-                    <Button Tag="checkupdate" Click="OnSettingsBtn" Style="{StaticResource SetRow}" Content="检查更新(GitHub Releases)"/>
+                    <TextBlock Text="About / Updates" Foreground="{StaticResource TxtLo}" FontSize="13" Margin="0,18,0,4"/>
+                    <TextBlock x:Name="VersionText" Text="Version —" Foreground="{StaticResource TxtHi}" FontSize="15" Margin="0,0,0,8"/>
+                    <Button Tag="checkupdate" Click="OnSettingsBtn" Style="{StaticResource SetRow}" Content="Check for updates (GitHub Releases)"/>
 
                     <TextBlock Text="EdgeHTML Reborn / Apotheosis — WebKit (WebCore) 2.52.4 — ARM32 UWP"
                                Foreground="#FF80868B" FontSize="12" TextWrapping="Wrap" Margin="0,22,0,24"/>
@@ -463,7 +467,62 @@
             </ScrollViewer>
         </Grid>
 
-        <!-- ===== 标签切换器(全屏)===== -->
+        <!-- ===== Diagnostics page (full-screen) =====
+             On a real Lumia there is no debugger (VS 2022 dropped ARM32 device debugging) and the
+             App Container hides LocalState, so this page is the only always-available way to read
+             the engine's own logs. Clipboard and share cost no manifest capability, which is why
+             they are the primary export routes; the file picker is kept for the SD card.
+             The file list is filled from code (kDiagFiles) so it exists in exactly one place. -->
+        <Grid x:Name="DiagPage" Grid.Row="0" Grid.RowSpan="2" Background="{StaticResource PageBg}" Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Background="{StaticResource Chrome}" Padding="3,6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Style="{StaticResource IconBtn}" FontFamily="Segoe MDL2 Assets" Content="&#xE72B;" Click="OnDiagBack"/>
+                <TextBlock x:Name="DiagTitle" Grid.Column="1" Text="Debug logs" Foreground="{StaticResource TxtHi}" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center" Margin="6,0"/>
+            </Grid>
+            <Grid Grid.Row="1" Margin="12,10,12,6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <ComboBox x:Name="DiagFileCombo" Grid.Column="0" HorizontalAlignment="Stretch" SelectionChanged="OnDiagFileChanged"/>
+                <Button Grid.Column="1" Tag="refresh" Click="OnDiagBtn" Style="{StaticResource IconBtn}"
+                        FontFamily="Segoe MDL2 Assets" Content="&#xE72C;" Margin="8,0,0,0"/>
+            </Grid>
+            <Border Grid.Row="2" Background="{StaticResource Inset}" Margin="12,0,12,0">
+                <TextBox x:Name="DiagText" IsReadOnly="True" AcceptsReturn="True" TextWrapping="NoWrap"
+                         Background="Transparent" BorderThickness="0" Foreground="{StaticResource TxtHi}"
+                         FontFamily="Courier New" FontSize="12" Padding="8"
+                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+            </Border>
+            <StackPanel Grid.Row="3" Margin="12,8,12,12">
+                <TextBlock x:Name="DiagStatus" Text="" Foreground="{StaticResource TxtLo}" FontSize="12" TextWrapping="Wrap" Margin="0,0,0,8"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="DiagCopyBtn" Grid.Column="0" Tag="copy" Click="OnDiagBtn" Style="{StaticResource SetRow}"
+                            HorizontalContentAlignment="Center" Content="Copy" Margin="0,0,4,0"/>
+                    <Button x:Name="DiagShareBtn" Grid.Column="1" Tag="share" Click="OnDiagBtn" Style="{StaticResource SetRow}"
+                            HorizontalContentAlignment="Center" Content="Share" Margin="4,0"/>
+                    <Button x:Name="DiagSaveBtn" Grid.Column="2" Tag="save" Click="OnDiagBtn" Style="{StaticResource SetRow}"
+                            HorizontalContentAlignment="Center" Content="Save" Margin="4,0,0,0"/>
+                </Grid>
+            </StackPanel>
+        </Grid>
+
+        <!-- ===== Tab switcher (full-screen) ===== -->
         <Grid x:Name="TabSwitcher" Grid.Row="0" Grid.RowSpan="2" Background="{StaticResource PageBg}" Visibility="Collapsed">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -472,8 +531,8 @@
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" Background="{StaticResource Chrome}" Padding="6,6">
                 <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                <TextBlock x:Name="TabSwitcherTitle" Grid.Column="0" Text="标签" Foreground="{StaticResource TxtHi}" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center" Margin="10,0"/>
-                <Button Grid.Column="1" Style="{StaticResource TabBtn}" Foreground="{StaticResource Accent}" Content="完成" Click="OnTabSwitcherDone"/>
+                <TextBlock x:Name="TabSwitcherTitle" Grid.Column="0" Text="Tabs" Foreground="{StaticResource TxtHi}" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center" Margin="10,0"/>
+                <Button Grid.Column="1" Style="{StaticResource TabBtn}" Foreground="{StaticResource Accent}" Content="Done" Click="OnTabSwitcherDone"/>
             </Grid>
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                 <StackPanel x:Name="TabList" Margin="10,10"/>
@@ -482,7 +541,7 @@
                     Background="{StaticResource Chrome}" Foreground="{StaticResource Accent}" Padding="0,15" Click="OnNewTab">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" FontSize="15" VerticalAlignment="Center" Foreground="{StaticResource Accent}"/>
-                    <TextBlock Text="新建标签页" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource Accent}"/>
+                    <TextBlock Text="New tab" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource Accent}"/>
                 </StackPanel>
             </Button>
         </Grid>

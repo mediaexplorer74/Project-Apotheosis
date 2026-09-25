@@ -1,0 +1,12 @@
+# Chunk 10 - Src/port/WebCoreDriver.cpp: single destroyed '?' chars (separator/bracket only).
+# Lines are marked '*' so the applier accepts a 1-character run.
+*2	C	// WebCoreDriver.cpp  --  WebCore headless software-render driver (Phase 1b)
+*214	C	// - x64-gpu build currently has USE_TEXTURE_MAPPER=0 in cmakeconfig.h; TextureMapper code is
+*261	C	// (the !PLATFORM(COCOA) branch -- our case).
+*336	C	// Apotheosis: 32-bit low-memory (Lumia) OOM prevention -- disable
+*3034	C	// fails even on a readable file in the app's own LocalState (curl 77), so the
+*3046	C	// outlive requests -- the singleton CurlSSLHandle owns them for the process lifetime.
+*3378	C	// WebCoreLoadUrl -- load an http(s):// URL over the network (curl backend) and
+*4213	C	// drives :hover / elementUnderMouse
+*4978	C	// !USE(TEXTURE_MAPPER): stubs when building without TextureMapper (e.g. x64-gpu with Cairo only)
+# end

@@ -1,126 +1,202 @@
-// WebCoreDriver.h — Phase 1b 渲染驱动的 C 接口(供 C++/CX MainPage 调用)。
-// 实现在 WebCoreDriver.lib(clang-cl 编的 WebCore 驱动 + 146 平台 stub)。
+// ============================================================================
+// WebCoreDriver.h  — C ABI for the WebCore headless software-render driver.
+//
+// This is the canonical C-ABI boundary between the UWP Harness (C++/CX, MSVC)
+// and the engine (Src/port, clang-cl → WebCoreDriver-gpu.lib). It must stay in
+// sync with Src/harness/WebCoreDriver.h — WebKit has two copies, one per side,
+// and any change to an export must be mirrored in both or the ABI breaks.
+//
+// Most calls render into a caller-provided w*h RGBA8888 buffer (>= w*h*4 bytes)
+// and return 0 on success, negative on failure.
+//
+// Error codes (negative returns):
+//   -1  bad args            -7  cairo surface create failed
+//   -2  page create failed  -8  cairo context create failed
+//   -3  no main frame       -9  bad/invalid URL          (WebCoreLoadUrl)
+//   -4  no view            -10  load failed              (WebCoreLoadUrl)
+//   -5  no document loader -11  load timed out (watchdog)(WebCoreLoadUrl)
+//   -6  no document
+//
+// All interactive-session calls must be serialized on the single engine thread.
+// ============================================================================
+
 #pragma once
+
 #include <cstdint>
 
+#ifdef __cplusplus
 extern "C" {
+#endif
 
-// 把一段 UTF-8 HTML 渲染成 width×height 的像素缓冲(RGBA8888,白底不透明)。
-// outBuf 必须 >= width*height*4 字节。返回 0 成功,负数失败(见 WebCoreDriver.cpp 错误码)。
+// Render a fragment of UTF-8 HTML into a width×height pixel buffer (RGBA8888, opaque white background).
 int WebCoreRenderHtml(const char* utf8Html, int width, int height, uint8_t* outBuf);
 
-// 验证版:只跑 init + Page::create + 纯色填充,验证 C ABI + 显示管线(引擎风险最小)。
+// Verification: only init + Page::create + solid fill, verifies C ABI + display pipeline (minimal engine risk).
 int WebCoreRenderHtmlStub(const char* utf8Html, int width, int height, uint8_t* outBuf);
 
-// Phase 1b 网络:加载真实 URL(curl + OpenSSL TLS 1.3)并渲染。返回 0 成功,负数失败
-// (-9 URL 非法 / -10 加载失败 / -11 30s 超时,其余同 WebCoreRenderHtml)。
+// Phase 1b networking: load a real URL (curl + OpenSSL TLS 1.3) and render. (-9/-10/-11 errors, else same as render.)
 int WebCoreLoadUrl(const char* url, int width, int height, uint8_t* outBuf);
 
-// 给 curl/OpenSSL 注入 CA 根证书包(PEM)。App Container 沙箱拿不到 Windows
-// 系统证书库,不调用它则所有 HTTPS(TLS 1.3)握手都会因服务器证书校验失败而断。
-// 须在首个 WebCoreLoadUrl() 之前调用一次;path 是 cacert.pem 的 UTF-8 路径。
+// Inject CA root certificate bundle (PEM) for curl/OpenSSL. App Container has no system trust store; call once
+// before the first WebCoreLoadUrl(). path is the UTF-8 path to cacert.pem.
 void WebCoreSetCACertPath(const char* path);
 
-// 用内存 PEM blob 注入 CA 根证书(CURLOPT_CAINFO_BLOB)。App Container 沙箱挡 OpenSSL
-// 的文件式 CA 加载(即便文件可读也 curl 77),故设备上必须用 blob 绕开文件 I/O。
-// data 是 cacert.pem 原始字节,须在首个 WebCoreLoadUrl 之前调用。
+// Inject CA root certificate using an in-memory PEM blob (CURLOPT_CAINFO_BLOB). App Container blocks OpenSSL
+// file-based CA loading (curl 77), so on device use the blob. Must be called before the first WebCoreLoadUrl.
 void WebCoreSetCACertBlob(const uint8_t* data, int len);
+// Content settings read at session build time (buildSession). 1 = on, 0 = off, negative =
+// "not configured yet", which the session treats as ON -- that is the browser default, so the
+// first navigation is right even when the harness's queued apply-settings job has not run yet.
+void WebCoreConfigure(int jsEnabled, int imagesEnabled);
 
-// 取回上次 WebCoreLoadUrl 失败时记录的网络错误(curl 错误码 + 描述 + URL)。
-// 写入 buf(最多 len 字节,含 NUL),返回写入字节数(不含 NUL)。无错误则为空串。
+// Retrieve the network error recorded on the last WebCoreLoadUrl failure (curl code + description + URL).
+// Writes into buf (at most len bytes incl. NUL), returns bytes written (excl. NUL). Empty string if no error.
 int WebCoreGetLastError(char* buf, int len);
 
-// 取上次 WebCoreLoadUrl 的渲染诊断(最终URL/标题/内容尺寸/非白像素数),用于定位白屏。
+// Retrieves render diagnostics from the last WebCoreLoadUrl (final URL/title/content size/non-white pixel count).
 int WebCoreGetDiag(char* buf, int len);
 
-// 取最近加载页面的标题(UTF-8),供历史/书签显示。返回写入字节数。
+// Title (UTF-8) of the most recently loaded page, for history/bookmark display. Returns bytes written.
 int WebCoreGetTitle(char* buf, int len);
 
-// 取最近渲染文档的最终 URL(UTF-8)。会话内点击触发导航后,用它检测 URL 变化以同步地址栏/前进后退栈。
+// Final URL (UTF-8) of the most recently rendered document. After click navigation within a session, use this
+// to detect URL changes for the address bar and forward/back history stack. Returns bytes written.
 int WebCoreGetUrl(char* buf, int len);
 
-// 直接下载 url 到 outPath(独立 curl,不渲染,复用 CA blob)。成功返回 HTTP 状态码(如 200),
-// 失败返回负数。须先经一次网络初始化(SetupRuntimeEnv 已触发 curl 全局初始化)。
+// Directly download url to outPath (standalone curl, no render, reuses CA blob). Returns HTTP status (e.g. 200)
+// on success, negative on failure. curl global init must have occurred first.
 int WebCoreDownload(const char* url, const char* outPath);
 
-// 当前页链接命中表(渲染时提取):数量 + 取第 i 个的矩形(位图坐标)和 URL。
-// 用于网页点击交互:UI 点击时判断点中哪个链接矩形 → 导航。
+// Current page link hit table (extracted during render): count + get rectangle (bitmap coords) and URL of i-th link.
 int WebCoreGetLinkCount();
 int WebCoreGetLink(int i, int* x, int* y, int* w, int* h, char* url, int len);
 
-// ---- 常驻交互会话(live interactive session)----------------------------------
-// 把一次性快照升级为常驻 Page:点击转发真实鼠标事件(按钮/表单/链接统一),滚动触发懒加载图片。
-// 必须串行在单引擎线程上调用。返回 0 成功,负数失败(-12 无会话 / -13 忙 / -14 帧丢失,其余同上)。
-
-// 加载 URL 并建立常驻会话(替代 WebCoreLoadUrl,用于需要后续交互的页面)。
+// ---- persistent interactive session (live Page + event forwarding) ----
+// Load a URL into a persistent session (replaces WebCoreLoadUrl for pages needing interaction). 0 on success.
 int WebCoreSessionLoad(const char* url, int width, int height, uint8_t* outBuf);
-
-// 关闭并销毁当前会话(导航到本地主页 / 挂起时调用)。
 void WebCoreCloseSession();
+int WebCoreClickAt(int x, int y, uint8_t* outBuf);     // (x,y) = bitmap/viewport px; hit test + default action
+// Apotheosis: the page's own verdict on the tap WebCoreClickAt just dispatched, as the `click` event's
+// defaultPrevented read *after* the dispatch settled. 1 = the page called preventDefault(), i.e. it
+// refused the default action; 0 = the click happened and nothing refused it; -1 = no `click` event was
+// recorded at all. Read it on the same thread, immediately after WebCoreClickAt; the next click resets
+// it. The harness needs it because "no navigation started && nothing repainted" does NOT mean the page
+// ignored the tap -- a page that preventDefaults and updates asynchronously looks identical, and the
+// frame-hash heuristic navigated such a tap against the page's explicit wish. See Doc/TAP-DISPATCH.md.
+int WebCoreLastClickDefaultPrevented();
+int WebCoreScrollBy(int dx, int dy, uint8_t* outBuf);  // dx>0 right, dy>0 down; triggers lazy image load
+int WebCoreSyncLinks();                                // refresh link hit-table after scroll settles (layout+extract, no paint)
+int WebCoreEditDebug(char* out, int cap);              // diag: last type-text canEdit/focus/insert state
+int WebCoreSetPageScale(float scale, int focalX, int focalY, uint8_t* outBuf); // M4 pinch zoom (clamped [0.5,6.0])
+int WebCoreGetPageScale();                             // M4: current pageScaleFactor ×1000 (1000 = 1.0x)
+// Apotheosis 2026-09-19: CSS page zoom (device px per CSS px), NOT pinch scale. Re-lays out, so the
+// layout viewport becomes viewport/zoom CSS px -- the GPU path renders at the panel's physical size
+// and needs zoom = CompositionScale to keep the layout at DIP width. Does NOT repaint; the caller
+// must (the harness sets it immediately before a resize). See the definition for the measurements.
+int WebCoreSetPageZoom(float zoom);
+int WebCoreSessionPaint(uint8_t* outBuf);             // no interaction, redraw only
+// Resize the live session's viewport to w x h and repaint at the new size (relayout + link
+// hit-table refresh included). outBuf must be at least w*h*4 bytes; every later paint call
+// writes w*h*4 until the next resize. 0 on success.
+int WebCoreSessionResize(int w, int h, uint8_t* outBuf);
 
-// 在 (x,y)(位图/视口像素)点一下:命中测试 + 默认动作(导航/提交/onclick),然后重绘到 outBuf。
-int WebCoreClickAt(int x, int y, uint8_t* outBuf);
+// ---- IME / keyboard ----
+int WebCoreFocusedEditable();                          // 1 if an editable element is focused (input/textarea/contenteditable)
+int WebCoreTypeText(const char* utf8, uint8_t* outBuf); // insert UTF-8 into focused editable; 0 on success
+int WebCoreKeyAction(int action, uint8_t* outBuf);     // 0=Backspace, 1=Enter (may submit form); 0 on success
 
-// 垂直滚动 dy 像素(正=向下),触发懒加载图片后重绘到 outBuf。
-int WebCoreScrollBy(int dx, int dy, uint8_t* outBuf);   // dx>0 右,dy>0 下
-// 滚动停止后刷新链接命中表(滚动期间为提速跳过了链接提取)。轻量:仅布局+提取,不绘制。返回 0。
-int WebCoreSyncLinks();
-// 诊断:最近一次 WebCoreTypeText 的可编辑/聚焦/插入状态(排查"打字不进框")。
-int WebCoreEditDebug(char* out, int cap);
-
-// M4 捏合缩放:把页面缩放因子设为 scale(钳 [0.5,6.0]),以屏幕焦点 (focalX,focalY) 锚定,重栅格(文字清晰)后重绘到 outBuf。返回 0。
-int WebCoreSetPageScale(float scale, int focalX, int focalY, uint8_t* outBuf);
-// M4:当前页面缩放因子 ×1000(1000=1.0x)。
-int WebCoreGetPageScale();
-
-// 不交互,仅按当前会话状态重绘到 outBuf。
-int WebCoreSessionPaint(uint8_t* outBuf);
-
-// ---- 输入法/键盘 ----
-// 当前是否有可编辑元素聚焦(输入框/textarea/contenteditable)→ 据此弹/收屏幕键盘。返回 1/0。
-int WebCoreFocusedEditable();
-// 向聚焦的可编辑元素插入文本(UTF-8),重绘到 outBuf。返回 0 成功。
-int WebCoreTypeText(const char* utf8, uint8_t* outBuf);
-// 特殊键:0=退格,1=回车(可能触发表单提交导航),重绘到 outBuf。返回 0 成功。
-int WebCoreKeyAction(int action, uint8_t* outBuf);
-
-// UA 切换:mobile=1 移动 iPhone UA(默认),0 桌面 Edge UA。切后需重新加载页面生效。
+// User agent switch: mobile=1 mobile iPhone UA (default), 0 desktop Edge UA. Requires reload.
 void WebCoreSetUserAgentMobile(int mobile);
-// 自定义 UA:非空覆盖 mobile/desktop(绕开按 UA 拦截的站点如 microsoft);空串=清除回退开关。切后重载生效。
+// Custom UA override (non-empty wins over mobile/desktop; empty string clears → reverts). Requires reload.
 void WebCoreSetUserAgentString(const char* ua);
 
-// M1:GPU 合成是否在跑(根 GraphicsLayer 已附)。加载后查,返回 1/0。
+// Whether GPU compositing is live (root GraphicsLayer attached). Check after load; returns 1/0.
 int WebCoreEnableCompositing();
 
-// M2:GPU 合成呈现(引擎线程调)。详见 WebCoreDriver.cpp。
-// nativeWindow=SwapChainPanel 的 PropertySet 的 IInspectable*(直呈现);nullptr=离屏(仅 readback)。成功后引擎对网络会话开合成。
+// M2 GPU compositing presentation (engine thread). nativeWindow = IInspectable* of SwapChainPanel's PropertySet
+// (direct rendering); nullptr = off-screen (readback only). Enables compositing for network sessions on success.
 int WebCoreGpuInit(void* nativeWindow, int w, int h);
-// 把当前会话图层树直呈现到窗口表面(eglSwapBuffers)。仅 GpuInit(nativeWindow!=null) 后有意义。返回 0 成功。
-int WebCoreComposite();
-// 离屏合成 + readback 出 RGBA 到 outBuf(>= w*h*4),用现有 WriteableBitmap 显示。返回 0 成功。
-int WebCoreCompositeReadback(uint8_t* outBuf);
-// 调试:设离屏 readback 翻转(找正确朝向)。flipH/flipV 非0=反转列/行。设完重绘当前帧生效。
-void WebCoreGpuSetFlip(int flipH, int flipV);
-// 调试:把 FrameView 滚动/内容尺寸 + 合成图层树文本写入 outBuf(定位背景丢失/滚动失效)。返回 0 成功。
-int WebCoreGpuLayerInfo(char* outBuf, int len);
+// Apotheosis: resize a live GPU session's render surface + viewport to w x h and repaint.
+// Recreates the ANGLE window surface at the new size (engine thread; ANGLE marshals to the
+// panel dispatcher, same as GpuInit). nativeWindow = NEW IInspectable* of a PropertySet with
+// EGLNativeWindowTypeProperty (same panel) + EGLRenderSurfaceSizeProperty = (w,h). The caller
+// must keep that PropertySet alive (harness stores it in m_gpuProps). 0 on success.
+int WebCoreGpuResize(void* nativeWindow, int w, int h, uint8_t* outBuf);
+int WebCoreComposite();                                 // direct present (eglSwapBuffers); only after GpuInit(nativeWindow!=null)
+int WebCoreCompositeReadback(uint8_t* outBuf);        // off-screen composite + readback RGBA
+void WebCoreGpuSetFlip(int flipH, int flipV);         // set readback flip; applies on next frame
+// Tell the driver whether the host is showing the GPU swapchain surface RIGHT NOW: 1 after switching
+// to it, 0 the moment the host reverts to the software bitmap. Defaults to 0.
+//
+// Without this the driver only knows that a swapchain is *possible* (a native window was passed to
+// WebCoreGpuInit) and takes the direct-present branch regardless -- returning success while leaving
+// the caller's RGBA buffer untouched. If the host has meanwhile hidden the panel, the frame is
+// presented into a surface nobody sees and the visible bitmap stays blank: a fully loaded page in a
+// white window, with no error anywhere. Measured on x64 on 2026-08-29; see
+// Doc/PUMPLOOP-SILENT-DEATH.md. With 0 the driver composites through TextureMapper and reads the
+// result back into the buffer instead, so layered content still reaches a software blit.
+void WebCoreSetDirectPresent(int on);
+int WebCoreGpuLayerInfo(char* outBuf, int len);       // FrameView scroll/content + compositing layer tree text
+// Apotheosis: set a file path the driver appends per-step GPU init markers to (crash pinpointing).
+// Pass a writable path (harness LocalState). Empty clears. Only affects WebCoreGpuInit.
+void WebCoreSetGpuInitLogFile(const char* path);
 
-// 在当前会话主世界执行 JS,结果转字符串写入 out。诊断/注入用。返回 0 成功。
+// Execute JS in the main world of the current session, convert result to string and write to out. 0 on success.
 int WebCoreEvalJS(const char* script, char* out, int len);
 
-// 实时一帧:推进动画/rAF/SPA 一帧并重绘到 outBuf(供低帧率定时器驱动,让动画动起来、SPA 渐进挂载)。
+// Live tick: advance animation/rAF/SPA one frame and redraw (low-fps timer keeps animations/SPA mounting).
 int WebCoreLiveTick(uint8_t* outBuf);
-// 当前文档仍处于 Pending/Unknown 的缓存资源数。用于图片/解码未完成时保持实时 tick。
+// Number of cached resources still Pending/Unknown for the current document (keep ticking while incomplete).
 int WebCoreGetPendingResourceCount();
-// 最近一帧像素哈希:实时模式比较连续帧,画面静止则停帧省电。
+// Which step of WebCoreLiveTick is executing right now: 0 = not in a tick, 10 = returned,
+// 1..3 = RunLoop::cycle (queued loader callbacks land here), 4 = rAF/rendering update,
+// 5 = frame/view/document lookups, 6 = microtasks, 7 = layout, 8 = pending-resource count, 9 = paint.
+//
+// Read from the UI thread and printed in the heartbeat line. The engine thread has been observed to
+// hang inside this job on the device (heartbeat: busy=1 job=live-tick), and this names the operation
+// that never returns. A marker file was rejected deliberately: the tick runs several times a second,
+// and per-step file I/O on the device's flash would alter the timing it is meant to measure. See
+// Doc/PUMPLOOP-SILENT-DEATH.md.
+int WebCoreGetLiveTickStep(void);
+// Frame hash of the most recent frame: in live mode compare consecutive frames; stop ticking when static.
 unsigned WebCoreGetFrameHash();
+// Top-level document fetch progress, or -1 when no top-level fetch is in flight. **The sign is the
+// contract**: -1 and only -1 means "no such fetch, the engine thread is free"; any non-negative value
+// means one IS in flight, in which case the engine thread is *supposed* to be blocked and the caller
+// must not judge a stalled counter as a wedge on the same timescale. The pre-body phase (connect, TLS,
+// TTFB, a redirect chain) reports a legitimate 0 -- it is not a movement claim.
+// The value is NOT a byte count: it is body bytes with the number of completed response hops folded in
+// above them, because a redirect chain reports 0 bytes through its whole life while working perfectly.
+// The caller compares it only against its own previous reading and prints it as `fetchprog=`: it lets
+// the wedge watchdog tell "the engine is blocked on a slow but healthy fetch" from "the engine made no
+// progress at all" without hardcoding a duration.
+// Both counters start at 0 and are reset to 0 per fetch -- never to -1 -- because the fold
+// `dl + (hops << 40)` turns a -1 sentinel into a large negative number, and the watchdog reads that as
+// "no fetch in flight" during a fetch. That inversion cost one false WEDGE dump (2026-09-19 04:35).
+// See the re-arming fetch budget in Doc/TOPLEVEL-FETCH-BUDGET.md, §9.
+long long WebCoreGetFetchProgress(void);
+// Engine liveness gauge: a monotonic count of the work the engine thread has visibly performed -- the
+// load job's stage boundaries, every DocumentWriter chunk, every settle tick of the load pump, and the
+// live tick's step index. Never negative, and meaningful only as a CHANGE against the caller's own
+// previous reading, exactly like WebCoreGetFetchProgress and used the same way by the wedge watchdog.
+// It exists because `finished` (completed jobs) is too coarse to answer the question: a single
+// `nav-load` job holds the engine thread for ~7 s on a 3.6 MB page (parse + inline JS + first paint),
+// during which `finished` cannot move at all, and a watchdog reading only `finished` dumped a full
+// engine stack for two such pages that loaded successfully two seconds later (2026-09-19, 04:35 and
+// 04:50). A frozen gauge means the engine made no visible progress -- it does NOT mean the engine is
+// idle (a cold engine with no session yet also reads frozen).
+long long WebCoreGetEngineActivity(void);
 
-// ---- 页内查找 find-in-page ----
-// 标记并高亮全部匹配 + 选中第一个,滚动到它,重绘到 outBuf。matchCase!=0 区分大小写;wrap!=0 回绕。
-// 空串=清除高亮。返回匹配数(>=0)或负错误码。
+// ---- find-in-page ----
+// Mark + highlight all matches, select the first, scroll to it. matchCase!=0 case-sensitive, wrap!=0 wrap.
+// Empty string = clear highlights. Returns match count (>=0) or negative error.
 int WebCoreFindString(const char* utf8, int matchCase, int wrap, uint8_t* outBuf);
-// 沿用上次查找词查下一个/上一个(不重新标记)。forward!=0 向下。返回 1=命中 / 0=无 / 负=错误。
-int WebCoreFindNext(int forward, uint8_t* outBuf);
-// 清除查找高亮/选区,重绘。返回 0 成功。
-int WebCoreFindClear(uint8_t* outBuf);
+int WebCoreFindNext(int forward, uint8_t* outBuf);   // 1=found / 0=none / neg=error (reuses last term, no re-mark)
+int WebCoreFindClear(uint8_t* outBuf);               // clear highlights + selection; 0 on success
 
-}
+// Memory pressure: 1=critical, 0=gentle. Flushes caches, back-forward cache, JSC GC, font cache.
+void WebCoreReleaseMemory(int critical);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif

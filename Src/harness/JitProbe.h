@@ -1,4 +1,5 @@
 #pragma once
 #include <string>
-// 可执行内存可行性探针(JIT 前提)。返回人读报告(UTF-8)。纯 C++ + SEH,单独编译(非 /ZW)。
+// Executable-memory feasibility probe (the JIT prerequisite). Returns a human-readable report (UTF-8).
+// Pure C++ + SEH, compiled separately (not /ZW).
 std::string RunJitProbe();

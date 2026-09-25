@@ -1,0 +1,73 @@
+# Chunk 01 - Src/port/WebCoreDriver.cpp lines <= 500
+53	C	// UWP: with WIN32_LEAN_AND_MEAN defined, winsock2 has to be included before windows.h,
+54	C	// which is where curl's SOCKET type comes from.
+55	C	// libcurl easy API -- used by WebCoreDownload
+77	C	// makeString() for building WTF::String values (IME text path)
+110	C	// WebCore::CookieJar, installed on the PageConfiguration below
+111	C	// Ref<StorageSessionProvider> needs the complete type
+119	C	// WebCorePort::PortChromeClient -- the compositing ChromeClient
+135	C	// Document::eventLoop().performMicrotaskCheckpoint()
+141	C	// cachedResourceLoader(): the pending-resource census writeDiag reports
+143	C	// Document::cachedResourceLoader() (inline accessor)
+145	C	// document.body()->childElementCount() for the SPA probe
+164	C	// Input and rendering entry points the resident session needs: EventHandler, Editor,
+165	C	// FindOptions, and the rAF / IntersectionObserver path isolatedUpdateRendering drives.
+166	C	// LocalFrame::eventHandler() -- mouse press/release dispatch
+167	C	// EventHandler's result type -- wasHandled()
+168	C	// page->focusController().setActive/setFocused (a headless page must be active for JS focus)
+169	C	// editor().canEdit() / insertText() / command() -- the IME text path
+170	C	// WebCore::FindOption / FindOptions
+171	C	// Page::FindStringData's std::optional<SimpleRange>
+172	C	// IME path: input.value() / dispatchInputEvent()
+173	C	// the same for <textarea>
+174	C	// isContentEditable() -- contenteditable targeting
+175	C	// elementFromPoint / focusedElement -- the tap hit-test and the focus probe
+186	C	// PlatformKeyboardEvent -- Enter and typed characters
+187	C	// frame->script().canExecuteScripts / executeScriptInWorldIgnoringException
+191	C	// setScrollPosition / maximumScrollPosition, reached through LocalFrameView
+192	C	// DoublePoint for PlatformMouseEvent
+193	C	// MonotonicTime timestamps for the synthetic events
+206	C	// ---- M2 GPU path (TextureMapper + ANGLE) ----
+207	C	// Two ways to get a composited frame out of GraphicsLayerTextureMapper through
+208	C	// TextureMapper in GL: render into a BitmapTexture and glReadPixels it into the
+209	C	// caller's RGBA buffer, or present straight to the SwapChainPanel (eglSwapBuffers).
+210	C	// Both are gated on g_gpuActive (set by WebCoreGpuInit); otherwise paintToRGBA falls
+211	C	// through to Cairo. TextureMapper::create() needs a current GL context
+212	C	// (TextureMapper.cpp:216 tests GLContext::current() != null), which comes from the EGL
+213	C	// window surface GLContext::create(display, nativeWindow) builds.
+216	C	// ms-master ANGLE's gl2.h omits the GL prototypes (glReadPixels/glViewport -> C3861)
+217	C	// GraphicsLayer -- chrome->rootLayer(), static_cast to the TextureMapper layer type
+219	C	// compositor().frameViewDidScroll() -- the TextureMapper's scroll hook
+223	C	// TextureMapper::create / beginPainting / endPainting (platform/graphics include dir)
+225	C	// the TextureMapper GraphicsLayer: .layer() / updateBackingStoreIncludingSubLayers
+226	C	// the composited frame's texture + bindAsSurface
+252	C	// no live session (see WebCoreSessionLoad)
+253	C	// busy: another pump is running
+254	C	// the main frame went away during the call
+351	C	// Apotheosis: the last network error, recorded by LoadingFrameLoaderClient's dispatchDidFail*
+352	C	// hooks as a ResourceError (curl code + domain + description + failing URL). MainPage reads
+353	C	// it back through WebCoreLoadUrl and logs it into LocalFolder -- in the App Container that
+354	C	// log is the only channel through which WebKit's own error path can be seen.
+356	C	// the diag line: URL, contents size, counts, parser state, resource statuses
+373	C	// last document title (for the tab/UI)
+374	C	// last document URL (requested vs effective -- see the address-bar note)
+375	C	// hash of the last painted frame, for blit de-duplication
+376	C	// pending/unknown resources as of the last census
+377	C	// mobile UA switch: true = iPhone-style UA, false = desktop (LoadingFrameLoaderClient::userAgent)
+381	C	// custom UA override, set by WebCoreSetUserAgentString
+382	C	// the SPA module probe's last verdict (import started / eval-ok / error)
+383	C	// the packaged CA bundle, handed to curl by WebCoreDownload
+385	C	// GPU active flag: true once WebCoreGpuInit has both a live GL context and a TextureMapper.
+386	C	// This is the only gate on the GPU path (plus PortChromeClient); with it false everything
+387	C	// falls through to Cairo. Enabling it unconditionally once cost a silent crash on the device.
+389	C	// content pixels counted by the last composite (0 = nothing painted); reset by WebCoreGpuInit
+390	C	// Everything else that needs TextureMapper lives under USE(TEXTURE_MAPPER).
+391	C	// g_gpuScrollFast: a fast scroll skips forceDirtyTree; also USE(TEXTURE_MAPPER)-only.
+435	C	// Load counters (main document + CSS/JS/subresources) that WebCorePortBumpLoad would feed
+436	C	// from ResourceHandle.cpp; WebCoreLoadUrl resets them and writeDiag prints them.
+488	C	// ---- extracted link table (rebuilt on every layout/paint) ----
+489	C	// Every <a href> with its viewport-relative boundingClientRect (so scrolling moves it)
+490	C	// plus its resolved URL. The harness hit-tests taps against this table.
+493	C	// the last WebCoreTypeText diagnostic (read back by WebCoreEditDebug)
+494	C	// find-in-page state: the query text and its options, kept for WebCoreFindNext
+# end

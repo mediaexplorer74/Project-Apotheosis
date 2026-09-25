@@ -6,5 +6,6 @@ namespace Harness {
     public:
         App();
         virtual void OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs^ e) override;
+        void OnSuspending(Platform::Object^ sender, Windows::ApplicationModel::SuspendingEventArgs^ e);
     };
 }

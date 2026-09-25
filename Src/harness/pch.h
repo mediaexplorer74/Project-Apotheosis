@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <string>
 
-// C++/CX 约定: pch 暴露 app/page 类型, 使 XAML 生成的 XamlTypeInfo.g.cpp 能看到它们。
+// C++/CX convention: the pch exposes app/page types so the XAML-generated XamlTypeInfo.g.cpp can see them.
 #include "App.xaml.h"
 #include "MainPage.xaml.h"
+// touch 22:22:45
