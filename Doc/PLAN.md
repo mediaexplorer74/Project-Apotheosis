@@ -702,3 +702,66 @@ compiler. Reference: `Doc/UNIFICATION.md` §C, `verify-xaml-connect.ps1` header,
 5. **Git optional** — per owner's decision; no Git work required.
 
 Item 1 (continue crash verification) is answered by §0i/CalculationValue work — see Archive/PLAN-HISTORY.md.
+
+## C# harness probes — managed DLL boundary (2026-09-25)
+
+### Decision
+
+The C# harness is an experiment, not the shipping browser. It must not be wired to WebKit static
+archives by assumption. The measured and supported boundary is:
+
+```text
+C# UWP app → WebCoreDriver.dll → WebCore.dll / JavaScriptCore.dll
+```
+
+The C++/CX harness uses `WebCoreDriver-gpu-{arch}.lib`, `WebCore.lib`, `JavaScriptCore.lib` and other
+native static/import libraries because it is a native executable. That static-link arrangement is not a
+managed-code build pattern. `WebCoreFull.lib` is a special native workaround archive for unresolved
+WebCore internals and is not a C# reference. C# must call the stable C ABI through P/Invoke and receive
+`WebCoreDriver.dll` plus the WebKit runtime DLLs as package content.
+
+### Probe trees
+
+Use separate trees and build them sequentially, never as concurrent full WebKit builds on this 4 GB
+machine:
+
+```text
+build-x64-19041-probe   active: SDK 19041 CMake/Ninja compatibility check
+build-csharp-x64-probe  later: C# x64 UWP + DLL boundary/package check
+build-csharp-arm32-probe later: C# ARM32 UWP/.NET Native question
+```
+
+The C# probes must not modify `build-x64-gpu`, `build-arm32-gpu`, or the production `Harness.vcxproj`.
+A probe is allowed to create a small temporary copy or a dedicated output directory. Do not add
+`WebCore.lib`, `JavaScriptCore.lib`, or `WebCoreFull.lib` to `Apotheosis.csproj`.
+
+### Order of work
+
+1. Let the active x64 SDK 19041 CMake/Ninja build finish and record its result.
+2. Confirm the expected x64 outputs: `WebCore.dll`, `JavaScriptCore.dll`, and the static libraries used by
+   the native harness.
+3. Build the C# x64 UWP package with SDK 19041 and the existing `DllImport` declarations. If a driver DLL
+   is not available, use a small dummy C ABI DLL for the packaging/PInvoke probe; do not fake a successful
+   WebKit result.
+4. Verify package identity, architecture, DLL placement, and a harmless native round-trip call.
+5. Only then build the C# ARM32 probe. The first ARM32 question is whether VS 2022/.NET Native can
+   produce and install the UWP package at all; this is not yet measured.
+6. Port engine-thread plumbing, job queue, heartbeat, diagnostics, and navigation state only after the
+   managed DLL boundary is proven. A C# UI alone is not a browser MVP.
+
+### Stop conditions
+
+Stop the C# probe and record the exact failure if:
+
+- C# UWP cannot target SDK 19041 with the installed VS 2022 components;
+- ARM32 `.NET Native` cannot produce a package;
+- AppContainer rejects `DllImport` or native DLL deployment;
+- a driver DLL cannot be made available with the correct architecture and signing/package identity.
+
+Do not respond by copying native `.lib` files into the C# project, by making a desktop process masquerade
+as UWP, or by claiming a runtime success from a compile-only probe.
+
+### Honest status
+
+`Src/Apotheosis/README.md` remains the source of truth for the C# experiment. The shipping path remains
+`Src/harness/Harness.vcxproj`; the C# work is optional exploration and must not block the x64/ARM32 MVP.
