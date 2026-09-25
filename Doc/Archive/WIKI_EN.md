@@ -1,3 +1,26 @@
+> **ARCHIVED / HISTORICAL — do not treat the tables and status claims below as current.**
+> The live entry point is [`../INDEX.md`](../INDEX.md). Live state and acceptance are in
+> [`../PLAN.md`](../PLAN.md) and [`../MVP.md`](../MVP.md). This file is retained as a background chapter
+> and as a guide to the original WebKit port; it was written during earlier phases and is deliberately
+> not rewritten in place.
+>
+> **Current overlay, 2026-09-25:** the working browser is the C++/CX harness in `Src/harness`; the C#
+> project in `Src/Apotheosis` is an abandoned experiment, not a build target. The x64 Release harness is
+> the daily verification line; ARM32/Lumia 950 remains the device target. The MVP is deliberately small:
+> address bar, Back, painted pages, scrolling, and a bounded site smoke test. Software presentation is
+> the safe path after the GPU direct-present white-page finding. The current ARM32 CMake cache already
+> disables media, WebGL/WebGPU/WebXR, MathML, XSLT, WebAssembly, and higher JIT tiers, while retaining
+> `ENABLE_JIT=ON`, `ENABLE_C_LOOP=OFF`, and `ENABLE_UNIFIED_BUILDS=ON`. ICU, layout/style, JSC, text
+> shaping, and the native port remain the real weight of the engine. WebKit is a separately fetched
+> upstream dependency; this repository does not yet publish a verified WebKit patch series.
+>
+> **Architecture boundary:** the native C++ path uses WebKit static/import libraries and the port
+> archive; a future managed harness must use `WebCoreDriver.dll` through P/Invoke, not `WebCoreFull.lib`
+> or WebKit `.lib` files. Do not start a new full WebKit build while the x64 SDK 19041 probe is running.
+
+---
+
+
 # Wiki: Project Apotheosis / EdgeHTML Reborn
 
 > What, why, and how we're porting WebKit to Windows 10 Mobile.
