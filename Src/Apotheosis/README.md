@@ -1,10 +1,19 @@
-# Src/Apotheosis — the C# harness experiment (stopped, kept on purpose)
+# Src/Apotheosis — the C# UWP app (the shipping line)
 
-**Status: research reference, not a shipping project.** The working browser is the native C++/CX
-harness in `Src/harness`. Nothing in the working browser depends on this directory.
+**Status: this is the product.** The C# app drives the engine through the C ABI of
+`WebCoreDriver.dll`. On 2026-09-26 it reached the first rendered page: the home page draws its CSS
+gradient, rounded cards, shadows and grid, and a real site loads with a parsed title, a live JS
+context and no network errors. The C++/CX harness in `Src/harness` is kept as a legacy UI source
+and a native reference point; nothing in the shipping app depends on it.
 
-This is a deliberately reduced C#/XAML harness: address bar and content view. It is not a half-finished
-copy of `Src/harness` and it is not a drop-in replacement for the native harness.
+> **What this project is not.** It is not a port of WebKit to C#. The engine stays native C++,
+> compiled to `WebCoreDriver.dll`; only the *shell* around it — window, address bar, tabs, settings,
+> diagnostics — is C#/XAML. Rewriting the engine itself in C# would be a multi-year effort and
+> nothing here is aimed at that. See [Architecture boundary](#architecture-boundary) below for the
+> exact line between the two.
+
+This is a deliberately reduced C#/XAML app: address bar and content view. It is not a copy of
+`Src/harness` and not a drop-in replacement for it.
 
 ## Why it exists
 
@@ -19,20 +28,26 @@ lose those measurements until they are deliberately ported.
 
 ## Architecture boundary
 
-The C# project must talk to a C ABI, not to WebKit static libraries:
+The C# project talks to a **C ABI**, not to WebKit static libraries. The engine is native C++; only the
+shell is managed:
 
 ```text
-C# UWP app
-    ↓ P/Invoke
-WebCoreDriver.dll
+C# UWP app  (C#/XAML — window, address bar, tabs, settings, diagnostics)
+    ↓ P/Invoke, 30 declarations in WebCoreDriver.cs
+WebCoreDriver.dll  (native, the whole engine statically linked in)
     ↓
-WebCore.dll / JavaScriptCore.dll
+JavaScriptCore.dll  (the only engine DLL still loaded at runtime)
 ```
 
-`WebCoreDriver.cs` declares 30 P/Invoke calls. The C++/CX harness instead links native archives such as
-`WebCoreDriver-gpu-x64.lib`, `WebCore.lib`, and `JavaScriptCore.lib`; those are native link inputs, not
-managed references. `WebCoreFull.lib` is a special native workaround archive for unresolved WebCore
-internals and is not a C# reference. Do not copy WebKit `.lib` files into `Apotheosis.csproj`.
+`WebCore.dll` **is no longer part of the package.** Since 2026-09-26 the driver links WebCore
+statically through `WebCoreFull-x64-19041.lib` / `WebCoreFull-arm32.lib`, because `stubs-other.cpp`
+needs WebCore internals that the DLL does not export (`RenderTheme::RenderTheme()` and
+`SystemFontDatabase::SystemFontDatabase()` are `protected` constructors, and
+`WebKitFontFamilyNames::standardFamily` is a data global). An `__imp_` thunk is only generated for an
+*exported* name, so those can never resolve at load time. Removing `WebCore.dll` saves 44 MB on x64.
+
+`WebCoreFull*.lib` is a native link input, never a C# reference. Do not copy WebKit `.lib` files into
+`Apotheosis.csproj`.
 
 A managed probe can be useful for a harmless C ABI round-trip and package check. It is not proof that a
 site paints until the real WebKit runtime is loaded and the frame is inspected.
@@ -52,26 +67,26 @@ before a managed runtime probe is meaningful.
 
 ## If resuming it
 
-0. Measured state 2026-09-26 (x64, Debug 0.2.0.5): builds, signs, installs and starts; the
-   managed side reaches `WebCoreRenderHtml` and then the process dies inside the first paint at
-   `FontCascadeFonts::realizeFallbackRangesAt` -> `cairo_scaled_font_create`; the native fault
-   crosses the P/Invoke boundary and .NET Native turns it into `FailFast(7)` (WER 0x1007, module
-   `SharedLibrary.dll`), so no managed catch can see it. Two earlier blocks are fixed and should
-   stay fixed: the `Apotheosis_TemporaryKey.pfx` password is EMPTY (`PackageCertificatePassword`
-   must stay empty or every build fails cert validation), and `native\x64` must ship the six
-   transitive deps the engine needs - brotlidec/brotlicommon/brotlienc/bz2/iconv-2/libsharpyuv -
-   plus the five fonts in `Assets\fonts`, or the process never reaches managed code at all
-   ("The app didn't start", 0x8025025B). Next lever is native, not managed: wrap the `WebCore*`
-   entry points in `Src/port/WebCoreDriver.cpp` in `__try/__except` so no exception can escape
-   into the CLR, and log what fontconfig resolved there.
-1. Finish the current x64 SDK 19041 WebKit build and record its result.
-2. Build an empty C# UWP ARM32 package first. If that cannot be built and installed under VS 2022,
-   stop: the next questions are irrelevant.
-3. Build a real `WebCoreDriver.dll` for the chosen architecture and place it in the appx package.
-4. Verify architecture, package identity, AppContainer deployment, and a harmless ABI round-trip.
-5. Only then connect the UI to `WebCoreSessionLoad`, `WebCoreLiveTick`, and the paint buffer.
-6. Port engine-thread plumbing, job queue, heartbeat, diagnostics, and navigation state before calling
-   the managed harness a browser.
+0. **Measured state 2026-09-26 (0.2.0.6, x64): builds, installs, runs, and paints.** The home page
+   renders its gradient, rounded cards, shadows and grid; `example.com` loads with `title=Example
+   Domain`, `js=1/1`, `err=0`. The null call that used to kill the process inside `Frame::init()`
+   (`WCRH:frame-init`, faulting address `WebCoreDriver.dll+0x0`) is gone.
+   **The open defect is that no text renders.** Shapes, colours and layout are correct; every glyph
+   is missing, so a white page with black text looks blank. The linked image contains FreeType in
+   full and HarfBuzz barely, but **no fontconfig at all** — and for x64 there is nothing to add,
+   because fontconfig will not cross-compile to UWP. See [Doc/PLAN.md](../../Doc/PLAN.md) §0b.
+1. ~~Finish the current x64 SDK 19041 WebKit build.~~ Done: `build-x64-gpu`, 1547/1548 objects.
+2. ~~Build an empty C# UWP ARM32 package.~~ Superseded: the ARM32 driver DLL now builds
+   (`unresolved=0`, 30 exports) and `native\ARM` is staged with 21 audited files. The appx for ARM has
+   not been built yet.
+3. ~~Build a real `WebCoreDriver.dll` for the chosen architecture.~~ Done for both.
+4. ~~Verify architecture, package identity, AppContainer deployment, ABI round-trip.~~ Done for x64:
+   the SHA256 of `WebCoreDriver.dll` **inside the appx** is verified against the link output.
+5. ~~Connect the UI to `WebCoreSessionLoad` / `WebCoreLiveTick` / the paint buffer.~~ Done.
+6. **Next:** give WebKit a working font back-end so text renders. Everything else is subordinate to
+   this, because a browser that draws boxes and no letters is not a browser.
+7. Port engine-thread plumbing, job queue, heartbeat, navigation state, before calling the managed
+   app a complete browser.
 
 ## Measurement honesty
 
