@@ -1,0 +1,25 @@
+<UserControl
+    x:Class="Apotheosis.Shell.Controls.EngineHost"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+        Deliberately a single-purpose control: it owns exactly one
+        SwapChainPanel and exactly one EngineWinRT.EngineSession, and
+        forwards input/lifecycle events between them. MainPage should never
+        reach past this control to touch EngineSession directly — that keeps
+        the "engine surface" concern isolated from "browser chrome" (address
+        bar, tabs, etc.), which is what let the old C++/CX harness stay
+        simple and is worth preserving in the C# rewrite.
+    -->
+    <SwapChainPanel
+        x:Name="EngineSurface"
+        Loaded="OnEngineSurfaceLoaded"
+        SizeChanged="OnEngineSurfaceSizeChanged"
+        PointerPressed="OnPointerPressed"
+        PointerMoved="OnPointerMoved"
+        PointerReleased="OnPointerReleased"
+        ManipulationMode="TranslateX,TranslateY,Scale"
+        ManipulationDelta="OnManipulationDelta"/>
+
+</UserControl>

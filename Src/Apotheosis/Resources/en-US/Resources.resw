@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="AppTitle" xml:space="preserve">
+    <value>EdgeHTML Reborn</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Loading</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="LoadFailed" xml:space="preserve">
+    <value>Load Failed</value>
+  </data>
+  <data name="LoadTimeout" xml:space="preserve">
+    <value>Load Timeout</value>
+  </data>
+  <data name="Processing" xml:space="preserve">
+    <value>Processing…</value>
+  </data>
+  <data name="Cancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="RenderError" xml:space="preserve">
+    <value>Render Error</value>
+  </data>
+  <data name="FindInPage" xml:space="preserve">
+    <value>Find in page</value>
+  </data>
+  <data name="UrlPlaceholder" xml:space="preserve">
+    <value>Search or enter URL</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Forward" xml:space="preserve">
+    <value>Forward</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="Bookmark" xml:space="preserve">
+    <value>Bookmark</value>
+  </data>
+  <data name="BookmarkThisPage" xml:space="preserve">
+    <value>Bookmark This Page</value>
+  </data>
+  <data name="NewTab" xml:space="preserve">
+    <value>New Tab</value>
+  </data>
+  <data name="DesktopSite" xml:space="preserve">
+    <value>Desktop Site</value>
+  </data>
+  <data name="MobileSite" xml:space="preserve">
+    <value>Mobile Site</value>
+  </data>
+  <data name="FindInPageAction" xml:space="preserve">
+    <value>Find in Page</value>
+  </data>
+  <data name="Share" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="CopyLink" xml:space="preserve">
+    <value>Copy Link</value>
+  </data>
+  <data name="DownloadPage" xml:space="preserve">
+    <value>Download Page</value>
+  </data>
+  <data name="Bookmarks" xml:space="preserve">
+    <value>Bookmarks</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="Downloads" xml:space="preserve">
+    <value>Downloads</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Menu" xml:space="preserve">
+    <value>Menu</value>
+  </data>
+  <data name="Tabs" xml:space="preserve">
+    <value>Tabs</value>
+  </data>
+  <data name="Done" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="GPU" xml:space="preserve">
+    <value>GPU</value>
+  </data>
+  <data name="DefaultSearchEngine" xml:space="preserve">
+    <value>Default Search Engine</value>
+  </data>
+  <data name="InterfaceLanguage" xml:space="preserve">
+    <value>Interface Language</value>
+  </data>
+  <data name="HomepageUrl" xml:space="preserve">
+    <value>Homepage URL (leave empty for default)</value>
+  </data>
+  <data name="RequestDesktopSite" xml:space="preserve">
+    <value>Request Desktop Site on Startup</value>
+  </data>
+  <data name="CustomUserAgent" xml:space="preserve">
+    <value>Custom User-Agent (empty = use toggle; reload to apply)</value>
+  </data>
+  <data name="DefaultZoom" xml:space="preserve">
+    <value>Default Zoom</value>
+  </data>
+  <data name="ConcurrentTabs" xml:space="preserve">
+    <value>Concurrent multi-engine tabs (placeholder)</value>
+  </data>
+  <data name="EnableGPU" xml:space="preserve">
+    <value>Enable GPU on Startup (auto after first page)</value>
+  </data>
+  <data name="EnableGPUNow" xml:space="preserve">
+    <value>Enable GPU Now (restart to revert)</value>
+  </data>
+  <data name="ClearData" xml:space="preserve">
+    <value>Clear Data</value>
+  </data>
+  <data name="ClearHistory" xml:space="preserve">
+    <value>Clear History</value>
+  </data>
+  <data name="ClearAllBookmarks" xml:space="preserve">
+    <value>Clear All Bookmarks</value>
+  </data>
+  <data name="ClearDownloads" xml:space="preserve">
+    <value>Clear Downloads</value>
+  </data>
+  <data name="Diagnostics" xml:space="preserve">
+    <value>Diagnostics</value>
+  </data>
+  <data name="ExportDebugLogs" xml:space="preserve">
+    <value>Export Debug Logs / Crash Dumps</value>
+  </data>
+  <data name="AboutUpdate" xml:space="preserve">
+    <value>About / Update</value>
+  </data>
+  <data name="CheckForUpdate" xml:space="preserve">
+    <value>Check for Update (GitHub Releases)</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="HistoryCleared" xml:space="preserve">
+    <value>History Cleared</value>
+  </data>
+  <data name="BookmarksCleared" xml:space="preserve">
+    <value>Bookmarks Cleared</value>
+  </data>
+  <data name="DownloadsCleared" xml:space="preserve">
+    <value>Downloads Cleared</value>
+  </data>
+  <data name="Footer" xml:space="preserve">
+    <value>EdgeHTML Reborn / Apotheosis — WebKit (WebCore) 2.52.4 — ARM32 UWP</value>
+  </data>
+  <data name="TabFav" xml:space="preserve">
+    <value>Favorites</value>
+  </data>
+  <data name="TabHist" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="TabDl" xml:space="preserve">
+    <value>Downloads</value>
+  </data>
+  <data name="ActionBtn" xml:space="preserve">
+    <value>Bookmark This Page</value>
+  </data>
+  <data name="DrawerTitle" xml:space="preserve">
+    <value>Menu</value>
+  </data>
+  <data name="UaBtn" xml:space="preserve">
+    <value>Mobile Site</value>
+  </data>
+  <data name="BackLabel" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="FwdLabel" xml:space="preserve">
+    <value>Forward</value>
+  </data>
+  <data name="ReloadLabel" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="ActFavLabel" xml:space="preserve">
+    <value>Bookmark</value>
+  </data>
+  <data name="NewTabLabel" xml:space="preserve">
+    <value>New Tab</value>
+  </data>
+  <data name="HomeLabel" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="ActUaLabel" xml:space="preserve">
+    <value>Desktop Site</value>
+  </data>
+  <data name="FindInPageLabel" xml:space="preserve">
+    <value>Find in Page</value>
+  </data>
+  <data name="ShareLabel" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="CopyLinkLabel" xml:space="preserve">
+    <value>Copy Link</value>
+  </data>
+  <data name="DownloadLabel" xml:space="preserve">
+    <value>Download Page</value>
+  </data>
+  <data name="BookmarksLabel" xml:space="preserve">
+    <value>Bookmarks</value>
+  </data>
+  <data name="HistoryLabel" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="DownloadsLabel" xml:space="preserve">
+    <value>Downloads</value>
+  </data>
+  <data name="SettingsLabel" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="TabSwitcherTitle" xml:space="preserve">
+    <value>Tabs</value>
+  </data>
+  <data name="TabSwitcherDone" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="SettingsDefaultSearch" xml:space="preserve">
+    <value>Default Search Engine</value>
+  </data>
+  <data name="SettingsLanguage" xml:space="preserve">
+    <value>Interface Language</value>
+  </data>
+  <data name="SettingsHomepage" xml:space="preserve">
+    <value>Homepage URL (leave empty for default)</value>
+  </data>
+  <data name="SettingsDesktopSite" xml:space="preserve">
+    <value>Request Desktop Site on Startup</value>
+  </data>
+  <data name="SettingsCustomUA" xml:space="preserve">
+    <value>Custom User-Agent (empty = use toggle; reload to apply)</value>
+  </data>
+  <data name="SettingsDefaultZoom" xml:space="preserve">
+    <value>Default Zoom</value>
+  </data>
+  <data name="SettingsConcurrentTabs" xml:space="preserve">
+    <value>Concurrent multi-engine tabs (placeholder)</value>
+  </data>
+  <data name="SettingsGPU" xml:space="preserve">
+    <value>GPU</value>
+  </data>
+  <data name="SettingsEnableGPU" xml:space="preserve">
+    <value>Enable GPU on Startup (auto after first page)</value>
+  </data>
+  <data name="SettingsEnableGPUNow" xml:space="preserve">
+    <value>Enable GPU Now (restart to revert)</value>
+  </data>
+  <data name="SettingsClearData" xml:space="preserve">
+    <value>Clear Data</value>
+  </data>
+  <data name="SettingsClearHistory" xml:space="preserve">
+    <value>Clear History</value>
+  </data>
+  <data name="SettingsClearBookmarks" xml:space="preserve">
+    <value>Clear All Bookmarks</value>
+  </data>
+  <data name="SettingsClearDownloads" xml:space="preserve">
+    <value>Clear Downloads</value>
+  </data>
+  <data name="SettingsDiagnostics" xml:space="preserve">
+    <value>Diagnostics</value>
+  </data>
+  <data name="SettingsExportDebug" xml:space="preserve">
+    <value>Export Debug Logs / Crash Dumps</value>
+  </data>
+  <data name="SettingsAboutUpdate" xml:space="preserve">
+    <value>About / Update</value>
+  </data>
+  <data name="SettingsCheckUpdate" xml:space="preserve">
+    <value>Check for Update (GitHub Releases)</value>
+  </data>
+</root>

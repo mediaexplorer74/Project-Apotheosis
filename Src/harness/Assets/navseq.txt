@@ -1,0 +1,69 @@
+# Apotheosis: a navigation sequence played back through the HARNESS path, one URL per line.
+# Brief: enabled=1 starts the autoplay; enabled=0 (or absent) stays silent. The rest of the
+# header from the original (other AI author) is below for context.
+#
+# This dump (Aug 25, 2026) is tuned to the white-screen-after-second-load defect on x64 bench.
+# We are in the run with all fixes .62-.77 applied: useJIT=false, background fetch, fail-fast
+# timeouts, async image decode, watchdog. The JSC interpreter is the next major investigation.
+# 
+# The SWITCH LIVES IN THIS FILE on purpose. It is decided at build time, which is the only
+# channel that reaches the device (WDP can READ but not WRITE LocalState on the Lumia). A
+# release build sets enabled=0 (or drops the file) and the player stays silent.
+#
+# Format: blank lines and lines starting with # are ignored.
+#   enabled=1         play the sequence. Anything else, or absent, means do nothing at all.
+#   keepawake=1       hold a DisplayRequest while the browser is in the foreground, so the device does
+#                     not dim and lock during a test.
+#   jit=0             force the interpreter (JSC_useJIT=false). Default in our current .77 build
+#                     anyway, so redundant here; kept for explicitness.
+#   delay=<seconds>   wait this long before the NEXT url, and before each one after it until changed.
+#                     0 means "as soon as possible" -- fires a new nav on top of a still-loading one.
+#   <url>             navigated to through the same code path a finger on the address bar would take.
+
+enabled=0
+keepawake=1
+
+# Apotheosis 2026-09-18: `jit=0` REMOVED and `enabled=1` -> `enabled=0`, for one measurement.
+#
+# The switch was added in the .77 era on the belief that the x64 bench cannot JIT (DEP/ACG) while the
+# Lumia can, recorded in the comment in MainPage.xaml.cpp. **That belief is now measured and false.**
+# With this file as it stands the app starts JIT-enabled and silent (like a release build), and
+# LocalState\nav.txt drives navigation by hand. Measured on 0.1.9.107 with the JIT on: dzen.ru rendered
+# (`nonwhite=302013/710656`, `js=1/1`) and the freeze that followed was IDENTICAL to the one seen on the
+# interpreter under 0.1.9.106 -- `finished` frozen, the tick never returning, the watchdog firing and not
+# stopping it. So the interpreter was never the explanation. Both lines also build the same tiers: LLInt
+# + baseline JIT, ENABLE_DFG_JIT=OFF, ENABLE_FTL_JIT=OFF (both CMakeCache.txt files; CLAUDE.md).
+# See Doc/DZEN-SCROLL-DEATH.md sections 10b-10d.
+#
+# `jit=0` still works and is still a useful bisect knob -- it is just no longer a live hypothesis.
+# Restore `enabled=1` before shipping a device test that needs the old sequence; decide about `jit=0`
+# separately, since the device's tiers are the bench's.
+
+# Part one: settled light loads. All three should paint; this confirms the fixes did not regress.
+delay=15
+https://example.com
+https://example.com
+https://news.ycombinator.com
+
+# Part 1b: a page that FORCES a compositing layer (will-change + translateZ). Added 2026-09-03,
+# because nothing else in this list exercises the GPU composite/readback branch at all: example.com,
+# ya.ru and HN produce no layer at this viewport, so Composite correctly returns -4 and
+# gpuCompositeReadback is never called. Without this entry the paint fixes of .82/.83 cannot be
+# confirmed or refuted by a sequence run. Seeded by hand into LocalState next to settings.ini; if the
+# file is absent the load fails visibly rather than silently skipping, which is the intent.
+delay=15
+file:///C:/Users/media/AppData/Local/Packages/EdgeHTMLReborn.Harness_edmb40rfkwsbg/LocalState/layertest.html
+
+# Part two: deliberately step on the navigate-while-loading path. dzen.ru is the Russian SPA that
+# died about a minute after navigation in an earlier run, and ya.ru is the page the white-screen
+# investigation was built on. delay=0 fires the second nav while the first is still loading -- the
+# same shape that broke live-tick.
+#
+# 2026-09-03: these two URLs used to be news.ycombinator.com and example.com while this very comment
+# claimed ya.ru and dzen.ru. The comment was right about the intent and the list was wrong, so a run
+# of this sequence never touched either of the two pages the defects live on. Fixed to match.
+delay=0
+https://ya.ru
+https://dzen.ru
+https://ya.ru
+https://dzen.ru

@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="AppTitle" xml:space="preserve">
+    <value>EdgeHTML Reborn</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>加载中</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>主页</value>
+  </data>
+  <data name="LoadFailed" xml:space="preserve">
+    <value>加载失败</value>
+  </data>
+  <data name="LoadTimeout" xml:space="preserve">
+    <value>加载超时</value>
+  </data>
+  <data name="Processing" xml:space="preserve">
+    <value>处理中…</value>
+  </data>
+  <data name="Cancelled" xml:space="preserve">
+    <value>已取消</value>
+  </data>
+  <data name="RenderError" xml:space="preserve">
+    <value>渲染错误</value>
+  </data>
+  <data name="FindInPage" xml:space="preserve">
+    <value>页面内查找</value>
+  </data>
+  <data name="UrlPlaceholder" xml:space="preserve">
+    <value>搜索或输入网址</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>后退</value>
+  </data>
+  <data name="Forward" xml:space="preserve">
+    <value>前进</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>刷新</value>
+  </data>
+  <data name="Bookmark" xml:space="preserve">
+    <value>书签</value>
+  </data>
+  <data name="BookmarkThisPage" xml:space="preserve">
+    <value>添加书签</value>
+  </data>
+  <data name="NewTab" xml:space="preserve">
+    <value>新标签页</value>
+  </data>
+  <data name="DesktopSite" xml:space="preserve">
+    <value>桌面版网站</value>
+  </data>
+  <data name="MobileSite" xml:space="preserve">
+    <value>移动版网站</value>
+  </data>
+  <data name="FindInPageAction" xml:space="preserve">
+    <value>页面内查找</value>
+  </data>
+  <data name="Share" xml:space="preserve">
+    <value>分享</value>
+  </data>
+  <data name="CopyLink" xml:space="preserve">
+    <value>复制链接</value>
+  </data>
+  <data name="DownloadPage" xml:space="preserve">
+    <value>下载页面</value>
+  </data>
+  <data name="Bookmarks" xml:space="preserve">
+    <value>书签</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>历史记录</value>
+  </data>
+  <data name="Downloads" xml:space="preserve">
+    <value>下载</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="Menu" xml:space="preserve">
+    <value>菜单</value>
+  </data>
+  <data name="Tabs" xml:space="preserve">
+    <value>标签页</value>
+  </data>
+  <data name="Done" xml:space="preserve">
+    <value>完成</value>
+  </data>
+  <data name="GPU" xml:space="preserve">
+    <value>GPU</value>
+  </data>
+  <data name="DefaultSearchEngine" xml:space="preserve">
+    <value>默认搜索引擎</value>
+  </data>
+  <data name="InterfaceLanguage" xml:space="preserve">
+    <value>界面语言</value>
+  </data>
+  <data name="HomepageUrl" xml:space="preserve">
+    <value>主页网址（留空为默认）</value>
+  </data>
+  <data name="RequestDesktopSite" xml:space="preserve">
+    <value>启动时请求桌面版网站</value>
+  </data>
+  <data name="CustomUserAgent" xml:space="preserve">
+    <value>自定义 User-Agent（留空=使用开关；刷新后生效）</value>
+  </data>
+  <data name="DefaultZoom" xml:space="preserve">
+    <value>默认缩放</value>
+  </data>
+  <data name="ConcurrentTabs" xml:space="preserve">
+    <value>多标签页（占位符）</value>
+  </data>
+  <data name="EnableGPU" xml:space="preserve">
+    <value>启动时启用 GPU（首次打开页面后自动）</value>
+  </data>
+  <data name="EnableGPUNow" xml:space="preserve">
+    <value>立即启用 GPU（重启后恢复）</value>
+  </data>
+  <data name="ClearData" xml:space="preserve">
+    <value>清除数据</value>
+  </data>
+  <data name="ClearHistory" xml:space="preserve">
+    <value>清除历史记录</value>
+  </data>
+  <data name="ClearAllBookmarks" xml:space="preserve">
+    <value>清除所有书签</value>
+  </data>
+  <data name="ClearDownloads" xml:space="preserve">
+    <value>清除下载</value>
+  </data>
+  <data name="Diagnostics" xml:space="preserve">
+    <value>诊断</value>
+  </data>
+  <data name="ExportDebugLogs" xml:space="preserve">
+    <value>导出调试日志 / 崩溃转储</value>
+  </data>
+  <data name="AboutUpdate" xml:space="preserve">
+    <value>关于 / 更新</value>
+  </data>
+  <data name="CheckForUpdate" xml:space="preserve">
+    <value>检查更新（GitHub Releases）</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>版本</value>
+  </data>
+  <data name="HistoryCleared" xml:space="preserve">
+    <value>历史记录已清除</value>
+  </data>
+  <data name="BookmarksCleared" xml:space="preserve">
+    <value>书签已清除</value>
+  </data>
+  <data name="DownloadsCleared" xml:space="preserve">
+    <value>下载已清除</value>
+  </data>
+  <data name="Footer" xml:space="preserve">
+    <value>EdgeHTML Reborn / Apotheosis — WebKit (WebCore) 2.52.4 — ARM32 UWP</value>
+  </data>
+  <data name="TabFav" xml:space="preserve">
+    <value>收藏夹</value>
+  </data>
+  <data name="TabHist" xml:space="preserve">
+    <value>历史记录</value>
+  </data>
+  <data name="TabDl" xml:space="preserve">
+    <value>下载</value>
+  </data>
+  <data name="ActionBtn" xml:space="preserve">
+    <value>添加书签</value>
+  </data>
+  <data name="DrawerTitle" xml:space="preserve">
+    <value>菜单</value>
+  </data>
+  <data name="UaBtn" xml:space="preserve">
+    <value>移动版网站</value>
+  </data>
+  <data name="BackLabel" xml:space="preserve">
+    <value>后退</value>
+  </data>
+  <data name="FwdLabel" xml:space="preserve">
+    <value>前进</value>
+  </data>
+  <data name="ReloadLabel" xml:space="preserve">
+    <value>刷新</value>
+  </data>
+  <data name="ActFavLabel" xml:space="preserve">
+    <value>书签</value>
+  </data>
+  <data name="NewTabLabel" xml:space="preserve">
+    <value>新标签页</value>
+  </data>
+  <data name="HomeLabel" xml:space="preserve">
+    <value>主页</value>
+  </data>
+  <data name="ActUaLabel" xml:space="preserve">
+    <value>桌面版网站</value>
+  </data>
+  <data name="FindInPageLabel" xml:space="preserve">
+    <value>页面内查找</value>
+  </data>
+  <data name="ShareLabel" xml:space="preserve">
+    <value>分享</value>
+  </data>
+  <data name="CopyLinkLabel" xml:space="preserve">
+    <value>复制链接</value>
+  </data>
+  <data name="DownloadLabel" xml:space="preserve">
+    <value>下载页面</value>
+  </data>
+  <data name="BookmarksLabel" xml:space="preserve">
+    <value>书签</value>
+  </data>
+  <data name="HistoryLabel" xml:space="preserve">
+    <value>历史记录</value>
+  </data>
+  <data name="DownloadsLabel" xml:space="preserve">
+    <value>下载</value>
+  </data>
+  <data name="SettingsLabel" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="TabSwitcherTitle" xml:space="preserve">
+    <value>标签页</value>
+  </data>
+  <data name="TabSwitcherDone" xml:space="preserve">
+    <value>完成</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="SettingsDefaultSearch" xml:space="preserve">
+    <value>默认搜索引擎</value>
+  </data>
+  <data name="SettingsLanguage" xml:space="preserve">
+    <value>界面语言</value>
+  </data>
+  <data name="SettingsHomepage" xml:space="preserve">
+    <value>主页网址（留空为默认）</value>
+  </data>
+  <data name="SettingsDesktopSite" xml:space="preserve">
+    <value>启动时请求桌面版网站</value>
+  </data>
+  <data name="SettingsCustomUA" xml:space="preserve">
+    <value>自定义 User-Agent（留空=使用开关；刷新后生效）</value>
+  </data>
+  <data name="SettingsDefaultZoom" xml:space="preserve">
+    <value>默认缩放</value>
+  </data>
+  <data name="SettingsConcurrentTabs" xml:space="preserve">
+    <value>多标签页（占位符）</value>
+  </data>
+  <data name="SettingsGPU" xml:space="preserve">
+    <value>GPU</value>
+  </data>
+  <data name="SettingsEnableGPU" xml:space="preserve">
+    <value>启动时启用 GPU（首次打开页面后自动）</value>
+  </data>
+  <data name="SettingsEnableGPUNow" xml:space="preserve">
+    <value>立即启用 GPU（重启后恢复）</value>
+  </data>
+  <data name="SettingsClearData" xml:space="preserve">
+    <value>清除数据</value>
+  </data>
+  <data name="SettingsClearHistory" xml:space="preserve">
+    <value>清除历史记录</value>
+  </data>
+  <data name="SettingsClearBookmarks" xml:space="preserve">
+    <value>清除所有书签</value>
+  </data>
+  <data name="SettingsClearDownloads" xml:space="preserve">
+    <value>清除下载</value>
+  </data>
+  <data name="SettingsDiagnostics" xml:space="preserve">
+    <value>诊断</value>
+  </data>
+  <data name="SettingsExportDebug" xml:space="preserve">
+    <value>导出调试日志 / 崩溃转储</value>
+  </data>
+  <data name="SettingsAboutUpdate" xml:space="preserve">
+    <value>关于 / 更新</value>
+  </data>
+  <data name="SettingsCheckUpdate" xml:space="preserve">
+    <value>检查更新（GitHub Releases）</value>
+  </data>
+</root>

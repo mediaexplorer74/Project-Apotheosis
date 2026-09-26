@@ -1,0 +1,55 @@
+<Page
+    x:Class="Apotheosis.Shell.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Apotheosis.Shell.Controls">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>   <!-- Toolbar / address bar -->
+            <RowDefinition Height="*"/>       <!-- Engine surface -->
+            <RowDefinition Height="Auto"/>   <!-- Status / progress -->
+        </Grid.RowDefinitions>
+
+        <!-- Toolbar -->
+        <Grid Grid.Row="0" Padding="8" ColumnSpacing="8" Background="{ThemeResource SystemChromeMediumColor}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" x:Name="BackButton" Content="&#xE72B;" FontFamily="Segoe MDL2 Assets"
+                    Command="{x:Bind ViewModel.GoBackCommand}"/>
+            <Button Grid.Column="1" x:Name="ForwardButton" Content="&#xE72A;" FontFamily="Segoe MDL2 Assets"
+                    Command="{x:Bind ViewModel.GoForwardCommand}"/>
+            <Button Grid.Column="2" x:Name="ReloadButton" Content="&#xE72C;" FontFamily="Segoe MDL2 Assets"
+                    Command="{x:Bind ViewModel.ReloadCommand}"/>
+
+            <TextBox Grid.Column="3" x:Name="AddressBar"
+                     Text="{x:Bind ViewModel.AddressBarText, Mode=TwoWay}"
+                     InputScope="Url"
+                     KeyDown="OnAddressBarKeyDown"/>
+
+            <Button Grid.Column="4" Content="Go" Command="{x:Bind ViewModel.NavigateCommand}"/>
+        </Grid>
+
+        <!-- Engine surface: the ONLY place native rendering happens.
+             Everything above and below this line is plain XAML chrome. -->
+        <controls:EngineHost Grid.Row="1" x:Name="Engine"/>
+
+        <!-- Status row -->
+        <Grid Grid.Row="2" Padding="8,4" Background="{ThemeResource SystemChromeLowColor}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}"
+                       TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+            <ProgressBar Grid.Column="1" Width="80" IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                         Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"/>
+        </Grid>
+    </Grid>
+</Page>

@@ -1,0 +1,5 @@
+14:32:34.374 app-ctor
+14:32:34.626 onlaunched
+14:32:34.656 mainpage-ctor
+14:32:34.690 mainpage-xaml-ok
+14:32:34.927 engine-load handle=140707527720960 err=0

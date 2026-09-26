@@ -1,0 +1,153 @@
+# ==== Build output / intermediates ====
+# NOTE: a pattern containing a slash is anchored to THIS .gitignore's directory (the repo root).
+# The harness lives under Src/, so "harness/AppPackages/" would NOT match "Src/harness/AppPackages/".
+# These are therefore written unanchored (no slash) to match at any depth.
+build-*/
+build-clang-webcore/
+build-clang-jit/
+build-clang-release/
+build-release/
+deps-build/
+*-build/
+AppPackages/
+Src/harness/ARM/
+Src/harness/Harness/
+Generated Files/
+obj/
+*.pch
+*.dmp
+crash/
+*.appx
+*.appxsym
+*.appxbundle
+# per-version appx build intermediates (what leaked before the path fix)
+*.psd1
+*.resfiles
+*.xbf
+*.intermediate
+*.cer
+*.pri
+*.appxmanifest.xml
+
+# ==== Binary / intermediate products ====
+*.obj
+*.lib
+*.dll
+*.pdb
+*.exe
+*.ilk
+*.exp
+*.winmd
+*.pri
+*.tlog
+*.idb
+*.iobj
+*.ipdb
+
+# ==== WebKit source (GB-level; engine patches tracked in memory) ====
+WebKit/
+
+# ==== Downloaded ANGLE binaries (re-downloadable; headers angle/include still tracked) ====
+angle/arm/
+angle-windowsstore/
+
+# ==== Logs / runtime status ====
+*.log
+jit-verify-result.txt
+jit-verify-status.txt
+gpu-verify-result.txt
+gpu-verify-status.txt
+gpu-build-status.txt
+deploy-status.txt
+stage.txt
+gpuprobe.txt
+jitresult.txt
+
+# ==== Fonts (re-downloadable) ====
+*.ttf
+*.ttc
+*.otf
+
+# ==== Fork temp backup ====
+.gpu-backup/
+
+# ==== Signing keys ====
+*.pfx
+
+# ==== Third-party reference / debug leftovers ====
+_ref/
+Navigator.i
+dist-14393/
+orig/
+k32test/
+
+# ==== Doc scratch (regenerable baselines / backups) ====
+Doc/font-baseline-*/
+Doc/qmark-backup/
+# Documentation archive: retained locally, not part of the public MVP tree.
+Doc/Archive/
+# Scratch and historical plan material
+Doc/PLAN-HISTORY.md
+Doc/qmark-*.tsv
+Doc/qmark-backup/
+Doc/qmark-map-driver.tsv
+Doc/qmark-report.ps1
+Doc/scan-encoding.ps1
+Doc/apply-qmark-map.ps1
+Doc/verify-qmark-fix.ps1
+Doc/build-*.log
+Doc/*.err.log
+
+# ==== Agent / editor scratch ====
+.mimocode/
+.monkeycode/
+.opencode/
+harness-build.log
+link-x64.log
+*.obj
+*.bak-20*
+
+# ==== Screenshots / scratch images (regenerable from the device) ===
+Images/shot-*.png
+Images/sshot*.png
+archive/
+
+# ==== Visual Studio ====
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# ==== CMake generated ====
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+cmakeconfig.h
+CPackConfig.cmake
+CPackSourceConfig.cmake
+*.dir/
+
+# ==== OS files ====
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# link maps: build artifacts (Src/port/WebCoreDriver-<arch>.map is ~40 MB each)
+*.map
+*.so
+
+# ==== Added 2026-09-26, first-commit hygiene ====
+# The previous check for "*.bak" matched the substring inside "*.bak-20*" and reported a
+# false positive, so .bak files were never actually excluded.
+*.bak
+# .NET Native / MSBuild output: the repo root .gitignore had obj/ but not bin/.
+bin/
+# Staging copies of the previous driver build, written by build-driver-dll-arm32.ps1.
+Src/port/_driver-backups/
+# Captured device-log dumps. Diagnostic evidence, reproducible, and far too large for the
+# repository: 466 files / ~432 MB of port-trace.txt alone. The conclusions are preserved in
+# Doc/Archive/ and Doc/Archive/PLAN-HISTORY.md; the raw logs stay on disk and in the D: backup.
+Doc/localstate-bak-*/
+Src/tools/device-logs/

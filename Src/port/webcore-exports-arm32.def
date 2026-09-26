@@ -1,0 +1,88 @@
+EXPORTS
+; ---- WebCore C++ internal symbols needed by port layer ----
+?begin@DocumentWriter@WebCore@@QAA_NABVURL@WTF@@_NPAVDocument@2@V?$optional@V?$ProcessQualified@VUUID@WTF@@@WebCore@@@std@@PBVNavigationAction@2@@Z
+?handleMouseMoveEvent@EventHandler@WebCore@@QAA?AVHandleUserInputEventResult@2@ABVPlatformMouseEvent@2@PAVHitTestResult@2@_N@Z
+?handleMousePressEvent@EventHandler@WebCore@@QAA?AVHandleUserInputEventResult@2@ABVPlatformMouseEvent@2@@Z
+?handleMouseReleaseEvent@EventHandler@WebCore@@QAA?AVHandleUserInputEventResult@2@ABVPlatformMouseEvent@2@@Z
+?frameViewDidScroll@RenderLayerCompositor@WebCore@@QAAXXZ
+?loadURL@FrameLoader@WebCore@@AAAX$$QAVFrameLoadRequest@2@ABVString@WTF@@W4FrameLoadType@2@PAVEvent@2@$$QAV?$RefPtr@$$CBVFormSubmission@WebCore@@U?$RawPtrTraits@$$CBVFormSubmission@WebCore@@@WTF@@U?$DefaultRefDerefTraits@$$CBVFormSubmission@WebCore@@@4@@5@$$QAV?$optional@VPrivateClickMeasurement@WebCore@@@std@@$$QAV?$CompletionHandler@$$A6AXXZ@5@@Z
+?loadWithDocumentLoader@FrameLoader@WebCore@@AAAXPAVDocumentLoader@2@W4FrameLoadType@2@$$QAV?$RefPtr@$$CBVFormSubmission@WebCore@@U?$RawPtrTraits@$$CBVFormSubmission@WebCore@@@WTF@@U?$DefaultRefDerefTraits@$$CBVFormSubmission@WebCore@@@4@@WTF@@W4AllowNavigationToInvalidURL@2@$$QAV?$CompletionHandler@$$A6AXXZ@6@@Z
+?stopAllLoaders@FrameLoader@WebCore@@QAAXW4ClearProvisionalItem@2@W4StopLoadingPolicy@2@@Z
+?goToItem@HistoryController@WebCore@@AAAXAAVHistoryItem@2@W4FrameLoadType@2@W4ShouldTreatAsContinuingLoad@2@W4ProcessSwapDisposition@2@@Z
+?restoreScrollPositionAndViewState@HistoryController@WebCore@@QAAXXZ
+?setSelection@FrameSelection@WebCore@@QAAXABVVisibleSelection@2@V?$OptionSet@W4SetSelectionOption@FrameSelection@WebCore@@$0A@@WTF@@UAXTextStateChangeIntent@2@W4CursorAlignOnScroll@12@W4TextGranularity@2@@Z
+?performMicrotaskCheckpoint@EventLoopTaskGroup@WebCore@@QAAXXZ
+?addData@DocumentWriter@WebCore@@QAAXABVSharedBuffer@2@@Z
+?aTag@HTMLNames@WebCore@@3V?$LazyNeverDestroyed@$$CBVHTMLQualifiedName@WebCore@@UAnyThreadsAccessTraits@WTF@@@WTF@@A DATA
+?inputTag@HTMLNames@WebCore@@3V?$LazyNeverDestroyed@$$CBVHTMLQualifiedName@WebCore@@UAnyThreadsAccessTraits@WTF@@@WTF@@A DATA
+?textareaTag@HTMLNames@WebCore@@3V?$LazyNeverDestroyed@$$CBVHTMLQualifiedName@WebCore@@UAnyThreadsAccessTraits@WTF@@@WTF@@A DATA
+; ---- Apotheosis: DOM link extraction (extractLinks in WebCoreDriver.cpp).
+; These MUST come from the DLL, not from WebCoreFull.lib. Document::links() builds a
+; DocLinks HTMLCollection whose traversal reads the HTMLNames globals (aTag/areaTag) and
+; caches itself in the document's node lists. Resolved from the static archive instead,
+; the EXE gets a second copy of that code bound to its own never-initialized copies of
+; those globals -> 0xC0000005 inside HTMLCollection::item(0). aTag above was already
+; exported for exactly this reason; the functions consuming it have to follow.
+?links@Document@WebCore@@QAA?AV?$Ref@VHTMLCollection@WebCore@@U?$RawPtrTraits@VHTMLCollection@WebCore@@@WTF@@U?$DefaultRefDerefTraits@VHTMLCollection@WebCore@@@4@@WTF@@XZ
+?scripts@Document@WebCore@@QAA?AV?$Ref@VHTMLCollection@WebCore@@U?$RawPtrTraits@VHTMLCollection@WebCore@@@WTF@@U?$DefaultRefDerefTraits@VHTMLCollection@WebCore@@@4@@WTF@@XZ
+?href@HTMLAnchorElement@WebCore@@QBA?AVURL@WTF@@XZ
+?insertTextWithoutSendingTextEvent@Editor@WebCore@@QAA_NABVString@WTF@@_NPAVTextEvent@2@@Z
+?s_defaultTimeoutInterval@ResourceRequestBase@WebCore@@0NA DATA
+?hasPlatformStrategies@WebCore@@YA_NXZ
+??_7ChromeClient@WebCore@@6B@ DATA
+
+?createBarcodeDetector@ChromeClient@WebCore@@UBA?AV?$RefPtr@VBarcodeDetector@ShapeDetection@WebCore@@U?$RawPtrTraits@VBarcodeDetector@ShapeDetection@WebCore@@@WTF@@U?$DefaultRefDerefTraits@VBarcodeDetector@ShapeDetection@WebCore@@@5@@WTF@@ABUBarcodeDetectorOptions@ShapeDetection@2@@Z
+?getBarcodeDetectorSupportedFormats@ChromeClient@WebCore@@UBAX$$QAV?$CompletionHandler@$$A6AX$$QAV?$Vector@W4BarcodeFormat@ShapeDetection@WebCore@@$0A@VCrashOnOverflow@WTF@@$0BA@UFastMalloc@5@@WTF@@@Z@WTF@@@Z
+?createFaceDetector@ChromeClient@WebCore@@UBA?AV?$RefPtr@VFaceDetector@ShapeDetection@WebCore@@U?$RawPtrTraits@VFaceDetector@ShapeDetection@WebCore@@@WTF@@U?$DefaultRefDerefTraits@VFaceDetector@ShapeDetection@WebCore@@@5@@WTF@@ABUFaceDetectorOptions@ShapeDetection@2@@Z
+?createTextDetector@ChromeClient@WebCore@@UBA?AV?$RefPtr@VTextDetector@ShapeDetection@WebCore@@U?$RawPtrTraits@VTextDetector@ShapeDetection@WebCore@@@WTF@@U?$DefaultRefDerefTraits@VTextDetector@ShapeDetection@WebCore@@@5@@WTF@@XZ
+
+; ---- Apotheosis: GPU compositing symbols (gpuPrepare/gpuPresent/gpuCompositeReadback
+; in WebCoreDriver.cpp). These four lack upstream WEBCORE_EXPORT, so before they were
+; listed here they were the ONLY reason WebCoreFull.lib had to stay in the harness link.
+; That archive then dragged GLContext/BitmapTexture/TextureMapper objects and their whole
+; transitive closure into the exe, giving every function-local static in them a second
+; copy independent of the DLL's -- the same duplicate-state class of bug as the earlier
+; BUILDING_WebCore/dllimport defect. Exporting them lets the harness drop the archive.
+??0BitmapTexture@WebCore@@AAA@ABVIntSize@1@V?$OptionSet@W4Flags@BitmapTexture@WebCore@@$0A@@WTF@@@Z
+?clearColor@TextureMapper@WebCore@@QAAXABVColor@2@@Z
+?createOffscreen@GLContext@WebCore@@SA?AV?$unique_ptr@VGLContext@WebCore@@U?$default_delete@VGLContext@WebCore@@@std@@@std@@AAVPlatformDisplay@2@@Z
+?setBackgroundColor@GraphicsLayerTextureMapper@WebCore@@UAAXABVColor@2@@Z
+
+; ---- Cairo C API functions (linked into WebCore.dll, needed by port layer) ----
+cairo_create
+cairo_destroy
+cairo_image_surface_create
+cairo_image_surface_get_data
+cairo_image_surface_get_stride
+cairo_status
+cairo_surface_destroy
+cairo_surface_flush
+cairo_surface_status
+cairo_close_path
+cairo_curve_to
+cairo_font_options_equal
+cairo_font_options_hash
+cairo_font_options_merge
+cairo_font_options_set_hint_metrics
+cairo_font_options_set_hint_style
+cairo_font_options_status
+cairo_get_matrix
+cairo_get_tolerance
+cairo_line_to
+cairo_move_to
+cairo_paint
+cairo_restore
+cairo_save
+cairo_scale
+cairo_set_font_options
+cairo_set_font_size
+cairo_set_line_cap
+cairo_set_line_join
+cairo_set_line_width
+cairo_set_matrix
+cairo_set_source_rgb
+cairo_set_tolerance
+cairo_stroke
+cairo_transform
+cairo_translate
+cairo_user_to_device_distance

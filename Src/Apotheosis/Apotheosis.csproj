@@ -1,0 +1,239 @@
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProjectGuid>{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}</ProjectGuid>
+    <OutputType>AppContainerExe</OutputType>
+    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
+    <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
+    <RootNamespace>Apotheosis</RootNamespace>
+    <AssemblyName>Apotheosis</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <PackageCertificateThumbprint>9775F34A02030380B99FFF4A1104CBFF8993A183</PackageCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
+    <OutputPath>bin\ARM\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Models.cs" />
+    <Compile Include="Str.cs" />
+    <Compile Include="WebCoreDriver.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="MainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\LargeTile.scale-100.png" />
+    <Content Include="Assets\LargeTile.scale-125.png" />
+    <Content Include="Assets\LargeTile.scale-150.png" />
+    <Content Include="Assets\LargeTile.scale-200.png" />
+    <Content Include="Assets\LargeTile.scale-400.png" />
+    <Content Include="Assets\SmallTile.scale-100.png" />
+    <Content Include="Assets\SmallTile.scale-125.png" />
+    <Content Include="Assets\SmallTile.scale-150.png" />
+    <Content Include="Assets\SmallTile.scale-200.png" />
+    <Content Include="Assets\SmallTile.scale-400.png" />
+    <Content Include="Assets\SplashScreen.scale-100.png" />
+    <Content Include="Assets\SplashScreen.scale-125.png" />
+    <Content Include="Assets\SplashScreen.scale-150.png" />
+    <Content Include="Assets\SplashScreen.scale-200.png" />
+    <Content Include="Assets\SplashScreen.scale-400.png" />
+    <Content Include="Assets\Square150x150Logo.scale-100.png" />
+    <Content Include="Assets\Square150x150Logo.scale-125.png" />
+    <Content Include="Assets\Square150x150Logo.scale-150.png" />
+    <Content Include="Assets\Square150x150Logo.scale-200.png" />
+    <Content Include="Assets\Square150x150Logo.scale-400.png" />
+    <Content Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-16.png" />
+    <Content Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-24.png" />
+    <Content Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-256.png" />
+    <Content Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-32.png" />
+    <Content Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-48.png" />
+    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-16.png" />
+    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-24.png" />
+    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-256.png" />
+    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-32.png" />
+    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-48.png" />
+    <Content Include="Assets\Square44x44Logo.png" />
+    <Content Include="Assets\Square150x150Logo.png" />
+    <Content Include="Assets\SplashScreen.png" />
+    <Content Include="Assets\cacert.pem" />
+    <!--
+      fontconfig runs inside an App Container, which has no system font directory.
+      SetupRuntimeEnv points FONTCONFIG_FILE at <installDir>\Assets\fonts, so the fonts
+      MUST ship there with the subfolder preserved (Link), otherwise they land in the
+      package root and the first cairo_scaled_font_create faults - a native exception
+      through the P/Invoke boundary, which .NET Native turns into FailFast(7) and kills
+      the process with no dump and no catchable exception. Same five files the native
+      harness ships in Src\harness\Assets\fonts.
+    -->
+    <Content Include="Assets\fonts\*.ttf">
+      <Link>Assets\fonts\%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <!--
+    Native WebKit driver payload, selected by $(Platform).
+
+    The DLLs MUST land at the package ROOT (see Link= below). The DllImport
+    declarations in WebCoreDriver.cs use bare filenames such as
+    "WebCoreDriver.dll", and an AppContainer only resolves those against the
+    package root - a native\x64\ subdirectory would require SetDllDirectory,
+    which is unavailable there. Without Link= the files would be staged under
+    native\ and every P/Invoke would fail with 0x8007007E.
+
+    $(Platform) picks the architecture:
+      x64  -> native\x64\*.dll  (engine set built today)
+      ARM  -> native\ARM\*.dll  (folder currently empty: the glob matches
+                                 nothing, so an ARM build stages no engine
+                                 rather than accidentally shipping x64 DLLs)
+    Dropping ARM binaries into native\ARM\ is therefore enough - no further
+    project-file editing needed.
+
+    WebCore.dll is explicitly EXCLUDED from both globs. Since 2026-09-26 the
+    driver links WebCore statically (WebCoreFull-x64-19041.lib /
+    WebCoreFull-arm32.lib), so WebCoreDriver.dll does not import WebCore.dll and
+    the file is dead weight - 44 MB on x64. On a 1 GB Lumia that is not a
+    rounding error, so the exclusion is enforced here rather than relying on
+    someone remembering to delete the file.
+  -->
+  <ItemGroup Condition=" '$(Platform)' == 'x64' ">
+    <Content Include="native\x64\*.dll" Exclude="native\x64\WebCore.dll">
+      <Link>%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'ARM' ">
+    <Content Include="native\ARM\*.dll" Exclude="native\ARM\WebCore.dll">
+      <Link>%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\Square44x44Logo.scale-100.png" />
+    <Content Include="Assets\Square44x44Logo.scale-125.png" />
+    <Content Include="Assets\Square44x44Logo.scale-150.png" />
+    <Content Include="Assets\Square44x44Logo.scale-200.png" />
+    <Content Include="Assets\Square44x44Logo.scale-400.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-16.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-24.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-256.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-32.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-48.png" />
+    <Content Include="Assets\StoreLogo.scale-100.png" />
+    <Content Include="Assets\StoreLogo.scale-125.png" />
+    <Content Include="Assets\StoreLogo.scale-150.png" />
+    <Content Include="Assets\StoreLogo.scale-200.png" />
+    <Content Include="Assets\StoreLogo.scale-400.png" />
+    <Content Include="Assets\WideTile.scale-100.png" />
+    <Content Include="Assets\WideTile.scale-125.png" />
+    <Content Include="Assets\WideTile.scale-150.png" />
+    <Content Include="Assets\WideTile.scale-200.png" />
+    <Content Include="Assets\WideTile.scale-400.png" />
+    <Content Include="Resources\en-US\Resources.resw" />
+    <Content Include="Resources\ru-RU\Resources.resw" />
+    <Content Include="Resources\zh-Hans\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="Microsoft.VCLibs, Version=14.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
+      <Version>6.2.14</Version>
+    </PackageReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+    <PackageCertificateKeyFile>Apotheosis_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <!--
+      Apotheosis_TemporaryKey.pfx (CN=media, thumbprint 9775F34A... - must stay
+      equal to PackageCertificateThumbprint above) was exported with an EMPTY
+      password. Declaring a non-empty password here makes _ValidateSigningCertificate,
+      which runs on EVERY build (PrepareForRunDependsOn), fail with
+      "Certificate could not be opened ... The specified network password is not correct".
+      The native harness pfx is the one whose password is "apotheosis" - do not copy that here.
+    -->
+    <PackageCertificatePassword></PackageCertificatePassword>
+    <AppxPackageSigningTimestampEnabled>false</AppxPackageSigningTimestampEnabled>
+  </PropertyGroup>
+  <!--
+    Placeholder for the ARM engine binaries: drop them into native\ARM\ and the
+    conditional ItemGroup above picks them up for Platform=ARM automatically.
+  -->
+  <ItemGroup>
+    <Folder Include="native\ARM\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Apotheosis_TemporaryKey.pfx" />
+  </ItemGroup>
+  <!--
+    Resolve the XAML targets to the actually-installed VS 2022 folder. The second
+    Import is a deliberate fallback: if v17.0 is missing it retries the
+    VisualStudioVersion-derived path rather than silently importing nothing.
+  -->
+  <PropertyGroup>
+    <ApotheosisXamlTargetsFolder Condition=" '$(ApotheosisXamlTargetsFolder)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v17.0</ApotheosisXamlTargetsFolder>
+  </PropertyGroup>
+  <Import Project="$(ApotheosisXamlTargetsFolder)\Microsoft.Windows.UI.Xaml.CSharp.targets" Condition="Exists('$(ApotheosisXamlTargetsFolder)\Microsoft.Windows.UI.Xaml.CSharp.targets')" />
+  <Import Project="$(ApotheosisXamlTargetsFolder)\Microsoft.Windows.UI.Xaml.CSharp.targets" Condition="!Exists('$(ApotheosisXamlTargetsFolder)\Microsoft.Windows.UI.Xaml.CSharp.targets')" />
+</Project>

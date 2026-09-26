@@ -1,0 +1,17 @@
+<Application
+    x:Class="Apotheosis.Shell.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- Keep theming here rather than inline in MainPage, so a
+                     future retro "Metro tile" resource dictionary swap is a
+                     one-line change, not a XAML rewrite. -->
+                <ResourceDictionary Source="Styles/BrowserChrome.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+
+</Application>

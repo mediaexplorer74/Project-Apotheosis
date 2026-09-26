@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  WebCoreDriver.vcxproj — Build WebCoreDriver.dll from Visual Studio 2022
+  
+  This is a UTILITY project that invokes clang-cl via custom build steps.
+  No CMake, no Ninja, no vcpkg required for this project.
+  
+  Usage:
+    1. Open this .vcxproj in VS 2022
+    2. Select configuration: Debug|x64 or Release|ARM
+    3. Build → it compiles 12 .cpp files with clang-cl + links with lld-link
+    
+  Prerequisites:
+    - LLVM/clang-cl installed at C:\Program Files\LLVM\bin\
+    - Pre-built WebKit in build-arm32-gpu\ (ARM) or build-x64-gpu\ (x64)
+    - vcpkg deps installed (cairo, curl, etc.)
+-->
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <ProjectGuid>{B1C2D3E4-F5A6-7890-ABCD-EF1234567890}</ProjectGuid>
+    <RootNamespace>WebCoreDriver</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <MinimumVisualStudioVersion>17.0</MinimumVisualStudioVersion>
+  </PropertyGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+
+  <!-- Shared properties for all configurations -->
+  <PropertyGroup>
+    <LLVMPath>C:\Program Files\LLVM\bin</LLVMPath>
+    <ApotheosisRoot>$(MSBuildProjectDirectory)\..\..</ApotheosisRoot>
+    <PortDir>$(MSBuildProjectDirectory)</PortDir>
+  </PropertyGroup>
+
+  <!-- ARM32 Release (default for Lumia 950) -->
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release' And '$(Platform)'=='ARM'">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ClangCL>
+      <Target>thumbv7-unknown-windows-msvc</Target>
+      <CppLanguageStd>stdcpp23</CppLanguageStd>
+      <Optimization>Full</Optimization>
+      <ExceptionHandling>Disabled</ExceptionHandling>
+      <PreprocessorDefinitions>ENABLE_JIT=1;WK_WINUWP=1;BUILDING_WEBKIT=1;BUILDING_WITH_CMAKE=1;BUILDING_WebCore=1;HAVE_CONFIG_H=1;UNICODE;_UNICODE;WIN32_LEAN_AND_MEAN;NOMINMAX;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_ENABLE_EXTENDED_ALIGNED_STORAGE;_HAS_EXCEPTIONS=0;__STDC_CONSTANT_MACROS;__WRL_NO_DEFAULT_LIB__;WINAPI_FAMILY=WINAPI_FAMILY_APP;_WIN32_WINNT=0x0A00;NTDDI_VERSION=0x0A000004;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ApotheosisRoot)\build-arm32-gpu;$(ApotheosisRoot)\build-arm32-gpu\WebCore\PrivateHeaders;$(ApotheosisRoot)\build-arm32-gpu\WebCore\DerivedSources;$(ApotheosisRoot)\WebKit\Source\WebCore;$(ApotheosisRoot)\WebKit\Source\WebCore\Modules\ShapeDetection\Interfaces;$(ApotheosisRoot)\WebKit\Source\WebCore\Modules\WebGPU\InternalAPI;$(ApotheosisRoot)\WebKit\Source\WebKitLegacy\WebCoreSupport;$(ApotheosisRoot)\WebKit\Source\WebKitLegacy;$(PortDir);$(ApotheosisRoot)\Src\angle\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-TP -FIconfig.h %(AdditionalOptions)</AdditionalOptions>
+    </ClangCL>
+    <Link>
+      <OutputFile>$(PortDir)\WebCoreDriver-arm.dll</OutputFile>
+      <ImportLibrary>$(PortDir)\WebCoreDriver-arm.lib</ImportLibrary>
+      <ModuleDefinitionFile>$(PortDir)\WebCoreDriver.exports.def</ModuleDefinitionFile>
+      <AdditionalLibraryDirectories>$(ApotheosisRoot)\build-arm32-gpu\lib;$(ApotheosisRoot)\Src\angle\arm;C:\vcpkg\installed\arm-uwp\lib;C:\icu-arm-uwp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>WebCore.lib;JavaScriptCore.lib;PAL.lib;WTF.lib;libEGL.lib;libGLESv2.lib;libcurl.lib;libssl.lib;libcrypto.lib;cairo.lib;pixman-1.lib;freetype.lib;harfbuzz.lib;fontconfig.lib;libexpat.lib;libxml2.lib;sqlite3.lib;z.lib;bz2.lib;brotlidec.lib;brotlicommon.lib;jpeg.lib;libpng16.lib;libwebp.lib;libwebpdemux.lib;libsharpyuv.lib;icuuc.lib;icuin.lib;icudt.lib;WindowsApp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+      <AppContainer>true</AppContainer>
+      <NoDefaultLib>true</NoDefaultLib>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <!-- x64 Release (PC dev) -->
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release' And '$(Platform)'=='x64'">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ClangCL>
+      <Target>x86_64-unknown-windows-msvc</Target>
+      <CppLanguageStd>stdcpp23</CppLanguageStd>
+      <Optimization>Full</Optimization>
+      <ExceptionHandling>Disabled</ExceptionHandling>
+      <PreprocessorDefinitions>ENABLE_JIT=1;WK_WINUWP=1;BUILDING_WEBKIT=1;BUILDING_WITH_CMAKE=1;BUILDING_WebCore=1;HAVE_CONFIG_H=1;UNICODE;_UNICODE;WIN32_LEAN_AND_MEAN;NOMINMAX;NOCRYPT;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_ENABLE_EXTENDED_ALIGNED_STORAGE;_HAS_EXCEPTIONS=0;__STDC_CONSTANT_MACROS;__WRL_NO_DEFAULT_LIB__;WINAPI_FAMILY=WINAPI_FAMILY_APP;_WIN32_WINNT=0x0A00;NTDDI_VERSION=0x0A000004;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ApotheosisRoot)\build-x64-gpu;$(ApotheosisRoot)\build-x64-gpu\WebCore\PrivateHeaders;$(ApotheosisRoot)\build-x64-gpu\WebCore\DerivedSources;$(ApotheosisRoot)\WebKit\Source\WebCore;$(ApotheosisRoot)\WebKit\Source\WebCore\Modules\ShapeDetection\Interfaces;$(ApotheosisRoot)\WebKit\Source\WebCore\Modules\WebGPU\InternalAPI;$(ApotheosisRoot)\WebKit\Source\WebKitLegacy\WebCoreSupport;$(ApotheosisRoot)\WebKit\Source\WebKitLegacy;$(PortDir);$(ApotheosisRoot)\Src\angle\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-TP -FIconfig.h %(AdditionalOptions)</AdditionalOptions>
+    </ClangCL>
+    <Link>
+      <OutputFile>$(PortDir)\WebCoreDriver-x64.dll</OutputFile>
+      <ImportLibrary>$(PortDir)\WebCoreDriver-x64.lib</ImportLibrary>
+      <ModuleDefinitionFile>$(PortDir)\WebCoreDriver.exports.def</ModuleDefinitionFile>
+      <AdditionalLibraryDirectories>$(ApotheosisRoot)\build-x64-gpu\lib;$(ApotheosisRoot)\Src\angle\x64;C:\vcpkg\installed\x64-uwp\lib;C:\icu-x64-uwp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>WebCore.lib;JavaScriptCore.lib;PAL.lib;WTF.lib;libEGL.lib;libGLESv2.lib;libcurl.lib;libssl.lib;libcrypto.lib;cairo.lib;pixman-1.lib;freetype.lib;harfbuzz.lib;fontconfig.lib;libexpat.lib;libxml2.lib;sqlite3.lib;z.lib;bz2.lib;brotlidec.lib;brotlicommon.lib;jpeg.lib;libpng16.lib;libwebp.lib;libwebpdemux.lib;libsharpyuv.lib;icuuc.lib;icuin.lib;icudt.lib;WindowsApp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+      <AppContainer>true</AppContainer>
+      <NoDefaultLib>true</NoDefaultLib>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(LLVMPath)\..\lib\clang\18\lib\windows\clang-cl.props" Condition="Exists('$(LLVMPath)\..\lib\clang\18\lib\windows\clang-cl.props')" />
+  </ImportGroup>
+
+  <ItemGroup>
+    <ClCompile Include="core.cpp" />
+    <ClCompile Include="browser.cpp" />
+    <ClCompile Include="PortChromeClient.cpp" />
+    <ClCompile Include="LoadingFrameLoaderClient.cpp" />
+    <ClCompile Include="PortPlatformStrategies.cpp" />
+    <ClCompile Include="PortNetworkStorageSession.cpp" />
+    <ClCompile Include="webcore-driver-stubs.cpp" />
+    <ClCompile Include="stubs-crypto.cpp" />
+    <ClCompile Include="stubs-pasteboard.cpp" />
+    <ClCompile Include="stubs-network.cpp" />
+    <ClCompile Include="stubs-ax.cpp" />
+    <ClCompile Include="stubs-other.cpp" />
+    <ClCompile Include="stubs-loader.cpp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="WebCoreDriver.h" />
+    <None Include="WebCoreDriverInternal.h" />
+    <None Include="WebCoreDriver.exports.def" />
+  </ItemGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+
+</Project>

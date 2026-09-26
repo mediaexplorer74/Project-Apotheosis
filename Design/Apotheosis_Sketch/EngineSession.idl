@@ -1,0 +1,73 @@
+namespace Apotheosis.EngineWinRT
+{
+    // Mirrors the load-state notion already implicit in WebCoreDriver's
+    // persistent Page/Frame session (port/WebCoreDriver.h). Kept intentionally
+    // small — add states only if the native driver actually distinguishes them.
+    enum EngineLoadState
+    {
+        Idle,
+        Loading,
+        Loaded,
+        Failed,
+    };
+
+    runtimeclass NavigationEventArgs
+    {
+        String Url{ get; };
+        Boolean IsSuccess{ get; };
+    }
+
+    // The WinRT projection of port/WebCoreDriver's C ABI.
+    //
+    // Design rule: this class does NOT reimplement anything WebCoreDriver
+    // already does. Every method here should be a thin marshal-and-forward
+    // to an existing WebCoreDriver_* C function. If a method here has no
+    // obvious native counterpart yet, that's a signal the native ABI needs
+    // a new export, not that this class should grow logic of its own.
+    runtimeclass EngineSession
+    {
+        EngineSession();
+
+        // Lifecycle. Initialize() creates the native WebCoreDriver session;
+        // Shutdown() tears it down. Must be called from the UI thread; the
+        // native session itself may spin up its own engine thread internally.
+        void Initialize();
+        void Shutdown();
+
+        // GPU interop — the one operation C# cannot perform directly.
+        // Implementation must QueryInterface the panel for ISwapChainPanelNative
+        // and hand it the DXGI swap chain WebCore's ANGLE/TextureMapper path
+        // renders into. See EngineSession.cpp for the exact hookup point.
+        void SetSwapChainPanel(Microsoft.UI.Xaml.Controls.SwapChainPanel panel);
+        void Resize(Single width, Single height);
+
+        // Navigation
+        void Navigate(String url);
+        void GoBack();
+        void GoForward();
+        void Reload();
+        void Stop();
+
+        Boolean CanGoBack{ get; };
+        Boolean CanGoForward{ get; };
+        String CurrentUrl{ get; };
+        EngineLoadState LoadState{ get; };
+
+        // Input forwarding. Coordinates are in DIPs, relative to the
+        // SwapChainPanel — the C# host control is responsible for the
+        // pointer-to-panel coordinate conversion before calling these.
+        void OnPointerPressed(Single x, Single y);
+        void OnPointerMoved(Single x, Single y);
+        void OnPointerReleased(Single x, Single y);
+        void OnPinchZoom(Single centerX, Single centerY, Single scaleDelta);
+
+        // All three events are guaranteed to be raised on the thread that
+        // called Initialize() (i.e. the UI thread), regardless of which
+        // thread the underlying WebCore callback fired on. This is the
+        // whole point of this class existing — see the thread-marshaling
+        // note in EngineSession.cpp before touching the callback plumbing.
+        event Windows.Foundation.TypedEventHandler<EngineSession, NavigationEventArgs> NavigationCompleted;
+        event Windows.Foundation.TypedEventHandler<EngineSession, String> TitleChanged;
+        event Windows.Foundation.TypedEventHandler<EngineSession, EngineLoadState> LoadStateChanged;
+    }
+}

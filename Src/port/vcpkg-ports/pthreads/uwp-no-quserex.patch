@@ -1,0 +1,11 @@
+--- a/pthread_win32_attach_detach_np.c
++++ b/pthread_win32_attach_detach_np.c
+@@ -85,7 +85,7 @@
+     __ptw32_h_quserex = LoadLibrary(QuserExDLLPathBuf);
+   }
+ #else
+-#  if ! defined(WINCE)
++#  if ! defined(WINCE) && (!defined(WINAPI_FAMILY) || WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP))
+   if(GetSystemDirectory(QuserExDLLPathBuf, sizeof(QuserExDLLPathBuf)/sizeof(TCHAR)) &&
+       0 == _tcsncat_s(QuserExDLLPathBuf, _countof(QuserExDLLPathBuf), TEXT("\\QUSEREX.DLL"), 12))
+     {

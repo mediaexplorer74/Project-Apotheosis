@@ -1,0 +1,60 @@
+# Apotheosis: a navigation sequence played back through the HARNESS path, one URL per line.
+#
+# Why this file exists. Device Portal on this Lumia (OS 15254.603) can READ files out of LocalState but
+# cannot WRITE them -- every upload form returns HTTP 500 -- so a test sequence cannot be pushed to the
+# phone at runtime. The one channel that does reach the device is the appx itself, so the sequence ships
+# inside the package and the app plays it on startup.
+#
+# Why not autodiag.txt, which already exists. That one calls WebCoreSessionLoad directly and initialises
+# the GPU offscreen, bypassing NavigateTo, the parking logic, NavRetry and the GPU-enable callback. On
+# 2026-08-21 it loaded four pages in one session and all four painted, while the same sequence by hand on
+# the device went blank after the first -- so it cannot see defects that live in the harness path, which
+# is where the last two turned out to be.
+#
+# THE SWITCH LIVES IN THIS FILE, on purpose. A marker file in LocalState would have been the obvious
+# design and is useless here, because that is exactly what cannot be delivered to the device. Shipping
+# the switch inside the package means it is decided at build time, which is the channel that works: a
+# release build sets enabled=0 (or drops the file) and the player stays silent.
+#
+# Format: blank lines and lines starting with # are ignored.
+#   enabled=1         play the sequence. Anything else, or absent, means do nothing at all.
+#   keepawake=1       hold a DisplayRequest while the browser is in the foreground, so the phone does not
+#                     dim and lock during a test. This lives here rather than in settings.ini for the same
+#                     reason everything else does: settings.ini is in LocalState, and Device Portal cannot
+#                     write there. The setting existed for a day before anyone noticed it had never once
+#                     been active on the device, because there was no way to deliver it.
+#                     It matters for diagnosis, not comfort: an app that loses foreground focus gets
+#                     suspended and then reaped by the OS, which looks exactly like a crash -- no UEF
+#                     line, no minidump, log ending mid-load. Keeping the screen alive removes that
+#                     explanation from the table instead of leaving it to argue about.
+#   jit=0             turn JavaScriptCore's JIT off for this build, by setting JSC_useJIT=false in the
+#                     environment before the engine initialises (Options.cpp scans for JSC_* names at
+#                     JSC::initialize() time). Absent, or anything other than 0, leaves the JIT alone.
+#                     THIS COSTS SPEED and is a diagnostic, not a setting: it exists because the JIT
+#                     works on the Lumia and is blocked by DEP/ACG on the x64 bench, so the device runs
+#                     compiled code where the bench interprets -- the largest remaining difference
+#                     between a phone that dies inside RunLoop::run() and a bench that survives the
+#                     same sequence. Set it back to 1 once the question is answered.
+#   delay=<seconds>   wait this long before the NEXT url, and before each one after it until changed.
+#                     0 means "as soon as possible", which is how a navigation is landed on top of a
+#                     running load -- the loading=1 condition behind the crash being chased.
+#   <url>             navigated to through the same code path a finger on the address bar would take.
+enabled=0
+keepawake=1
+# 2026-08-21: jit=0 was shipped once, in 0.1.9.38, to test whether the silent death needs compiled
+# code. It does not -- the crash reproduced identically with the JIT off, so the hypothesis is dead
+# and the switch is back to 1. Doc/PUMPLOOP-SILENT-DEATH.md has the run.
+jit=1
+
+# Part one: does the blank-second-load fix hold? Three settled loads, all three should paint.
+delay=25
+https://example.com
+https://example.com
+https://news.ycombinator.com
+
+# Part two: step on the navigate-while-loading defect deliberately. The heavy page goes first, because a
+# light one finishes before the next navigation can overlap it -- example.com loads in 1.4 s on the bench,
+# which is why a 2-second gap reproduced nothing there.
+delay=0
+https://news.ycombinator.com
+https://example.com

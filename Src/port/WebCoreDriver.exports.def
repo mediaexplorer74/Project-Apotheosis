@@ -1,0 +1,74 @@
+; WebCoreDriver.exports.def — 30 essential C ABI exports for the C# UWP harness.
+; Build: link with /DEF:WebCoreDriver.exports.def to produce clean DLL exports.
+;
+; 9 functions removed from export surface:
+;   WebCoreRenderHtmlStub   — test stub, never called
+;   WebCoreLoadUrl          — replaced by WebCoreSessionLoad (persistent session)
+;   WebCoreSetCACertPath    — file-based CA fails in App Container; use Blob variant
+;   WebCoreGetPageScale     — scale tracked on harness side (m_pageScale)
+;   WebCoreSessionPaint     — superseded by WebCoreLiveTick
+;   WebCoreComposite        — GPU direct-present happens inside LiveTick/ClickAt
+;   WebCoreCompositeReadback — replaced by GPU direct-present path
+;   WebCoreGpuSetFlip       — debug-only, not used
+;   WebCoreEvalJS           — JS injection, not needed for browsing
+
+LIBRARY WebCoreDriver
+EXPORTS
+    ; TLS / CA certificates
+    WebCoreSetCACertBlob
+
+    ; Apotheosis: managed-host support (native FONTCONFIG_FILE, opt-in SEH guard, probes)
+    WebCoreSetFontConfigFile
+    WebCoreSetSehGuard
+    WebCoreGetSehInfo
+    WebCoreGetFontInfo
+    WebCoreDumpFontConfig
+
+    ; Content configuration (JS / images toggles from Settings)
+    WebCoreConfigure
+
+    ; One-shot rendering (home page, error pages)
+    WebCoreRenderHtml
+
+    ; Persistent session lifecycle
+    WebCoreSessionLoad
+    WebCoreCloseSession
+
+    ; Interaction
+    WebCoreClickAt
+    WebCoreScrollBy
+    WebCoreSyncLinks
+    WebCoreTypeText
+    WebCoreKeyAction
+    WebCoreFocusedEditable
+    WebCoreSetPageScale
+    WebCoreLiveTick
+
+    ; Metadata / diagnostics
+    WebCoreGetTitle
+    WebCoreGetUrl
+    WebCoreGetLinkCount
+    WebCoreGetLink
+    WebCoreGetFrameHash
+    WebCoreGetPendingResourceCount
+    WebCoreGetLastError
+    WebCoreGetDiag
+    WebCoreEditDebug
+
+    ; Find in page
+    WebCoreFindString
+    WebCoreFindNext
+    WebCoreFindClear
+
+    ; Downloads
+    WebCoreDownload
+
+    ; User agent
+    WebCoreSetUserAgentMobile
+    WebCoreSetUserAgentString
+
+    ; GPU compositing
+    WebCoreGpuInit
+    WebCoreEnableCompositing
+    WebCoreGpuLayerInfo
+    WebCoreSetGpuInitLogFile
