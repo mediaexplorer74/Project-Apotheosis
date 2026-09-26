@@ -1,77 +1,73 @@
 # Src/Apotheosis — the C# harness experiment (stopped, kept on purpose)
 
-**Status: abandoned experiment. Not built, not maintained, not expected to compile as-is.**
-Nothing in the working browser depends on it. It is kept because the idea was sound and the reason it
-was dropped turned out to be weak — so the next person should be able to pick the decision up on
-accurate grounds instead of re-deriving it.
+**Status: research reference, not a shipping project.** The working browser is the native C++/CX
+harness in `Src/harness`. Nothing in the working browser depends on this directory.
 
-## What it is
+This is a deliberately reduced C#/XAML harness: address bar and content view. It is not a half-finished
+copy of `Src/harness` and it is not a drop-in replacement for the native harness.
 
-A port of the harness UI from C++/CX to C#, started around 2026-07 with a deliberately reduced brief:
-**address bar and content view only** — no history, no bookmarks, no find-in-page, no diagnostics page,
-no overlays. It is not a half-finished copy of `Src/harness`; it is a smaller thing, finished to a
-smaller specification.
+## Why it exists
 
-Measured 2026-08-22:
+C# would give us readable UI code, catchable managed exceptions, and a smaller XAML surface. The
+measured objections to managed marshalling are not currently a reason to declare the idea impossible:
+blittable `DllImport` calls are cheap relative to a WebCore tick, and a pinned byte buffer can pass a
+frame without an extra managed copy. The unknown is the UWP toolchain, especially ARM32 .NET Native.
 
-| | `Src/harness` (C++/CX, working) | `Src/Apotheosis` (C#) |
-|---|---|---|
-| page code | 4937 lines | 2234 |
-| XAML | 548 | 459 |
-| ABI surface | 44 exports in `WebCoreDriver.h` | 30 `DllImport`s in `WebCoreDriver.cs` |
+The native harness also contains engine-thread plumbing, job labels, heartbeat diagnostics, packaged
+test switches, navigation guards, and the GPU/software fallback. Replacing it with a small C# UI would
+lose those measurements until they are deliberately ported.
 
-The 30-of-44 gap is mostly the features the brief excluded, not missing work.
+## Architecture boundary
 
-## Which solution is which
+The C# project must talk to a C ABI, not to WebKit static libraries:
 
-- `Src/Harness.sln` — the **working** C++/CX harness. This is what ships.
-- `Src/Apotheosis.sln` — this C# project alone.
-- `Apotheosis.sln` (repo root) — `WebCoreDriver` **and** this C# project. Opening it and building
-  everything will not produce the browser; that is `Src/Harness.sln`.
+```text
+C# UWP app
+    ↓ P/Invoke
+WebCoreDriver.dll
+    ↓
+WebCore.dll / JavaScriptCore.dll
+```
 
-## Why it was stopped, and why that reason does not hold up
+`WebCoreDriver.cs` declares 30 P/Invoke calls. The C++/CX harness instead links native archives such as
+`WebCoreDriver-gpu-x64.lib`, `WebCore.lib`, and `JavaScriptCore.lib`; those are native link inputs, not
+managed references. `WebCoreFull.lib` is a special native workaround archive for unresolved WebCore
+internals and is not a C# reference. Do not copy WebKit `.lib` files into `Apotheosis.csproj`.
 
-It was stopped on the argument that marshalling C ABI calls from managed code would cost performance.
-On the numbers that objection is **overstated**:
+A managed probe can be useful for a harmless C ABI round-trip and package check. It is not proof that a
+site paints until the real WebKit runtime is loaded and the frame is inspected.
 
-- A `DllImport` call with blittable arguments costs tens of nanoseconds. This ABI is coarse:
-  `WebCoreLiveTick` performs a run-loop pump, a rendering update, layout and a full paint — measured in
-  hundreds of milliseconds on the device. Thirty such calls per second at 50 ns each is noise.
-- The frame buffer is the only bulk transfer: `WebCoreLiveTick(uint8_t*)` fills roughly 711 KB
-  (360×494×4) per tick. From C# a `byte[]` can be pinned with `fixed` and passed directly — no copy.
-  The C++/CX harness already copies that buffer into a `WriteableBitmap`, so the cost is comparable.
+## What the project currently contains
 
-And one thing C# would genuinely have bought, which is worth stating plainly: **a null reference in C#
-throws a catchable exception with a stack trace, while a null `^` handle in C++/CX is a raw access
-violation that `catch (...)` cannot catch under `/EHsc`.** That exact failure killed startup silently in
-versions 0.1.8.64 through 0.1.8.67, and it is what motivated this experiment. A minimal UI also means
-few XAML connection ids, so less exposure to the drift that caused it, and C# has no two-pass
-`MainPage.g.hpp` trap at all.
+- `App.xaml`, `MainPage.xaml`, and managed UI code;
+- `WebCoreDriver.cs` with the 30-call managed ABI surface;
+- SDK 19041 UWP project settings and x64/ARM configurations;
+- a certificate reference and package assets, but no verified `WebCoreDriver.dll` packaging path;
+- no project reference or native library reference to WebCore.
 
-That wound is now fenced on the C++ side instead: `Src/tools/verify-xaml-connect.ps1` fails the build on
-any markup/code drift, and the "never `/t:Rebuild`" rule is in CLAUDE.md.
+`Src/Apotheosis.sln` contains this project alone. `Apotheosis-mix.sln`, when present, is a visual
+research solution only: opening it does not mean that Build Solution produces the browser. The engine
+is still built separately with CMake/Ninja/clang-cl, and the driver DLL must be built and packaged
+before a managed runtime probe is meaningful.
 
-## What actually argues against resuming *right now*
+## If resuming it
 
-1. **The instrumentation, not the UI.** The C++ harness has since grown the machinery that is currently
-   closing an open defect: a dedicated engine thread with a labelled job queue, a heartbeat reporting
-   `busy` / `pending` / `finished` / `job` / `tickstep`, the live-tick step counter, screen-wake and test
-   switches shipped inside the package, the duplicate-navigation guard, and the GPU-enable path with its
-   software fallback. None of that is UI decoration and a minimal brief does not excuse porting it.
-2. **.NET Native for UWP on ARM32 under VS 2022 is an unknown.** Not a small risk, not a measured one
-   either — nobody has tried. This, rather than marshalling, is the question to answer first.
-3. **Timing.** Replacing the harness mid-investigation means restarting a defect hunt with zero
-   instrumentation.
+1. Finish the current x64 SDK 19041 WebKit build and record its result.
+2. Build an empty C# UWP ARM32 package first. If that cannot be built and installed under VS 2022,
+   stop: the next questions are irrelevant.
+3. Build a real `WebCoreDriver.dll` for the chosen architecture and place it in the appx package.
+4. Verify architecture, package identity, AppContainer deployment, and a harmless ABI round-trip.
+5. Only then connect the UI to `WebCoreSessionLoad`, `WebCoreLiveTick`, and the paint buffer.
+6. Port engine-thread plumbing, job queue, heartbeat, diagnostics, and navigation state before calling
+   the managed harness a browser.
 
-## What this directory is good for today
+## Measurement honesty
 
-- A compact, readable statement of the **minimum viable harness** — useful when arguing about what the
-  MVP actually needs.
-- A ready reference for the ABI surface from a managed caller, if the engine is ever embedded elsewhere.
+A compile-only C# success means "managed project can be compiled." It does not mean WebKit works, ARM32
+deployment works, or a page painted. Those are separate acceptance gates and must be reported as such.
 
-## If you resume it
+The native line remains the shipping path:
 
-Answer (2) above first — build an empty C# UWP app for ARM32 and deploy it to the device. If that does
-not work, nothing else matters. Then port the plumbing before the UI: engine thread, job queue with
-labels, heartbeat, packaged switches. Read `Doc/WIKI_EN.md` §11 and `Doc/PUMPLOOP-SILENT-DEATH.md` first,
-so the diagnostics come across intact rather than being rediscovered.
+```text
+WebKit CMake/Ninja → WebCore/JavaScriptCore → port archive → C++/CX Harness.vcxproj → appx
+```
