@@ -14,3 +14,8 @@ These are short operating rules distilled from the detailed reports in [Archive/
 - Do not rebuild the engine for a harness-only presentation question unless a measurement requires it.
 - Preserve the Chinese comments in the original build/deploy scripts; they are an intentional tribute.
   The `en/ru/zh` UI strings are an intentional feature.
+- Never reproduce a port compile rule by guessing a short include list. Extract the complete
+  `DEFINES`/`FLAGS`/`INCLUDES` from the exact build tree (`build.ninja`); the full list carries generated
+  headers and platform-specific paths that short lists silently omit.
+- A successful WebKit build plus successful port-object compilation is not yet a working driver DLL. The
+  link boundary may still require the native `WebCoreFull`-style archive for WebCore internal symbols.

@@ -703,6 +703,25 @@ compiler. Reference: `Doc/UNIFICATION.md` §C, `verify-xaml-connect.ps1` header,
 
 Item 1 (continue crash verification) is answered by §0i/CalculationValue work — see Archive/PLAN-HISTORY.md.
 
+
+### 19041 native-driver probe result (2026-09-26)
+
+The separate `build-x64-19041-probe` completed the full WebKit build with `NINJA_EXIT=0` and produced
+`WebCore.dll`, `JavaScriptCore.dll`, `WebCore.lib`, and `JavaScriptCore.lib`. A driver probe then compiled
+all 13 native port translation units, including `WebCoreDriver.cpp`, with the full `build.ninja` compile
+context. The probe initially exposed a real missing definition of `apoRefreshDiagCarried`; the working-tree
+fix adds the small adapter that carries the last measured non-white count into `writeDiag`.
+
+The DLL link is not complete. After the compile succeeded, `lld-link` reported unresolved WebCore internal
+symbols such as `WebCore::RenderTheme::*`, `WebCore::Theme::drawNamedImage`, and
+`WebCore::ScrollbarTheme::handleMousePressEvent`. This is the expected difference between an import-only
+`WebCore.lib` and the native harness's `WebCoreFull`-style archive. The next step is a bounded x64-19041
+`WebCoreFull`-equivalent link probe; do not treat the C# boundary as proven until a real driver DLL links and
+exports the 30 C ABI functions.
+
+The probe scripts and logs live under `build-x64-19041-probe`; they are diagnostic inputs, not source
+changes. The production `build-x64-gpu` and `build-arm32-gpu` remain untouched.
+
 ## C# harness probes — managed DLL boundary (2026-09-25)
 
 ### Decision
