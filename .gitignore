@@ -63,8 +63,11 @@ stage.txt
 gpuprobe.txt
 jitresult.txt
 
-# ==== Fonts (re-downloadable) ====
-*.ttf
+# ==== Fonts ====
+# These five TTFs are NOT re-downloadable: they are the ONLY fonts available inside the
+# AppContainer, they are staged into the appx as Assets\fonts, and without them the app does
+# not start. They are committed deliberately and are expected in the GitHub mirror too.
+# (MSDN admin / Microsoft developer-program member, 2026-09-26: redistribution is fine.)
 *.ttc
 *.otf
 
