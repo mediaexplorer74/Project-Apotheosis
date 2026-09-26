@@ -727,6 +727,19 @@ changes. The production `build-x64-gpu` and `build-arm32-gpu` remain untouched.
 ### Decision
 
 The C# harness is an experiment, not the shipping browser. It must not be wired to WebKit static
+
+### 19041 driver DLL probe (2026-09-26, completed)
+
+The archive-first link succeeded after building `WebCoreFull-x64-19041.lib` (939 WebCore objects) and
+`PAL-x64-19041.lib` (24 PAL objects), linking those before the remaining native dependencies, and using
+`cairo-complete-x64-uwp.lib` plus `harfbuzz-icu.lib`. `lld-link` produced
+`WebCoreDriver-x64-19041.dll` (46,197,248 bytes) with exit code 0. The 32 named functions in
+`WebCoreDriver.exports.def` are present; the extra WebCore-looking entry is the library name, not a
+function export. The DLL still lists runtime dependencies such as `JavaScriptCore.dll`, ICU 78, ANGLE,
+curl, freetype, pixman, and the MSVC CRT, so a C# appx must package the corresponding runtime files.
+The C# x64 probe may now test package placement and a harmless P/Invoke round-trip. This still does not
+prove that a page paints; that remains a separate WebCore runtime test.
+
 archives by assumption. The measured and supported boundary is:
 
 ```text
