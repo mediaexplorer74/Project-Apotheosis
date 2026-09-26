@@ -144,3 +144,23 @@ These are short operating rules distilled from the detailed reports in [Archive/
 - **A static library records its target machine.** ARM archives must be built with
   `...\MSVC\14.44.35207\bin\Hostx64\arm\lib.exe`; an x64 `lib.exe` produces a library that
   `link.exe /MACHINE:ARM` rejects. And the ARM SDK is **10.0.19041.0** — 26100 does not ship ARM32 libs.
+- **A renamed build tree leaves stale paths in `CMakeFiles/TargetDirectories.txt` too.** After the
+  `build-x64-19041-probe` → `build-x64-gpu` rename, `build.ninja`, `.ninja_deps` and the `*.rsp` files
+  were fixed, but 15 CMake-generated files were not: `CMakeFiles/TargetDirectories.txt` (101
+  occurrences), `CMakeFiles/rules.ninja`, every `cmake_install.cmake`, and the two `CPack*.cmake`.
+  The symptom appears only on the *next* ninja run, and it is nasty: ninja decides CMake is stale,
+  and `TargetDirectories.txt` sends the regeneration into a directory that no longer exists —
+  `Configuring incomplete, errors occurred!`. The rule template in `build.ninja` itself was correct,
+  so grepping `build.ninja` finds nothing and the cause looks impossible. A rename sweep must cover
+  `CMakeFiles/**` and `**/cmake_install.cmake`, not just the ninja files.
+- **Never use `Get-ChildItem | Length` to check header integrity — symlinks report 0.** 4663 of the
+  7770 `.h` files under `build-x64-gpu` are symlinks, and PowerShell reports `Length = 0` for every
+  one, which looks exactly like a tree destroyed by an interrupted build. It is not: read through the
+  link (`Get-Content`) or stat the target. A genuine check is
+  `Where-Object { -not ($_.Attributes -band [IO.FileAttributes]::ReparsePoint) }` — that left 26 real
+  files, all `.lut.h` dated 2026-09-25, i.e. legitimately empty generated headers from the original
+  build. I raised a false alarm on this and killed two builds for nothing.
+- **Re-running CMake invalidates the whole ninja build.** The regeneration rewrites `build.ninja`, so
+  every recorded command hash changes and the next `ninja <single-target>` still wants thousands of
+  edges (4280 observed). A one-file change in a WebCore TU is therefore *not* a minutes-long
+  operation once CMake has re-run — budget a full WebCore rebuild, or compile the TU by hand.

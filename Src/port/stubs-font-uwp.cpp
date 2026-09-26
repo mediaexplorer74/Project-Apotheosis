@@ -8,6 +8,8 @@
 #if PLATFORM(WIN) && USE(CAIRO) && defined(WK_WINUWP)
 
 #include <wtf/HashFunctions.h>
+#include <cstring>
+#include <memory>
 
 namespace WebCore {
 
@@ -19,9 +21,120 @@ void FontCache::platformInvalidate()
 {
 }
 
-std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription&, const AtomString&, const FontCreationContext&, OptionSet<FontLookupOptions>)
+// Apotheosis 2026-09-26: this function used to `return nullptr` unconditionally, and that single
+// line is why the browser drew boxes, gradients, borders and layout but not a single glyph.
+// WebCore asks for a face by family name; a nullptr here means no FontPlatformData is ever built,
+// so no run of text is ever shaped, so nothing is ever rasterised. The whole FreeType + Cairo FT
+// path is present and working -- it was simply never asked for a file.
+//
+// The bundled-face machinery already existed and is used by systemFallbackForCharacterCluster
+// below: apotheosisSetForcedBundledFontName() -> apotheosisBundledFontFaceForName() (FreeType,
+// cairo-ft) -> apotheosisCreateScaledFont(). All this adds is the family -> file decision.
+//
+// Deliberately minimal: five bundled faces, regular style only, no foreign formats. Weight and
+// italic are ignored because no bold/italic cut is bundled; a browser that renders bold text as
+// regular is a cosmetic problem, whereas one that renders no text at all is fatal.
+
+namespace {
+
+// ASCII lower-casing, and folding of spaces/quotes, so that "Times New Roman", "times new roman"
+// and "TIMESNEWROMAN" all land on the same entry without pulling ICU into this translation unit.
+void apotheosisNormalizeFamily(const char* family, char* out, size_t outLen)
 {
-    return nullptr;
+    size_t j = 0;
+    if (family) {
+        for (const char* p = family; *p && j + 1 < outLen; ++p) {
+            char c = *p;
+            if (c >= 'A' && c <= 'Z')
+                c = static_cast<char>(c - 'A' + 'a');
+            if (c == ' ' || c == '"' || c == '\'')
+                continue;
+            out[j++] = c;
+        }
+    }
+    out[j] = 0;
+}
+
+// The five faces the port ships inside Assets\fonts.
+const char* apotheosisPickBundledFontFile(const char* family)
+{
+    char name[128];
+    apotheosisNormalizeFamily(family, name, sizeof(name));
+
+    // A non-ASCII family name is a CJK/localised name (SimSun, Microsoft YaHei, PingFang, ...).
+    // segoeui.ttf and the other Latin faces cannot cover it; simhei.ttf contains Latin + CJK, so
+    // send every such request there rather than letting it fail. This matters for real sites:
+    // the home page uses font-family:sans-serif, but zh/ja/ko pages ask by localised name.
+    for (const char* p = name; *p; ++p) {
+        if (static_cast<unsigned char>(*p) >= 0x80)
+            return "simhei.ttf";
+    }
+
+    auto is = [name](const char* candidate) { return !strcmp(name, candidate); };
+
+    // Monospace first, then serif: a browser resolves the generic families in a fixed order, and
+    // the remaining two faces are Arial (a sans) and SimHei (the CJK catch-all).
+    static const char* kMono[] = { "monospace", "courier", "couriernew", "consolas", "lucidaconsole", "monaco", "menlo", "dejavusansmono", "liberationmono" };
+    for (const char* c : kMono) {
+        if (is(c))
+            return "cour.ttf";
+    }
+
+    static const char* kSerif[] = { "serif", "times", "timesnewroman", "georgia", "garamond", "cambria", "bookantiqua", "palatino", "constantia", "liberationserif" };
+    for (const char* c : kSerif) {
+        if (is(c))
+            return "times.ttf";
+    }
+
+    static const char* kSans[] = { "sans-serif", "sansserif", "segoeui", "segoeuix", "arial", "helvetica", "verdana", "tahoma", "calibri", "roboto", "opensans", "lato", "system-ui", "systemui", "ui-sans-serif" };
+    for (const char* c : kSans) {
+        if (is(c))
+            return "segoeui.ttf";
+    }
+
+    // Unknown family: browsers fall back to the user's default family rather than rendering
+    // nothing, so an unrecognised name must not return nullptr either.
+    return "segoeui.ttf";
+}
+
+} // namespace
+
+// Defined in FontPlatformData.cpp; the declaration is repeated here so that this translation unit
+// does not need that header (which would drag in the cairo/ft include soup).
+extern void apotheosisSetForcedBundledFontName(const char*);
+
+std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& description, const AtomString& familyName, const FontCreationContext&, OptionSet<FontLookupOptions>)
+{
+    // Apotheosis 2026-09-18, kept verbatim: computedSize() is 0 until style resolution sets it, and
+    // FontDataCacheKeyTraits::emptyValue() IS FontPlatformData(0.f, false, false). Handing the hash
+    // table its own EMPTY sentinel makes HashTable::validateKey() fire a RELEASE assert ->
+    // WTFCrashWithInfo -> abort(). Measured: scrolling dzen.ru aborted the process with exit code 3
+    // from exactly this call. A release assert is not conditional on ASSERT_ENABLED. So refuse a
+    // non-positive or NaN size; the caller handles nullptr.
+    const float size = description.computedSize();
+    if (!(size > 0.0f))
+        return nullptr;
+
+    // The family arrives pre-resolved by the cache; fall back to the description's own if it is
+    // empty, which is the case for a run of text with no author-specified family at all.
+    String family = familyName;
+    if (family.isEmpty())
+        family = description.family();
+
+    const char* file = apotheosisPickBundledFontFile(family.utf8().data());
+
+    // Force the requested face, build the platform data, then release the override immediately.
+    // The override is a file-local global in FontPlatformData.cpp, so it must never be left set.
+    apotheosisSetForcedBundledFontName(file);
+    auto platformData = std::make_unique<FontPlatformData>(size, false, false);
+    apotheosisSetForcedBundledFontName(nullptr);
+
+    // A face that failed to build leaves m_scaledFont null. Caching a font-less platform data
+    // would poison every later lookup for this family, so decline instead.
+    if (!platformData || !platformData->scaledFont())
+        return nullptr;
+
+    return platformData;
 }
 
 RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription& description, const Font&, IsForPlatformFont, PreferColoredFont, StringView)
