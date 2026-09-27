@@ -95,6 +95,7 @@ this project a separate bug.
 ## Document map
 
 - [PLAN.md](PLAN.md) — live state, the v1.0 definition, and open work. Start here for "where are we".
+- [ARCHITECTURE.md](ARCHITECTURE.md) — how the C# line is put together: layer and threading diagrams, the C ABI, the present path, the SEH contract, and what is measured versus assumed.
 - [MANAGED-HOST.md](MANAGED-HOST.md) — what the C# side can see: the SEH contract, the new exports, the font probe, how to read a run.
 - [LESSONS.md](LESSONS.md) — operating rules distilled from past failures.
 - [BUILD-ARM32.md](BUILD-ARM32.md) — the ARM32 line: engine archives, the driver-DLL link, deployment, known ARM traps.

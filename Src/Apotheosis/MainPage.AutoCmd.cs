@@ -12,7 +12,8 @@
 // and only a change re-arms it.
 //
 //   goto <url>               navigate
-//   scroll <dx> <dy>         one scroll step, timed
+//   scroll <dx> <dy>         one scroll step, timed (engine path, NOT the touch path)
+//   swipe <dy> <steps> <gapMs>  a finger: drives FreeScrollBy on the UI thread, ~60Hz
 //   scrolln <dx> <dy> <n>    n steps, timed individually -- the scroll benchmark
 //   wait <ms>                sleep on the engine thread
 //   hash                     log the frame hash (equal consecutive hashes = a settled frame)
@@ -27,6 +28,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Windows.Storage;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 
 namespace Apotheosis
@@ -135,6 +137,10 @@ namespace Apotheosis
                             AutoScrollOne(dx, dy, frame, sw, i);
                         }
                     }
+                    else if (verb == "swipe")
+                    {
+                        AutoSwipe(int.Parse(parts[1]), int.Parse(parts[2]), int.Parse(parts[3]));
+                    }
                     else if (verb == "wait")
                     {
                         int ms = int.Parse(parts[1]);
@@ -163,6 +169,57 @@ namespace Apotheosis
                     AutoLog("ERR '" + cmd + "' " + ex.GetType().Name + ": " + ex.Message);
                 }
             }
+        }
+
+        // Emulate a finger, not a scrollbar.
+        //
+        // The `scroll` command calls WebCoreScrollBy directly and therefore measures only the engine
+        // plus the present. A real drag is a different path: OnImageManipDelta -> FreeScrollBy
+        // accumulates a delta on the UI thread, PumpScroll coalesces whatever accumulated into ONE
+        // engine call, and when the queue finally drains it runs SyncLinksAfterScroll and restarts the
+        // live tick. If a step arrives while _scrollBusy is set it is simply merged into the next
+        // pump. That coalescing is where "smooth at first, then it seizes up" would live, so the
+        // benchmark has to drive FreeScrollBy and let the real merge logic run.
+        //
+        // It must therefore run on the UI thread, not the engine thread: from the engine thread
+        // FreeScrollBy would Post its own scroll job behind the batch currently executing, and the
+        // whole gesture would only replay after the batch finished.
+        //
+        // The pause between steps is awaited, not blocked on -- Task.Delay().Wait() would freeze the
+        // dispatcher, the pending present callbacks could not run, and the measurement would describe
+        // a stalled UI instead of a swipe. gapMs=16 approximates a 60Hz finger.
+        void AutoSwipe(int totalDy, int steps, int gapMs)
+        {
+            if (steps < 1) steps = 1;
+            int per = (int)Math.Round(totalDy / (double)steps);
+            AutoLog("swipe start dy=" + totalDy + " steps=" + steps
+                + " per=" + per + " gapMs=" + gapMs);
+
+            CoreDispatcher disp = Dispatcher;
+            try
+            {
+                disp.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                {
+                    try
+                    {
+                        if (!_sessionActive) { AutoLog("swipe ignored: no session"); return; }
+                        var sw = Stopwatch.StartNew();
+                        long last = 0;
+                        for (int i = 0; i < steps; i++)
+                        {
+                            long t = sw.ElapsedMilliseconds;
+                            FreeScrollBy(0, per);
+                            AutoLog("swipe[" + i + "] stepMs=" + (t - last) + " at=" + t);
+                            last = t;
+                            if (gapMs > 0) await System.Threading.Tasks.Task.Delay(gapMs);
+                        }
+                        AutoLog("swipe end totalMs=" + sw.ElapsedMilliseconds);
+                        AutoLog("hash 0x" + WebCoreDriver.WebCoreGetFrameHash().ToString("x8"));
+                    }
+                    catch (Exception ex) { AutoLog("swipe ERR " + ex.GetType().Name + ": " + ex.Message); }
+                });
+            }
+            catch (Exception ex) { AutoLog("swipe post failed " + ex.Message); }
         }
 
         // One scroll step, timed. The number that matters is the per-step cost as the page grows, so
