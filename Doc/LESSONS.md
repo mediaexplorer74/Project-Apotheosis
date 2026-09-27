@@ -144,6 +144,16 @@ These are short operating rules distilled from the detailed reports in [Archive/
 - **A static library records its target machine.** ARM archives must be built with
   `...\MSVC\14.44.35207\bin\Hostx64\arm\lib.exe`; an x64 `lib.exe` produces a library that
   `link.exe /MACHINE:ARM` rejects. And the ARM SDK is **10.0.19041.0** — 26100 does not ship ARM32 libs.
+- **A stale PCH poisons every later compile, and ninja will not repair it.** WebCore's
+  `cmake_pch.cxx.pch` is a *side effect* of the `cmake_pch.cxx.obj` edge — `/Fo` and `/Fp` in one
+  command. Ninja tracks only the `.obj`, so after the SDK was pinned to 19041 the PCH still held
+  `corecrt.h` from 26100, and every WebCore TU that used it died with four
+  `redefinition of '_CrtEnableIf'` / `'_Mbstatet'` errors blaming a deep include chain
+  (`simde/arm/neon.h` -> `fenv.h`). Deleting the `.pch` alone is not enough — ninja skips the edge.
+  To force a PCH rebuild you must delete **both** `cmake_pch.cxx.obj` and `cmake_pch.cxx.pch`.
+  Beware the misleading shape of this failure: the error names `fenv.h`, so it reads like a simde
+  problem, and it appears only in a TU that happens to be the first to include `fenv.h` after the
+  PCH — which is why it looked like my own file was at fault.
 - **A renamed build tree leaves stale paths in `CMakeFiles/TargetDirectories.txt` too.** After the
   `build-x64-19041-probe` → `build-x64-gpu` rename, `build.ninja`, `.ninja_deps` and the `*.rsp` files
   were fixed, but 15 CMake-generated files were not: `CMakeFiles/TargetDirectories.txt` (101

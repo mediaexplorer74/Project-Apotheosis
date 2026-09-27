@@ -115,13 +115,13 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     if (!(size > 0.0f))
         return nullptr;
 
-    // The family arrives pre-resolved by the cache; fall back to the description's own if it is
-    // empty, which is the case for a run of text with no author-specified family at all.
-    String family = familyName;
-    if (family.isEmpty())
-        family = description.family();
-
-    const char* file = apotheosisPickBundledFontFile(family.utf8().data());
+    // The family is the cache's own lookup key and arrives already resolved. This WebKit's
+    // FontDescription carries no family member at all -- it lives entirely in this argument --
+    // so there is nothing to fall back to, and an empty name simply misses every table and
+    // lands on segoeui.ttf.
+    // AtomString is not a String subclass in this WebKit; .string() is its accessor (see
+    // BitmapImage.h), and the .string().utf8() shape is the idiom used across WebCore.
+    const char* file = apotheosisPickBundledFontFile(familyName.string().utf8().data());
 
     // Force the requested face, build the platform data, then release the override immediately.
     // The override is a file-local global in FontPlatformData.cpp, so it must never be left set.
