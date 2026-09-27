@@ -14,6 +14,8 @@
 //   goto <url>               navigate
 //   scroll <dx> <dy>         one scroll step, timed (engine path, NOT the touch path)
 //   swipe <dy> <steps> <gapMs>  a finger: drives FreeScrollBy on the UI thread, ~60Hz
+//   ui <what>              drive the shell: settings | settings-close | menu | menu-close
+//                          | general | advanced | tabs
 //   scrolln <dx> <dy> <n>    n steps, timed individually -- the scroll benchmark
 //   wait <ms>                sleep on the engine thread
 //   hash                     log the frame hash (equal consecutive hashes = a settled frame)
@@ -121,7 +123,11 @@ namespace Apotheosis
                         string url = cmd.Substring(4).Trim();
                         AutoLog("goto " + url);
                         if (!_sessionActive) AutoLog("goto ignored: no session");
-                        else NavigateTo(url, true);
+                        // NavigateTo touches XAML, so it has to run on the UI thread. Calling it
+                        // straight from the controller's engine thread threw RPC_E_WRONG_THREAD
+                        // (0x8001010E) the moment a page was actually on screen. Fire-and-forget:
+                        // the wait verb after it is what observes the load.
+                        else AutoUi("goto " + url);
                     }
                     else if (verb == "scroll")
                     {
@@ -140,6 +146,10 @@ namespace Apotheosis
                     else if (verb == "swipe")
                     {
                         AutoSwipe(int.Parse(parts[1]), int.Parse(parts[2]), int.Parse(parts[3]));
+                    }
+                    else if (verb == "ui")
+                    {
+                        AutoUi(parts.Length > 1 ? parts[1] : "");
                     }
                     else if (verb == "wait")
                     {
@@ -169,6 +179,46 @@ namespace Apotheosis
                     AutoLog("ERR '" + cmd + "' " + ex.GetType().Name + ": " + ex.Message);
                 }
             }
+        }
+
+        // Drive the shell's own UI, so a run can prove the chrome works and not only the
+        // engine. Needed on the device too, where there is nobody to tap the menu button.
+        // Everything here goes through the dispatcher because these touch XAML state.
+        void AutoUi(string what)
+        {
+            CoreDispatcher disp = Dispatcher;
+            try
+            {
+                disp.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    try
+                    {
+                        switch ((what ?? "").ToLowerInvariant())
+                        {
+                            case "settings": ShowSettings(); break;
+                            case "settings-close": HideSettings(); break;
+                            case "menu": ShowActionMenu(); break;
+                            case "menu-close": HideActionMenu(); break;
+                            case "general": ShowSettings(); if (SettingsPivot != null) SettingsPivot.SelectedIndex = 0; break;
+                            case "advanced": ShowSettings(); if (SettingsPivot != null) SettingsPivot.SelectedIndex = 1; break;
+                            case "tabs": TabSwitcher.Visibility = Visibility.Visible; break;
+                            case "home": NavigateTo(_homeUrl, true); break;
+                            default:
+                                if (what != null && what.StartsWith("goto ", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    string u = what.Substring(5).Trim();
+                                    if (u.Length > 0) NavigateTo(u, true);
+                                    else AutoLog("ui goto: empty url");
+                                }
+                                else { AutoLog("ui unknown: " + what); return; }
+                                break;
+                        }
+                        AutoLog("ui " + what + " done");
+                    }
+                    catch (Exception ex) { AutoLog("ui ERR " + ex.GetType().Name + ": " + ex.Message); }
+                });
+            }
+            catch (Exception ex) { AutoLog("ui post failed " + ex.Message); }
         }
 
         // Emulate a finger, not a scrollbar.

@@ -18,7 +18,9 @@ namespace Apotheosis
             CustomUserAgent, DefaultZoom, ConcurrentTabs, EnableGPU, EnableGPUNow,
             ClearData, ClearHistory, ClearAllBookmarks, ClearDownloads,
             Diagnostics, ExportDebugLogs, AboutUpdate, CheckForUpdate, Version,
-            HistoryCleared, BookmarksCleared, DownloadsCleared, Footer,
+            HistoryCleared, BookmarksCleared, DownloadsCleared,
+            General, Advanced, VerboseLogging,
+            Footer,
             COUNT
         }
 
@@ -37,6 +39,7 @@ namespace Apotheosis
                 "Clear Data", "Clear History", "Clear All Bookmarks", "Clear Downloads",
                 "Diagnostics", "Export Debug Logs / Crash Dumps", "About / Update", "Check for Update (GitHub Releases)", "Version",
                 "History Cleared", "Bookmarks Cleared", "Downloads Cleared",
+                "General", "Advanced", "Verbose logging",
                 "EdgeHTML Reborn / Apotheosis — WebKit (WebCore) 2.52.4 — ARM32 UWP",
             },
             // Russian
@@ -51,6 +54,7 @@ namespace Apotheosis
                 "Очистить данные", "Очистить историю", "Очистить все закладки", "Очистить загрузки",
                 "Диагностика", "Экспорт логов / дампов", "О программе / Обновление", "Проверить обновления (GitHub)", "Версия",
                 "История очищена", "Закладки очищены", "Загрузки очищены",
+                "Основные", "Продвинутые", "Подробный лог",
                 "EdgeHTML Reborn / Apotheosis — WebKit (WebCore) 2.52.4 — ARM32 UWP",
             },
             // Chinese
@@ -65,6 +69,7 @@ namespace Apotheosis
                 "清除数据", "清除历史记录", "清除所有书签", "清除下载",
                 "诊断", "导出调试日志 / 崩溃转储", "关于 / 更新", "检查更新（GitHub Releases）", "版本",
                 "历史记录已清除", "书签已清除", "下载已清除",
+                "常规", "高级", "详细日志",
                 "EdgeHTML Reborn / Apotheosis — WebKit (WebCore) 2.52.4 — ARM32 UWP",
             },
         };

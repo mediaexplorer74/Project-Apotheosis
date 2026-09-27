@@ -191,9 +191,14 @@
     <Content Include="Assets\WideTile.scale-150.png" />
     <Content Include="Assets\WideTile.scale-200.png" />
     <Content Include="Assets\WideTile.scale-400.png" />
-    <Content Include="Resources\en-US\Resources.resw" />
-    <Content Include="Resources\ru-RU\Resources.resw" />
-    <Content Include="Resources\zh-Hans\Resources.resw" />
+    <!-- These must be PRIResource, not Content. Content copies the .resw into the package
+         verbatim and MakePri never sees it, so no resources.pri is generated and every
+         x:Uid in the XAML resolves to an empty string at run time, which is how the
+         whole chrome ended up with blank labels while the web page rendered fine.
+         Str.Get() masked the same defect for the strings that went through code. -->
+    <PRIResource Include="Resources\en-US\Resources.resw" />
+    <PRIResource Include="Resources\ru-RU\Resources.resw" />
+    <PRIResource Include="Resources\zh-Hans\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="Microsoft.VCLibs, Version=14.0" />

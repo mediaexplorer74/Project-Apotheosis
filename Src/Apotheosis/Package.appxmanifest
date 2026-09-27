@@ -24,11 +24,15 @@
   </Dependencies>
 
   <Resources>
-    <Resource Language="x-generate"/>
+    <!-- Listed explicitly, without x-generate. x-generate made the build derive this
+         list from the PRIResource items, and it emitted only EN-US into the generated
+         manifest while still producing language-ru/zh-hans resource packages, so those
+         two were built and then never declared: they would not install, and x:Uid would
+         fall back to the default language for a Russian or Chinese user. zh-CN is gone
+         because there is no zh-CN Resources.resw; zh-Hans is the Simplified pack. -->
     <Resource Language="en-US"/>
     <Resource Language="ru-RU"/>
     <Resource Language="zh-Hans"/>
-    <Resource Language="zh-CN"/>
   </Resources>
 
   <Applications>

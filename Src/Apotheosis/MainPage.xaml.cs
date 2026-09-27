@@ -75,6 +75,7 @@ namespace Apotheosis
         // design, so it cannot answer "how far did setup actually get".
         static void Crumb(string text)
         {
+            if (!_traceOn) return;
             try
             {
                 string dir = ApplicationData.Current.LocalFolder.Path;
@@ -228,6 +229,13 @@ namespace Apotheosis
         string _homeUrl = "about:home";
         int _uiLang;
 
+        // Verbose tracing. On by default for the bench, because on this build a LocalState file
+        // is the only proof of what the engine did. Off for a person who just wants to read pages:
+        // every Crumb() is a synchronous File.AppendAllText on the engine thread.
+        // Static because Crumb() is called from the static SetupRuntimeEnv() on the engine thread,
+        // which runs before any MainPage instance exists.
+        static bool _traceOn = true;
+
         // Tabs
         List<Tab> _tabs = new List<Tab>();
         int _activeTab;
@@ -279,6 +287,23 @@ namespace Apotheosis
             _tabs.Add(new Tab { CurrentUrl = _homeUrl });
             _activeTab = 0;
             UpdateTabCount();
+
+            // Hardware / title-bar Back. The Lumia 950 has a physical Back key and Windows 11
+            // surfaces a back affordance in the title bar for a UWP app, and both arrive here as
+            // SystemNavigationManager.BackRequested rather than as a click on BackBtn. Without this
+            // the key does nothing until the user reaches the first navigation, which reads as a
+            // broken phone. The handler is a stack: it peels one overlay per press, and only then
+            // navigates, and only then lets the shell close the app.
+            try
+            {
+                var nav = SystemNavigationManager.GetForCurrentView();
+                nav.BackRequested += OnSystemBackRequested;
+                nav.AppViewBackButtonVisibility =
+                    (SettingsPage.Visibility == Visibility.Visible || _navIndex > 0)
+                        ? AppViewBackButtonVisibility.Visible
+                        : AppViewBackButtonVisibility.Collapsed;
+            }
+            catch { }
 
             // GPU crash loop protection
             try
@@ -434,6 +459,7 @@ namespace Apotheosis
                         case "gpudefault": _gpuDefault = (int.Parse(v) != 0); break;
                         case "ua_custom": _uaCustom = v; break;
                         case "lang": _uiLang = int.Parse(v); break;
+                        case "log": _traceOn = (int.Parse(v) != 0); break;
                     }
                 }
             }
@@ -458,6 +484,7 @@ namespace Apotheosis
                 sb.AppendLine($"gpudefault={(_gpuDefault ? 1 : 0)}");
                 sb.AppendLine($"ua_custom={_uaCustom}");
                 sb.AppendLine($"lang={_uiLang}");
+                sb.AppendLine($"log={(_traceOn ? 1 : 0)}");
                 File.WriteAllText(Path.Combine(d, "settings.ini"), sb.ToString(), Encoding.UTF8);
             }
             catch { }
@@ -1281,6 +1308,25 @@ namespace Apotheosis
         }
 
         // ===== Toolbar events =====
+        // One press of the system Back key peels exactly one layer, in the order a person would
+        // expect: the thing that is on top of the page goes away first, and history is only
+        // consulted when nothing is covering the page. Returning without setting Handled on the
+        // last step hands the key to the shell, which closes the app -- the correct behaviour at
+        // the root of the navigation stack, and what a phone user expects.
+        void OnSystemBackRequested(object sender, BackRequestedEventArgs e)
+        {
+            try
+            {
+                if (SettingsPage.Visibility == Visibility.Visible) { HideSettings(); e.Handled = true; return; }
+                if (TabSwitcher.Visibility == Visibility.Visible) { TabSwitcher.Visibility = Visibility.Collapsed; e.Handled = true; return; }
+                if (FindBar.Visibility == Visibility.Visible) { OnFindClose(this, null); e.Handled = true; return; }
+                if (SuggestPanel.Visibility == Visibility.Visible) { SuggestPanel.Visibility = Visibility.Collapsed; e.Handled = true; return; }
+                if (ActionMenu.Visibility == Visibility.Visible) { HideActionMenu(); e.Handled = true; return; }
+                if (!_loading && _navIndex > 0) { OnBack(this, null); e.Handled = true; }
+            }
+            catch { }
+        }
+
         void OnBack(object s, RoutedEventArgs e)
         {
             if (_loading || _navIndex <= 0) return;
@@ -1669,6 +1715,14 @@ namespace Apotheosis
             if (SetGpuSwitch != null) SetGpuSwitch.IsOn = _gpuDefault;
             if (SetUaCustomBox != null) SetUaCustomBox.Text = _uaCustom;
             if (SetLangCombo != null) SetLangCombo.SelectedIndex = _uiLang;
+            // Pivot headers come from Str rather than x:Uid: General/Advanced/VerboseLogging are new
+            // ids that are not in the .resw files yet, and Str.Get falls back to its hardcoded
+            // table, so all three languages are correct without touching the resw.
+            if (SettingsGeneralItem != null) SettingsGeneralItem.Header = Str.Get("General");
+            if (SettingsAdvancedItem != null) SettingsAdvancedItem.Header = Str.Get("Advanced");
+            if (SetLogSwitch != null) SetLogSwitch.IsOn = _traceOn;
+            if (SetLogSwitch != null) SetLogSwitch.Header = Str.Get("VerboseLogging");
+            UpdateLogHint();
             if (VersionText != null)
             {
                 var pv = Package.Current.Id.Version;
@@ -1693,10 +1747,27 @@ namespace Apotheosis
             if (SetGpuSwitch != null) _gpuDefault = SetGpuSwitch.IsOn;
             if (SetUaCustomBox != null) _uaCustom = (SetUaCustomBox.Text ?? "").Trim();
             if (SetLangCombo != null && SetLangCombo.SelectedIndex >= 0) _uiLang = SetLangCombo.SelectedIndex;
+            if (SetLogSwitch != null) _traceOn = SetLogSwitch.IsOn;
             ApplySettings();
             SaveSettings();
             SettingsPage.Visibility = Visibility.Collapsed;
             StartLiveMode();
+        }
+
+        void OnLogSwitchToggled(object sender, RoutedEventArgs e)
+        {
+            if (SetLogSwitch == null) return;
+            _traceOn = SetLogSwitch.IsOn;
+            UpdateLogHint();
+            if (_traceOn) Crumb("logging enabled from settings");
+        }
+
+        void UpdateLogHint()
+        {
+            if (SetLogHint == null) return;
+            SetLogHint.Text = _traceOn
+                ? "setup-trace.txt is being written to LocalState."
+                : "Tracing is off. LocalState files stop growing; setup-trace.txt will not record new entries.";
         }
 
         void OnSettingsBack(object s, RoutedEventArgs e) => HideSettings();

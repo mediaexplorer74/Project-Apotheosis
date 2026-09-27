@@ -380,7 +380,13 @@
                 <Button Grid.Column="0" Style="{StaticResource IconBtn}" FontFamily="Segoe MDL2 Assets" Content="&#xE72B;" Click="OnSettingsBack"/>
                 <TextBlock Grid.Column="1" x:Uid="SettingsTitle" Foreground="{StaticResource TxtHi}" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center" Margin="6,0"/>
             </Grid>
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <!-- General / Advanced split. A Pivot rather than one long scrolling list: the
+                 settings that change what the user browses and the ones that change how the
+                 engine runs should not compete for the same screen, and the Advanced set is
+                 the one a person changes rarely and regrets easily (GPU, logging). -->
+            <Pivot x:Name="SettingsPivot" Grid.Row="1" Background="Transparent">
+            <PivotItem x:Name="SettingsGeneralItem">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="18,12">
                     <TextBlock x:Uid="SettingsDefaultSearch" Foreground="{StaticResource TxtLo}" FontSize="13" Margin="0,8,0,4"/>
                     <ComboBox x:Name="SetSearchCombo" HorizontalAlignment="Stretch">
@@ -412,12 +418,26 @@
                         <TextBlock Grid.Column="1" x:Name="SetZoomLabel" Text="100%" Foreground="{StaticResource TxtLo}" FontSize="14" VerticalAlignment="Center"/>
                     </Grid>
                     <Slider x:Name="SetZoomSlider" Minimum="50" Maximum="200" StepFrequency="10" Value="100" ValueChanged="OnZoomChanged"/>
-
+                </StackPanel>
+            </ScrollViewer>
+            </PivotItem>
+            <PivotItem x:Name="SettingsAdvancedItem">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="18,12">
                     <ToggleSwitch x:Name="SetTabModeSwitch" x:Uid="SettingsConcurrentTabs" IsEnabled="False" Foreground="{StaticResource TxtHi}" Margin="0,4,0,0"/>
 
                     <TextBlock x:Uid="SettingsGPU" Foreground="{StaticResource TxtLo}" FontSize="13" Margin="0,18,0,4"/>
                     <ToggleSwitch x:Name="SetGpuSwitch" x:Uid="SettingsEnableGPU" Foreground="{StaticResource TxtHi}" Margin="0,0,0,6"/>
                     <Button Tag="gpu" Click="OnSettingsBtn" Style="{StaticResource SetRow}" x:Uid="SettingsEnableGPUNow"/>
+
+                    <!-- Logger. Not cosmetic: on this build the only evidence of what the engine
+                         did is a file in LocalState, so turning tracing off trades diagnosis for
+                         disk and I/O. Off is the right default for a person just reading pages. -->
+                    <TextBlock Text="— logging —" Foreground="{StaticResource TxtLo}" FontSize="13" Margin="0,18,0,4"/>
+                    <ToggleSwitch x:Name="SetLogSwitch" Foreground="{StaticResource TxtHi}" Margin="0,0,0,6"
+                                  Toggled="OnLogSwitchToggled"/>
+                    <TextBlock x:Name="SetLogHint" Foreground="{StaticResource TxtLo}" FontSize="12"
+                               TextWrapping="Wrap" Margin="0,0,0,6"/>
 
                     <TextBlock x:Uid="SettingsClearData" Foreground="{StaticResource TxtLo}" FontSize="13" Margin="0,18,0,4"/>
                     <Button Tag="clearhist" Click="OnSettingsBtn" Style="{StaticResource SetRow}" x:Uid="SettingsClearHistory" Margin="0,0,0,6"/>
@@ -435,6 +455,8 @@
                                Foreground="#FF80868B" FontSize="12" TextWrapping="Wrap" Margin="0,22,0,24"/>
                 </StackPanel>
             </ScrollViewer>
+            </PivotItem>
+            </Pivot>
         </Grid>
 
         <!-- Tab switcher -->
