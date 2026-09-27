@@ -154,6 +154,27 @@ These are short operating rules distilled from the detailed reports in [Archive/
   Beware the misleading shape of this failure: the error names `fenv.h`, so it reads like a simde
   problem, and it appears only in a TU that happens to be the first to include `fenv.h` after the
   PCH — which is why it looked like my own file was at fault.
+- **`createFontPlatformData` is not why nothing renders — measured, 2026-09-27.** It used to
+  `return nullptr` unconditionally, which is a very satisfying explanation for "layout and colour
+  work but no glyphs", and it is wrong. With a real bundled-font implementation instrumented, a load
+  of `https://example.com/` calls it and it *succeeds* every time (`OK segoeui.ttf at 16.00px`,
+  `OK segoeui.ttf at 24.00px`, plus SimHei via `systemFallbackForCharacterCluster`) — a face is built,
+  a scaled font exists, the cache is warm, and the screen still shows no text. The fault is strictly
+  **downstream of font selection**, in shaping or rasterisation. Do not re-diagnose this as a missing
+  font backend; the bundled FreeType + cairo-ft path is present and reachable. See the trace block in
+  `Src/port/stubs-font-uwp.cpp` for the captured evidence.
+- **The family reaching font selection is usually EMPTY, not missing.** `isNull=0 isEmpty=1` on most
+  calls. This is the same null/`AtomString`-default-constructed-family condition that
+  `Doc/Archive/FONT-NULL-FAMILY-CRASH.md` documents as a crash producer; here it is benign because
+  the code maps an unrecognised or empty family to a default face instead of returning `nullptr`.
+- **Every port trace is file-local, so no other TU can log.** `WebCorePortTrace` in
+  `WebCoreDriver.cpp` is in an **anonymous namespace** — `llvm-nm` reports
+  `?WebCorePortTrace@?A0xC8417F77@@...` — and `portLoaderTraceBoth` in
+  `PortPlatformStrategies.cpp` is `static`. Declaring either from another translation unit gives
+  `LNK2019` under *any* linkage: `extern "C"` looks for an unmangled name, plain C++ for
+  `?WebCorePortTrace@@YAXPEBDZZ`, and neither exists. A trace added to a WebCore port stub must
+  derive `port-trace.txt` from `FONTCONFIG_FILE` itself (the driver's own rule: strip the filename,
+  append `port-trace.txt`), which costs one TU rebuild instead of re-plumbing the driver.
 - **A renamed build tree leaves stale paths in `CMakeFiles/TargetDirectories.txt` too.** After the
   `build-x64-19041-probe` → `build-x64-gpu` rename, `build.ninja`, `.ninja_deps` and the `*.rsp` files
   were fixed, but 15 CMake-generated files were not: `CMakeFiles/TargetDirectories.txt` (101

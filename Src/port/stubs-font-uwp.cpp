@@ -8,8 +8,12 @@
 #if PLATFORM(WIN) && USE(CAIRO) && defined(WK_WINUWP)
 
 #include <wtf/HashFunctions.h>
+#include <cstdarg>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <memory>
+#include <string>
 
 namespace WebCore {
 
@@ -21,19 +25,68 @@ void FontCache::platformInvalidate()
 {
 }
 
-// Apotheosis 2026-09-26: this function used to `return nullptr` unconditionally, and that single
-// line is why the browser drew boxes, gradients, borders and layout but not a single glyph.
-// WebCore asks for a face by family name; a nullptr here means no FontPlatformData is ever built,
-// so no run of text is ever shaped, so nothing is ever rasterised. The whole FreeType + Cairo FT
-// path is present and working -- it was simply never asked for a file.
+namespace {
+
+// Apotheosis 2026-09-27, diagnostic only. WebCoreDriver.cpp's WebCorePortTrace is file-local
+// (llvm-nm reports it as ?WebCorePortTrace@?A0xC8417F77@@..., i.e. an anonymous namespace), so
+// it cannot be called from another translation unit -- declaring it produces LNK2019 whichever
+// linkage is chosen. Every other port trace (portLoaderTraceBoth) is `static` for the same
+// reason. Rather than re-plumb a trace API through the driver, this reproduces the driver's
+// own destination rule: it derives the path from FONTCONFIG_FILE and appends to
+// port-trace.txt beside it. Keeps this investigation to a single-TU rebuild.
+void apotheosisFontTrace(const char* fmt, ...)
+{
+    const char* fcc = getenv("FONTCONFIG_FILE");
+    if (!fcc)
+        return;
+    std::string path(fcc);
+    auto pos = path.rfind('\\');
+    if (pos == std::string::npos)
+        return;
+    path.resize(pos + 1);
+    path += "port-trace.txt";
+    char buf[512];
+    va_list ap;
+    va_start(ap, fmt);
+    vsnprintf(buf, sizeof buf, fmt, ap);
+    va_end(ap);
+    if (FILE* f = fopen(path.c_str(), "ab")) {
+        fputs(buf, f);
+        fputc('\n', f);
+        fflush(f);
+        fclose(f);
+    }
+}
+
+} // namespace
+
+// Apotheosis 2026-09-27 — MEASURED, and it is NOT the cause of the missing text.
 //
-// The bundled-face machinery already existed and is used by systemFallbackForCharacterCluster
-// below: apotheosisSetForcedBundledFontName() -> apotheosisBundledFontFaceForName() (FreeType,
-// cairo-ft) -> apotheosisCreateScaledFont(). All this adds is the family -> file decision.
+// This used to `return nullptr` unconditionally. Implementing it for real changes nothing on screen:
+// example.com still paints zero glyphs. Instrumenting it (traces below) settles the question that
+// two earlier diagnoses got wrong. On a real load of https://example.com/ this function is called
+// and SUCCEEDS every single time:
 //
-// Deliberately minimal: five bundled faces, regular style only, no foreign formats. Weight and
-// italic are ignored because no bold/italic cut is bundled; a browser that renders bold text as
-// regular is a cosmetic problem, whereas one that renders no text at all is fatal.
+//   FONT cfpd: enter family='system-ui' size=24.00 isNull=0 isEmpty=0
+//   FONT cfpd: picked segoeui.ttf
+//   FONT cfpd: OK segoeui.ttf at 24.00px
+//   FONT cfpd: enter family=''        size=16.00 isNull=0 isEmpty=1
+//   FONT cfpd: OK segoeui.ttf at 16.00px
+//   FONT fallback: OK simhei at 24.00px
+//
+// So a face is built, a scaled font exists, and the cache is warm — and still no glyph reaches the
+// screen. The failure is strictly downstream of font selection, in shaping or rasterisation.
+// Two things worth keeping from that trace: the family arrives EMPTY (isEmpty=1) far more often
+// than not, which is the same empty-family condition Doc/Archive/FONT-NULL-FAMILY-CRASH.md documents
+// as a null-AtomString producer; and an empty family must still resolve to a face rather than
+// nullptr, which is what the segoeui.ttf default below is for.
+//
+// The bundled-face machinery is real and works: apotheosisSetForcedBundledFontName() ->
+// apotheosisBundledFontFaceForName() (FreeType, cairo-ft) -> apotheosisCreateScaledFont().
+//
+// Deliberately minimal: five bundled faces, regular style only, no foreign formats. Weight and italic
+// are ignored because no bold/italic cut is bundled; a browser that renders bold text as regular is
+// a cosmetic problem, whereas one that renders no text at all is fatal.
 
 namespace {
 
@@ -112,8 +165,12 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     // from exactly this call. A release assert is not conditional on ASSERT_ENABLED. So refuse a
     // non-positive or NaN size; the caller handles nullptr.
     const float size = description.computedSize();
-    if (!(size > 0.0f))
+    apotheosisFontTrace("FONT cfpd: enter family='%s' size=%.2f isNull=%d isEmpty=%d",
+        familyName.string().utf8().data(), double(size), int(familyName.isNull()), int(familyName.isEmpty()));
+    if (!(size > 0.0f)) {
+        apotheosisFontTrace("FONT cfpd: decline, size non-positive or NaN");
         return nullptr;
+    }
 
     // The family is the cache's own lookup key and arrives already resolved. This WebKit's
     // FontDescription carries no family member at all -- it lives entirely in this argument --
@@ -122,6 +179,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     // AtomString is not a String subclass in this WebKit; .string() is its accessor (see
     // BitmapImage.h), and the .string().utf8() shape is the idiom used across WebCore.
     const char* file = apotheosisPickBundledFontFile(familyName.string().utf8().data());
+    apotheosisFontTrace("FONT cfpd: picked %s", file);
 
     // Force the requested face, build the platform data, then release the override immediately.
     // The override is a file-local global in FontPlatformData.cpp, so it must never be left set.
@@ -131,9 +189,12 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 
     // A face that failed to build leaves m_scaledFont null. Caching a font-less platform data
     // would poison every later lookup for this family, so decline instead.
-    if (!platformData || !platformData->scaledFont())
+    if (!platformData || !platformData->scaledFont()) {
+        apotheosisFontTrace("FONT cfpd: face FAILED for %s at %.2fpx", file, double(size));
         return nullptr;
+    }
 
+    apotheosisFontTrace("FONT cfpd: OK %s at %.2fpx", file, double(size));
     return platformData;
 }
 
@@ -156,6 +217,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
     // A release assert is not conditional on ASSERT_ENABLED, so this is a crash and not a debug trip.
     // With no usable size there is no fallback face to offer, so decline; the caller handles nullptr.
     const float size = description.computedSize();
+    apotheosisFontTrace("FONT fallback: enter size=%.2f", double(size));
     if (!(size > 0.0f)) // also rejects NaN
         return nullptr;
     apotheosisSetForcedBundledFontName("simhei.ttf");
@@ -163,8 +225,11 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
     apotheosisSetForcedBundledFontName(nullptr);
     // A face that could not be built leaves m_scaledFont null. That is not the empty sentinel (the
     // size is non-zero) so it would not assert, but caching a font-less platform data is still wrong.
-    if (!platformData.scaledFont())
+    if (!platformData.scaledFont()) {
+        apotheosisFontTrace("FONT fallback: simhei FAILED at %.2fpx", double(size));
         return nullptr;
+    }
+    apotheosisFontTrace("FONT fallback: OK simhei at %.2fpx", double(size));
     return fontForPlatformData(platformData);
 }
 
