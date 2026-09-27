@@ -651,6 +651,9 @@ namespace Apotheosis
                             ScrollFab.Visibility = sessionActive ? Visibility.Visible : Visibility.Collapsed;
                         _lastFrameHash = 0;
                         if (sessionActive) StartLiveMode(); else StopLiveMode();
+                        // Apotheosis 2026-09-27: start the LocalState command channel once the session
+                        // is live, so a scripted batch can navigate and scroll without a restart.
+                        if (sessionActive) StartAutoCmd();
                         OnNavDone(titleCopy, ok, loadOk);
                     });
                 }

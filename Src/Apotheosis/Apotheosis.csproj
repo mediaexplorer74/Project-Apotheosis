@@ -64,6 +64,7 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MainPage.AutoCmd.cs" />
     <Compile Include="Models.cs" />
     <Compile Include="Str.cs" />
     <Compile Include="WebCoreDriver.cs" />

@@ -241,3 +241,34 @@ These are short operating rules distilled from the detailed reports in [Archive/
   every recorded command hash changes and the next `ninja <single-target>` still wants thousands of
   edges (4280 observed). A one-file change in a WebCore TU is therefore *not* a minutes-long
   operation once CMake has re-run — budget a full WebCore rebuild, or compile the TU by hand.
+
+## Driving the C# app from a script (2026-09-27)
+
+- **`System.Threading.Thread` does not exist in this project's UWP profile.** Only
+  `System.Threading.Tasks` is referenced, so `Thread.Sleep(ms)` fails to compile with
+  `CS0234 ... 'Thread' does not exist in the namespace 'System.Threading'`. Use
+  `Task.Delay(ms).Wait()`. This is a *profile* limitation, not a missing assembly, so adding the
+  `using` cannot fix it.
+- **The C# line had no way to be scripted.** `nav.txt` did this for the C++/CX harness, but that
+  watcher was never ported; the C# app only reads `testurl.txt` **once at startup**, so every check
+  cost a full install-restart cycle. `Src/Apotheosis/MainPage.AutoCmd.cs` restores it: a 250 ms
+  watcher on `LocalState\autocmd.txt` running `goto` / `scroll` / `scrolln` / `wait` / `hash` /
+  `diag` on the engine thread, appending per-command timings to `LocalState\autocmd-log.txt`. The
+  batch is dispatched with `WebEngine.Instance.Post` because every P/Invoke needs the engine thread.
+- **Seed the file stamp at startup.** Comparing `LastWriteTimeUtc` across ticks means a leftover
+  `autocmd.txt` never replays by itself; only a fresh write re-arms it. Otherwise every app launch
+  silently re-runs the last test.
+- **`WebCoreGetFrameHash()` is the cheap flicker detector.** It is stable for a static page, so N
+  samples 400 ms apart alternating between two values means the compositor is repainting different
+  content. Seven consecutive identical hashes on `ya.ru` after reverting the frame-pooling
+  experiment is a much stronger signal than eyeballing a screenshot.
+- **Measured scroll cost, software rendering, `ya.ru`:** first step 173 ms (cold paint), then
+  121 / 88 / 43 ms, then a flat **11-13 ms** for the remaining 19 steps. The flatness matters more
+  than the mean: cost does not grow with distance scrolled, which is what "fine then grinds to a
+  halt" would look like. This drives `WebCoreScrollBy` directly, so it measures engine + present and
+  *not* the touch path with its accumulated deltas, link sync and live tick.
+- **Memory for the same run:** 171 MB working set, 409 MB private, 619 handles, with 80 MB physical
+  RAM free - the machine is genuinely tight, worth remembering before blaming the browser for every
+  allocation hiccup.
+- **`testurl.txt` takes a bare URL**, not a command. Writing `goto https://ya.ru/` navigates
+  nowhere and `stage.txt` reports the whole string as the URL.
