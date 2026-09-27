@@ -68,6 +68,22 @@ namespace Apotheosis
             public void Post(Action job) => _queue.Add(job);
         }
 
+        // Apotheosis 2026-09-27: append-only breadcrumbs for SetupRuntimeEnv. The C++ harness had a
+        // full log here; this line ships without one, and a swallowed exception inside that method is
+        // invisible from the outside -- it surfaces much later as a page that will not load, or as
+        // missing text, and both look like engine faults. WriteStage() overwrites stage.txt by
+        // design, so it cannot answer "how far did setup actually get".
+        static void Crumb(string text)
+        {
+            try
+            {
+                string dir = ApplicationData.Current.LocalFolder.Path;
+                File.AppendAllText(Path.Combine(dir, "setup-trace.txt"),
+                    DateTime.Now.ToString("HH:mm:ss.fff") + "  " + text + Environment.NewLine);
+            }
+            catch { }
+        }
+
         static void SetupRuntimeEnv()
         {
             try
@@ -101,8 +117,26 @@ namespace Apotheosis
                 // environment block in this App Container, so the driver never saw its own
                 // fonts.conf -- and the first paint faulted in cairo_scaled_font_create with
                 // fontconfig having matched nothing. Set it natively instead, like the C++ harness.
-                try { WebCoreDriver.WebCoreSetFontConfigFile(confPath); }
+                Crumb("fontconf:begin");
+                try { WebCoreDriver.WebCoreSetFontConfigFile(confPath); Crumb("fontconf:ok"); }
                 catch { Environment.SetEnvironmentVariable("FONTCONFIG_FILE", confPath); }
+
+                // Apotheosis 2026-09-27: WebCoreSetFontConfigFile above also adopts APOTHEOSIS_FONTS_DIR,
+                // by reading the <dir> out of the fonts.conf it was just handed. That variable is the
+                // one FontPlatformData.cpp's apotheosisBundledFontFaceForName() checks before it will
+                // load a bundled TTF through FreeType into a cairo FT face, and it is why NOTHING used
+                // to render text: unset, the bundled face is skipped, cairo falls back to its toy
+                // face, which resolves through fontconfig -- not deployed -- and
+                // cairo_scaled_font_create returns an in-error scaled font (CAIRO_STATUS_NO_MEMORY)
+                // on which every glyph operation is a silent no-op. Layout, colour and paint all work,
+                // and not one glyph appears, on any page, ever.
+                //
+                // A separate WebCoreSetFontsDir P/Invoke was tried first and cannot work from here:
+                // .NET Native rejects a newly added import with "method 'WebCoreSetFontsDir' has no
+                // implementation (no RVA)" -- a TypeLoadException on the first call. Letting the one
+                // call that already works carry both settings also keeps a single source of truth, so
+                // the two paths can never disagree about where the fonts are.
+                Crumb("fontsdir:delegated-to-fontconf");
                 // Opt in to the driver's SEH guard before any engine call: a native fault then
                 // returns rc = -17 (kErrSeh) plus WebCoreGetSehInfo instead of killing the process
                 // with a FailFast the managed side cannot catch.

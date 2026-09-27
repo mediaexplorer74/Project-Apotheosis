@@ -3417,12 +3417,70 @@ void WebCoreSetCACertBlob(const uint8_t* data, int len)
 // the native process environment block, so the driver saw no config at all and the first
 // paint died in cairo_scaled_font_create with fontconfig having matched nothing. The
 // C++/CX harness has never had this problem because it calls _putenv_s itself.
+// Apotheosis 2026-09-27: the managed host cannot set APOTHEOSIS_FONTS_DIR itself, for the same
+// reason it cannot set FONTCONFIG_FILE -- Environment.SetEnvironmentVariable does not reach the
+// native process environment block in this App Container. It is read by
+// FontPlatformData.cpp's apotheosisBundledFontFaceForName(), the FreeType path that loads a bundled
+// TTF into a cairo FT face:
+//
+//     const char* dir = std::getenv("APOTHEOSIS_FONTS_DIR");
+//     if (!dir || !*dir) return nullptr;
+//
+// The C++ harness set it in SetupRuntimeEnv; the C# host did not, and that is why NOTHING rendered
+// text. With it unset, apotheosisBundledFontFace() falls through to cairo_toy_font_face_create,
+// which resolves through fontconfig -- not deployed (Doc/BUILD-X64.md: neither cairo-2.dll nor
+// fontconfig-1.dll ships) -- so cairo_scaled_font_create returned an in-error scaled font,
+// CAIRO_STATUS_NO_MEMORY, and every glyph operation on it was a silent no-op. Measured with the
+// probe in stubs-font-uwp.cpp, before this was fixed:
+//
+//     FONT probe: begin, cairo_status=1              <- 1 == CAIRO_STATUS_NO_MEMORY
+//     FONT probe: control-cairo-toy -> inked=0 of 1600 px
+//     FONT probe: cairo-show-text  -> inked=0 of 1600 px
+//
+// while font *selection* was working fine (FONT cfpd: OK segoeui.ttf at 16.00px). The fonts were
+// found all along; they were objects that cannot draw.
+//
+// Apotheosis 2026-09-27: this is done by parsing <dir> out of the very fonts.conf that was just
+// installed, rather than by a second P/Invoke. A new `WebCoreSetFontsDir` export was tried first
+// and does not work on the managed side: .NET Native rejects a freshly added P/Invoke with
+// "method 'WebCoreSetFontsDir' has no implementation (no RVA)", a TypeLoadException at the first
+// call. Deriving the directory from the config file keeps one source of truth -- the two can never
+// disagree -- and adds no import at all.
+static void ApotheosisAdoptFontsDirFromConf(const char* confPath)
+{
+    if (!confPath || !*confPath)
+        return;
+    FILE* f = fopen(confPath, "rb");
+    if (!f)
+        return;
+    char buf[4096];
+    size_t n = fread(buf, 1, sizeof buf - 1, f);
+    fclose(f);
+    buf[n] = 0;
+    const char* open = strstr(buf, "<dir>");
+    if (!open)
+        return;
+    open += 5;
+    const char* close = strchr(open, '<');
+    if (!close || close <= open)
+        return;
+    std::string dir(open, close);
+    while (!dir.empty() && (dir.back() == ' ' || dir.back() == '\r' || dir.back() == '\n'))
+        dir.pop_back();
+    if (dir.empty())
+        return;
+    _putenv_s("APOTHEOSIS_FONTS_DIR", dir.c_str());
+    WebCorePortTrace("SetFontsDir(from conf): %s", dir.c_str());
+    ApoDumpFontConfigOnce("fontsdir");
+}
+
 extern "C" void WebCoreSetFontConfigFile(const char* path)
 {
     if (!path || !*path)
         return;
     _putenv_s("FONTCONFIG_FILE", path);
     WebCorePortTrace("SetFontConfigFile: %s", path);
+    ApotheosisAdoptFontsDirFromConf(path);
     ApoDumpFontConfigOnce("env");
 }
 

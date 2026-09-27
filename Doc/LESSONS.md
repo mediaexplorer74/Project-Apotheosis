@@ -154,6 +154,30 @@ These are short operating rules distilled from the detailed reports in [Archive/
   Beware the misleading shape of this failure: the error names `fenv.h`, so it reads like a simde
   problem, and it appears only in a TU that happens to be the first to include `fenv.h` after the
   PCH — which is why it looked like my own file was at fault.
+- **Text rendered nothing at all because `APOTHEOSIS_FONTS_DIR` was never set — fixed 2026-09-27.**
+  The single cause, and it had nothing to do with font selection. `FontPlatformData.cpp`'s
+  `apotheosisBundledFontFaceForName()` — the FreeType path that loads a bundled TTF into a cairo FT
+  face — starts with `if (!std::getenv("APOTHEOSIS_FONTS_DIR")) return nullptr;`. The C++ harness set
+  it in `SetupRuntimeEnv`; **the managed C# host only ever set `FONTCONFIG_FILE`**. So the bundled
+  face was skipped, `apotheosisBundledFontFace()` fell through to `cairo_toy_font_face_create`, and the
+  toy face resolves through fontconfig — which is not deployed (`Doc/BUILD-X64.md`: neither
+  `cairo-2.dll` nor `fontconfig-1.dll` ships). `cairo_scaled_font_create` then returned an **in-error
+  scaled font, `CAIRO_STATUS_NO_MEMORY`**, and every glyph operation on it is a silent no-op. Layout,
+  colour, borders and paint all worked; not one glyph appeared, on any page, ever.
+  - **The tell was the status, not the pointer.** `scaledFont()` was non-null, so the code reported
+    `OK` — it never asked `cairo_scaled_font_status()`, which is the only thing that reports this.
+  - Proof, from the probe in `stubs-font-uwp.cpp`: `cairo_status=1` before, `cairo_status=0` after.
+  - Fix: `WebCoreSetFontConfigFile` now also parses `<dir>` out of the `fonts.conf` it was handed and
+    sets `APOTHEOSIS_FONTS_DIR` from it. One source of truth, and no new import.
+  - A **separate** `WebCoreSetFontsDir` P/Invoke does **not** work and must not be reintroduced:
+    .NET Native rejects a freshly added import at the first call with
+    `TypeLoadException: method 'WebCoreSetFontsDir' has no implementation (no RVA)`. Fold the work
+    into an existing export instead.
+- **`SetupRuntimeEnv`'s single outer `try` hides unrelated failures as unrelated symptoms.** A throw
+  from one P/Invoke silently skipped `WebCoreSetSehGuard` and `WebCoreSetCACertBlob`, after which the
+  page failed TLS with `curl 60` and looked like a network fault. `Crumb()` in `MainPage.xaml.cs`
+  writes append-only breadcrumbs to `LocalState\setup-trace.txt` for exactly this; `stage.txt`
+  overwrites and cannot answer "how far did setup get".
 - **`createFontPlatformData` is not why nothing renders — measured, 2026-09-27.** It used to
   `return nullptr` unconditionally, which is a very satisfying explanation for "layout and colour
   work but no glyphs", and it is wrong. With a real bundled-font implementation instrumented, a load

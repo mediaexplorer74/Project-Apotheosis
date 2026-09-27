@@ -15,6 +15,11 @@
 #include <memory>
 #include <string>
 
+// Apotheosis 2026-09-27: the rasterisation probe below drives cairo directly. FontPlatformData.h
+// only forward-declares the cairo types (RefPtrCairo.h), so the real API needs cairo.h; its
+// directory is already on the include path as an -imsvc entry from the cairo build.
+#include <cairo.h>
+
 namespace WebCore {
 
 void FontCache::platformInit()
@@ -56,6 +61,81 @@ void apotheosisFontTrace(const char* fmt, ...)
         fflush(f);
         fclose(f);
     }
+}
+
+// Apotheosis 2026-09-27, diagnostic. A three-way split of "no glyph reaches the screen", run once
+// on the first face that builds successfully. Font selection is already proven good (see the trace
+// block below), so the fault is in one of three places, and they need completely different fixes:
+//
+//   1. FreeType cannot load a glyph from the bundled TTF  -> the file/face itself is unusable.
+//   2. FreeType is fine but cairo paints nothing          -> cairo's raster backend is broken here.
+//   3. Both work                                          -> the loss is upstream, in WebKit's
+//                                                           shaping or its paint path, and this probe
+//                                                           is the control that proves it.
+//
+// Each step is reported separately so a failure names the guilty layer instead of just "no text".
+
+// Count pixels darker than near-white, so a blank surface reports 0 and any ink reports > 0.
+void apotheosisFontProbeInked(const char* who, int width, int height, int pitch, const unsigned char* pixels)
+{
+    if (!pixels || width <= 0 || height <= 0 || pitch <= 0) {
+        apotheosisFontTrace("FONT probe: %s -> no bitmap (%dx%d pitch=%d)", who, width, height, pitch);
+        return;
+    }
+    int inked = 0;
+    for (int y = 0; y < height; ++y) {
+        const unsigned char* row = pixels + static_cast<ptrdiff_t>(y) * pitch;
+        for (int x = 0; x < width; ++x) {
+            // CAIRO_FORMAT_ARGB32 is premultiplied BGRX on little-endian; gray coverage is enough.
+            if (row[4 * x + 0] < 200 || row[4 * x + 1] < 200 || row[4 * x + 2] < 200)
+                ++inked;
+        }
+    }
+    apotheosisFontTrace("FONT probe: %s -> inked=%d of %d px", who, inked, width * height);
+}
+
+void apotheosisRasterProbe(cairo_scaled_font_t* font)
+{
+    static bool done = false;
+    if (done)
+        return;
+    done = true;
+
+    apotheosisFontTrace("FONT probe: begin, cairo_status=%d", int(cairo_scaled_font_status(font)));
+
+    // --- A. Control: cairo's own built-in font ----------------------------------------
+    // This is the probe that says whether cairo can rasterise glyphs at all *in this process*.
+    // It touches none of the port's font code, so if it comes back blank the raster backend
+    // itself is broken and no amount of font selection will ever produce a pixel.
+    {
+        cairo_surface_t* surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 40, 40);
+        cairo_t* cr = cairo_create(surface);
+        cairo_set_source_rgb(cr, 1, 1, 1);
+        cairo_paint(cr);
+        cairo_set_source_rgb(cr, 0, 0, 0);
+        cairo_select_font_face(cr, "sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+        cairo_set_font_size(cr, 24.0);
+        cairo_show_text(cr, "A");
+        cairo_destroy(cr);
+        cairo_surface_flush(surface);
+        apotheosisFontProbeInked("control-cairo-toy", 40, 40,
+            int(cairo_image_surface_get_stride(surface)), cairo_image_surface_get_data(surface));
+        cairo_surface_destroy(surface);
+    }
+
+    // --- B. The real thing: the very scaled font WebKit is about to use ------------------
+    cairo_surface_t* surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 40, 40);
+    cairo_t* cr = cairo_create(surface);
+    cairo_set_source_rgb(cr, 1, 1, 1);
+    cairo_paint(cr);
+    cairo_set_source_rgb(cr, 0, 0, 0);
+    cairo_set_font_size(cr, 24.0);
+    cairo_show_text(cr, "A");
+    cairo_destroy(cr);
+    cairo_surface_flush(surface);
+    apotheosisFontProbeInked("cairo-show-text", 40, 40,
+        int(cairo_image_surface_get_stride(surface)), cairo_image_surface_get_data(surface));
+    cairo_surface_destroy(surface);
 }
 
 } // namespace
@@ -195,6 +275,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     }
 
     apotheosisFontTrace("FONT cfpd: OK %s at %.2fpx", file, double(size));
+    apotheosisRasterProbe(platformData->scaledFont());
     return platformData;
 }
 
