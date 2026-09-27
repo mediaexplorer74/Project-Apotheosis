@@ -1,8 +1,8 @@
 # Apotheosis -- architecture of the current line
 
-> Written 2026-09-27, replacing `Doc/Archive/Architect.md` (a Phase 1-3 task tracker) and
-> `Doc/Archive/Architect_2.md` (a July 2026 RnD report). Both are kept in the archive as history;
-> neither describes what the code looks like now. Where they disagree with this file, this file wins.
+> Written 2026-09-27. This document supersedes the two earlier `Architect*.md` files, which described
+> the July 2026 C++/CX RnD line rather than the current C# one; they have been retired rather than
+> kept alongside, so that what remains under `Doc/` is a description of the system as it is now.
 > Companion documents: [INDEX.md](INDEX.md) (front door), [MVP.md](MVP.md) (acceptance contract),
 > [PLAN.md](PLAN.md) (live state), [LESSONS.md](LESSONS.md) (operating rules).
 
