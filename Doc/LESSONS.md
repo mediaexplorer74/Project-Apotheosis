@@ -154,6 +154,28 @@ These are short operating rules distilled from the detailed reports in [Archive/
   Beware the misleading shape of this failure: the error names `fenv.h`, so it reads like a simde
   problem, and it appears only in a TU that happens to be the first to include `fenv.h` after the
   PCH — which is why it looked like my own file was at fault.
+- **Do not cache or pool a `WriteableBitmap` that is on screen, and do not pool the frame buffer
+  it is filled from — measured 2026-09-27, both were tried and both reverted.** Reusing one
+  `WriteableBitmap` and re-assigning it as `Image.Source` every frame felt *faster* (it removes a
+  2.97 MB array and a surface allocation per frame) and then made images on `ya.ru` visibly blink out
+  and back. The compositor holds a reference to the surface it is presenting, so overwriting one in
+  place is not safe; a **fresh** `WriteableBitmap` per frame is exactly what lets the old one stay
+  intact until the new one is ready. A 3-slot pool for the RGBA frame buffer has the same hazard from
+  the other side: the array is captured by a dispatcher closure and read on the UI thread after the
+  P/Invoke returns, so a slot can be recycled while a queued frame still references it. A frame
+  showing a mix of two states is what both produce.
+- **What did help, and is safe: allocate the 2.97 MB BGRA scratch array in `BlitToBitmap` once.**
+  `720*1080*4` exceeds the 85 KB Large Object Heap threshold, and the LOH is never compacted, so one
+  such array per presented frame dragged the process into repeated Gen2 collections. That is what
+  made long-page scrolling stutter progressively and stall before the footer; the touch bench
+  reported exactly that shape. The per-frame RGBA buffer was left alone — the real fix is to have
+  `paintToRGBA` emit BGRA so no conversion buffer is needed at all, which is a driver change.
+- **The GPU is not in play on the C# line: `WebCoreGpuInit` returns -20.** `LocalState\gpuinit.txt`
+  records it, `_gpuPresent` stays false, and every frame goes through the software path
+  (`BlitToBitmap`). So the scroll numbers above are CPU rasterisation into a `WriteableBitmap`, not
+  GPU compositing — worth knowing before optimising for the GPU path. Note the crash-loop guard at
+  `MainPage.xaml.cs`: a leftover `gpu-crash.flag` file turns `_gpuDefault` off permanently, so a
+  single historical crash will keep the GPU off for every later run until the flag is removed.
 - **Text rendered nothing at all because `APOTHEOSIS_FONTS_DIR` was never set — fixed 2026-09-27.**
   The single cause, and it had nothing to do with font selection. `FontPlatformData.cpp`'s
   `apotheosisBundledFontFaceForName()` — the FreeType path that loads a bundled TTF into a cairo FT

@@ -869,6 +869,17 @@ namespace Apotheosis
             }
         }
 
+        // Apotheosis 2026-09-27: per-frame frame-buffer allocation. A 3-buffer pool was tried here and
+        // reverted. The reasoning for a pool was sound -- `new byte[kW * kH * 4]` is 2.97 MB and
+        // lands on the never-compacted Large Object Heap, once per scroll step and once per live
+        // tick -- but the array is captured by a dispatcher closure and read on the UI thread after
+        // the P/Invoke returns, so a buffer can be recycled while a frame that still references it
+        // is queued for blit. With three slots and a scroll plus a live tick both in flight that
+        // pipeline can exceed the ring, and a recycled buffer is exactly how you get a frame that
+        // shows a mix of two states. The remaining per-frame 2.97 MB is worth attacking at the
+        // source instead: have paintToRGBA write BGRA so no conversion buffer is needed at all.
+        static byte[] NewFrameBuffer() => new byte[kW * kH * 4];
+
         // ===== Scroll =====
         void EngineScroll(int dy)
         {
@@ -881,7 +892,7 @@ namespace Apotheosis
 
             WebEngine.Instance.Post(() =>
             {
-                byte[] rgba = new byte[kW * kH * 4];
+                byte[] rgba = NewFrameBuffer();
                 int rc = -999;
                 GCHandle h = GCHandle.Alloc(rgba, GCHandleType.Pinned);
                 try { rc = WebCoreDriver.WebCoreScrollBy(0, dy, h.AddrOfPinnedObject()); }
@@ -929,7 +940,7 @@ namespace Apotheosis
 
             WebEngine.Instance.Post(() =>
             {
-                byte[] rgba = new byte[kW * kH * 4];
+                byte[] rgba = NewFrameBuffer();
                 int rc = -999;
                 GCHandle h = GCHandle.Alloc(rgba, GCHandleType.Pinned);
                 try { rc = WebCoreDriver.WebCoreScrollBy(dx, dy, h.AddrOfPinnedObject()); }
@@ -1025,7 +1036,7 @@ namespace Apotheosis
 
             WebEngine.Instance.Post(() =>
             {
-                byte[] rgba = new byte[kW * kH * 4];
+                byte[] rgba = NewFrameBuffer();
                 int rc = -999;
                 GCHandle h = GCHandle.Alloc(rgba, GCHandleType.Pinned);
                 try { rc = WebCoreDriver.WebCoreSetPageScale(newScale, focalX, focalY, h.AddrOfPinnedObject()); }
@@ -1098,7 +1109,7 @@ namespace Apotheosis
             WebEngine.Instance.Post(() =>
             {
                 if (!_appForeground) return;
-                byte[] rgba = new byte[kW * kH * 4];
+                byte[] rgba = NewFrameBuffer();
                 int rc = -999; uint hash = 0; int pending = 0;
                 GCHandle h = GCHandle.Alloc(rgba, GCHandleType.Pinned);
                 try
@@ -2298,8 +2309,11 @@ namespace Apotheosis
                 int lc = WebCoreDriver.WebCoreGetLinkCount();
                 for (int i = 0; i < lc; i++)
                 {
-                    int lx = 0, ly = 0, lw = 0, lh = 0;
+                    // Apotheosis 2026-09-27: ONE buffer for every link, not one per link. At 1200 bytes
+                    // a page with a few thousand anchors allocated megabytes per scroll gesture, and each
+                    // iteration also crosses the P/Invoke boundary -- this runs after every scroll.
                     byte[] lu = new byte[1200];
+                    int lx = 0, ly = 0, lw = 0, lh = 0;
                     if (WebCoreDriver.WebCoreGetLink(i, ref lx, ref ly, ref lw, ref lh, lu, lu.Length) != 0)
                     {
                         links.Add(new PageLink
@@ -2314,25 +2328,50 @@ namespace Apotheosis
             return links;
         }
 
+        // Apotheosis 2026-09-27: BlitToBitmap runs on EVERY presented frame, and it was the single
+        // most allocation-heavy thing in the app. It created a fresh WriteableBitmap (a new GPU
+        // surface) per frame, a fresh 2.97 MB BGRA scratch array per frame, and then swizzled
+        // RGBA->BGRA one BYTE AT A TIME -- 3.1 million managed array stores per frame, on the UI
+        // thread, for a 720x1080 surface. Combined with the per-frame RGBA allocation that fed it,
+        // that was ~6 MB of Large Object Heap garbage per frame, which is the stutter-and-grind the
+        // touch bench reported on long pages.
+        //
+        // Apotheosis 2026-09-27: the per-frame 2.97 MB BGRA scratch array is now allocated once.
+        // That was real money: BlitToBitmap runs on every presented frame, and at 720x1080x4 it was
+        // 2.97 MB of Large Object Heap garbage per frame, which is what made long-page scrolling
+        // progressively stutter and grind to a halt.
+        //
+        // REVERTED, and this is the interesting part: a first attempt also cached the
+        // WriteableBitmap itself and re-assigned it as RenderImage.Source every frame. That made
+        // scrolling feel much better, but it made IMAGES FLICKER on ya.ru -- cards blinked out and
+        // back. The compositor holds a reference to the surface it is presenting, so overwriting one
+        // bitmap in place while it is on screen is not safe; a fresh WriteableBitmap per frame is
+        // precisely what makes the old one stay intact until the new one is ready. Do not re-cache
+        // this object. See Doc/LESSONS.md.
+        static byte[] _blitScratch;
+
         void BlitToBitmap(byte[] rgba)
         {
             if (_gpuPresent) return;
             try
             {
+                if (_blitScratch == null)
+                    _blitScratch = new byte[kW * kH * 4];
+
+                byte[] dst = _blitScratch;
+                int n = kW * kH;
+                for (int i = 0, o = 0; i < n; i++, o += 4)
+                {
+                    dst[o] = rgba[o + 2];     // B
+                    dst[o + 1] = rgba[o + 1]; // G
+                    dst[o + 2] = rgba[o];     // R
+                    dst[o + 3] = rgba[o + 3]; // A
+                }
+
+                // A fresh bitmap every frame, deliberately -- see the note above.
                 var wb = new WriteableBitmap(kW, kH);
                 using (var stream = wb.PixelBuffer.AsStream())
-                {
-                    // RGBA -> BGRA conversion
-                    byte[] bgra = new byte[kW * kH * 4];
-                    for (int i = 0, n = kW * kH; i < n; i++)
-                    {
-                        bgra[i * 4 + 0] = rgba[i * 4 + 2]; // B
-                        bgra[i * 4 + 1] = rgba[i * 4 + 1]; // G
-                        bgra[i * 4 + 2] = rgba[i * 4 + 0]; // R
-                        bgra[i * 4 + 3] = rgba[i * 4 + 3]; // A
-                    }
-                    stream.Write(bgra, 0, bgra.Length);
-                }
+                    stream.Write(dst, 0, dst.Length);
                 wb.Invalidate();
                 RenderImage.Source = wb;
             }
