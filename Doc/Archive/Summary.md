@@ -2399,6 +2399,67 @@ must either have the engine writer open/append/close per line (as `WebCorePortTr
 rotation copy the chunk aside and truncate in place. Until then, pull `port-trace.txt` whole and read
 `.1`/`.2` as always-absent.
 
+### The full install snapshot, and the `.30` death named at last: `wtf/HashTable.h:534` (2026-10-09 23:12)
+
+`Src/tools/device-logs/20261009-231207/port-trace.txt` — 6,223,695 B / 140,748 lines, pulled with the
+app **closed** (a live process 404s this file) — carries the whole install, `.25` through `.30`, and
+**eight aborts, one in every version**. Session boundaries are the `SetFontsDir(from conf): …ME.Apotheosis_<ver>_arm…`
+lines:
+
+| line | version | `#0` | `#2` |
+|---|---|---|---|
+| 4362 | `.25` | +0xDDB9 | +0xECEB |
+| 13143 | `.26` | +0xDDD9 | +0xEEC5 |
+| 20311 | `.27` | +0xDDDD | +0xEECD |
+| 26985 | `.27` | +0xDDDD | +0xEECD |
+| 31628 | `.28` | +0xDDDD | +0xF2CD |
+| 32502 | `.29` | +0xDF15 | **JavaScriptCore.dll+0x1EA01B** |
+| 77770 | `.30` | +0xE1AD | +0xF7E5 |
+| 140231 | `.30` | +0xE1AD | +0xF7E5 |
+
+`.25`–`.28` share the `+0xDDxx`/`+0xEExx` family and **every one of them reports
+`assert-scan: no argument triple`** — they are the `RELEASE_ASSERT(m_channel)` WebSocket death, whose
+`#2` names nothing because of the [[assert-reader-image-string-never-copied]] defect. `.29` is the only
+one whose `#2` is a *different module* (JavaScriptCore — the `RedBlackTree` cure that a relink cannot
+carry). `.30` reproduces its own signature twice, tid 2548 then 4072.
+
+**The `.30` abort is now fully named — from the stack window, not from the scan.** The last abort's
+`ABRT window[…]` dump holds `WTFCrashWithInfo`'s three arguments adjacent, in order:
+
+```
+window[104] 09F12C14 5BE3F7E5  WebCoreDriver.dll+0xF7E5   <- the tracer's "#2"
+window[105] 09F12C18 00000216                              line = 0x216 = 534
+window[106] 09F12C1C 5D683735  __FILE__       = …\build-arm32-gpu\WTF\Headers\wtf/HashTable.h
+window[107] 09F12C20 5D69F061  __PRETTY_FUNCTION__ = void WTF::HashTable<WebCore::FontPlatformData,
+                               WTF::KeyValuePair<WebCore::FontPlatformData, WTF::Ref<WebCore::Font>>, …,
+                               WebCore::FontDataCacheKeyTraits>::validateKey(const ValueType &) [Key = …]
+```
+
+So it is a **`RELEASE_ASSERT` at `wtf/HashTable.h:534`**, in the FontCache font map
+(`FontDataCacheKeyTraits`), reached with a key equal to that map's `emptyValue()` —
+`FontPlatformData(0, false, false)`. **`HashTable.h:534` is the exact line the port's own comment
+predicts** (`Src/port/stubs-font-uwp.cpp:291-299`, which guards its own fallback path with a `size > 0`
+test and then a `scaledFont()` test), so the empty key now arrives by a route that guard does not cover.
+The surrounding window is a coherent **text-shaping** chain — `WidthIterator::applyExtraSpacingAfterShaping`
+→ `commitCurrentFontRange` → `FontCascade::glyphDataForCharacter` → `FontCascadeFonts::glyphDataForVariant`
+→ `glyphDataForSystemFallback` → `SystemFallbackFontCache::systemFallbackForCharacterCluster` →
+`FontCache::systemFallbackForCharacterCluster` (the port stub) → `FontCache::fontForPlatformData` → the
+assert — so **the process dies while shaping text that needed a system font fallback**. Same family as
+`null-font-family-crash`.
+
+**The method finding is the one to keep.** The net printed
+`ABRT assert-scan: no argument triple in 1024 words from 09F12A74` and named nothing, while the raw
+window dump three lines below contained the whole argument triple. Both read the same stack; only the
+window found it. **When the scan reports nothing, read the window by hand before believing it.** (And
+`#2 = +0xF7E5` symbolizes to `??1PolicyContainer@WebCore` at `+0xf7e4` only because `validateKey` is a
+header template whose crash site was ICF-folded into a cluster of identical "call and never return"
+bodies — the map names an arbitrary twin; the window names the truth.)
+
+Arithmetic for the next reader: symbolise against the map's **VA column** with target
+`= 0x10000000 + reportedOffset`; the driver's base in these dumps is `0x5BE30000` and the image is
+≈ 30.6 MB (32,120,320 B), so offsets up to ≈ `0x1EA0000` are in-image and the `+0x1853735` /
+`+0x186F061` string pointers above are legitimate literals, not mis-attribution.
+
 ---
 
 *"Reviving the Windows Phone web for the people who never let it die."*
