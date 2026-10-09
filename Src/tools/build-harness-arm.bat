@@ -1,7 +1,8 @@
 @echo off
-rem Apotheosis: build the ARM32 appx. Mirror of _build-appx-x64.bat, and it exists for the same
-rem reason: msbuild needs a full VS environment, and the nested quoting for vcvars does not survive
-rem being passed through a POSIX shell.
+rem Apotheosis: build the ARM32 **C++ harness** (Harness.vcxproj), not the Apotheosis app package --
+rem for that one this is the wrong file, use build-app-arm.bat. Mirror of build-harness-x64.bat, and it
+rem exists for the same reason: msbuild needs a full VS environment, and the nested quoting for vcvars
+rem does not survive being passed through a POSIX shell.
 rem
 rem vcvars64 is deliberate, not a mistake. It is here only to put msbuild on PATH; the ARM toolchain
 rem itself comes from the project, which pins Platform=ARM, toolset v143 14.44.35207 and SDK

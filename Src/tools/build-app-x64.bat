@@ -1,7 +1,7 @@
 @echo off
 rem Apotheosis: build the C# UWP package (ME.Apotheosis) for the x64 bench.
 rem
-rem Separate from _build-appx-x64.bat, which builds the C++ harness (Harness.vcxproj) -- the two
+rem Separate from build-harness-x64.bat, which builds the C++ harness (Harness.vcxproj) -- the two
 rem lines are different projects with different toolchains, and a build of one never implied a
 rem build of the other. The command line is not obvious: AppxBundle=Always plus SideloadOnly is
 rem what emits Apotheosis_<ver>_x64_Debug.appxbundle, which is the artifact

@@ -6,7 +6,7 @@ $ls = 'C:\Users\media\AppData\Local\Packages\EdgeHTMLReborn.Harness_edmb40rfkwsb
 
 $stamp = Get-Date -Format 'HH:mm:ss'
 Write-Output "[$stamp] step 1: build appx"
-& cmd.exe /c "$root\Src\tools\_build-appx-x64.bat" 2>&1 | Select-Object -Last 12
+& cmd.exe /c "$root\Src\tools\build-harness-x64.bat" 2>&1 | Select-Object -Last 12
 if ($LASTEXITCODE -ne 0) { Write-Output "APPX BUILD FAILED exit=$LASTEXITCODE"; exit 1 }
 
 Write-Output ("[{0}] step 2: install in place + launch" -f (Get-Date -Format 'HH:mm:ss'))

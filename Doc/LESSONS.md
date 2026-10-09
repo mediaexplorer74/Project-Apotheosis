@@ -68,7 +68,7 @@ These are short operating rules distilled from the detailed reports in [Archive/
   `pwsh -File Src/port/build-driver-dll-arm32.ps1 -Arch x64` (it recompiles nothing when the
   `Src/port/*.x64.obj` objects are newer than their sources, so a pure export change is a relink), then
   copy `Src/port/WebCoreDriver-x64.dll` into `Src/Apotheosis/native/x64/` — the appx payload is a *copy*,
-  and `_build-csharp-x64.bat` does not refresh it. Verify with
+  and `build-app-x64.bat` does not refresh it. Verify with
   `llvm-readobj --coff-exports <dll> | grep <name>` rather than by rebuilding the app.
 - **Never `catch { }` around a native call you have not yet seen succeed.** The window-fitted viewport
   shipped with `try { rc = ...Resize(...); } catch { }` and logged only its own `-1000` sentinel, so the
@@ -648,3 +648,21 @@ The report is accurate and the mechanism is not a leak.
   stopped compiling for six weeks without anyone noticing. The general form: **`#pragma message` on the
   real command line beats any amount of reasoning about include chains**, and the same wrong reasoning
   was reached twice, a fortnight apart, by two different routes.
+
+## Packaging: a bundle that passes the audit and is still wrong (2026-10-10)
+
+- **`Test-AppxPayload.ps1` does not look inside the bundle's package list.** It checks architecture,
+  payload placement, `resources.pri` and the export table — all of which a *single-package* bundle
+  satisfies. What it cannot see is a missing `Apotheosis_<ver>_language-ru.appx`, so an English-only
+  artifact reports `AUDIT PASSED` and deploys. Count the inner `.appx` files as a separate check:
+  there are **seven** (main + `language-ru` + `language-zh-hans` + four `scale-*`).
+- **`/p:UapAppxPackageBuildMode=SideloadOnly` suppresses resource-pack generation on this project.**
+  Measured while creating `Src/tools/build-app-arm.bat` by copying the flag from
+  `build-app-x64.bat`: the bundle then held only `Apotheosis_<ver>_ARM.appx`, and
+  `BundleArtifacts/arm.txt` lost every `ResourcePack=` line. Copying a flag between the two arch
+  scripts was the whole mistake — the x64 C# package carries its ru-RU strings inline, so the flag is
+  harmless there and destructive here, where they live in the language pack. `BundleArtifacts/arm.txt`
+  is the cheap tell: it is rewritten by every build and its line count is the package count.
+- The general shape: **a build flag that is correct on one line is not evidence for the other line.**
+  Same family as [[two-lines-two-sdk-header-versions]] — verify per line, with an artifact you can
+  count, not with a green checkmark.

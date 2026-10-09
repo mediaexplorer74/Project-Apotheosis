@@ -1,6 +1,8 @@
 @echo off
-rem Apotheosis: msbuild needs a full VS environment (vcvars64) and the nested quoting for that does
-rem not survive being passed through a POSIX shell, so the two steps live in a file instead.
+rem Apotheosis: build the x64 **C++ harness** (Harness.vcxproj), not the Apotheosis app package -- for
+rem that one use build-app-x64.bat. msbuild needs a full VS environment (vcvars64) and the nested
+rem quoting for that does not survive being passed through a POSIX shell, so the two steps live in a
+rem file instead.
 call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" >nul
 if errorlevel 1 exit /b 1
 cd /d "%~dp0..\.."

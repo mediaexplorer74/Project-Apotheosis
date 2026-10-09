@@ -64,7 +64,7 @@ if (-not $SkipDriver) {
 
 # ---------------------------------------------------------------- 3. appx build
 if (-not $SkipBuild) {
-    # Apotheosis: go through _build-appx-x64.bat rather than calling MSBuild here.
+    # Apotheosis: go through build-harness-x64.bat rather than calling MSBuild here.
     #
     # This used to invoke MSBuild.exe directly, found via vswhere, with no Visual Studio environment
     # around it. MSBuild then resolves the C++ toolset itself and picks the 32-bit host targeting
@@ -77,7 +77,7 @@ if (-not $SkipBuild) {
     # shell -- see CLAUDE.md. Having two ways to build the same appx, one of them without vcvars,
     # was the defect.
     Say 'building appx (this is the long step)'
-    $bat = Join-Path $Root 'Src\tools\_build-appx-x64.bat'
+    $bat = Join-Path $Root 'Src\tools\build-harness-x64.bat'
     if (-not (Test-Path $bat)) { throw "missing $bat" }
     & cmd.exe /c "`"$bat`""
     if ($LASTEXITCODE) { throw "msbuild failed ($LASTEXITCODE)" }

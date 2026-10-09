@@ -399,8 +399,8 @@ twice with `0x80073CF9`/`0x80004005` — `Failure in the SystemRegisterRemove st
 `failed to register the windows.MRT extension: The data is invalid` — while the deployment **rolled
 back cleanly** to the old version. The working route is back up `LocalState`, `Remove-AppxPackage`,
 `Add-AppxPackage`, restore `LocalState`; `Remove-AppxPackage` alone deletes `LocalState`, so the
-backup is not optional. New tooling: `_build-csharp-x64.bat` (the C# bundle — distinct from
-`_build-appx-x64.bat`, which builds the C++ harness), `install-apotheosis-x64.ps1`,
+backup is not optional. New tooling: `build-app-x64.bat` (the C# bundle — distinct from
+`build-harness-x64.bat`, which builds the C++ harness), `install-apotheosis-x64.ps1`,
 `drive-csharp.ps1 -FitWindow` (DPI-aware capture; without `SetProcessDPIAware` the shot is a crop).
 
 ---

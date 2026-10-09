@@ -1166,7 +1166,19 @@ the **package root** — inside the AppContainer there is no `SetDllDirectory`, 
 `native\ARM\WebCoreDriver.dll` subdirectory makes `DllImport` fail. This is configured for both arches
 and was verified against the built bundle on 2026-10-03: all 22 engine DLLs are at the root.
 
-Build the package to deploy like this (from the repo root, `bash`):
+Build the package to deploy with the script that exists for it:
+
+```
+Src/tools/build-app-arm.bat
+```
+
+It wraps exactly the MSBuild invocation this section used to spell out inline — every device deploy
+retyped that command line by hand, which is why it is now a file. It is `Release|ARM` with
+`AppxBundle=Always` and `AppxBundlePlatforms=arm`; the `-p:`-versus-`/p:` caveat below is already
+handled inside it. Distinguish it from `build-harness-arm.bat`, which builds the **C++ harness**
+(`Harness.vcxproj`), a different project. **It deliberately does not pass
+`UapAppxPackageBuildMode=SideloadOnly`** — see the lesson below; with that flag the bundle loses every
+resource pack. To run it by hand from `bash`, the equivalent is:
 
 ```
 "/c/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" \
@@ -1177,8 +1189,9 @@ Build the package to deploy like this (from the repo root, `bash`):
 Use `-p:` (a dash), not `/p:` — Git Bash rewrites `/p:` into a path. Use `AppxBundle=Always`: a plain
 `.appx` (`AppxBundle=Never`) is refused by `Add-AppxPackage` when updating an existing bundled install.
 The artifact lands at `Src/Apotheosis/AppPackages/Apotheosis_<version>_Test/Apotheosis_<version>_arm.appxbundle`
-(version follows `Package.appxmanifest`; the current one is `0.2.3.30`, the build that carries the
-rebuilt `JavaScriptCore.dll`).
+(version follows `Package.appxmanifest`; the current one is `0.2.3.31`, the build that carries the
+font-stub relink). **Bump the version first** — `pwsh -File Src/tools/Set-AppVersion.ps1` — because the
+device refuses an install whose identity matches the installed one while the contents differ: 0x80073CFB.
 
 Run MSBuild and the ARM driver script under **`pwsh`** (PowerShell 7), not `powershell.exe` (5.1):
 under 5.1 any native tool that writes to stderr (llvm-lib without `/MACHINE`, the ARM env script's own
