@@ -313,6 +313,39 @@ before deciding, for the same reason. **Pull `port-trace.1.txt` and `port-trace.
 `port-trace.txt`** — both are in `pull-device-logs.ps1`'s default list. The read-side 404 while the app
 lives is unchanged and is not a size limit; rotation bounds the damage, it does not lift it.
 
+**It has never fired, and the reason is now known (2026-10-09, second `.30` run).** Measured:
+`port-trace.txt` reached **6,223,695 bytes / 140,805 lines** with no `port-trace.1.txt` and no
+`port-trace.2.txt` present, and it still carried the `.26`–`.29` sessions — so rotation has not fired
+once in this install's whole life, not merely in that session. The code is deployed (the
+`rotated out at the size ceiling` string byte-searches clean in the staged ARM driver, which was
+staged 22:11:24 and packed at 22:14:47) and `ApoGestureMark` writes through `WebCorePortTrace` dozens
+of times a session, so the rotation path is executed constantly.
+
+The cause is a sharing violation on the destructive step, and it is silent. `apoTraceAppend`
+(`WebKit/Source/WTF/wtf/generic/RunLoopGeneric.cpp:57`) keeps its `FILE*` in a function-static and
+**never closes it**:
+
+```cpp
+static FILE* s_file = nullptr;      // process-lifetime, and every rlife:/wtimer: line goes through it
+...
+s_file = fopen(path.c_str(), "ab");
+fputs(line, s_file);
+fflush(s_file);
+```
+
+MSVC's `fopen` opens without `FILE_SHARE_DELETE`, so `rename(path, previous)` in
+`portTraceRotateIfNeeded` fails with `ERROR_SHARING_VIOLATION` for as long as that handle lives — and
+the handler for that case is `return;` with the comment "still over the ceiling; the next probe tries
+again", i.e. it retries forever and reports nothing. `remove(previous)` fails the same way (harmlessly,
+the file does not exist yet). The engine's writer is in a different module from the driver's, so this
+is not visible from the rotation site at all.
+
+Nothing about the ceiling constant or the two-name scheme is wrong; the rename simply cannot succeed
+while an engine-side handle is open. A fix has to either make the engine writer open/append/close per
+line (as `WebCorePortTrace` does) or have the rotation fall back to copying the chunk aside and
+truncating in place. **Until then, treat a pull's `port-trace.txt` as unbounded and pull it whole** —
+the `.1`/`.2` names in the default list are harmless to ask for but will always 404.
+
 
 ## Status measured 2026-10-03 (night, later) — the `.24` pull answers "gesture or close", and the engine death has a port-side fix
 

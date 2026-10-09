@@ -2332,6 +2332,50 @@ Two consequences worth keeping:
 Not measured: the trace rotation (3.29 MB < the 4 MB ceiling, so `.1`/`.2` were absent) and the
 rebuilt-engine pinch path both remain unverified on the device.
 
+### The second `.30` run: the zoom lever is reachable, the death reproduces exactly, and the trace rotation is root-caused (2026-10-09)
+
+Pulled from `Src/tools/device-logs/20261009-225645/` (port-trace 6,223,695 B / 140,805 lines) and
+`Src/tools/device-logs/20261009-224656/settings.ini`.
+
+**The blur experiment.** `settings.ini` after the change reads `zoom=100` (was `zoom=50`);
+`fitwindow=0` and `gpudefault=0` unchanged. The maintainer's report — "не идеально, но вроде бы
+повеселее" — is exactly the split predicted above: the raster returns to one buffer pixel per CSS
+pixel, and the DIP→physical upscale of the software present path remains.
+
+- The zoom lever is confirmed **reachable**: the new session (lines 78292–140231) carries two
+  `gesture: zoom enter` markers (82507, 87775), each followed within two lines by `gesture: resize
+  enter` — the `PostZoomAndRepaint` zoom-then-resize pair — and `ApoGestureMark(kGestZoom, …)` is the
+  first statement of `WebCoreSetPageZoom`.
+- It is **not** confirmed *effective* by measurement, and the reason is worth keeping. `stage.txt`
+  still read `contents=1024x1986`, byte-identical to the `zoom=50` run, because the diag is written
+  once per completed load (`WriteStage`, `File.WriteAllText`) and the last completed load preceded the
+  settings change — the diag cannot be synced to a zoom change (`diag-line-cannot-sync-a-load`, hit
+  again). And the port's own zoom log goes through `gpuLogMarkerF` into `gpuinit-steps.txt`, which is
+  **HTTP 404 on this device** — that marker channel is dead in this configuration. So only the visual
+  report and the gesture markers distinguish the two settings; no number does.
+
+**The death reproduces exactly.** The second session aborted at line 140231 with a stack identical to
+the first run's — `#0 WebCoreDriver.dll+0xE1AD`, `#1 ucrtbase.dll+0x39DDF`, `#2
+WebCoreDriver.dll+0xF7E5`, `no argument triple in 1024 words` — from a different thread (tid 4072 vs
+2548), after prolonged scrolling. Two independent sessions, the same offsets: the `.30` death is
+deterministic at its site, which `.29`'s was not.
+
+**The trace rotation has never fired, and the cause is a silent sharing violation.**
+`port-trace.txt` reached 6.2 MB against a 4 MB ceiling with no `.1` and no `.2`, while still carrying
+the `.26`–`.29` sessions — so it has never rotated once in this install's life. The code is deployed
+(the `rotated out at the size ceiling` string byte-searches clean in the staged ARM driver, staged
+22:11:24 and packed at 22:14:47) and `ApoGestureMark` writes through `WebCorePortTrace` dozens of
+times per session, so the path is executed constantly. `apoTraceAppend`
+(`WebKit/Source/WTF/wtf/generic/RunLoopGeneric.cpp:57`) keeps its `FILE*` in a function-static and
+**never closes it**, and MSVC's `fopen` omits `FILE_SHARE_DELETE` — so `rename(path, previous)` fails
+with `ERROR_SHARING_VIOLATION` for the life of that handle, and the code's handler for that case is a
+bare `return;` ("still over the ceiling; the next probe tries again"). It retries forever and reports
+nothing. The engine's writer lives in a different module, so the rotation site cannot see it.
+The ceiling constant and the two-name scheme are both correct; only the rename is impossible. A fix
+must either have the engine writer open/append/close per line (as `WebCorePortTrace` does) or have the
+rotation copy the chunk aside and truncate in place. Until then, pull `port-trace.txt` whole and read
+`.1`/`.2` as always-absent.
+
 ---
 
 *"Reviving the Windows Phone web for the people who never let it die."*

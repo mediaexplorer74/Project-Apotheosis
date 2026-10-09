@@ -36,11 +36,18 @@ param(
     [string]$PackagePattern = 'EdgeHTMLReborn.Harness_*',
     [string[]]$Files = @(
         'port-trace.txt',       # driver: loader scheduling and the settle loop, appended and flushed per line
-        # The completed chunks, after the trace rotated at its 4 MB ceiling (2026-10-09). The driver
-        # writes .1 and the loader .2, so both are needed. Pulled by default because the rotation is
-        # invisible from here: a routine pull that takes only port-trace.txt would silently drop
-        # everything but the newest chunk, and the session being investigated is often the one that
-        # just rotated out.
+        # The chunks the rotation is *supposed* to move aside, as the driver's (.1) and the loader's
+        # (.2) -- distinct names on purpose, so the destructive step cannot delete the other writer's
+        # chunk. Kept in the default list because a pull that dropped them would silently lose
+        # everything but the newest chunk IF rotation ever happened.
+        #
+        # Measured 2026-10-09 (second `.30` run): it never has. port-trace.txt reached 6,223,695 B
+        # against the 4 MB ceiling with no .1 and no .2, and still carried the .26-.29 sessions, so
+        # it has never rotated once in this install's life. Cause: apoTraceAppend
+        # (WebKit/Source/WTF/wtf/generic/RunLoopGeneric.cpp:57) caches its FILE* for the process
+        # lifetime, and MSVC's fopen omits FILE_SHARE_DELETE, so the rotation's rename() fails with a
+        # sharing violation and its handler is a bare `return`. Expect these two to 404; pull
+        # port-trace.txt whole. See Doc/Archive/Summary.md and Doc/BUILD-ARM32.md.
         'port-trace.1.txt',
         'port-trace.2.txt',
         'gpuinit-steps.txt',    # driver: gpuLogMarker / DBG_STAGE markers, flushed per line
