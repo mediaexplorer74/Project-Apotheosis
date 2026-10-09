@@ -2437,9 +2437,11 @@ window[107] 09F12C20 5D69F061  __PRETTY_FUNCTION__ = void WTF::HashTable<WebCore
 
 So it is a **`RELEASE_ASSERT` at `wtf/HashTable.h:534`**, in the FontCache font map
 (`FontDataCacheKeyTraits`), reached with a key equal to that map's `emptyValue()` —
-`FontPlatformData(0, false, false)`. **`HashTable.h:534` is the exact line the port's own comment
-predicts** (`Src/port/stubs-font-uwp.cpp:291-299`, which guards its own fallback path with a `size > 0`
-test and then a `scaledFont()` test), so the empty key now arrives by a route that guard does not cover.
+`FontPlatformData(0, false, false)`. `HashTable.h:534` is the exact line the port's own comment predicts
+(`Src/port/stubs-font-uwp.cpp:291-299`, which guards that fallback path with a `size > 0` test and then a
+`scaledFont()` test). The first reading of that coincidence was "the empty key arrives by a route the
+guard does not cover"; the disassembly in the next section falsifies it — **the deployed ARM driver has
+no guard at all.**
 The surrounding window is a coherent **text-shaping** chain — `WidthIterator::applyExtraSpacingAfterShaping`
 → `commitCurrentFontRange` → `FontCascade::glyphDataForCharacter` → `FontCascadeFonts::glyphDataForVariant`
 → `glyphDataForSystemFallback` → `SystemFallbackFontCache::systemFallbackForCharacterCluster` →
@@ -2459,6 +2461,71 @@ Arithmetic for the next reader: symbolise against the map's **VA column** with t
 `= 0x10000000 + reportedOffset`; the driver's base in these dumps is `0x5BE30000` and the image is
 ≈ 30.6 MB (32,120,320 B), so offsets up to ≈ `0x1EA0000` are in-image and the `+0x1853735` /
 `+0x186F061` string pointers above are legitimate literals, not mis-attribution.
+
+### The `.30` death is closed, and the cause is a stale object inside `WebCoreFull-arm32.lib` (2026-10-09, later)
+
+The assert named above has a producer, and the producer is not the current source. The deployed
+`Src/Apotheosis/native/ARM/WebCoreDriver.dll` (2026-10-09 22:11:24, byte-identical to
+`Src/port/WebCoreDriver-arm.dll`, the same link that wrote `WebCoreDriver-arm.map`) carries, at
+`WebCoreDriver.dll+0xBE8950`, the map's `?systemFallbackForCharacterCluster@FontCache@WebCore` from member
+`WebCoreFull-arm32:stubs-font-uwp.cpp.obj`. Disassembled, that body is:
+
+```
+10be8966  apotheosisSetForcedBundledFontName("simhei.ttf")   ; r0 = 0x1184f021
+10be8972  vldr s0, [r6, #104]                       ; size = description.computedSize()
+10be8978  FontPlatformData(size, false, false)      ; ctor, sret at sp+0x14
+10be898c  apotheosisSetForcedBundledFontName(nullptr)
+10be8998  fontForPlatformData(tmp) -> sret
+```
+
+`0x1184f021` is the string, by arithmetic: `.rdata` VMA `0x1184b000`, raw `0x184B600`, `simhei.ttf` at
+file offset 25,485,857 → VA `0x1184f021`. And in the whole 158-byte body (`0x10be8950`–`0x10be89ee`,
+bounded by the map's next symbol) **there is no float compare and no conditional branch** — the only
+`bne` is the `__security_cookie` check. Neither the `size > 0.0f` guard nor the `scaledFont()` check
+exists in the deployed code. So when `description.computedSize()` is 0, the ctor builds exactly
+`FontDataCacheKeyTraits::emptyValue()` = `FontPlatformData(0.f, false, false)` and hands it to
+`fontForPlatformData`, whose `HashMap::ensure` release-asserts on an empty key. **That is the `.30`
+abort, by construction, with nothing left to guess.**
+
+The function is byte-for-byte the object
+`build-arm32-gpu/Source/WebCore/CMakeFiles/WebCore.dir/C_/…/Src/port/stubs-font-uwp.cpp.obj`,
+**mtime 2026-08-22 09:50:35** — the same instructions in the same order, only the linker-resolved
+immediates differ. The x64 twin of that same path is 2026-09-27 04:14:03 and *does* contain the guard,
+which is why one source behaves on one line and not on the other: the shipped ARM image (22:11) and the
+freshly relinked x64 image (22:24) are the two halves of that comparison.
+
+**Why it never shipped.** `stubs-font-uwp.cpp` is compiled *inside* WebCore (that object's path is a
+WebCore target), so it lands in the prebuilt 3.33 GB `build-arm32-gpu/lib/WebCoreFull-arm32.lib`. The ARM
+line only rebuilds the port files named in `Src/port/build-driver-dll-arm32.ps1` (`$Sources`, lines 83–98:
+WebCoreDriver, PortChromeClient, LoadingFrameLoaderClient, PortPlatformStrategies,
+PortNetworkStorageSession, PortStorage, PortWebSocket, webcore-driver-stubs, stubs-crypto,
+stubs-pasteboard, stubs-network, stubs-ax, stubs-other, stubs-loader, plus `..\harness\gdi-stubs`).
+**`stubs-font-uwp` is not in that list.** All 939 objects under
+`build-arm32-gpu/Source/WebCore/CMakeFiles/WebCore.dir` are older than 2026-09-01, so *every* port source
+that WebCore compiles is frozen at 22–23.08 — `stubs-font-uwp.cpp`, `stubs-screen-uwp.cpp`,
+`stubs-sqlite.cpp`, `NetworkStorageSessionCurl.cpp`, and the fork's own additions inside
+`WebKit/Source/WebCore/platform/graphics/FontPlatformData.cpp` (`apotheosisBundledFontFaceForName`,
+`apotheosisSetForcedBundledFontName`).
+
+Two measurements that stop a wrong inference here. (1) The archive holds **two** stub objects: a newer one
+whose literal pool is contiguous (`segoeui.ttf\0simhei.ttf\0APOTHEOSIS_FONTS_DIR\0`, archive offset
+1,256,175,856) and the Aug-22 one near the end (3,330,162,876) — and the link took the old one. (2) The
+`segoeui.ttf` and `APOTHEOSIS_FONTS_DIR` literals that *are* in the shipped DLL come from the freshly
+compiled `WebCoreDriver.arm32.obj` (`Src/port/WebCoreDriver.cpp:1138,1158,4270`), not from the stub — so
+"the DLL contains `segoeui.ttf`" says nothing about which stub object was linked.
+
+**The fix is one line:** add `'stubs-font-uwp'` to `$Sources` in `Src/port/build-driver-dll-arm32.ps1`. The
+loop then produces `stubs-font-uwp.arm32.obj` (`compile-driver-gpu-arm32.ps1` reads the flags out of
+`build-arm32-gpu/build.ninja`), and the link appends the objects *before* `$WebKitLibs`, so the fresh
+definitions win over the archive member; `/FORCE:MULTIPLE` is already applied on ARM (line 398), so even a
+duplicate definition would be a warning this line already tolerates. **Verify offline, before any device
+run:** the rebuilt driver must contain strings the deployed one lacks — `grep -a "FONT fallback"` on the
+new DLL must succeed (today it finds nothing), and a disassembly at `+0xBE8950` must show a `vcmp` before
+the forced-name call.
+
+This is the same *class* as the JavaScriptCore `RedBlackTree` cure and a different *mechanism*: that one
+was a header-only fix baked into a prebuilt DLL, this one is a stale object inside a prebuilt archive.
+Both are answered by one rule for this line: **only the files in `$Sources` are live.**
 
 ---
 

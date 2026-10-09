@@ -1274,3 +1274,40 @@ launch reads it to set `_gpuDefault = false` (`MainPage.xaml.cs:519-525`), so `g
 current `settings.ini` is the shape of a previous GPU attempt that died during init.
 
 Not measured this run: the trace rotation (3.29 MB < the 4 MB ceiling, so `.1`/`.2` were absent).
+
+## The ARM font stub is frozen inside `WebCoreFull-arm32.lib` (2026-10-09)
+
+This is the `.30` death, and it is a build-line defect, not an engine one. The deployed
+`Src/Apotheosis/native/ARM/WebCoreDriver.dll` (2026-10-09 22:11) contains, at `+0xBE8950`, the map's
+`FontCache::systemFallbackForCharacterCluster` — and that body is disassembly-for-disassembly the object
+`build-arm32-gpu/Source/WebCore/CMakeFiles/WebCore.dir/C_/…/Src/port/stubs-font-uwp.cpp.obj`, **built
+2026-08-22 09:50**. It has neither the `size > 0` guard nor the `scaledFont()` check (no `vcmp` anywhere in
+its 158 bytes), so a zero-size `FontDescription` makes it hand `FontDataCacheKeyTraits::emptyValue()` —
+`FontPlatformData(0.f,false,false)` — to `fontForPlatformData`, whose `HashMap::ensure` release-asserts on
+an empty key. `RELEASE_ASSERT` at `wtf/HashTable.h:534`. The x64 twin of the same source path is built from
+2026-09-27 sources and does have the guard; that asymmetry is the whole difference between the two lines
+here.
+
+Why a relink never carried it: `stubs-font-uwp.cpp` is a **WebCore** translation unit (see the object
+path), so it is baked into `build-arm32-gpu/lib/WebCoreFull-arm32.lib`. `Src/port/build-driver-dll-arm32.ps1`
+compiles and links only its `$Sources` list (lines 83–98) — WebCoreDriver, PortChromeClient,
+LoadingFrameLoaderClient, PortPlatformStrategies, PortNetworkStorageSession, PortStorage, PortWebSocket,
+webcore-driver-stubs, stubs-crypto, stubs-pasteboard, stubs-network, stubs-ax, stubs-other, stubs-loader,
+plus `..\harness\gdi-stubs` — and `stubs-font-uwp` is not in it. All 939 objects in the ARM WebCore tree are
+older than 2026-09-01, so every port file WebCore compiles is frozen at 22–23.08: also
+`stubs-screen-uwp.cpp`, `stubs-sqlite.cpp`, `NetworkStorageSessionCurl.cpp`, and the fork's additions in
+`WebKit/Source/WebCore/platform/graphics/FontPlatformData.cpp`.
+
+**Fix (one line):** add `'stubs-font-uwp'` to `$Sources` in `Src/port/build-driver-dll-arm32.ps1`, then run
+that script for `-Arch arm` as usual. Objects precede `$WebKitLibs` on the link line, so the fresh
+definitions win over the archive member, and ARM already links `/FORCE:MULTIPLE` (line 398).
+
+**Verify offline, before deploying** — no device needed, and this is the cheapest possible check:
+`grep -a "FONT fallback" Src/Apotheosis/native/ARM/WebCoreDriver.dll` must succeed on the new DLL (today it
+finds nothing), and `llvm-objdump -d --start-address=0xBE8950` must show a `vcmp` before the
+`apotheosisSetForcedBundledFontName` call.
+
+**Caution.** The upstream object is fine; only the *staging* is stale. Do **not** try to fix this by
+touching `build-arm32-gpu`'s cmake — that tree cannot be reconfigured and any WebKit cmake edit regenerates
+`build.ninja` and breaks the device configuration. Recompiling the one file through `$Sources` sidesteps the
+tree entirely.
