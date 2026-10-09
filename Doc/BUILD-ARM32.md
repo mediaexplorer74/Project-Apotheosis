@@ -649,6 +649,19 @@ table.
    DLLs extracted from the .appx hash-match their builds. **What this does *not* yet settle is the
    device:** no run has happened, so whether the `.29` dzen.ru death is gone is still open.
 
+   **How the device proves which `JavaScriptCore.dll` it is running — and it costs nothing.** The
+   install folder cannot be read: WDP answers `HTTP 403` to `knownfolderid=InstallationFolder` (and to
+   `Package`) in every spelling tried — `path` empty, `%5C`, `\` — so a payload DLL on the phone cannot
+   be hashed over Device Portal. Only `LocalAppData\LocalState` is readable. It does not need to be.
+   The rebuilt WTF carries `apoRLLife`, which appends one
+   `rlife: <what> a=<ptr> b=<ptr> count=<n> extra=<n> tid=<n>` line per event to the same
+   `port-trace.txt` the puller takes, and several of those events are unconditional: `loop-create` at
+   RunLoop construction, `sched`/`unsched` on every timer, `task-destroy` on every `ScheduledTask`.
+   Measured on the `.29` trace, whose engine is the 2026-08-23 DLL: **zero** `rlife` lines in 38,263.
+   A `.30` session containing any `rlife:` line is therefore proof by the engine's own hand that the
+   rebuilt `JavaScriptCore.dll` is installed and executing — which is exactly the confusion that cost
+   the `.29` round, and it needs no version bump and no extra instrument.
+
 ### Results of docket step 2 (2026-10-03) — the ARM appx builds, and the Debug one cannot be installed
 
 Both configurations built on the first attempt, with no project-file change beyond stale comments
@@ -1131,7 +1144,8 @@ Build the package to deploy like this (from the repo root, `bash`):
 Use `-p:` (a dash), not `/p:` — Git Bash rewrites `/p:` into a path. Use `AppxBundle=Always`: a plain
 `.appx` (`AppxBundle=Never`) is refused by `Add-AppxPackage` when updating an existing bundled install.
 The artifact lands at `Src/Apotheosis/AppPackages/Apotheosis_<version>_Test/Apotheosis_<version>_arm.appxbundle`
-(version follows `Package.appxmanifest`; the current one is `0.2.3.29`).
+(version follows `Package.appxmanifest`; the current one is `0.2.3.30`, the build that carries the
+rebuilt `JavaScriptCore.dll`).
 
 Run MSBuild and the ARM driver script under **`pwsh`** (PowerShell 7), not `powershell.exe` (5.1):
 under 5.1 any native tool that writes to stderr (llvm-lib without `/MACHINE`, the ARM env script's own
