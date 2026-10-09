@@ -1312,9 +1312,25 @@ recompiled only that TU and relinked: `unresolved=0 duplicate=142` (the `/FORCE:
 31370.5 KB, staged to `Src/Apotheosis/native/ARM/WebCoreDriver.dll`. The rebuild contains `FONT fallback` /
 `FONT cfpd` / `FONT probe` (the old payload has none of them); the map names `stubs-font-uwp.arm32.obj`
 instead of the archive member; and `systemFallbackForCharacterCluster` at the new `+0x1FB20` opens with the
-trace call followed by `vcmp.f32 s16, #0` / `vmrs` / `ble` — the guard. **Owed: a device run** (deploy, then
-check that the dzen.ru text-shaping abort is gone). Note `stubs-screen-uwp` and `stubs-sqlite` are frozen the
-same way and are still unlisted; they were left alone because nothing today points at them.
+trace call followed by `vcmp.f32 s16, #0` / `vmrs` / `ble` — the guard. Note `stubs-screen-uwp` and
+`stubs-sqlite` are frozen the same way and are still unlisted; they were left alone because nothing
+today points at them.
+
+**Device result, 2026-10-09 late / 10-10 — the `.30` death is closed.** `0.2.3.31` was built
+(`AppxBundle=Always`, Release|ARM), audited (`AUDIT PASSED`, 30 binaries all arm, `WebCoreDriver.dll`
+present, 40/40 declared exports) with the packaged driver hash-matching the build
+(`sha256 1826435b1fb03aa4…`), and deployed (`HTTP 202 in 36s`, `Success`,
+`ME.Apotheosis_0.2.3.31_arm__cj4nrm0qt9s1y`). The session ran on dzen.ru and was closed by hand, so the
+trace was readable whole: `port-trace.txt`, 4,145,662 B / 83,462 lines. **The process lived past four
+minutes** (`pid=5704`, ws ~460 MB) where `.30` died about twenty seconds in, and `crash-report.txt` is
+absent. The abort triple is gone: `HashTable.h:534`, `RELEASE_ASSERT`, `WTFCrashWithInfo`, `validateKey`
+and `fontForPlatformData` are **0 hits** in both files pulled. What proves the fix rather than luck is
+the new code's own voice — `FONT cfpd:` **511** times, `FONT fallback:` **29** — and, at the centre,
+`FONT cfpd: decline, size non-positive or NaN` **26** times, each preceded by
+`FONT cfpd: enter family='…' size=0.00` for thirteen generic families (`system-ui`, `Segoe UI`, `Roboto`,
+`Noto Sans`, `Ubuntu`, `Helvetica Neue`, `Arial`, `-apple-system`, …). That `size=0` input is exactly
+the one that used to build `FontPlatformData(0,false,false)` and release-assert; it now declines. The
+stale-object diagnosis and this measurement agree, on hardware.
 
 **Caution.** The upstream object is fine; only the *staging* is stale. Do **not** try to fix this by
 touching `build-arm32-gpu`'s cmake — that tree cannot be reconfigured and any WebKit cmake edit regenerates

@@ -2536,8 +2536,18 @@ device: (1) the image now contains `FONT fallback` / `FONT cfpd` / `FONT probe`,
 (2) the map attributes `systemFallbackForCharacterCluster` to `stubs-font-uwp.arm32.obj` where it used to
 name the archive member `WebCoreFull-arm32:stubs-font-uwp.cpp.obj`; (3) the function moved from `+0xBE8950`
 to `+0x1FB20`, and its body there reads `vcmp.f32 s16, #0` / `vmrs APSR_nzcv, fpscr` / `ble …` immediately
-after the trace call — the `if (!(size > 0.0f)) return nullptr` that the shipped code never had. What
-remains is the device: deploy `.31` and watch the dzen.ru text-shaping abort.
+after the trace call — the `if (!(size > 0.0f)) return nullptr` that the shipped code never had.
+
+**Confirmed on the device, 2026-10-09 late.** `0.2.3.31` (bundle audited, packaged driver hash-identical
+to the build) deployed `HTTP 202 in 36s` and ran dzen.ru to a hand close. The process **outlived `.30` by
+two orders of magnitude** — four-plus minutes against twenty seconds — and no `crash-report.txt` was
+written. The abort triple is absent: `HashTable.h:534`, `RELEASE_ASSERT`, `validateKey` and
+`fontForPlatformData` are zero hits in the whole 83,462-line trace. The decisive detail is not the
+silence but the new stub's own lines: `FONT cfpd:` 511, `FONT fallback:` 29, and
+`FONT cfpd: decline, size non-positive or NaN` **26 times** — every one preceded by
+`FONT cfpd: enter family='…' size=0.00`. That is precisely the input that used to reach
+`fontForPlatformData` and release-assert at `HashTable.h:534`. The guard is now firing on hardware, so
+the fix is measured, not inferred from a quiet log.
 
 ---
 
