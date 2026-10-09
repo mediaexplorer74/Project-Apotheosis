@@ -2527,6 +2527,18 @@ This is the same *class* as the JavaScriptCore `RedBlackTree` cure and a differe
 was a header-only fix baked into a prebuilt DLL, this one is a stale object inside a prebuilt archive.
 Both are answered by one rule for this line: **only the files in `$Sources` are live.**
 
+**Applied and verified offline, same evening.** `'stubs-font-uwp'` is now in `$Sources`; the rebuild
+recompiled that one translation unit (`stubs-font-uwp.arm32.obj`, 34,440 B — the old object was 649,427 B
+because it carried debug info) and linked with `unresolved=0 duplicate=142`, the duplicates being exactly
+the `/FORCE:MULTIPLE` case this line already tolerated. The fresh payload is
+`Src/Apotheosis/native/ARM/WebCoreDriver.dll`, 32,123,392 B (was 32,120,320). Three checks, none needing the
+device: (1) the image now contains `FONT fallback` / `FONT cfpd` / `FONT probe`, which the old one lacked;
+(2) the map attributes `systemFallbackForCharacterCluster` to `stubs-font-uwp.arm32.obj` where it used to
+name the archive member `WebCoreFull-arm32:stubs-font-uwp.cpp.obj`; (3) the function moved from `+0xBE8950`
+to `+0x1FB20`, and its body there reads `vcmp.f32 s16, #0` / `vmrs APSR_nzcv, fpscr` / `ble …` immediately
+after the trace call — the `if (!(size > 0.0f)) return nullptr` that the shipped code never had. What
+remains is the device: deploy `.31` and watch the dzen.ru text-shaping abort.
+
 ---
 
 *"Reviving the Windows Phone web for the people who never let it die."*

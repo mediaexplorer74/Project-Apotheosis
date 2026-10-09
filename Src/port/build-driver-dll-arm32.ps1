@@ -94,7 +94,20 @@ $Sources = @(
     'stubs-network',
     'stubs-ax',
     'stubs-other',
-    'stubs-loader'
+    'stubs-loader',
+    # Apotheosis 2026-10-09: stubs-font-uwp.cpp is a WebCore translation unit -- CMake compiles it
+    # into WebCoreFull-arm32.lib (build-arm32-gpu\Source\WebCore\CMakeFiles\WebCore.dir\...), and this
+    # list is the ONLY set of sources the ARM relink ever rebuilds. Until today the phone therefore
+    # linked a stubs-font-uwp.cpp.obj built 2026-08-22 09:50, whose
+    # FontCache::systemFallbackForCharacterCluster carries neither the `size > 0` guard nor the
+    # `scaledFont()` check: a zero-size FontDescription handed FontDataCacheKeyTraits::emptyValue()
+    # (FontPlatformData(0,false,false)) to fontForPlatformData, whose HashMap::ensure release-asserts
+    # -- RELEASE_ASSERT at wtf/HashTable.h:534, the `.30` device death, measured by disassembling the
+    # shipped DLL against that stale object. Listing the source here compiles it with the same flags
+    # as the other stubs; objects precede $WebKitLibs on the link line, so these definitions win over
+    # the archive member, and /FORCE:MULTIPLE (ARM only, below) tolerates any overlap. Verify a rebuild
+    # took without touching the device: the new DLL must contain "FONT fallback" (the old one does not).
+    'stubs-font-uwp'
 )
 
 # Apotheosis 2026-09-26 (ARM only): Cairo's win32 backend references desktop GDI through __imp_,

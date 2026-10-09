@@ -1307,6 +1307,15 @@ definitions win over the archive member, and ARM already links `/FORCE:MULTIPLE`
 finds nothing), and `llvm-objdump -d --start-address=0xBE8950` must show a `vcmp` before the
 `apotheosisSetForcedBundledFontName` call.
 
+**Applied and verified offline 2026-10-09.** The line is now `'stubs-font-uwp'` in `$Sources`, `-Arch arm`
+recompiled only that TU and relinked: `unresolved=0 duplicate=142` (the `/FORCE:MULTIPLE` case), DLL
+31370.5 KB, staged to `Src/Apotheosis/native/ARM/WebCoreDriver.dll`. The rebuild contains `FONT fallback` /
+`FONT cfpd` / `FONT probe` (the old payload has none of them); the map names `stubs-font-uwp.arm32.obj`
+instead of the archive member; and `systemFallbackForCharacterCluster` at the new `+0x1FB20` opens with the
+trace call followed by `vcmp.f32 s16, #0` / `vmrs` / `ble` — the guard. **Owed: a device run** (deploy, then
+check that the dzen.ru text-shaping abort is gone). Note `stubs-screen-uwp` and `stubs-sqlite` are frozen the
+same way and are still unlisted; they were left alone because nothing today points at them.
+
 **Caution.** The upstream object is fine; only the *staging* is stale. Do **not** try to fix this by
 touching `build-arm32-gpu`'s cmake — that tree cannot be reconfigured and any WebKit cmake edit regenerates
 `build.ninja` and breaks the device configuration. Recompiling the one file through `$Sources` sidesteps the
