@@ -2234,6 +2234,106 @@ can still fire. It is called from `SetLoading(false)`, from `OnLiveTick`'s safet
 
 ---
 
+## `0.2.3.30`: the rebuilt `JavaScriptCore.dll` is on the phone, the death is a different one, and the "blurry" report is measured (2026-10-09)
+
+The first `.30` device run. All numbers below come from
+`Src/tools/device-logs/20261009-224047/port-trace.txt` (3,288,252 B / 78,287 lines, pulled
+2026-10-09 22:40) and `Src/tools/device-logs/20261009-224656/settings.ini`.
+
+### What the run proved, for free
+
+- **The rebuilt engine is installed and executing.** The `.30` session is lines **38268–77770**
+  (session boundaries are the `SetFontsDir(from conf): …ME.Apotheosis_<ver>_arm…` lines; the file is
+  append-only and holds `.26`–`.30`). It carries **1531** `rlife:` lines, all `tid=2548`; the `.29`
+  session carries **zero**. `rlife:` is written by the rebuilt WTF itself, so this is the engine
+  naming its own identity — no version bump and no extra instrument needed (see "How the device
+  proves which `JavaScriptCore.dll` it is running" in `Doc/BUILD-ARM32.md`).
+- **The new `RedBlackTree` detectors never fired.** `TREE-BAD-AT-LOOP-DESTROY`,
+  `TREE-BAD-AFTER-SCHED`, `TREE-BAD-AFTER-UNSCHED`, `TREE-BAD-INS-COUNT`, `TREE-BAD-REM-COUNT`,
+  `TREE-ZERO-LINK`, `TREE-WALK-TRUNCATED` = **0 hits in the whole file**. The defect class the `.29`
+  death came out of did not recur.
+- **The RunLoop tree is healthy at the end.** The `rlife:` `sched`/`unsched` pairs are balanced right
+  up to the last line before the abort — `sched … count=1` / `unsched … count=0` alternating, no
+  `count=0` while still in the tree.
+
+### What died, and where the evidence stops
+
+The process still aborted, ~20 s in, during a **burst of image loads**: the last lines before the
+abort are `loader: CALL type=1 main=1` for `avatars.mds.yandex.net/get-direct/…` and
+`get-yabs_performance/…` (ad banners and avatars), immediately after a run of the font path's
+`APOTRACE String::lower`. The maintainer's report — "крашнулся секунд через двадцать при скролле
+вниз" — is consistent: scrolling is what triggers those lazy image loads.
+
+The signature **changed**. The abort header is
+
+```
+ABRT: abort() reached the CRT signal handler tid=2548
+ABRT stack (3 frames):
+  ABRT #0 WebCoreDriver.dll+0xE1AD
+  ABRT #1 ucrtbase.dll+0x39DDF
+  ABRT #2 WebCoreDriver.dll+0xF7E5
+ABRT assert-scan: no argument triple in 1024 words from 0A992B64
+```
+
+- `#2` is now in **`WebCoreDriver.dll`**; on `.29` it was `JavaScriptCore.dll+0x1EA01B`.
+- The scan found **no argument triple**, so this is a plain `CRASH()` / `WTFCrash()`, not a
+  `RELEASE_ASSERT` — the assert-reader path is not involved, and the abort is not a
+  `WTFCrashWithInfo` caller.
+- Symbolization (the map's VA column is what the tracer's offsets compare against; it is **not** an
+  absolute address — it equals `0x10000000 + RVA + 0x1000`, i.e. `RVA = offset − 0x1000`):
+  - `#0 0xE1AD` → RVA `0xD168` `?ApoPortAbortHandler@…` at `+0x45` — the handler, as expected, the
+    same `+0x45` seen on `.29`.
+  - `#2 0xF7E5` → nearest-below is `??1PolicyContainer@WebCore@@QAA@XZ` at RVA `0xE7E4`, **one byte**
+    before the frame. Its neighbours are `??1HTTPHeaderMap@WebCore@@QAA@XZ` (0xE686),
+    `??1AdditionalNetworkLoadMetricsForWebInspector@WebCore@@QAA@XZ` (0xE728) and
+    `?WTFCrashWithInfo@@YAXHPBD0H@Z` (0xE7CA, `+0x1B`). Empty destructors spaced ~0xA0 apart is the
+    ICF-folded-block signature, so "nearest below" names an arbitrary twin.
+  - **`#2` is therefore recorded as unresolved, not named.** What the frames do support: the abort
+    came from driver-side code, not from JavaScriptCore.
+- Instrument trap, recorded because it cost three passes: a lookup keyed on the map's **RVA field**
+  lands in a completely different ICF cluster (`0xF6DC`–`0xF70C`, the `??_G`/`??_E` fold set) and
+  returns a plausible wrong answer. Same class as `llvm-symbolizer`'s nearest-symbol trap.
+
+### The "blurry content" report is a measurement
+
+The device settings (`settings.ini`, pulled 2026-10-09 22:46) are:
+
+```
+zoom=50        fitwindow=0        gpudefault=0
+```
+
+With `fitwindow=0` the viewport is the fixed constant `kW×kH = 720×1080` **DIP**, and `zoom=50` makes
+the layout width = viewport / 0.5 = **1440 CSS px**. The engine then rasterizes that 1440-px-wide
+layout into a 720-px-wide buffer — **one buffer pixel per two CSS pixels**. The buffer is presented
+through `RenderImage` (`Stretch="None"`, one bitmap pixel per DIP) and the compositor scales DIPs to
+the panel's physical pixels (720 DIP = 1440 px on this Lumia), i.e. **another 2×**.
+
+The port states the rule itself, at `WebCoreSetPageZoom` (`Src/port/WebCoreDriver.cpp:5947-5960`): GPU
+present uses the panel's *physical* size as the viewport and `zoom = CompositionScale`, "which is
+where the sharpness comes from"; and **"software present has a DIP-sized viewport and must stay at
+zoom 1.0"**. So `zoom=50` on the software path is exactly the combination the code says not to use:
+it halves the raster resolution on top of the unavoidable DIP→physical upscale. The app never asks
+for the display scale at all — there is no `DisplayInformation` / `RawPixelsPerViewportPixel` /
+`ResolutionScale` anywhere in `Src/Apotheosis`.
+
+The sharp path is the GPU one, and it has **never been armed on the device**: `EnableGpu()` writes
+`gpuinit.txt`, and no pull in `Src/tools/device-logs/*/` has ever contained it (`gpudefault=0` in the
+settings file above).
+
+Two consequences worth keeping:
+
+- **The one-step test is to set the zoom back to 100%.** That returns the raster to one buffer pixel
+  per CSS pixel and should halve the perceived blur. The residual 2× DIP→physical upscale stays and
+  is structural to the software present path.
+- **The pinch is not the cause, and cannot be.** With `fitwindow=0` the only drain for a deferred
+  commit (`AdoptViewport`/`ApplyViewport`) returns at once, so a pinch on this configuration never
+  reaches the engine — its "survived well" in this run is a survived *gesture*, not a survived zoom.
+
+Not measured: the trace rotation (3.29 MB < the 4 MB ceiling, so `.1`/`.2` were absent) and the
+rebuilt-engine pinch path both remain unverified on the device.
+
+---
+
 *"Reviving the Windows Phone web for the people who never let it die."*
 
 ---

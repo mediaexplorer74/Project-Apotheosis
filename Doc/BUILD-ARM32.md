@@ -1179,3 +1179,36 @@ same night).
 and `Microsoft.VCLibs.140.00.Debug`, which a retail Lumia does not carry; the install fails on the
 unmet dependency before any of our code runs. Release depends only on the retail frameworks.
 
+
+## The `.30` device outcome (2026-10-09)
+
+Deployed (`HTTP 202 in 34s`, `Success`, `ME.Apotheosis_0.2.3.30_arm__cj4nrm0qt9s1y`) and launched by
+hand. **The rebuilt `JavaScriptCore.dll` is on the phone**: the `.30` session in `port-trace.txt`
+carries 1531 `rlife:` lines, all `tid=2548`, where the `.29` session carries none. **The new
+`RedBlackTree` detectors never fired**: `TREE-BAD-*`, `TREE-ZERO-LINK` and `TREE-WALK-TRUNCATED` are
+0 hits in the whole file, and the `sched`/`unsched` pairs stay balanced to the last line.
+
+The process still aborted, ~20 s in, during a burst of image loads (ad banners and avatars). The
+signature **changed**: `#2` is now `WebCoreDriver.dll+0xF7E5` (on `.29` it was
+`JavaScriptCore.dll+0x1EA01B`), and there is **no argument triple**, so it is a plain `CRASH()`, not a
+`RELEASE_ASSERT`. `#2` lands in an ICF-folded block of empty WebCore destructors (`~PolicyContainer`
+at map RVA `0xE7E4`, one byte before the frame, with `WTFCrashWithInfo` at `0xE7CA`), so it is left
+**unresolved rather than named**; what the frames support is that the abort came from driver-side
+code, not from JavaScriptCore. Full analysis in `Doc/Archive/Summary.md`.
+
+**Read the map VA column, not the RVA field**: for the driver tracer an offset `O` corresponds to map
+RVA `O - 0x1000`, and the VA column equals `0x10000000 + O`. Keying on the RVA field lands in the
+wrong ICF cluster and returns a plausible wrong symbol.
+
+**The "blurry content" report, measured.** Device `settings.ini`: `zoom=50`, `fitwindow=0`,
+`gpudefault=0`. With fit off the viewport is the fixed `720x1080` DIP, and `zoom=50` lays the page
+out at 1440 CSS px into a 720-px buffer — one buffer pixel per two CSS pixels — which the compositor
+then upscales to the panel. The port states the rule at `WebCoreSetPageZoom`
+(`Src/port/WebCoreDriver.cpp:5947-5960`): software present "has a DIP-sized viewport and must stay at
+zoom 1.0", while GPU present uses the panel's physical size and `zoom = CompositionScale`, "which is
+where the sharpness comes from". GPU has never been armed on this device (`EnableGpu()` writes
+`gpuinit.txt`; no pull contains it). **One-step test: set the zoom back to 100%.** The residual
+DIP -> physical upscale is structural to the software path.
+
+Not measured this run: the trace rotation (3.29 MB < the 4 MB ceiling, so `.1`/`.2` were absent) and
+a pinch that actually reaches the engine (with fit off, nothing drains the deferred commit).
