@@ -1,0 +1,35 @@
+# Chunk 08 - Src/port/WebCoreDriver.cpp lines 4048-4516
+4048	C	// Close the session: tear down the Page and everything hanging off it
+4056	C	// Synthesise a tap at (x,y). Coordinates are viewport-relative; EventHandler applies
+4057	C	// the scroll offset itself (windowToContents). Mouse move/down/up so the page really
+4058	C	// sees a click, then pump -- settle ticks plus rAF -- so whatever it triggered runs.
+4081	C	// scoped guard: clears g_inPump on every exit path
+4090	C	// flush layout first: elementFromPoint needs real geometry
+4194	C	// Reset the load state before pumping: dispatch itself can complete a load
+4195	C	// (signalLoadComplete, LoadingFrameLoaderClient.cpp:131). A stale mainDone would make
+4196	C	// pumpLoop return early, so the tap's own navigation would never be waited for.
+4200	C	// NOTE: g_session must not be reset while this pointer is captured
+4215	C	// raises the user-gesture indicator (popup/autoplay policy)
+4217	C	// dispatches the DOM 'click' -- the anchor's default action runs from here
+4219	C	// Focus-on-tap. Headless has no window for the OS to focus, so a tap on a text
+4220	C	// input, textarea or contenteditable has to focus it here -- otherwise
+4221	C	// WebCoreFocusedEditable stays 0 and the IME path has nothing to type into.
+4236	C	// pump so the page's work (onclick and friends) runs; a tap has no navigation to await
+4357	C	// re-read view/frame and re-size before painting
+4384	C	// Scroll by (dx,dy), positive means down. Each tick drives isolatedUpdateRendering so
+4385	C	// IntersectionObserver and lazy loading fire; the position is clamped to [min,max].
+4405	C	// flush layout: contentsSize and the scroll limits come from it
+4418	C	// M3 note: a scroll does not pay for pumpLoop's 8 s rendering-update wait. It runs
+4419	C	// isolatedUpdateRendering (scroll steps, IntersectionObserver), resizes and relayouts,
+4420	C	// paints once, and the harness's StartLiveMode (WebCoreLiveTick) takes it from there
+4421	C	// for the JS-driven follow-up work (clicks, further loads).
+4423	C	// Note: this path deliberately does not call extractLinks -- link rects are
+4424	C	// viewport-relative and change with every scroll, so the harness calls WebCoreSyncLinks.
+4426	C	// fast scroll: skip forceDirtyTree (the content moved, so it is dirty already)
+4433	C	// Rebuild the link table after a scroll. The rects are viewport-relative, so scrolling
+4434	C	// invalidates all of them even when nothing was repainted -- hence this separate call.
+4454	C	// Find in page: mark every match and return the match count (>= 0), or an error.
+4455	C	//   matchCase != 0 = case sensitive, wrap != 0 = wrap around; clear via WebCoreFindClear.
+4490	C	// Move to the next (forward != 0) or previous match: 1 = found, 0 = not, < 0 = error
+4516	C	// Clear all find highlights; 0 on success
+# end

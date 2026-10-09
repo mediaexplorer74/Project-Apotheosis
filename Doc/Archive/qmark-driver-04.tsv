@@ -1,0 +1,12 @@
+# Chunk 04 - Src/port/WebCoreDriver.cpp lines 977-1426
+977	C	// view->paint has produced Cairo ARGB32; swizzle it into the caller's RGBA8888 buffer
+978	C	// (B<->R plus un-premultiplied alpha -- the conversion every paint path in this file shares)
+1411	C	// nothing to wait for: clear the probe so writeDiag cannot report a stale verdict
+1414	C	// an import was kicked, so pump with no navigation to wait for and let the promise settle
+1421	C	// Teardown order, chosen so nothing can touch a freed session (a late didFinishLoad or curl
+1422	C	//  callback is the hazard): (b) detach the client's load handler -- it becomes a no-op;
+1423	C	//  (c) stopAllLoaders -- late dispatches become no-ops as well; (d) drop the frame and
+1424	C	//  client handles; (e) release the Page so ~Page can detach from the session;
+1425	C	//  (f) drain: cycle the run loop so any straggler loader/curl callback retires.
+1426	C	// Teardown is not a pump, so g_inPump is deliberately left alone here.
+# end

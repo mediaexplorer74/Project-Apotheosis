@@ -1,0 +1,52 @@
+# Chunk 02 - Src/port/WebCoreDriver.cpp lines 514-770
+514	C	// built with -fno-exceptions: this path has no try/catch at all
+531	C	// http(s) only: javascript:, #fragment and mailto: are not tap targets
+532	C	// the rect is viewport-relative (scroll-affected); the caller forces layout first
+537	C	// skip anchors scrolled out of the rendered area
+558	C	// ============================================================================
+559	C	// Live interactive session: one resident Page with real input and real rendering.
+560	C	// EventHandler press/release/move drives hover, click, onclick and SPA handlers;
+561	C	// isolatedUpdateRendering drives rAF and IntersectionObserver; the run loop is
+562	C	// pumped from here. Invariants: one session at a time (a stale teardown would be a
+563	C	// use-after-free), frame/view re-read after each pump, one pump at a time (g_inPump).
+566	C	// load reached a terminal state (success or failure)
+571	C	// keeps frame/view/document alive
+572	C	// the frame, re-read after every pump; owns the view
+573	C	// the frame's loader client, borrowed -- carries the load-completion handler
+574	C	// borrowed from the Page's UniqueRef; rootLayer()/present hooks (GPU path)
+576	C	// per-job load state; didFinishLoad captures a pointer into it
+579	C	// set while a pump is live -- the single-pump guard
+581	C	// clears g_inPump on every exit path, early returns included
+589	C	// Pump the run loop until the document is idle (resources and XHR finished, timers drained):
+590	C	//   mainDone: the load's terminal flag; null = there is no navigation to wait for
+591	C	//   allowEarlyStopWithoutNav: for taps and scrolls, stop after ~0.5 s of quiet
+592	C	//   settleCapTicks: hard cap on settle ticks (each one 50 ms)
+593	C	//   pageForRendering: when set, every tick runs isolatedUpdateRendering (rAF/IO, SPA pages)
+621	C	// EmptyChromeClient's RenderingUpdateScheduler is a no-op, so rAF and
+622	C	// IntersectionObserver never fire on their own -- which is why this tick drives them.
+631	C	// drives rAF/IntersectionObserver (and the JS/DOM work they schedule)
+633	C	// isolatedUpdateRendering can replace the main frame (a page-initiated navigation), so
+634	C	// the frame is re-read below and the pump stops if it is no longer the one it came for.
+641	C	// Apotheosis: microtask and promise work (ES module evaluation and its follow-ups) needs
+642	C	// a run-loop cycle of its own; isolatedUpdateRendering alone does not drain it.
+659	C	// Note: isLoadingInAPISense goes false while a module script (<script type=module>) is
+660	C	// still evaluating, because ScriptRunner/WindowEventLoop only posts a 0 s timer.
+661	C	// The run-loop cycles this tick performs are what let that work finish, and the quiet
+662	C	// window below is what makes stopping safe rather than a race with the evaluator.
+682	C	// ~0.8 s of quiet (16 x 50 ms) with no navigation -> the page is settled
+686	C	// hard cap (8 s by default): the settle loop cannot run forever
+727	C	// Notes on the two settle numbers. pumpLoop waits for 16 quiet ticks (~0.8 s at
+728	C	// 50 ms) before declaring a page settled; in practice that window covers the one or
+729	C	// two leftover resource/JS events a real page emits, and anything past it is ordinary
+730	C	// idle behaviour (a setTimeout-driven tick, or work started by input). Between loads
+731	C	// the harness's own 200 ms live tick (StartLiveMode/WebCoreLiveTick) covers the gap.
+743	C	// ===================== M2 GPU recipe: forcing a full repaint =====================
+744	C	// Everything here is inside USE(TEXTURE_MAPPER) (the Cairo-only builds skip it).
+746	C	// Mark every GraphicsLayer dirty (setNeedsDisplay). A tile whose m_needsDisplay /
+747	C	// m_needsDisplayRect is clear is skipped by updateBackingStoreIfNeeded, so without
+748	C	// this a pumpLoop-driven rendering-update can repaint nothing and the readback
+749	C	// returns the clear colour (contentPx = 0). setNeedsDisplay does nothing at all
+750	C	// for a layer with drawsContent = false, which is why the recursion visits every one.
+769	C	// Rebuild the TextureMapperLayer tree and re-upload dirty tiles; requires g_glContext
+770	C	// to be current. The Apple ports' WCScene::update, for this layer type instead.
+# end

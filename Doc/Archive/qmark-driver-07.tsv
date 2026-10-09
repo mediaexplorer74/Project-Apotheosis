@@ -1,0 +1,16 @@
+# Chunk 07 - Src/port/WebCoreDriver.cpp lines 3450-3560
+3450	C	// Apotheosis: enable JavaScript (LLInt plus the baseline JIT -- no higher tiers here),
+3451	C	// or a modern page is static text: no DOM behaviour, no SPA, no rendering updates.
+3453	C	// <img> and CSS background images
+3459	C	// headless, but the page still has to be marked visible or WebCore skips painting
+3494	C	// settle: a 50 ms timer polls isLoadingInAPISense (resources/XHR) and keeps the loop
+3495	C	// alive so a page that is still running JS can finish (the bilibili case). The cap is
+3496	C	// 8 s (160 x 50 ms); the 30 s watchdog stops the loop regardless.
+3533	C	// Apotheosis: the commit can replace the LocalFrameView, so the handle is re-read from
+3534	C	// the frame here; a stale view would be resized and painted instead of the live one.
+3543	C	// refresh the link table before painting
+3545	C	// ---- Cairo paint + the RGBA swizzle described above ----
+3556	C	// C ABI: exports
+3559	C	// Reload a URL into the live session -- the session counterpart of WebCoreLoadUrl, used
+3560	C	// by WebCoreClickAt/WebCoreScrollBy for link navigation. 0 on success, as there.
+# end

@@ -1,0 +1,18 @@
+# Chunk 05 - Src/port/WebCoreDriver.cpp lines 1737-2435
+1737	C	// Reset g_session first: this destroys any previous Page (and pump residue) before a
+1738	C	// new one is built. emplace() plus w/h/load is all a session needs to report kOK --
+1739	C	// page/mainFrame/client are filled in by buildSession, and the caller tears down on failure.
+2349	C	// The cookie jar. DOM access (document.cookie) and HTTP headers (Cookie/Set-Cookie, seen
+2350	C	// by LoadingFrameLoaderClient::createNetworkingContext) have to share this one store.
+2367	C	// GPU path: a GPU session (GL context + TextureMapper) needs a ChromeClient that can
+2368	C	// hand back a root GraphicsLayer -- PortChromeClient::attachRootGraphicsLayer -- plus
+2369	C	// the settings below. The empty-client default is EmptyChromeClient, i.e. Cairo only.
+2395	C	// borrowed from the Page's UniqueRef -- owned by the Page, never freed here
+2399	C	// NOTE: g_session is never reset while these borrowed pointers are live
+2404	C	// Important: pageConfigurationWithEmptyClients() sets SandboxFlags::all() (which includes
+2405	C	//   SandboxScripts), so ScriptController::canExecuteScripts() answers false however
+2406	C	//   setScriptEnabled(true) is called -- the sandbox wins and no script ever runs, which
+2407	C	//   breaks every SPA page. Clearing it here is what makes JS possible at all.
+2414	C	// borrowed, so teardown can detach the load handler
+2435	C	// GPU gate for this session: with it on, PortChromeClient gets a root layer to composite
+# end

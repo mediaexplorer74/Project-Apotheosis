@@ -87,8 +87,10 @@ k32test/
 # ==== Doc scratch (regenerable baselines / backups) ====
 Doc/font-baseline-*/
 Doc/qmark-backup/
-# Documentation archive: retained locally, not part of the public MVP tree.
-Doc/Archive/
+# Documentation archive: committed since 2026-10-09. It used to be excluded ("retained locally,
+# not part of the public MVP tree"), which also meant everything written there -- the findings
+# archive in particular -- never reached the GitHub mirror. 52 text files, under 1 MB, no binaries.
+# The raw device logs some of these files quote stay ignored; see the end of this file.
 # Scratch and historical plan material
 Doc/PLAN-HISTORY.md
 Doc/qmark-*.tsv
@@ -113,7 +115,9 @@ link-x64.log
 # ==== Screenshots / scratch images (regenerable from the device) ===
 Images/shot-*.png
 Images/sshot*.png
-archive/
+# "archive/" used to sit here. Removed 2026-10-09: the pattern is unanchored, so it matched at any
+# depth, and gitignore matching is case-insensitive on this filesystem -- so it silently shadowed
+# Doc/Archive/ as well, a second net over a directory the Doc section already excluded.
 
 # ==== Visual Studio ====
 .vs/

@@ -1,0 +1,29 @@
+# Chunk 03 - Src/port/WebCoreDriver.cpp lines 1011-1472
+1011	C	// M2: GPU present path. Taken only when the GPU is active, a TextureMapper exists and
+1012	C	// this view is the current session's main frame's view; it composites through the
+1013	C	// TextureMapper and reads the result back. Every other case falls through to Cairo.
+1074	C	// ScrollView::paint offsets by -scrollPosition itself, so a software paint needs no
+1075	C	// scroll compensation: the buffer is already at the current scroll position. When a
+1076	C	// root GraphicsLayer exists this paint is only the fallback, and it is
+1077	C	// FlattenCompositingLayers/Snapshotting that make this single pass complete.
+1088	C	// FNV-1a style hash of every 4th pixel: cheap change detection for the harness
+1110	C	// Sample every 4th pixel in each axis (one pixel per 16 px block) and hash R/G/B only:
+1111	C	// cheap, and stable enough to notice a real repaint rather than sub-pixel noise.
+1125	C	// Fills g_lastDiag/g_lastTitle (URL, counts, parser state); read by WebCoreGetDiag/GetTitle
+1137	C	// JS state: jsEnabled = the Settings switch; canExec = ScriptController's answer (0 with no page)
+1138	C	// scriptCount = how many <script> elements the SPA-probe heuristic below saw
+1150	C	// SPA probe, DOM side (no JS eval): #root with children > 0 means React/Vue mounted. A
+1151	C	// zero with loads=/js= healthy is "the bundle never mounted", not "the load failed".
+1272	C	// The res: list below. N in name(sN) is CachedResource::Status, not a stage number:
+1273	C	// 0 Unknown, 1 Pending, 2 Cached (loaded), 3 LoadError, 4 DecodeError.
+1274	C	// (s1) entries are therefore in flight, (s3) entries are the ones that failed.
+1362	C	// Evaluate JS in the page's main world and copy the string result into out (SPA probe)
+1391	C	// SPA probe: find the page's <script type=module> and kick its import, so a bundle that
+1392	C	// only ever runs on an import promise actually starts; the outcome lands in g_spaProbe.
+1393	C	// frame/view/document are re-read afterwards -- the import can navigate the page.
+1464	C	// (e) Order matters: ~Page runs while g_session is still alive, so the load state the
+1465	C	//     loader client points at stays valid for the whole of the destructor. Releasing the
+1466	C	//     Page after g_session.reset() would let ~Page touch a freed Session -- a UAF.
+1468	C	// (f) drop the Session (the Page itself was released just above)
+1472	C	// (g) drain: cycle the run loop so any straggler loader/curl callback retires
+# end
