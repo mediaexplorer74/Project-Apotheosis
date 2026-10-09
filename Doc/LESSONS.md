@@ -620,3 +620,31 @@ The report is accurate and the mechanism is not a leak.
   deferred commit instead of a geometry adopt. **Grep every write of a deferred flag and check each
   one has a reader on the path it is written from** — a pickup that is guarded by a mode check the
   writer does not share is a silent drop.
+- **A compile-capable environment hides a link-time dependency.** The ARM line's environment is two
+  scripts: `Src\setenv.ps1` (project paths) and `Src\port\arm32-uwp-env.ps1` (`LIB`/`INCLUDE`/`PATH`
+  for the UWP ARM SDK). Sourcing only the first looks fine for hours — `ninja` runs, `clang-cl`
+  compiles, WTF objects appear — because every include path is baked into `build.ninja` as `-I` flags,
+  and then it dies on the *first link*: `lld-link: error: could not open 'ucrt.lib'`. The failing edge
+  is `bin/LLIntSettingsExtractor.exe`, a build-time host generator that CMake links as part of the ARM
+  target, and the CRT is located through `LIB`, not through a baked-in path. **A missing `LIB` is
+  invisible until something links, so "it compiles" is not evidence that the environment is complete** —
+  and the failure lands 1996 steps in, past the point where you would still be watching. The recipe is
+  in `Src\port\build-webcore-arm32.ps1`, which sources both before invoking ninja.
+- **The two build lines see different Windows SDK header *versions*, so "is it declared?" is not a
+  question the preprocessor can answer.** One translation unit (`Src/port/WebCoreDriver.cpp`), one
+  `GetModuleHandleExW` declaration needed by hand. Measured on both lines with `#pragma message`
+  (2026-10-09): `_APISETLIBLOADER_` is **defined on both**, and
+  `WINAPI_FAMILY_PARTITION(DESKTOP|SYSTEM|GAMES)` is **0 on both** — because both compile with
+  `-DWINAPI_FAMILY=WINAPI_FAMILY_APP`. Both obvious guards are therefore wrong. What actually differs
+  is the SDK: ARM pins `10.0.19041.0` through `arm32-uwp-env.ps1`, and *that* `libloaderapi.h` hides
+  the function behind the desktop/system/games partitions; the x64 chain reaches `10.0.26100.0`, which
+  declares it for `APP` as well. Found by preprocessing the x64 TU and reading the `#line` marker above
+  the hit: `# 309 "...\10.0.26100.0\um\libloaderapi.h"`. **When a UWP build may or may not see a Win32
+  declaration, do not guard on a header macro or on the API family — declare it unconditionally as a
+  byte-exact copy of the SDK's prototype**, since the SDK's own `WINBASEAPI BOOL WINAPI` *is*
+  `__declspec(dllimport) BOOL __stdcall`: where the header already declared it, yours is a legal
+  redeclaration; where it did not, yours is the only one. Getting the return type wrong (`HMODULE` for
+  the SDK's `BOOL`) is what turned the duplicate into `conflicting types`, which is how the x64 line
+  stopped compiling for six weeks without anyone noticing. The general form: **`#pragma message` on the
+  real command line beats any amount of reasoning about include chains**, and the same wrong reasoning
+  was reached twice, a fortnight apart, by two different routes.

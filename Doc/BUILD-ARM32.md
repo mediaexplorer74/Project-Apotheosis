@@ -619,13 +619,35 @@ table.
    `TREE-BAD` string being present in the rebuilt binary — a stale DLL is indistinguishable from a
    broken fix at runtime.
 
-   **Run it at `-j1`, decided 2026-10-09.** The bench cannot be handed over for the duration, so the run
-   has to share the machine: `ninja -C build-arm32-gpu -j1 bin/JavaScriptCore.dll` (2 650 steps, the full
-   target — the WTF headers sit in the PCH, so no smaller target carries the cure). `-j1` is the point,
-   not a fallback: at `-j2` a shared machine's own load lands on top of it and a killed or truncated
-   ninja run is the one failure this build cannot afford to misread. Slower, and the only cost is wall
-   clock. `build.ninja` is dated 2026-08-22 and **must not be regenerated** — do not touch any WebKit
-   cmake file or `CMakeCache.txt` in that directory; back the directory up first.
+   **Run it at `-j4` (revised the same day from `-j1`).** The bench cannot be handed over for the
+   duration, so the run has to share the machine, and the first decision was the cautious one. Two
+   measurements moved it to `-j4`: the maintainer raised the CPU clock (it had been running at ~80 %),
+   and the pagefile is 8 GB on a machine with **4 logical processors and 3.9 GB of RAM**. At `-j1` the
+   estimate was ~7 h and at `-j4` ~4-5 h, and the swap is the buffer that makes the wider setting
+   survivable rather than a claim that memory exists. Expect the free-memory figure to sit under 1 GB
+   and the pagefile to be busy — that is the setting working, not failing. Drop to `-j3` if it thrashes.
+   Command: `ninja -C build-arm32-gpu -j4 bin/JavaScriptCore.dll` (2 650 steps, the full target — the
+   WTF headers sit in the PCH, so no smaller target carries the cure). `build.ninja` is dated 2026-08-22
+   and **must not be regenerated** — do not touch any WebKit cmake file or `CMakeCache.txt` in that
+   directory; back the directory up first (done 2026-10-09: `D:\Backups\build-arm32-gpu_2026-10-09`,
+   13 219 files, robocopy exit 1, timestamps preserved — the copy holds real files where the source has
+   4 655 CMake `PrivateHeaders` symlinks, which is why it measures ~25 MB larger).
+
+   **Source *both* environment scripts, or the link fails.** `Src\setenv.ps1` sets the project paths;
+   `Src\port\arm32-uwp-env.ps1` is what sets `LIB`/`INCLUDE` to the UWP ARM SDK. Running ninja with only
+   the former compiles happily — clang-cl gets every `-I` from `build.ninja` — and then dies on the
+   first *link* with `lld-link: error: could not open 'ucrt.lib'`, because the host tool
+   `bin/LLIntSettingsExtractor.exe` (a build-time generator linked `/machine:ARM`) resolves the CRT
+   through `LIB`. Observed exactly once, at step 1996/2650, 2026-10-09. The canonical order is in
+   `Src\port\build-webcore-arm32.ps1`: `setenv.ps1`, then `arm32-uwp-env.ps1`, then ninja.
+
+   **Done 2026-10-09.** `NINJA_EXIT=0` in 35 minutes (a first aborted run had already built ~2000 of
+   the 2650 edges). Verified on the binary: mtime `2026-10-09 21:55:31`, 10.42 MB, `COFF-ARM` /
+   `IMAGE_FILE_MACHINE_ARMNT (0x1C4)`, and **all six `TREE-BAD-*` markers PRESENT** where the
+   pre-rebuild DLL had none. The cure is now in the ARM engine. The artifact that carries it is
+   `Apotheosis_0.2.3.30_arm.appxbundle` — staged driver 40/40 exports, `AUDIT PASSED`, and both engine
+   DLLs extracted from the .appx hash-match their builds. **What this does *not* yet settle is the
+   device:** no run has happened, so whether the `.29` dzen.ru death is gone is still open.
 
 ### Results of docket step 2 (2026-10-03) — the ARM appx builds, and the Debug one cannot be installed
 

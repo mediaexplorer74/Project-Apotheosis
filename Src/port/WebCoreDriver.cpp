@@ -457,25 +457,36 @@ static int g_sehGuardEnabled = 0;            // 0 = native behaviour, 1 = manage
 static char g_lastSeh[512] = "";             // last caught native fault (WebCoreGetSehInfo)
 static char g_fontInfo[1024] = "";           // last font probe summary (WebCoreGetFontInfo)
 
-// Apotheosis 2026-09-26 (ARM32): the ARM32 include chain does not reach libloaderapi.h's
-// declaration of GetModuleHandleExW, so ApoFormatAddress() failed with "use of undeclared
-// identifier 'GetModuleHandleExW'" (1 error, down from the 15 __try errors). x64 and the
-// C++/CX harness already see it -- GetModuleFileNameW next to it is declared on both -- so
-// declare it only when the SDK header has not. The call itself is AppContainer-safe: it is
-// the FROM_ADDRESS form, with no PEB walk and no tlsm32 on Mobile.
+// Apotheosis 2026-09-26 (ARM32): ApoFormatAddress() calls GetModuleHandleExW and the ARM32 include
+// chain does not declare it, so it is declared here by hand. The call itself is AppContainer-safe:
+// it is the FROM_ADDRESS form, with no PEB walk and no tlsm32 on Mobile.
 //
-// Apotheosis 2026-10-09: the guard was `_LIBLOADERAPI_H_`, which is not the macro this header
-// uses -- every SDK on this machine (19041 and 26100 alike) guards libloaderapi.h with
-// `_APISETLIBLOADER_`. So the declaration was compiled even on x64, where the real prototype is
-// already in the chain, and the two disagreed on the return type (`HMODULE` here, the SDK's
-// `BOOL`): "conflicting types for 'GetModuleHandleExW'" at this line, and the x64 driver stopped
-// compiling on 2026-10-09. Nobody saw it because the x64 driver object predates the block. The
-// condition now asks the question it always meant to -- is that header already in this TU? -- and
-// the return type is the SDK's own `BOOL` (an `int`), so that if the header does arrive later in
-// the translation unit the two declarations are identical rather than merely both present.
-#if !defined(_APISETLIBLOADER_)
+// The guard this needs has a history -- read the block below before touching it. Both conditions
+// that look obviously right are wrong, one of them silently broke the x64 line for six weeks, and
+// the same mistake was made twice (2026-09-26 and again 2026-10-09) by reasoning about the header
+// instead of asking the compiler.
+//
+// Declared unconditionally, as an exact copy of the SDK's own prototype. Which line needs this
+// declaration, and which does not, is not a question the preprocessor can ask here, and the two
+// obvious guards both answer it wrongly:
+//
+//   * `_APISETLIBLOADER_` (the macro libloaderapi.h actually uses) is **defined on both lines**,
+//     so testing it suppresses this declaration on ARM, where the SDK then declares nothing and the
+//     call fails with `use of undeclared identifier 'GetModuleHandleExW'` (observed 2026-10-09).
+//   * `WINAPI_FAMILY_PARTITION(DESKTOP|SYSTEM|GAMES)` is **0 on both lines** (both compile with
+//     `-DWINAPI_FAMILY=WINAPI_FAMILY_APP`), so testing that changes nothing either.
+//
+// The real difference is the **SDK header version**, printed by `#pragma message` on both lines:
+// ARM pins 10.0.19041.0 through `arm32-uwp-env.ps1`, and *that* libloaderapi.h gates the function
+// behind the desktop/system/games partitions, hiding it from an APP build; the x64 chain reaches
+// 10.0.26100.0, which declares it for APP as well. No macro distinguishes the two.
+//
+// What makes an unconditional declaration safe is matching the prototype exactly, so that where the
+// SDK already declared it this is a legal redeclaration rather than an error. The earlier version
+// returned `HMODULE`; the SDK returns `BOOL`, and *that* mismatch is what produced
+// `conflicting types for 'GetModuleHandleExW'` on x64. Keep this line byte-identical to
+// `__declspec(dllimport) BOOL __stdcall GetModuleHandleExW(DWORD, LPCWSTR, HMODULE*);` in both SDKs.
 extern "C" __declspec(dllimport) int __stdcall GetModuleHandleExW(DWORD, LPCWSTR, HMODULE*);
-#endif
 static void ApoFormatAddress(void* addr, char* out, size_t outLen)
 {
     // HMODULE/LPCWSTR are the SDK's own types (libloaderapi.h reaches this TU transitively);
