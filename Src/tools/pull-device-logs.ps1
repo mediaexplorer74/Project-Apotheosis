@@ -50,7 +50,14 @@ param(
         # port-trace.txt whole. See Doc/Archive/Summary.md and Doc/BUILD-ARM32.md.
         'port-trace.1.txt',
         'port-trace.2.txt',
-        'gpuinit-steps.txt',    # driver: gpuLogMarker / DBG_STAGE markers, flushed per line
+        # The driver's step-marker channel, under BOTH names -- the app calls
+        # WebCoreSetGpuInitLogFile with "gpu-steps.txt" (MainPage.xaml.cs:219) while the C++ harness
+        # passes "gpuinit-steps.txt". Listing only the harness name is why several `.30` pulls came
+        # back 404 for a file that existed and was being written: the delivered app writes
+        # gpu-steps.txt. Read it happily WHILE the app runs -- gpuLogMarker does
+        # fopen("a")/fclose per line, so unlike port-trace.txt this file is never held open.
+        'gpu-steps.txt',        # app: the zoom/layout line and every DBG_STAGE marker
+        'gpuinit-steps.txt',    # harness: same channel, harness's filename
         'log.txt',              # harness: startup, navigation, STAGE markers, the diag line
         # The dying session's log.txt, copied aside by the crash-verdict code before LogInit truncates
         # it. Only present after a crash, and it is the only copy left once the app has been relaunched

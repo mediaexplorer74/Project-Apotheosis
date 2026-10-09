@@ -2354,9 +2354,28 @@ pixel, and the DIP→physical upscale of the software present path remains.
   still read `contents=1024x1986`, byte-identical to the `zoom=50` run, because the diag is written
   once per completed load (`WriteStage`, `File.WriteAllText`) and the last completed load preceded the
   settings change — the diag cannot be synced to a zoom change (`diag-line-cannot-sync-a-load`, hit
-  again). And the port's own zoom log goes through `gpuLogMarkerF` into `gpuinit-steps.txt`, which is
-  **HTTP 404 on this device** — that marker channel is dead in this configuration. So only the visual
-  report and the gesture markers distinguish the two settings; no number does.
+  again). So only the visual report and the gesture markers distinguish the two settings; no number did
+  — **at the time of that run.**
+- **Corrected 2026-10-09 23:08: the port's zoom log was never 404; it was asked for under the wrong
+  name.** The app sets `WebCoreSetGpuInitLogFile` to **`gpu-steps.txt`** (`MainPage.xaml.cs:219`) while
+  the C++ harness passes `gpuinit-steps.txt`; `pull-device-logs.ps1`'s default list carried only the
+  harness name, so every `.30` pull recorded a 404 for a file that existed and was being written, and
+  the conclusion "that marker channel is dead in this configuration" was an artifact of the filename.
+  The channel is not merely alive, it is **readable while the app runs**: `gpuLogMarker`
+  (`WebCoreDriver.cpp:2582`) does `fopen(…, "a")` / `fprintf` / `fclose` **per line**, so no handle is
+  held — unlike `port-trace.txt`. The script's default list now names both. Two `.30`-era pulls
+  (12:50, 13:25) had in fact already fetched `gpu-steps.txt` by hand.
+- **With the right file the number exists, and it says the 100 % setting was live.** The pull at 23:08
+  (`Src/tools/device-logs/20261009-230812/gpu-steps.txt`, 52,218 B / 950 lines, taken against the
+  running app) shows a file truncated once at process start (zero old-format `CSS-ish` lines — it is
+  the current session in its entirety, two `WebCoreSessionLoad` of `dzen.ru`) whose first zoom marker
+  reads `[GPU] page zoom 1.00 -> 0.59 (contents 720x1654 css | viewport 720x1080 dip | w/zoom 1220
+  css)`. `before = 1.00` on the session's first zoom call is the missing measurement: with `zoom=100`
+  the `_defaultZoom != 100` guard at `MainPage.xaml.cs:1166` skips the commit, `teardownSession` leaves
+  the factor at 1.0, and the session therefore ran at **one buffer pixel per CSS pixel** — exactly the
+  half-resolution term removed and the DIP→physical upscale left standing. That session then took two
+  pinches that **both applied** (1.00→0.59, 0.59→0.80); the deferral trap is a race that loses one
+  pinch that lands *during* an interaction, not a permanent drop of all of them.
 
 **The death reproduces exactly.** The second session aborted at line 140231 with a stack identical to
 the first run's — `#0 WebCoreDriver.dll+0xE1AD`, `#1 ucrtbase.dll+0x39DDF`, `#2

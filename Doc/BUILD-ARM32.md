@@ -1245,5 +1245,32 @@ calls it on every load, and **`compositing=0` in all ten pulled `stage.txt` file
 2026-10-09); `gpudefault=0` as well. **One-step test: set the zoom back to 100%.** The residual
 DIP -> physical upscale is structural to the software path.
 
-Not measured this run: the trace rotation (3.29 MB < the 4 MB ceiling, so `.1`/`.2` were absent) and
-a pinch that actually reaches the engine (with fit off, nothing drains the deferred commit).
+**Ran, and the number arrived later (2026-10-09 23:08).** The zoom was set to 100% by hand and the
+maintainer reported "не идеально, но вроде бы повеселее" -- better, not fixed, which is exactly the
+predicted split. The confirming measurement was missed at first because the pull asked for the port's
+marker file under the **wrong name**: the app passes `gpu-steps.txt` (`MainPage.xaml.cs:219`) while the
+C++ harness passes `gpuinit-steps.txt`, and only the harness name was in the default list -- so several
+pulls logged a 404 for a file that existed. Pulled under the right name against the *running* app
+(`gpuLogMarker` opens/appends/closes per line, so unlike `port-trace.txt` it is readable live), the file
+is truncated once per process and its first zoom marker reads `[GPU] page zoom 1.00 -> 0.59 (contents
+720x1654 css | viewport 720x1080 dip | w/zoom 1220 css)`. `before = 1.00` on the session's first zoom
+call is the missing number: at `zoom=100` the `_defaultZoom != 100` guard at `MainPage.xaml.cs:1166`
+skips the commit and `teardownSession` leaves 1.0, so the session truly ran at one buffer pixel per CSS
+pixel. Two pinches in that session both applied (1.00->0.59, 0.59->0.80).
+
+**Before arming the GPU, two things the measurements say.** (1) `rc=0` is not the same as a picture:
+`WebCoreGpuInit` returns 0 as soon as the GL context and `TextureMapper` exist
+(`WebCoreDriver.cpp:6089-6113`), while the gate that matters is the first frame. In the August harness
+pulls on this same device `WebCoreGpuInit returned 0` appears in **every** one, yet
+`EnableCompositing=1` appears **once** (2026-08-21 18:09:49, `presenting through the GPU surface`); all
+the others read `EnableCompositing=0 Composite=-12 -- staying on software present`. The August harness
+checked that pair and stayed on software; the current app (`MainPage.xaml.cs:2938`) treats `rcCopy == 0`
+alone as success and sets `_gpuPresent = true`. (2) The app never calls `WebCoreSetDirectPresent` --
+`WebCoreDriver.h:153-163` documents that without it the driver takes the direct-present branch regardless
+and presents into a surface nobody sees, "a fully loaded page in a white window". Both are reasons to
+expect the GPU switch to need a verification step of our own, not just a colour change on a button.
+Also note the crash-loop guard: `EnableGpu` writes `gpu-crash.flag` before `WebCoreGpuInit` and the next
+launch reads it to set `_gpuDefault = false` (`MainPage.xaml.cs:519-525`), so `gpudefault=0` in the
+current `settings.ini` is the shape of a previous GPU attempt that died during init.
+
+Not measured this run: the trace rotation (3.29 MB < the 4 MB ceiling, so `.1`/`.2` were absent).
