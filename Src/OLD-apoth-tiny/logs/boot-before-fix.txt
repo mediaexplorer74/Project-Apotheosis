@@ -1,5 +1,0 @@
-14:27:14.331 app-ctor
-14:27:14.599 onlaunched
-14:27:14.612 mainpage-ctor
-14:27:14.627 mainpage-xaml-ok
-14:27:14.690 engine-load handle=0 err=126

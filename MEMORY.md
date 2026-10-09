@@ -14,6 +14,12 @@ in section 6 so nobody resurrects them.
 
 ## Current status — Sep 18, 2026 (morning)
 
+> **Superseded 2026-10-03 for the C# line.** The current state is [Doc/PLAN.md](Doc/PLAN.md) §0a
+> (build `ME.Apotheosis_0.2.1.4_x64`; Nokia Design Archive opens, the language repaints, 13/13 sites
+> pass) with the acceptance table in [Doc/MVP.md](Doc/MVP.md) and the narrative in
+> [Doc/Archive/Summary.md](Doc/Archive/Summary.md). Everything below is the C++/CX harness line's
+> state and the Sep-18 evidence; it is history, not a spec.
+>
 > Current evidence: [STATUS-2026-09-18.md](Doc/STATUS-2026-09-18.md).
 > The original 2026-09-03 handoff following this section is historical, including its installed
 > version, old GPU observations and "next steps"; those do not override the .97 evidence.

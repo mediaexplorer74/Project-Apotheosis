@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
@@ -8,13 +8,13 @@
 
   <Identity Name="ME.Apotheosis"
             Publisher="CN=media"
-            Version="0.2.0.6"
+            Version="0.2.3.29"
             ProcessorArchitecture="arm" />
 
   <mp:PhoneIdentity PhoneProductId="b3a9e5c2-1d4f-4a7b-9c8e-0f1a2b3c4d5e" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>Apotheosis</DisplayName>
+    <DisplayName>Apotheosis 0.2.3.29</DisplayName>
     <PublisherDisplayName>Admin</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -29,7 +29,15 @@
          manifest while still producing language-ru/zh-hans resource packages, so those
          two were built and then never declared: they would not install, and x:Uid would
          fall back to the default language for a Russian or Chinese user. zh-CN is gone
-         because there is no zh-CN Resources.resw; zh-Hans is the Simplified pack. -->
+         because there is no zh-CN Resources.resw; zh-Hans is the Simplified pack.
+
+         Apotheosis 2026-10-03: the UI no longer reads these. The strings live in the
+         table in Str.cs, because a .resw is bound to the VIEW language and cannot be
+         repainted while the app runs, which is what "the language setting does not
+         repaint the UI" turned out to be. The resources are still shipped and the
+         languages still declared: the .resw files are this fork's translation corpus,
+         and dropping them from the package is a separate packaging decision. To retire
+         them, delete the PRIResource items in Apotheosis.csproj and the three files. -->
     <Resource Language="en-US"/>
     <Resource Language="ru-RU"/>
     <Resource Language="zh-Hans"/>
@@ -40,7 +48,7 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="Apotheosis.App">
       <uap:VisualElements
-        DisplayName="Apotheosis"
+        DisplayName="Apotheosis 0.2.3.29"
         Description="Modern WebKit browser on Windows 10 Mobile (ARM32)"
         BackgroundColor="#1E1E1E"
         Square150x150Logo="Assets\Square150x150Logo.png"

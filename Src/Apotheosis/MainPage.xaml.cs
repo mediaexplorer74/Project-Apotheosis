@@ -33,7 +33,74 @@ namespace Apotheosis
 {
     public sealed partial class MainPage : Page
     {
-        const int kW = 720, kH = 1080;
+        // The engine viewport, in device pixels.
+        //
+        // These two numbers are the ONE size shared by the engine session, the GPU surface and the
+        // WriteableBitmap: the session is created at kW x kH, the GPU texture is allocated at
+        // kW x kH, and the RGBA buffer every present path blits is kW * kH * 4 bytes. A change here
+        // is not a layout tweak -- it is a change to the present path, including its stride, its
+        // `contents=` accounting and the GPU DIP/device-pixel mapping.
+        //
+        // Apotheosis 2026-10-03 (second pass): no longer `const`. With `fitwindow=1` in settings.ini
+        // a SizeChanged on ContentArea rewrites them to the window's own size, which is what removes
+        // the white fields: measured on this bench, a 1368-DIP-wide content area showed a 720-DIP
+        // page and 647 DIP of white beside it. They are fields rather than a second "live viewport"
+        // pair because every existing use site already means "the current viewport", and a parallel
+        // pair would be a second truth to keep in step.
+        //
+        // With the setting OFF -- the default, and the state the ARM line inherits -- nothing writes
+        // them and the port behaves exactly as it did. The measurement that made this safe to try is
+        // in Doc/PLAN.md §0 item 4.
+        static int kW = 720, kH = 1080;
+
+        // The window-fitted viewport. See ApplyViewport().
+        //
+        // The geometry is one sentence: the CSS viewport is the content area divided by the page
+        // zoom, so at the default 100% one CSS px is one DIP and the layout width is the window's
+        // own width. The user agent does NOT enter into it -- mobile and desktop differ by the UA
+        // header and by nothing else, which is also what the switch means on a phone.
+        //
+        // Apotheosis 2026-10-03: until today `mobile` ALSO re-laid the page out at a fixed phone
+        // CSS width (412) and magnified it by `window / 412`, capped at 3.5, to keep a phone-shaped
+        // "морда" in a window that is not phone-shaped. Measured on the bench (1355x751 DIP,
+        // CompositionScale 2.00, `settings.ini ua=1`): `fitwindow: resize rc=0 zoom rc=0
+        // 1355x751 z=3,29`, and because the frame is drawn 1:1 in DIP, 16 CSS px of text came out
+        // 53 DIP = 106 physical px -- 3.3x the desktop render of the same page, which the user read
+        // as "масштаб конский" the moment dzen.ru rendered. Two numbers decide the result and they
+        // multiply: this zoom and the page-zoom slider in Settings (50..200 %); at 200 % and 3.29
+        // the page was painted at 6.58 engine px per CSS px, 13 physical px.
+        //
+        // The magnification bought nothing. `zoom = width / cssWidth` fills the window for ANY
+        // cssWidth, so a narrow layout is not what fills it -- legibility is what the magnification
+        // costs. A narrow "морда" on a wide screen is therefore an explicit choice of the page-zoom
+        // setting, not a side effect of the UA switch.
+        //
+        // One rule is enough for every device in the target set, and DIP is the reason: the Lumia
+        // 950 (CompositionScale 2.5, 576x1024 DIP) and the 640 (2.0, 360x640 DIP) differ 4x in
+        // pixels, and at the same zoom they render text at the SAME physical size, because that is
+        // what a DIP is. The 640 sees less of the page, which is what a smaller screen is. The
+        // 1280x800 Windows tablet at 100% (1280 DIP) and the old hybrid laptop (1366 DIP) are the
+        // same rule with more room. The whole set spans 360..1366 DIP wide, 3.8x, and one number
+        // covers it.
+        //
+        // Above this the RGBA buffer (w * h * 4, contiguous) stops being cheap: 2048 x 2048 is
+        // 16 MB. A 4K window at 100% would ask for 3840 and is left with the old fixed viewport
+        // rather than being silently served a 60 MB allocation.
+        const int kViewportCeiling = 2048;
+
+        // The page-zoom range, as fractions. One pair for every lever that sets a zoom -- the
+        // Settings slider, ApplySettings' clamp, a pinch's preview clamp and its commit clamp -- so
+        // that a gesture can never preview a factor the release would refuse. These are the bounds
+        // of the setting, not of the engine: WebCoreSetPageZoom itself accepts 0.1..8.0.
+        const float kZoomMin = 0.5f;    // layout twice as wide as the window
+        const float kZoomMax = 2.0f;    // layout at half the window width
+
+        // --- window-fitted viewport state ---
+        bool _vpDirty;            // a size arrived while the engine was busy; adopt it when free
+        int _vpW, _vpH;           // the wanted size, in DIP (software present draws 1:1)
+        float _vpZoom = 1f;
+        float _pageZoom = 1f;     // what the engine was last told
+
         static readonly string[] kSearchPrefixes = {
             "https://cn.bing.com/search?q=",
             "https://www.google.com/search?q=",
@@ -138,6 +205,19 @@ namespace Apotheosis
                 // call that already works carry both settings also keeps a single source of truth, so
                 // the two paths can never disagree about where the fonts are.
                 Crumb("fontsdir:delegated-to-fontconf");
+
+                // Apotheosis 2026-10-03: turn on the port's own step-marker file. Until this call
+                // the C++ side had a whole diagnostic channel -- gpuLogMarker, one flushed line per
+                // step, written so that a step which never finishes still leaves its own line --
+                // and its path was an empty static char[1024], so every marker went to
+                // OutputDebugString and nothing else. The markers that were invisible from here
+                // include the measurement this project spent a day unable to take:
+                // WebCoreSetPageZoom logs "(layout %dx%d CSS-ish, viewport %dx%d)", i.e. whether
+                // the page zoom reached the layout or the call returned 0 having changed nothing.
+                // The file is appended to, never rotated, and only the resize path turns on the
+                // per-frame markers (g_stageTrace), so the cost is one line per event.
+                try { WebCoreDriver.WebCoreSetGpuInitLogFile(Path.Combine(localDir, "gpu-steps.txt")); }
+                catch (Exception ex) { Crumb("gpusteps: " + ex.GetType().Name); }
                 // Opt in to the driver's SEH guard before any engine call: a native fault then
                 // returns rc = -17 (kErrSeh) plus WebCoreGetSehInfo instead of killing the process
                 // with a FailFast the managed side cannot catch.
@@ -165,6 +245,12 @@ namespace Apotheosis
                     WriteStage("env-ca-done");
                 }
                 WriteStage("env-done");
+                // SetupRuntimeEnv is the engine Loop's FIRST job, so everything that must come after
+                // process init is ordered by this flag rather than by hope: WebCoreReleaseMemory ahead
+                // of init is the intermittent startup death the harness recorded, and the
+                // memory-pressure handler is registered from the UI thread, which can run while this
+                // method is still going.
+                _engineReady = true;
             }
             catch { }
         }
@@ -225,9 +311,27 @@ namespace Apotheosis
         int _defaultZoom = 100;
         int _tabMode;
         string _uaCustom = "";
+        // The touch-emulation scroll pair over the page. On by default: the platforms cannot
+        // reliably tell "has a touchscreen" from "does not", and a missing scroll button on a
+        // device with no working touch path is worse than two buttons on one that has. The switch
+        // is the answer, not the default.
+        bool _showFab = true;
+        // Fit the engine viewport to the window instead of leaving the 720x1080 one. Off by
+        // default: it changes the present path, and the ARM line has not seen it.
+        bool _fitWindow;
+        // The address-bar dropdown (history + site matches). On by default, because that is what the
+        // history tiles and the requirement 7 measurement were built around -- but it opens over the
+        // page, and the page is what the user came for, so it needs an off switch. Read in
+        // ShowSuggestions(), the one function that can put the panel on screen.
+        bool _suggestOn = true;
         string _searchPrefix = kSearchPrefixes[0];
         string _homeUrl = "about:home";
         int _uiLang;
+        // Which language the home document currently on screen was built in. The home page is
+        // engine-side HTML, so it cannot be repainted the way a XAML caption can -- it has to be
+        // built again through the engine. This is what lets HideSettings notice that the language
+        // changed while the user was in the settings overlay and rebuild the page once.
+        int _homeHtmlLang = -1;
 
         // Verbose tracing. On by default for the bench, because on this build a LocalState file
         // is the only proof of what the engine did. Off for a person who just wants to read pages:
@@ -235,6 +339,32 @@ namespace Apotheosis
         // Static because Crumb() is called from the static SetupRuntimeEnv() on the engine thread,
         // which runs before any MainPage instance exists.
         static bool _traceOn = true;
+
+        // ── Memory pressure and the ledger behind it (2026-10-03) ──────────────────────────────
+        //
+        // The C++ harness has reacted to AppMemoryUsageIncreased since 2026-09-24; this app had no
+        // MemoryManager call anywhere, so the live line shipped without its entire remedy. The failure
+        // that exposed it, measured on the Lumia: scrolling dzen.ru drove the working set from 100 to
+        // 298 MB in 47 s and the process was *reaped* -- no crash dump even though CrashDumpEnabled was
+        // true, no WER record, and no dangling line in the driver's per-line trace, i.e. destroyed
+        // between two statements rather than inside one. A UWP app is killed by the platform when it
+        // busts its memory limit, and that kill is silent, so nothing inside the process can report it.
+        //
+        // Two different things are needed here. The LIMIT, which nothing in this project had ever read
+        // -- that is what mem.txt answers, and it is the number that turns "we suspect a quota kill"
+        // into a measurement. And a release that can run *between* navigations: the port already called
+        // WebCoreReleaseMemory(1) on every navigation, but the runaway happens while one page is being
+        // scrolled, so the cadence was wrong, not the callee.
+        //
+        // Gated at Medium and above, copying the harness and for its measured reason: the platform
+        // counts a process's first reading as a rise, and on a fresh launch that rise is into `low`,
+        // where releasing costs a re-decode of everything and once posted a job ahead of the engine's
+        // first navigation -- which is what killed the app at startup. _engineReady is the second
+        // guard, and it is needed because here the handler is registered from the UI thread while the
+        // engine thread is still inside SetupRuntimeEnv.
+        static volatile bool _engineReady;
+        static int _memLastLevel = -1;
+        static DateTime _memLastLine = DateTime.MinValue;
 
         // Tabs
         List<Tab> _tabs = new List<Tab>();
@@ -250,6 +380,7 @@ namespace Apotheosis
 
         // Live rendering
         DispatcherTimer _liveTimer;
+        DispatcherTimer _memTimer;   // the 1 s memory ledger; see the block at _traceOn for why it exists
         bool _liveBusy;
         int _liveBusyAge;
         uint _lastFrameHash;
@@ -261,11 +392,55 @@ namespace Apotheosis
         int _scrollAccumX;
         bool _scrollBusy;
 
-        // Pinch zoom
+        // Pinch and other zooms.
+        //
+        // Apotheosis 2026-10-03: there is no page-scale state here any more, on purpose. The removal
+        // is the fix for a defect a finger found and no file recorded: after a pinch on dzen.ru the
+        // user reported an overlay that "lives in another layer -- scrolling inside the popup does
+        // not move the popup, it scrolls the site underneath". That is what WebCoreSetPageScale
+        // produces by construction: it MAGNIFIES the finished layer tree without re-running layout
+        // (the port's own note on WebCoreSetPageZoom), so the engine's idea of the layout viewport
+        // and the pixels on screen stop agreeing -- fixed-position elements, hit testing and the tap
+        // mapping each pick a different one. CSS page zoom re-lays the page out instead, so there is
+        // exactly one geometry and it is the one the user sees.
+        //
+        // _liveScale remains: it is the gesture's own preview factor, applied as a XAML
+        // ScaleTransform and gone by the time the commit blits.
         bool _pinching;
         float _liveScale = 1.0f;
-        float _pageScale = 1.0f;
         double _focalX = 360, _focalY = 540;
+
+        // ===== Double-tap to fit =====
+        //
+        // Two facts about the UWP gesture stack decide this design, and both are easy to get wrong:
+        //   * when a double tap occurs, `Tapped` has ALREADY fired for the first tap. A naive
+        //     implementation therefore forwards a click into the page and only then zooms -- and on
+        //     a feed page the first tap of the pair follows a card link, so the "zoom" gesture would
+        //     navigate away;
+        //   * the second tap raises `DoubleTapped` and NOT a second `Tapped`, so cancelling the
+        //     *pending* first tap is enough to make the pair do exactly one thing.
+        // A tap is therefore held for the double-tap window before it is forwarded. That delays
+        // every link tap in the app by kDoubleTapMs, which is the price every mobile browser pays
+        // for this gesture; it is small next to the engine's own click latency (seconds on a heavy
+        // page) and it is the only way the pair can be told apart. The window is the interval UWP
+        // itself uses to decide the pair.
+        const int kDoubleTapMs = 250;
+        DispatcherTimer _tapTimer;
+        double _tapX, _tapY;
+        // Set when a double tap is handled. If the input stack also reports the second tap of the
+        // pair as a `Tapped` -- the documentation says it does not, but the guarantee is the
+        // platform's to keep and not ours to assume -- that stray tap is swallowed instead of
+        // becoming a click 250 ms later. Zero means "never", and the subtraction wraps, so the
+        // comparison is safe across `Environment.TickCount` going negative on a long uptime.
+        uint _lastDoubleTapMs;
+
+        // The zoom double-tap-to-fit returns to: the FIT zoom, where the layout width IS the window
+        // width (see the geometry note on kViewportCeiling). CSS page zoom has no focal point to
+        // zoom *around* -- it re-lays the page out rather than magnifying it -- so this gesture is a
+        // level toggle and not a zoom-to-point: double-tap leaves the fit zoom, double-tap returns
+        // to it. The level it leaves for is the last one the user chose that was not the fit zoom.
+        const float kFitZoom = 1.0f;
+        float _lastFitOffZoom = kZoomMax;
 
         // Load watchdog
         DispatcherTimer _loadWatchdog;
@@ -287,6 +462,21 @@ namespace Apotheosis
             _tabs.Add(new Tab { CurrentUrl = _homeUrl });
             _activeTab = 0;
             UpdateTabCount();
+            // Language is known only after LoadSettings(), and the XAML no longer carries x:Uid,
+            // so every caption in the tree has to be applied once here.
+            RetranslateUi();
+
+            // Apotheosis 2026-10-03: the LocalState command channel is started HERE, not only when
+            // a session goes live. It used to be started from the navigation-completion path
+            // (`if (sessionActive) StartAutoCmd();`), which made the channel depend on the app
+            // having opened a session first -- and a scripted batch whose first line is `goto` can
+            // never run, because nothing reads the batch until a navigation has already happened.
+            // That is a deadlock the caller cannot see: the batch file is written, the app ignores
+            // it, and the only symptom is an autocmd-log.txt that was never created.
+            //
+            // Starting it in the ctor costs a 250 ms timer that reads a file, and it makes the
+            // first navigation scriptable, which is what every test harness here needs.
+            StartAutoCmd();
 
             // Hardware / title-bar Back. The Lumia 950 has a physical Back key and Windows 11
             // surfaces a back affordance in the title bar for a UWP app, and both arrive here as
@@ -304,6 +494,23 @@ namespace Apotheosis
                         : AppViewBackButtonVisibility.Collapsed;
             }
             catch { }
+
+            // Memory pressure. Registered in the ctor rather than in OnLaunched so it is live before
+            // the first navigation, and here rather than elsewhere because it is the same kind of
+            // app-lifetime subscription as the Back handler above. OnMemTick is the ledger, the
+            // increased event is the remedy. Neither may block the UI thread, so the release itself
+            // goes through WebEngine.Instance.Post.
+            try
+            {
+                Windows.System.MemoryManager.AppMemoryUsageIncreased += OnMemoryUsageIncreased;
+                _memTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+                _memTimer.Tick += OnMemTick;
+                _memTimer.Start();
+                MemLog("started limit=" + Mb(Windows.System.MemoryManager.AppMemoryUsageLimit)
+                    + " used=" + Mb(Windows.System.MemoryManager.AppMemoryUsage)
+                    + " level=" + MemLevelName((int)Windows.System.MemoryManager.AppMemoryUsageLevel));
+            }
+            catch (Exception ex) { MemLog("registration FAILED: " + ex.Message); }
 
             // GPU crash loop protection
             try
@@ -460,6 +667,9 @@ namespace Apotheosis
                         case "ua_custom": _uaCustom = v; break;
                         case "lang": _uiLang = int.Parse(v); break;
                         case "log": _traceOn = (int.Parse(v) != 0); break;
+                        case "touchfab": _showFab = (int.Parse(v) != 0); break;
+                        case "fitwindow": _fitWindow = (int.Parse(v) != 0); break;
+                        case "suggest": _suggestOn = (int.Parse(v) != 0); break;
                     }
                 }
             }
@@ -485,16 +695,123 @@ namespace Apotheosis
                 sb.AppendLine($"ua_custom={_uaCustom}");
                 sb.AppendLine($"lang={_uiLang}");
                 sb.AppendLine($"log={(_traceOn ? 1 : 0)}");
+                sb.AppendLine($"touchfab={(_showFab ? 1 : 0)}");
+                sb.AppendLine($"fitwindow={(_fitWindow ? 1 : 0)}");
+                sb.AppendLine($"suggest={(_suggestOn ? 1 : 0)}");
                 File.WriteAllText(Path.Combine(d, "settings.ini"), sb.ToString(), Encoding.UTF8);
             }
             catch { }
+        }
+
+        // ── The memory ledger and the release it feeds (2026-10-03) ────────────────────────────
+        //
+        // mem.txt is a per-line flushed marker, the same kind of channel the driver uses and for the
+        // same reason: it is the only thing that survives the death being investigated. The 1 s
+        // cadence is the point. The WDP-side sampler this replaced could manage a reading only every
+        // 3-4 s, which is coarse enough to lose the event itself -- the last thing it saw was 298 MB,
+        // and the kill came within the next second, so its curve can say "it exploded" but not what it
+        // exploded from.
+
+        static string Mb(ulong bytes) => (bytes / 1048576.0).ToString("N1") + "MB";
+
+        static string MemLevelName(int level)
+        {
+            switch (level)
+            {
+                case 0: return "low";
+                case 1: return "medium";
+                case 2: return "high";
+                case 3: return "overlimit";
+                default: return "?" + level;
+            }
+        }
+
+        // Opens and closes the file every line: a buffered writer would lose the tail exactly when it
+        // matters, which is the lesson the driver's own marker channel is built on.
+        static void MemLog(string text)
+        {
+            try
+            {
+                File.AppendAllText(Path.Combine(LocalStateDir(), "mem.txt"),
+                    DateTime.Now.ToString("HH:mm:ss.fff") + "  " + text + Environment.NewLine);
+            }
+            catch { }
+        }
+
+        void OnMemTick(object s, object e)
+        {
+            try
+            {
+                ulong used = Windows.System.MemoryManager.AppMemoryUsage;
+                ulong limit = Windows.System.MemoryManager.AppMemoryUsageLimit;
+                int level = (int)Windows.System.MemoryManager.AppMemoryUsageLevel;
+                // Every second while anything moves, every fifth while the app sits idle: this file
+                // has to stay short enough to read its tail on a phone, and a flat stretch says
+                // nothing. A level change is always written, whatever the clock says.
+                bool levelChanged = level != _memLastLevel;
+                if (levelChanged || (DateTime.Now - _memLastLine).TotalSeconds >= 5)
+                {
+                    _memLastLine = DateTime.Now;
+                    if (levelChanged) _memLastLevel = level;
+                    MemLog("used=" + Mb(used) + " limit=" + Mb(limit)
+                        + (limit > 0 ? " pct=" + (used * 100 / limit) : " pct=?")
+                        + " level=" + MemLevelName(level) + (levelChanged ? " (changed)" : ""));
+                }
+            }
+            catch { }
+        }
+
+        // Fires on an upward *crossing* of the memory level. The platform counts a process's first
+        // reading as one, and on a fresh launch that rise is into `low` -- so the gate below is not
+        // defensive, it is the fix for a real startup death; the full argument is at _traceOn.
+        void OnMemoryUsageIncreased(object sender, object e)
+        {
+            try
+            {
+                int level = (int)Windows.System.MemoryManager.AppMemoryUsageLevel;
+                ulong used = Windows.System.MemoryManager.AppMemoryUsage;
+                ulong limit = Windows.System.MemoryManager.AppMemoryUsageLimit;
+                MemLog("PRESSURE level=" + MemLevelName(level) + " used=" + Mb(used) + " limit=" + Mb(limit));
+                if (level < 1)
+                    return;                 // low: a fresh launch's first reading, not pressure
+                if (!_engineReady)
+                {
+                    MemLog("PRESSURE ignored: engine not ready yet");
+                    return;
+                }
+                PostMemRelease("pressure:" + MemLevelName(level));
+            }
+            catch (Exception ex) { MemLog("PRESSURE handler failed: " + ex.Message); }
+        }
+
+        // Posts, never calls: every C ABI call runs on the engine thread and the UI thread must not
+        // block on the engine. This is the same queue every other engine call in the app uses, and it
+        // is what makes the release land between jobs instead of in the middle of one.
+        void PostMemRelease(string why)
+        {
+            ulong used = Windows.System.MemoryManager.AppMemoryUsage;
+            ulong limit = Windows.System.MemoryManager.AppMemoryUsageLimit;
+            MemLog("release REQUEST (" + why + ") used=" + Mb(used) + " limit=" + Mb(limit));
+            WebEngine.Instance.Post(() =>
+            {
+                try
+                {
+                    if (!_engineReady) { MemLog("release SKIPPED: engine not ready"); return; }
+                    WebCoreDriver.WebCoreReleaseMemory(1);
+                    MemLog("release DONE (engine thread) used=" + Mb(Windows.System.MemoryManager.AppMemoryUsage));
+                }
+                catch (Exception ex) { MemLog("release FAILED: " + ex.Message); }
+            });
         }
 
         void ApplySettings()
         {
             _searchPrefix = SearchPrefixFor(_setSearch);
             _searchPrefixStatic = _searchPrefix;
-            _defaultZoom = Math.Max(50, Math.Min(200, _defaultZoom));
+            // The one clamp for the SETTING. The slider's own range is the same pair, and a pinch
+            // clamps to it too (CommitPageZoom), so the three levers cannot disagree about what the
+            // engine will accept.
+            _defaultZoom = Math.Max((int)(kZoomMin * 100f), Math.Min((int)(kZoomMax * 100f), _defaultZoom));
             _uaMobile = !_setUaDesktop;
             int mobile = _uaMobile ? 1 : 0;
             string ua = _uaCustom;
@@ -504,7 +821,26 @@ namespace Apotheosis
                 try { WebCoreDriver.WebCoreSetUserAgentString(string.IsNullOrEmpty(ua) ? null : ua); } catch { }
             });
             if (UaBtn != null)
-                UaBtn.Content = _uaMobile ? Str.Get("MobileSite") : Str.Get("DesktopSite");
+                UaBtn.Content = Str.Get(_uaMobile ? "MobileSite" : "DesktopSite");
+
+            // The UA no longer decides any geometry, so this call is here only to re-derive the
+            // viewport on its own terms -- AdoptViewport recomputes _vpZoom from the page-zoom
+            // setting, and the UA switch is simply the most common moment for it to be worth a
+            // repaint. It is kept (rather than dropped) because a UA change is also the moment a
+            // page is most likely to want a re-layout, and because this is where the uaMobile= field
+            // of the trace below is anchored.
+            //
+            // Apotheosis 2026-10-03: until today the zoom WAS a function of the UA -- desktop filled
+            // the window at 1.0 while mobile re-laid the page out at a fixed 412 CSS px and
+            // magnified it, which on this bench was 3.29. See the note on kViewportCeiling.
+            //
+            // This runs on the UI thread at every call site, and AdoptViewport is a no-op unless
+            // fitwindow is on and a layout pass has happened, so it is safe on the ctor's path too.
+            // Its work is posted after the UA Post above: one engine queue, same order.
+            Crumb($"applysettings: uaMobile={(_uaMobile ? 1 : 0)} fit={(_fitWindow ? 1 : 0)}"
+                  + $" vp={_vpW}x{_vpH} kW={kW}x{kH} vz={_vpZoom:0.00} pz={_pageZoom:0.00}"
+                  + $" session={(_sessionActive ? 1 : 0)}");
+            if (_fitWindow) AdoptViewport();
         }
 
         static string SearchPrefixFor(int idx)
@@ -556,17 +892,50 @@ namespace Apotheosis
                 Progress.Visibility = loading ? Visibility.Visible : Visibility.Collapsed;
             }
             UpdateUrlActionGlyph();
+            // One place to pick up a viewport that arrived while the engine was busy, because this
+            // is the single point every load ends at. The first attempt put the pickup in the
+            // after-load callback instead, ahead of OnNavDone -- which is what clears _loading -- so
+            // ApplyViewport bailed on its own busy test, set _vpDirty again, and nothing ever asked
+            // it a second time. The measurement was a page that never resized and a log with no
+            // `fitwindow:` line in it at all.
+            //
+            // DrainPendingZoom and not AdoptViewport: the fitted mode has geometry to adopt, the
+            // fixed 720x1080 line only has a pending zoom to re-commit, and AdoptViewport returns at
+            // once when _fitWindow is off. See DrainPendingZoom().
+            if (!loading && _vpDirty) DrainPendingZoom();
         }
 
         void NavigateTo(string url, bool pushHistory)
         {
-            if (_loading) return;
+            // Apotheosis 2026-10-03: a navigation dropped here is a navigation the user asked for
+            // and did not get, and it used to leave NO trace at all -- the scripted `goto` logged
+            // "done", stage.txt kept the previous line, the engine diag kept the previous page.
+            // Measured: a `goto` issued while the shell was still finishing the previous render
+            // was dropped in silence and looked exactly like a navigation that had not been
+            // delivered yet. Say which it was.
+            // A navigation attempt closes the dropdown, delivered or not. This used to sit below the
+            // "shell busy" early-return, so a navigation issued while a load was in flight was
+            // dropped in silence AND left the suggestion list hanging over the page -- measured on
+            // the bench 2026-10-03: typing dzen.ru and pressing Enter while the previous dzen load
+            // was still running left a full-height list over the content area, and the shell was
+            // loading, so no later event was going to close it either. The list belongs to the
+            // address box, so every way out of the box closes it.
+            HideSuggestions();
+            if (_loading)
+            {
+                AutoLog("nav DROPPED, shell busy: " + url);
+                return;
+            }
             string wurl = string.IsNullOrEmpty(url) ? "about:home" : url;
             bool isHome = wurl == "about:home";
             _currentUrl = isHome ? "about:home" : wurl;
 
-            // Reset zoom
-            _pinching = false; _liveScale = 1.0f; _pageScale = 1.0f;
+            // End the gesture's preview, not the zoom. The page zoom is a user-level setting now, so
+            // a navigation must not clear it: the port's teardown DOES forget the factor behind our
+            // back (teardownSession resets g_pageZoom to 1.0), and that is why the after-load path
+            // re-applies it -- see the note in OnNavDone. Clearing the value here as well would make
+            // a zoomed page snap back to 100 % on the next link instead of being re-armed.
+            _pinching = false; _liveScale = 1.0f;
             if (GpuPanel != null) GpuPanel.RenderTransform = null;
             if (RenderImage != null) RenderImage.RenderTransform = null;
 
@@ -579,10 +948,7 @@ namespace Apotheosis
             }
             UpdateNavButtons();
             UpdateLockIcon();
-            HideSuggestions();
-            _urlSyncing = true;
-            if (UrlBox != null) UrlBox.Text = isHome ? "" : url;
-            _urlSyncing = false;
+            SetUrlBoxText(isHome ? "" : url);
             if (TitleText != null)
                 TitleText.Text = isHome ? Str.Get("Home") : $"{Str.Get("Loading")}  {wurl}";
             SetLoading(true);
@@ -600,6 +966,7 @@ namespace Apotheosis
             string surl = url ?? "";
             long mySeq = ++_opSeq;
             string homeHtml = isHome ? BuildHomeHtml(_bookmarks, _historyList) : "";
+            if (isHome) _homeHtmlLang = Str.Lang;
 
             WebEngine.Instance.Post(() =>
             {
@@ -667,21 +1034,84 @@ namespace Apotheosis
                 {
                     disp.RunAsync(CoreDispatcherPriority.Normal, () =>
                     {
-                        if (_opSeq != mySeq) return;
-                        if (ok)
+                        if (_opSeq != mySeq)
                         {
-                            BlitToBitmap(rgba);
-                            _pageLinks = links;
+                            // A newer operation owns the engine now, and _loading is ITS flag to
+                            // clear -- so it must not be cleared here. But this used to return
+                            // without a word, and when the superseding operation did not clear the
+                            // flag either, _loading stayed true and every later NavigateTo was
+                            // dropped in silence. Say it out loud; the flag is now also visible in
+                            // the `diag` line, so the two halves of that story meet in one file.
+                            AutoLog($"nav SUPERSEDED seq {mySeq} -> {_opSeq} ({_currentUrl})");
+                            return;
                         }
-                        _sessionActive = sessionActive;
-                        if (ScrollFab != null)
-                            ScrollFab.Visibility = sessionActive ? Visibility.Visible : Visibility.Collapsed;
-                        _lastFrameHash = 0;
-                        if (sessionActive) StartLiveMode(); else StopLiveMode();
-                        // Apotheosis 2026-09-27: start the LocalState command channel once the session
-                        // is live, so a scripted batch can navigate and scroll without a restart.
-                        if (sessionActive) StartAutoCmd();
-                        OnNavDone(titleCopy, ok, loadOk);
+                        // OnNavDone is what clears _loading, so it runs even when a step above it
+                        // throws. This try/finally is the second half of the same fix: the body
+                        // used to be one bare sequence under an empty catch, and an exception in
+                        // StopLiveMode/StartLiveMode/StartAutoCmd left the shell permanently busy
+                        // with the page already blitted on screen.
+                        try
+                        {
+                            if (ok)
+                            {
+                                BlitToBitmap(rgba);
+                                _pageLinks = links;
+                            }
+                            _sessionActive = sessionActive;
+                            RefreshFab();
+                            _lastFrameHash = 0;
+
+                            // Apotheosis 2026-10-03: the engine's page zoom does NOT survive a
+                            // navigation, and the shell's cache does -- which is a bug that hides
+                            // itself. Every navigation here goes through WebCoreSessionLoad, which
+                            // tears the session down, and teardownSession resets the port's
+                            // remembered zoom to 1.0 ("the requested zoom belonged to the frame
+                            // that just went away"). The new session is therefore laid out
+                            // unzoomed, while _pageZoom still holds the zoom the last frame was
+                            // given -- so AdoptViewport/ApplyViewport compare two equal numbers and
+                            // answer "nothing to do", and the page is presented across the full
+                            // window for the rest of the session.
+                            //
+                            // Measured on the 1355-DIP bench, 0.2.3.8, when the wanted zoom was
+                            // still `dipW / 412` in mobile mode: `ua mobile` logged
+                            // `fitwindow: 1355x751 zoom=3,29` and the zoom reached the engine
+                            // (`[GPU] page zoom 1.00 -> 3.29`), then the next `goto` presented an
+                            // UNZOOMED frame that was byte-identical to the desktop one, and no
+                            // further `fitwindow:` line was ever written. Two frames, 2736x1728,
+                            // zero differing pixels.
+                            //
+                            // The same hole opens for any page-zoom setting other than 100%, so the
+                            // guard below is now that condition rather than the mobile mode.
+                            //
+                            // Forget the cache at the only moment it can become wrong, and let the
+                            // load's own pickup re-derive it: _vpDirty makes SetLoading(false) ->
+                            // AdoptViewport recompute _vpZoom as well, so a setting that changed
+                            // while this load was in flight is covered by the same line. Guarded on
+                            // the WANTED zoom rather than the cached one, because the cached one is
+                            // exactly what may be stale here. At the default 100% the wanted zoom IS
+                            // the engine's default, so nothing is asked for and no repaint is spent.
+                            if (_vpW >= 16 && Math.Abs(ViewportZoom() - 1f) > 0.001f)
+                            {
+                                _pageZoom = -1f;   // unknown to the shell; the engine has 1.0
+                                _vpDirty = true;
+                            }
+                            if (sessionActive) StartLiveMode(); else StopLiveMode();
+                            // The command channel is started in the ctor (see there); this is a belt
+                            // for a session that somehow went live without it. StartAutoCmd is
+                            // idempotent, so the second call is free.
+                            if (sessionActive) StartAutoCmd();
+                        }
+                        catch (Exception ex)
+                        {
+                            AutoLog("nav done threw " + ex.GetType().Name + ": " + ex.Message);
+                        }
+                        finally
+                        {
+                            // A size that arrived while this load owned the engine is picked up by
+                            // SetLoading(false) inside OnNavDone -- not earlier, because _loading is
+                            // still set at that point and ApplyViewport would only defer to itself.
+                            OnNavDone(titleCopy, ok, loadOk);
+                        }
                     });
                 }
                 catch { }
@@ -698,9 +1128,7 @@ namespace Apotheosis
                 AddHistory(_currentUrl, _currentTitle);
             if (_currentUrl != "about:home")
             {
-                _urlSyncing = true;
-                if (UrlBox != null) UrlBox.Text = _currentUrl;
-                _urlSyncing = false;
+                SetUrlBoxText(_currentUrl);
             }
             UpdateLockIcon();
             SetLoading(false);
@@ -716,8 +1144,27 @@ namespace Apotheosis
                 EnableGpu();
                 return;
             }
-            if (_sessionActive && _defaultZoom != 100)
-                PinchCommit(_defaultZoom / 100.0f, kW / 2, kH / 2);
+            // Re-apply the user's page zoom after a load, because a navigation resets the engine's
+            // factor behind our back (see the note in the nav-done block above).
+            //
+            // Both geometries now apply the SAME lever -- CSS page zoom -- and the paths differ only
+            // in who does the repaint:
+            //   fitwindow on  -- the nav-done sentinel sets _vpDirty, so SetLoading(false) ->
+            //                    AdoptViewport -> ApplyViewport re-applies the zoom and repaints.
+            //                    Doing it here as well would post a second zoom+resize through
+            //                    PostZoomAndRepaint, bump _opSeq and make the first frame superseded:
+            //                    an extra ~1.2 s repaint per load for nothing.
+            //   fitwindow off -- the fixed 720x1080 viewport, which is the ARM line as it stands.
+            //                    Nothing above this line re-applies the zoom there (AdoptViewport
+            //                    returns at once when _fitWindow is off), so it is done here, at the
+            //                    current size: WebCoreSessionResize repaints even when the size is
+            //                    unchanged, which is what makes a page zoom possible without a resize
+            //                    at all.
+            // Before 2026-10-03 the fitwindow-off branch went in as page SCALE, because SetPageZoom
+            // does not paint and there was no resize to borrow a repaint from. With the resize
+            // repainting at any size, that reason is gone and the scale path is gone with it.
+            if (!_fitWindow && _sessionActive && _defaultZoom != 100)
+                CommitPageZoom(_defaultZoom / 100.0f, "reload");
         }
 
         void OnLoadWatchdog(object s, object e)
@@ -728,7 +1175,7 @@ namespace Apotheosis
                 ++_opSeq;
                 _interacting = false;
                 _sessionActive = false;
-                if (ScrollFab != null) ScrollFab.Visibility = Visibility.Collapsed;
+                RefreshFab();
                 if (TitleText != null) TitleText.Text = Str.Get("LoadTimeout");
                 SetLoading(false);
                 UpdateNavButtons();
@@ -752,12 +1199,44 @@ namespace Apotheosis
             }
         }
 
-        void OnPageTapped(object sender, TappedRoutedEventArgs e)
+        // The inverse of MapTapToEngine, and it has to stay next to it.
+        //
+        // `taplink` picks a link out of _pageLinks, whose X/Y/W/H are in ENGINE pixels -- the space
+        // ForwardClickToEngine compares against -- while HandleTapAt takes DIP, the space a finger
+        // reports. The two only differ on the GPU path (see the DPI note on MapTapToEngine), which
+        // is exactly why the pair has to be read together: one of them changed alone is a tap that
+        // lands somewhere else.
+        void MapEngineToDip(int px, int py, out double outDipX, out double outDipY)
+        {
+            double aw = ContentArea.ActualWidth, ah = ContentArea.ActualHeight;
+            if (_gpuPresent && aw > 1 && ah > 1)
+            {
+                outDipX = px * aw / kW;
+                outDipY = py * ah / kH;
+            }
+            else
+            {
+                outDipX = px;
+                outDipY = py;
+            }
+        }
+
+        // The tap the user's finger produces and the tap a script produces enter HERE, and that is
+        // the point of this function existing.
+        //
+        // Apotheosis 2026-10-03: OnPageTapped used to hold this body directly, which made the app's
+        // only tap path reachable solely from XAML's manipulation stack -- and that stack cannot be
+        // driven synthetically on this bench (memory: `synthetic-input-cannot-reach-uwp`). The C++
+        // harness closed that gap for itself long ago with `TapFromScript` -> `HandleTapAt`; the
+        // shipping C# line had no equivalent, so "does a tap follow a link?" could be answered only
+        // by reading code. This is that equivalent: the autocmd verbs `tap` and `taplink` call this
+        // function, and so does the finger. A scripted tap that went anywhere else would measure a
+        // different code path and prove nothing about the one a user has.
+        void HandleTapAt(double dipX, double dipY)
         {
             HideSuggestions();
             if (_loading || _interacting) return;
-            var pt = e.GetPosition(ContentArea);
-            MapTapToEngine(pt.X, pt.Y, out int px, out int py);
+            MapTapToEngine(dipX, dipY, out int px, out int py);
             if (px < 0 || py < 0 || px >= kW || py >= kH) return;
 
             if (_sessionActive)
@@ -774,6 +1253,47 @@ namespace Apotheosis
                     return;
                 }
             }
+        }
+
+        void OnPageTapped(object sender, TappedRoutedEventArgs e)
+        {
+            var pt = e.GetPosition(ContentArea);
+            if (_lastDoubleTapMs != 0 &&
+                unchecked((uint)Environment.TickCount - _lastDoubleTapMs) < (uint)kDoubleTapMs)
+                return;   // the tail of a double tap, not a tap of its own
+            // Held for the double-tap window rather than forwarded now -- see kDoubleTapMs. The
+            // scripted `tap`/`taplink` verbs call HandleTapAt directly and are NOT delayed: a script
+            // has no double taps to disambiguate, and paying the wait there would only make the
+            // bench slower than the finger.
+            _tapX = pt.X; _tapY = pt.Y;
+            if (_tapTimer == null)
+            {
+                _tapTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(kDoubleTapMs) };
+                _tapTimer.Tick += (s, a) => { _tapTimer.Stop(); HandleTapAt(_tapX, _tapY); };
+            }
+            _tapTimer.Stop();
+            _tapTimer.Start();
+        }
+
+        void OnPageDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            // Cancel the pending single tap first, whatever else happens: the pair must do one
+            // thing, and the pending tap is a click that has not been sent yet.
+            if (_tapTimer != null) _tapTimer.Stop();
+            _lastDoubleTapMs = (uint)Environment.TickCount;
+            DoubleTapFit();
+        }
+
+        // The body of the gesture, kept separate from the event handler so the `dtap` autocmd verb
+        // can drive THE SAME path a finger does. A script that re-implemented the toggle would
+        // measure the verb rather than the feature.
+        void DoubleTapFit()
+        {
+            if (!_sessionActive) { Crumb("dtapfit: no session"); return; }
+            bool atFit = Math.Abs(_vpZoom - kFitZoom) < 0.001f;
+            float want = atFit ? _lastFitOffZoom : kFitZoom;
+            Crumb($"dtapfit: {_vpZoom:0.00} -> {want:0.00} ({(atFit ? "off fit" : "to fit")})");
+            CommitPageZoom(want, "dtapfit");
         }
 
         void ForwardClickToEngine(int px, int py)
@@ -854,7 +1374,7 @@ namespace Apotheosis
                             if (rcCopy == -12 || rcCopy == -14)
                             {
                                 _sessionActive = false;
-                                if (ScrollFab != null) ScrollFab.Visibility = Visibility.Collapsed;
+                                RefreshFab();
                             }
                             SetLoading(false);
             if (TitleText != null)
@@ -881,9 +1401,7 @@ namespace Apotheosis
             if (navUrl != null)
             {
                 _currentUrl = navUrl;
-                _urlSyncing = true;
-                if (UrlBox != null) UrlBox.Text = navUrl;
-                _urlSyncing = false;
+                SetUrlBoxText(navUrl);
                 UpdateLockIcon();
                 UpdateUrlActionGlyph();
                 bool dup = (_navIndex >= 0 && _navIndex < _navStack.Count && _navStack[_navIndex] == navUrl);
@@ -1016,7 +1534,14 @@ namespace Apotheosis
             });
         }
 
-        // ===== Pinch zoom =====
+        // ===== Pinch zoom, as page zoom =====
+        //
+        // The gesture keeps the committed page zoom as its base (_vpZoom, the value the engine was
+        // last told and the one ViewportZoom() derives from the setting), and it previews by scaling
+        // the frame it already has. The preview is a magnification of the OLD layout on purpose: page
+        // zoom re-runs layout, and re-running it per finger delta would cost ~1.2 s of engine thread
+        // each time. Chrome previews its pinch the same way -- magnify now, reflow on release -- and
+        // the commit below is what makes the two agree.
         void OnImageManipDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             if (!_sessionActive) return;
@@ -1025,9 +1550,12 @@ namespace Apotheosis
             {
                 _pinching = true;
                 if (ds > 0) _liveScale *= ds;
-                float total = _pageScale * _liveScale;
-                if (total < 0.5f) _liveScale = 0.5f / _pageScale;
-                if (total > 6.0f) _liveScale = 6.0f / _pageScale;
+                // Clamped to the range the commit can actually deliver, so the picture under the
+                // finger is never a factor the release would silently refuse. kW/kZoomLo/hi are the
+                // Settings slider's own bounds (ApplySettings clamps _defaultZoom to 50..200).
+                float total = _vpZoom * _liveScale;
+                if (total < kZoomMin) _liveScale = kZoomMin / _vpZoom;
+                if (total > kZoomMax) _liveScale = kZoomMax / _vpZoom;
                 var fp = e.Position;
                 _focalX = fp.X; _focalY = fp.Y;
                 ApplyLiveZoom();
@@ -1052,43 +1580,65 @@ namespace Apotheosis
             if (!_pinching) return;
             _pinching = false;
             float live = _liveScale; _liveScale = 1.0f;
-            float newScale = _pageScale * live;
-            newScale = Math.Max(0.5f, Math.Min(6.0f, newScale));
-            MapTapToEngine(_focalX, _focalY, out int fpx, out int fpy);
-            PinchCommit(newScale, fpx, fpy);
+            // The focal point is dropped here and that is not an oversight: CSS page zoom has no
+            // focal point. It re-lays the page out at `viewport / zoom` CSS px and paints that, so
+            // the frame the user gets is anchored the way the engine anchors it. The focal point is
+            // still what the live preview scales around, which is why _focalX/_focalY survive the
+            // commit call -- but nothing downstream of the engine reads them any more.
+            CommitPageZoom(_vpZoom * live, "pinch");
+            // A pinch on a heavy page finishes while the load's own zoom re-apply still holds the
+            // engine, so the commit above defers. Try the drain immediately -- it is a no-op when
+            // the engine was free and the commit went straight through -- and let OnLiveTick's
+            // safety net cover the case where it was not.
+            if (_vpDirty) DrainPendingZoom();
         }
 
-        void PinchCommit(float newScale, int focalX, int focalY)
+        // Apply a page zoom now, at the current viewport, and repaint.
+        //
+        // This is the replacement for the old PinchCommit/WebCoreSetPageScale path, and it is
+        // deliberately the SAME lever the Settings slider drives (ViewportZoom -> _vpZoom ->
+        // PostZoomAndRepaint). Two consequences worth stating, because both are behaviour the user
+        // will see:
+        //   * the pinch sets the zoom level itself (_defaultZoom), so the Settings slider follows the
+        //     finger and the value persists like a browser's zoom level does;
+        //   * the gesture cannot zoom past the slider's range (50..200 %), because the preview and
+        //     the commit share one clamp. Widening that range is a one-line change in ApplySettings
+        //     plus kZoomMin/kZoomMax here, and it is the only place to widen.
+        void CommitPageZoom(float zoom, string why)
         {
-            CoreDispatcher disp = Dispatcher;
-            long mySeq = ++_opSeq;
-            bool present = _gpuPresent;
+            if (zoom < kZoomMin) zoom = kZoomMin;
+            if (zoom > kZoomMax) zoom = kZoomMax;
+            int pct = (int)(zoom * 100f + 0.5f);
+            _defaultZoom = pct;
+            _vpZoom = pct / 100f;
+            // What double-tap-to-fit will zoom back to next time. Recorded here and not at the
+            // gesture, because this is the one function every zoom lever goes through -- slider,
+            // pinch and double-tap alike -- so "the last zoom the user chose" needs no second
+            // bookkeeper.
+            if (Math.Abs(_vpZoom - kFitZoom) > 0.001f) _lastFitOffZoom = _vpZoom;
 
-            WebEngine.Instance.Post(() =>
+            if (!_sessionActive) { Crumb($"{why}: no session, zoom {pct}% kept for the next load"); return; }
+            if (_gpuPresent) { Crumb($"{why}: skipped, GPU frame live"); return; }
+            // Same rule as ApplyViewport: a load or an interaction owns the engine at one size and
+            // one buffer. _vpDirty is enough here -- the wanted zoom is now _defaultZoom, and every
+            // deferred pickup re-derives _vpZoom from it through ViewportZoom(), so the pinch is not
+            // lost, it is only late.
+            if (_loading || _interacting) { _vpDirty = true; Crumb($"{why}: deferred (L{(_loading ? 1 : 0)}I{(_interacting ? 1 : 0)})"); return; }
+
+            // Already there: nothing to re-lay out and nothing to repaint. This is not a
+            // micro-optimisation -- a pinch that lands back on the zoom it started from used to pay
+            // the whole price (one layout plus one repaint, ~1 s of engine thread) for a frame
+            // identical to the one on screen; measured on this bench, a repeat pinch at the 0.50
+            // floor did exactly that.
+            if (!_vpDirty && pct == (int)(_pageZoom * 100f + 0.5f))
             {
-                byte[] rgba = NewFrameBuffer();
-                int rc = -999;
-                GCHandle h = GCHandle.Alloc(rgba, GCHandleType.Pinned);
-                try { rc = WebCoreDriver.WebCoreSetPageScale(newScale, focalX, focalY, h.AddrOfPinnedObject()); }
-                finally { h.Free(); }
-                int rcCopy = rc;
-                try
-                {
-                    disp.RunAsync(CoreDispatcherPriority.Normal, () =>
-                    {
-                        if (_opSeq != mySeq) return;
-                        if (rcCopy == 0)
-                        {
-                            _pageScale = newScale;
-                            if (!present) BlitToBitmap(rgba);
-                        }
-                        if (GpuPanel != null) GpuPanel.RenderTransform = null;
-                        if (RenderImage != null) RenderImage.RenderTransform = null;
-                        StartLiveMode();
-                    });
-                }
-                catch { }
-            });
+                Crumb($"{why}: already at {pct}%");
+                return;
+            }
+
+            // No geometry change: this is a zoom, so the viewport stays exactly as it was and the
+            // resize inside PostZoomAndRepaint is there for its repaint, not for its size.
+            PostZoomAndRepaint(kW, kH, _vpZoom, why);
         }
 
         // ===== Live rendering loop =====
@@ -1130,6 +1680,12 @@ namespace Apotheosis
                 if (++_liveBusyAge < 5) return;
                 _liveBusy = false;
             }
+            // Safety net for a resize or a zoom that arrived while something else owned the engine:
+            // this is reached only when the session is live and nothing is loading or interacting,
+            // which is exactly the state both drains need. Without it a size that landed during a
+            // swipe waited for the next navigation, and a pinch that landed during a load was simply
+            // lost on the fixed-viewport line.
+            if (_vpDirty) { DrainPendingZoom(); return; }
             _liveBusyAge = 0;
             _liveBusy = true;
             long mySeq = _opSeq;
@@ -1165,7 +1721,7 @@ namespace Apotheosis
                             if (rcCopy == -12 || rcCopy == -14)
                             {
                                 _sessionActive = false;
-                                if (ScrollFab != null) ScrollFab.Visibility = Visibility.Collapsed;
+                                RefreshFab();
                                 StopLiveMode();
                             }
                             return;
@@ -1343,9 +1899,32 @@ namespace Apotheosis
 
         void OnHome(object s, RoutedEventArgs e) => NavigateTo(_homeUrl, true);
 
+        // What Enter on the address box means, in one place: the key handler and the `enter` autocmd
+        // verb both land here, so the scripted run measures the same thing the keyboard does.
+        void CommitUrlBox()
+        {
+            HideSuggestions();
+            NavigateTo(NormalizeUrl(UrlBox?.Text), true);
+        }
+
         void OnUrlKeyDown(object s, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter) NavigateTo(NormalizeUrl(UrlBox?.Text), true);
+            // Enter must dismiss the dropdown itself. It used to navigate without touching it, so
+            // the page loaded UNDERNEATH a list that stayed on screen -- measured on the bench
+            // 2026-10-03: typing dzen.ru and pressing Enter left the panel covering the content area
+            // with the page already loaded behind it, and the only way out was to click the page.
+            // The Go button path (OnUrlAction) always hid it, which is why this survived: the two
+            // ways into a navigation disagreed about whether the dropdown was theirs to close.
+            if (e.Key == VirtualKey.Enter)
+            {
+                CommitUrlBox();
+                e.Handled = true;
+            }
+            else if (e.Key == VirtualKey.Escape)
+            {
+                HideSuggestions();
+                e.Handled = true;
+            }
         }
 
         void OnMenu(object s, RoutedEventArgs e) => ShowActionMenu();
@@ -1359,7 +1938,7 @@ namespace Apotheosis
                 if (_loadWatchdog != null) _loadWatchdog.Stop();
                 WebEngine.Instance.Post(() => { try { WebCoreDriver.WebCoreCloseSession(); } catch { } });
                 _sessionActive = false;
-                if (ScrollFab != null) ScrollFab.Visibility = Visibility.Collapsed;
+                RefreshFab();
                 SetLoading(false);
                 if (TitleText != null) TitleText.Text = Str.Get("Cancelled");
                 return;
@@ -1415,11 +1994,29 @@ namespace Apotheosis
         void OnUrlChanged(object sender, TextChangedEventArgs e)
         {
             UpdateUrlActionGlyph();
-            if (_urlSyncing) { HideSuggestions(); return; }
-            if (!_urlFocused) { HideSuggestions(); return; }
             string q = UrlBox?.Text ?? "";
+            // A shell write is not typing. `_urlSyncing` alone is not enough: measured on the bench
+            // 2026-10-03 the TextChanged for a committed URL is delivered AFTER the flag has been
+            // cleared, so the handler saw `_urlFocused == true`, matched the URL against the history
+            // the commit had just appended, and reopened the dropdown -- one row reading
+            // `dzen - поиск / cn.bing.com/search?q=dzen` under a page that was already loading.
+            // The remembered string is what survives the delay. See SetUrlBoxText.
+            if (_urlSyncing || q == _lastSyncedText) { HideSuggestions(); return; }
+            if (!_urlFocused) { HideSuggestions(); return; }
             if (string.IsNullOrEmpty(q)) { HideSuggestions(); return; }
             ShowSuggestions(q);
+        }
+
+        // Every place the SHELL puts text in the address box goes through here. `_lastSyncedText`
+        // is the part that survives an asynchronous TextChanged; `_urlSyncing` stays for the
+        // synchronous case, which is the common one.
+        string _lastSyncedText;
+        void SetUrlBoxText(string t)
+        {
+            _urlSyncing = true;
+            _lastSyncedText = t;
+            if (UrlBox != null) UrlBox.Text = t;
+            _urlSyncing = false;
         }
 
         void OnUrlGotFocus(object s, RoutedEventArgs e) { _urlFocused = true; }
@@ -1428,6 +2025,11 @@ namespace Apotheosis
         // ===== Suggestions =====
         void ShowSuggestions(string query)
         {
+            // The one gate that matters: ShowSuggestions is the only function that can put the
+            // panel on screen, so the switch is read here and nowhere else. HideSuggestions() (not
+            // a bare return) is deliberate -- the box may already be open from a keystroke sent
+            // before the setting was turned off in the sheet.
+            if (!_suggestOn) { HideSuggestions(); return; }
             if (SuggestPanel == null || SuggestList == null) return;
             SuggestList.Children.Clear();
             string ql = query.ToLowerInvariant();
@@ -1450,10 +2052,21 @@ namespace Apotheosis
             Consider(_historyList);
             if (matches.Count == 0) { HideSuggestions(); return; }
 
+            // The desktop ceiling in XAML (250 DIP) is most of a 360x640 phone window, and the
+            // phone is the shipping target. Clamp to a third of the content area, so the list is
+            // never more than a minority of the page on any window size. 120 DIP is the floor: two
+            // rows plus a scroll affordance is the smallest list still worth opening.
+            if (SuggestScroll != null && ContentArea != null && ContentArea.ActualHeight > 0)
+                SuggestScroll.MaxHeight = Math.Max(120, Math.Min(250, ContentArea.ActualHeight * 0.34));
+
             foreach (var e in matches)
             {
                 string u = e.Url;
-                var row = MakeRow(string.IsNullOrEmpty(e.Title) ? e.Url : e.Title, e.Url, Colors.White);
+                // `DisplayUrl` for the secondary line (and for the primary when there is no title):
+                // a list of eight `https://` prefixes is eight wasted columns on a 360-DIP phone,
+                // which is the shipping target.
+                var row = MakeRow(string.IsNullOrEmpty(e.Title) ? DisplayUrl(e.Url) : e.Title,
+                                  DisplayUrl(e.Url), Colors.White);
                 var btn = new Button
                 {
                     Background = new SolidColorBrush(Colors.Transparent),
@@ -1466,9 +2079,7 @@ namespace Apotheosis
                 btn.Click += (ss, ee) =>
                 {
                     HideSuggestions();
-                    _urlSyncing = true;
-                    if (UrlBox != null) UrlBox.Text = u;
-                    _urlSyncing = false;
+                    SetUrlBoxText(u);
                     NavigateTo(u, true);
                 };
                 SuggestList.Children.Add(btn);
@@ -1485,10 +2096,7 @@ namespace Apotheosis
         void ShowActionMenu()
         {
             HideSuggestions();
-            if (ActFavLabel != null)
-                ActFavLabel.Text = (!string.IsNullOrEmpty(_currentUrl) && IsBookmarked(_currentUrl)) ? "Bookmarked" : "Bookmark";
-            if (ActUaLabel != null)
-                ActUaLabel.Text = _uaMobile ? "Mobile Site" : "Desktop Site";
+            UpdateActionLabels();
             ActionMenu.Visibility = Visibility.Visible;
             StopLiveMode();
         }
@@ -1534,14 +2142,15 @@ namespace Apotheosis
             if (IsBookmarked(_currentUrl))
             {
                 _bookmarks.RemoveAll(e => e.Url == _currentUrl);
-                if (TitleText != null) TitleText.Text = "Bookmark Removed";
+                if (TitleText != null) TitleText.Text = Str.Get("BookmarkRemoved");
             }
             else
             {
                 _bookmarks.Insert(0, new Entry { Url = _currentUrl, Title = string.IsNullOrEmpty(_currentTitle) ? _currentUrl : _currentTitle });
-                if (TitleText != null) TitleText.Text = "Bookmarked";
+                if (TitleText != null) TitleText.Text = Str.Get("Bookmarked");
             }
             SaveBookmarks();
+            UpdateActionLabels();
             if (Drawer.Visibility == Visibility.Visible && _tab == DrawerTab.Favorites)
                 RebuildDrawerList();
         }
@@ -1550,7 +2159,7 @@ namespace Apotheosis
         {
             if (string.IsNullOrEmpty(_currentUrl) || _currentUrl == "about:home")
             {
-                if (TitleText != null) TitleText.Text = "Nothing to Share";
+                if (TitleText != null) TitleText.Text = Str.Get("NothingToShare");
                 return;
             }
             try { DataTransferManager.ShowShareUI(); } catch { }
@@ -1564,7 +2173,7 @@ namespace Apotheosis
                 var dp = new DataPackage();
                 dp.SetText(_currentUrl);
                 Clipboard.SetContent(dp);
-                if (TitleText != null) TitleText.Text = "Link Copied";
+                if (TitleText != null) TitleText.Text = Str.Get("LinkCopied");
             }
             catch { }
         }
@@ -1572,7 +2181,7 @@ namespace Apotheosis
         void DoToggleUA()
         {
             _uaMobile = !_uaMobile;
-            if (UaBtn != null) UaBtn.Content = _uaMobile ? "Mobile Site" : "Desktop Site";
+            UpdateActionLabels();
             int mobile = _uaMobile ? 1 : 0;
             WebEngine.Instance.Post(() => { try { WebCoreDriver.WebCoreSetUserAgentMobile(mobile); } catch { } });
             if (!string.IsNullOrEmpty(_currentUrl) && _currentUrl != "about:home")
@@ -1597,12 +2206,9 @@ namespace Apotheosis
             _tab = tab;
             HideSuggestions();
             Drawer.Visibility = Visibility.Visible;
-            if (tab == DrawerTab.Favorites)
-                ActionBtn.Content = (!string.IsNullOrEmpty(_currentUrl) && IsBookmarked(_currentUrl)) ? "Remove Bookmark" : "Bookmark This Page";
-            else if (tab == DrawerTab.History)
-                ActionBtn.Content = "Clear";
-            else
-                ActionBtn.Content = "Download This Page";
+            // Title and the right-hand primary button both depend on which tab this is, so they
+            // are set together (and retranslated with the rest if the language changed).
+            UpdateDrawerChrome();
             RebuildDrawerList();
             StopLiveMode();
         }
@@ -1615,28 +2221,47 @@ namespace Apotheosis
 
         static Border MakeRow(string title, string sub, Color titleColor)
         {
-            var sp = new StackPanel { Margin = new Thickness(14, 10, 14, 10) };
+            // `TextWrapping` is set EXPLICITLY and it is not decoration. `MaxLines` is documented as
+            // a cap on wrapped lines, but the runtime takes it as a licence to wrap: measured on the
+            // bench 2026-10-03, a suggestion row with `MaxLines = 1` and
+            // `TextTrimming = CharacterEllipsis` rendered a long page title as TWO full lines with no
+            // ellipsis at all, so eight history entries filled the whole content area -- reported as
+            // "гигантское паразитное окно с кривым показом истории". NoWrap plus trimming gives the
+            // one clipped line that was always intended.
+            var sp = new StackPanel { Margin = new Thickness(14, 4, 14, 4) };
             var t = new TextBlock
             {
-                Text = title, FontSize = 20,
+                Text = title, FontSize = 15,
                 Foreground = new SolidColorBrush(titleColor),
+                TextWrapping = TextWrapping.NoWrap,
                 TextTrimming = TextTrimming.CharacterEllipsis, MaxLines = 1
             };
             var u = new TextBlock
             {
-                Text = sub, FontSize = 15,
+                Text = sub, FontSize = 12,
                 Foreground = new SolidColorBrush(Color.FromArgb(255, 0x80, 0x86, 0x8b)),
+                TextWrapping = TextWrapping.NoWrap,
                 TextTrimming = TextTrimming.CharacterEllipsis, MaxLines = 1,
-                Margin = new Thickness(0, 2, 0, 0)
+                Margin = new Thickness(0, 1, 0, 0)
             };
             sp.Children.Add(t); sp.Children.Add(u);
             return new Border
             {
                 Background = new SolidColorBrush(Color.FromArgb(255, 0x2B, 0x2D, 0x31)),
-                CornerRadius = new CornerRadius(10),
-                Margin = new Thickness(0, 0, 0, 8),
+                CornerRadius = new CornerRadius(8),
+                Margin = new Thickness(0, 0, 0, 4),
                 Child = sp
             };
+        }
+
+        // The address as it is worth SHOWING: the scheme is noise in a list where every entry has
+        // one. `about:` and `file:` keep theirs, because there the scheme is the whole address.
+        static string DisplayUrl(string url)
+        {
+            if (string.IsNullOrEmpty(url)) return "";
+            if (url.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) return url.Substring(8);
+            if (url.StartsWith("http://", StringComparison.OrdinalIgnoreCase)) return url.Substring(7);
+            return url;
         }
 
         void RebuildDrawerList()
@@ -1649,7 +2274,8 @@ namespace Apotheosis
 
             if (list.Count == 0)
             {
-                string emptyText = _tab == DrawerTab.Favorites ? "No Bookmarks" : (_tab == DrawerTab.History ? "No History" : "No Downloads");
+                string emptyText = Str.Get(_tab == DrawerTab.Favorites ? "NoBookmarks"
+                                         : _tab == DrawerTab.History ? "NoHistory" : "NoDownloads");
                 DrawerList.Children.Add(new TextBlock
                 {
                     Text = emptyText,
@@ -1686,7 +2312,7 @@ namespace Apotheosis
                     string favUrl = u;
                     var del = new Button
                     {
-                        Content = "Remove Bookmark", FontSize = 15,
+                        Content = Str.Get("RemoveBookmark"), FontSize = 15,
                         Background = new SolidColorBrush(Colors.Transparent),
                         Foreground = new SolidColorBrush(Color.FromArgb(255, 0xD9, 0x30, 0x25)),
                         BorderThickness = new Thickness(0),
@@ -1715,19 +2341,13 @@ namespace Apotheosis
             if (SetGpuSwitch != null) SetGpuSwitch.IsOn = _gpuDefault;
             if (SetUaCustomBox != null) SetUaCustomBox.Text = _uaCustom;
             if (SetLangCombo != null) SetLangCombo.SelectedIndex = _uiLang;
-            // Pivot headers come from Str rather than x:Uid: General/Advanced/VerboseLogging are new
-            // ids that are not in the .resw files yet, and Str.Get falls back to its hardcoded
-            // table, so all three languages are correct without touching the resw.
-            if (SettingsGeneralItem != null) SettingsGeneralItem.Header = Str.Get("General");
-            if (SettingsAdvancedItem != null) SettingsAdvancedItem.Header = Str.Get("Advanced");
-            if (SetLogSwitch != null) SetLogSwitch.IsOn = _traceOn;
-            if (SetLogSwitch != null) SetLogSwitch.Header = Str.Get("VerboseLogging");
-            UpdateLogHint();
-            if (VersionText != null)
-            {
-                var pv = Package.Current.Id.Version;
-                VersionText.Text = $"{Str.Get("Version")} {pv.Major}.{pv.Minor}.{pv.Build}.{pv.Revision}";
-            }
+            if (SetFabSwitch != null) SetFabSwitch.IsOn = _showFab;
+            if (SetFitSwitch != null) SetFitSwitch.IsOn = _fitWindow;
+            if (SetSuggestSwitch != null) SetSuggestSwitch.IsOn = _suggestOn;
+            // Captions, pivot headers and the version line all come from one pass -- see
+            // RetranslateUi(). It used to be three hand-written Str.Get calls here, which is
+            // how the rest of the page ended up with captions nobody had ever set.
+            RetranslateUi();
             SettingsPage.Visibility = Visibility.Visible;
             StopLiveMode();
         }
@@ -1748,9 +2368,24 @@ namespace Apotheosis
             if (SetUaCustomBox != null) _uaCustom = (SetUaCustomBox.Text ?? "").Trim();
             if (SetLangCombo != null && SetLangCombo.SelectedIndex >= 0) _uiLang = SetLangCombo.SelectedIndex;
             if (SetLogSwitch != null) _traceOn = SetLogSwitch.IsOn;
+            if (SetFabSwitch != null) _showFab = SetFabSwitch.IsOn;
+            if (SetSuggestSwitch != null) _suggestOn = SetSuggestSwitch.IsOn;
+            bool wantFit = (SetFitSwitch != null) && SetFitSwitch.IsOn;
             ApplySettings();
             SaveSettings();
+            // The switch takes effect here rather than at the next navigation: the page behind the
+            // Settings sheet is already loaded and will not fire the branch that used to own this.
+            RefreshFab();
+            // Fitting is not a flag it reads later -- it is a resize now, and turning it off is a
+            // resize back to 720x1080. SetFitWindow is a no-op when nothing changed.
+            SetFitWindow(wantFit);
             SettingsPage.Visibility = Visibility.Collapsed;
+            // The home page is HTML built by BuildHomeHtml(), so the ordinary XAML repaint cannot
+            // reach it: a language chosen while its document is on screen leaves the hero and the
+            // section heading in the old language. Rebuild it once, and only when it is what the
+            // user is looking at.
+            if (_currentUrl == "about:home" && _homeHtmlLang != Str.Lang)
+                NavigateTo(_homeUrl, true);
             StartLiveMode();
         }
 
@@ -1765,9 +2400,23 @@ namespace Apotheosis
         void UpdateLogHint()
         {
             if (SetLogHint == null) return;
-            SetLogHint.Text = _traceOn
-                ? "setup-trace.txt is being written to LocalState."
-                : "Tracing is off. LocalState files stop growing; setup-trace.txt will not record new entries.";
+            SetLogHint.Text = Str.Get(_traceOn ? "LoggingOnHint" : "LoggingOffHint");
+        }
+
+        // The UA switch applies the moment it moves, like the language picker, instead of waiting
+        // for Settings to close. Two reasons. It is what a person expects from a switch that sits
+        // next to one which already behaves that way; and it makes the scripted `ua` verb a
+        // measurement of the shipping path rather than of a private field -- the controller sets
+        // the real control's IsOn and nothing else.
+        //
+        // It does not re-navigate: the session keeps the document it has. The switch changes the UA
+        // of the *next* request, so a test that wants the other layout has to `ua` and then `goto`.
+        void OnUaSwitchToggled(object sender, RoutedEventArgs e)
+        {
+            if (SetUaSwitch == null) return;
+            _setUaDesktop = SetUaSwitch.IsOn;
+            ApplySettings();
+            Crumb("ua -> " + (_setUaDesktop ? "desktop" : "mobile"));
         }
 
         void OnSettingsBack(object s, RoutedEventArgs e) => HideSettings();
@@ -1783,8 +2432,153 @@ namespace Apotheosis
             {
                 _uiLang = SetLangCombo.SelectedIndex;
                 Str.SetLang(_uiLang);
+                // This is the whole point of the pass below: the user just changed the language
+                // of a UI that is already on screen. Storing the index and saving it (which is
+                // all this handler used to do) left every caption in the previous language, and
+                // the .resw route could not have repainted them anyway -- ResourceLoader is bound
+                // to the view language, en-US here, and ignores this setting entirely.
+                RetranslateUi();
+                // The status line is translated too ("Home", "Loading", "Load Failed"), so when it
+                // shows one of those and not a page title it has to follow the switch.
+                if (TitleText != null && _currentUrl == "about:home")
+                    TitleText.Text = Str.Get("Home");
                 SaveSettings();
             }
+        }
+
+        // ===== Localisation =====
+        //
+        // Apotheosis 2026-10-03. One idempotent pass over everything the user can read, called
+        // from the constructor, from OnLangChanged, and from every overlay's Show* method --
+        // most of these captions are shared by several overlays, and whichever one happened to
+        // be open when the language changed has to come back correct.
+        //
+        // The XAML deliberately carries x:Name and no longer x:Uid. Two measured reasons: an
+        // x:Uid lookup asks for "SettingsTitle.Text" while the .resw files here define the bare
+        // name "SettingsTitle", so every x:Uid caption rendered EMPTY (the settings page shipped
+        // with uncaptioned controls); and the .resw is bound to the view language, so it can
+        // never be repainted at runtime. Str.cs now owns the strings. See its header.
+        //
+        // The null guards are not defensive noise: a control inside the unselected Pivot item may
+        // be absent, and a stale caption is a far better outcome than a crash in a repaint pass.
+        static void Loc(TextBlock t, string key) { if (t != null) t.Text = Str.Get(key); }
+        static void Loc(Button b, string key) { if (b != null) b.Content = Str.Get(key); }
+        // A ToggleSwitch's On/Off captions come from the OS, not from the app: they follow the
+        // system language. A Russian UI on an English system showed "Откл." under an English
+        // header, so a switch is given all three strings here.
+        static void LocSwitch(ToggleSwitch t, string headerKey)
+        {
+            if (t == null) return;
+            t.Header = Str.Get(headerKey);
+            t.OnContent = Str.Get("On");
+            t.OffContent = Str.Get("Off");
+        }
+
+        internal void RetranslateUi()
+        {
+            // Values that live in the same pass as the captions. The log switch is here rather
+            // than in ShowSettings() because removing it from there while moving the labels was a
+            // real regression: the caption flipped to the current language and the switch itself
+            // stayed off, so the page said "Verbose logging / Off" next to a hint that tracing was
+            // on. Anything the repaint pass owns has to be set here.
+            if (SetLogSwitch != null) SetLogSwitch.IsOn = _traceOn;
+            UpdateLogHint();
+
+            // Address / find fields: the placeholder is a caption too.
+            if (UrlBox != null) UrlBox.PlaceholderText = Str.Get("UrlPlaceholder");
+            if (FindBox != null) FindBox.PlaceholderText = Str.Get("FindInPage");
+
+            // Action sheet -- the four icon buttons, then the rows.
+            Loc(BackLabel, "Back");
+            Loc(FwdLabel, "Forward");
+            Loc(ReloadLabel, "Reload");
+            Loc(NewTabLabel, "NewTab");
+            Loc(HomeLabel, "Home");
+            Loc(FindInPageLabel, "FindInPageAction");
+            Loc(ShareLabel, "Share");
+            Loc(CopyLinkLabel, "CopyLink");
+            Loc(DownloadLabel, "DownloadPage");
+            Loc(BookmarksLabel, "Bookmarks");
+            Loc(HistoryLabel, "History");
+            Loc(DownloadsLabel, "Downloads");
+            Loc(SettingsLabel, "Settings");
+            UpdateActionLabels();
+
+            // Drawer.
+            Loc(TabFav, "Favorites");
+            Loc(TabHist, "History");
+            Loc(TabDl, "Downloads");
+            UpdateDrawerChrome();
+
+            // Settings, General.
+            Loc(SettingsTitle, "Settings");
+            Loc(SettingsDefaultSearch, "DefaultSearchEngine");
+            Loc(SettingsLanguage, "InterfaceLanguage");
+            Loc(SettingsHomepage, "HomepageUrl");
+            LocSwitch(SetUaSwitch, "RequestDesktopSite");
+            Loc(SettingsCustomUA, "CustomUserAgent");
+            Loc(SettingsDefaultZoom, "DefaultZoom");
+            LocSwitch(SetFabSwitch, "ShowScrollButtons");
+            LocSwitch(SetFitSwitch, "FitPageToWindow");
+            LocSwitch(SetSuggestSwitch, "AddressBarSuggestions");
+
+            // Settings, Advanced.
+            LocSwitch(SetTabModeSwitch, "ConcurrentTabs");
+            Loc(SettingsGpuSection, "GPU");
+            LocSwitch(SetGpuSwitch, "EnableGPU");
+            Loc(SetGpuNowBtn, "EnableGPUNow");
+            LocSwitch(SetLogSwitch, "VerboseLogging");
+            Loc(SettingsClearData, "ClearData");
+            Loc(SetClearHistBtn, "ClearHistory");
+            Loc(SetClearFavBtn, "ClearAllBookmarks");
+            Loc(SetClearDlBtn, "ClearDownloads");
+            Loc(SettingsDiagnostics, "Diagnostics");
+            Loc(SetExportBtn, "ExportDebugLogs");
+            Loc(SettingsAboutUpdate, "AboutUpdate");
+            Loc(SetCheckUpdateBtn, "CheckForUpdate");
+            Loc(SettingsFooter, "Footer");
+            if (SettingsGeneralItem != null) SettingsGeneralItem.Header = Str.Get("General");
+            if (SettingsAdvancedItem != null) SettingsAdvancedItem.Header = Str.Get("Advanced");
+            if (VersionText != null)
+            {
+                var pv = Package.Current.Id.Version;
+                VersionText.Text = $"{Str.Get("Version")} {pv.Major}.{pv.Minor}.{pv.Build}.{pv.Revision}";
+            }
+
+            // Tab switcher.
+            Loc(TabSwitcherTitle, "Tabs");
+            Loc(TabSwitcherDone, "Done");
+            Loc(NewTabButton, "NewTab");
+        }
+
+        // The two captions that depend on state rather than on the language alone.
+        void UpdateActionLabels()
+        {
+            bool marked = !string.IsNullOrEmpty(_currentUrl) && IsBookmarked(_currentUrl);
+            if (ActFavLabel != null) ActFavLabel.Text = Str.Get(marked ? "Bookmarked" : "Bookmark");
+            string ua = Str.Get(_uaMobile ? "MobileSite" : "DesktopSite");
+            if (ActUaLabel != null) ActUaLabel.Text = ua;
+            if (UaBtn != null) UaBtn.Content = ua;
+        }
+
+        void UpdateDrawerChrome()
+        {
+            if (DrawerTitle != null)
+            {
+                DrawerTitle.Text = _tab == DrawerTab.Favorites ? Str.Get("Bookmarks")
+                                 : _tab == DrawerTab.History ? Str.Get("History")
+                                 : Str.Get("Downloads");
+            }
+            if (ActionBtn == null) return;
+            if (_tab == DrawerTab.Favorites)
+            {
+                bool marked = !string.IsNullOrEmpty(_currentUrl) && IsBookmarked(_currentUrl);
+                ActionBtn.Content = Str.Get(marked ? "RemoveBookmark" : "BookmarkThisPage");
+            }
+            else if (_tab == DrawerTab.History)
+                ActionBtn.Content = Str.Get("Clear");
+            else
+                ActionBtn.Content = Str.Get("DownloadThisPage");
         }
 
         void OnSettingsBtn(object sender, RoutedEventArgs e)
@@ -1926,7 +2720,7 @@ namespace Apotheosis
                             if (rcCopy == -12 || rcCopy == -14)
                             {
                                 _sessionActive = false;
-                                if (ScrollFab != null) ScrollFab.Visibility = Visibility.Collapsed;
+                                RefreshFab();
                             }
                             if (FindCount != null) FindCount.Text = "";
                             return;
@@ -1956,7 +2750,6 @@ namespace Apotheosis
             t.NavIndex = _navIndex;
             t.CurrentUrl = string.IsNullOrEmpty(_currentUrl) ? "about:home" : _currentUrl;
             t.CurrentTitle = _currentTitle;
-            t.PageScale = _pageScale;
         }
 
         void RestoreTab(int i)
@@ -1968,16 +2761,16 @@ namespace Apotheosis
             _navIndex = t.NavIndex;
             _currentUrl = t.CurrentUrl;
             _currentTitle = t.CurrentTitle;
-            _pageScale = t.PageScale;
+            // The zoom is not restored with the tab, on purpose: it is one user-level setting (see
+            // CommitPageZoom), and the after-load re-apply re-arms the engine from it. A tab that
+            // carried its own copy would be a second authority for the same number.
             ++_opSeq;
             _interacting = false;
             if (_loadWatchdog != null) _loadWatchdog.Stop();
             _loading = false;
             UpdateNavButtons();
             UpdateLockIcon();
-            _urlSyncing = true;
-            if (UrlBox != null) UrlBox.Text = (_currentUrl == "about:home") ? "" : _currentUrl;
-            _urlSyncing = false;
+            SetUrlBoxText((_currentUrl == "about:home") ? "" : _currentUrl);
             NavigateTo(_currentUrl, false);
         }
 
@@ -1991,7 +2784,6 @@ namespace Apotheosis
             _loading = false;
             _navStack.Clear(); _navIndex = -1;
             _currentUrl = ""; _currentTitle = "";
-            _pageScale = 1.0f;
             UpdateTabCount();
             NavigateTo(_homeUrl, true);
         }
@@ -2010,7 +2802,6 @@ namespace Apotheosis
                 _loading = false;
                 _navStack.Clear(); _navIndex = -1;
                 _currentUrl = ""; _currentTitle = "";
-                _pageScale = 1.0f;
                 UpdateTabCount();
                 NavigateTo(_homeUrl, true);
                 return;
@@ -2346,7 +3137,14 @@ namespace Apotheosis
             h.Append(".hero h1{margin:0;font-size:46px;letter-spacing:-1px}.hero p{margin:10px 0 0;font-size:20px;opacity:.92}");
             h.Append(".wrap{padding:24px}.sec{font-size:17px;color:#5f6368;margin:0 0 14px}");
             h.Append(".grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}");
-            h.Append("a.tile{display:block;text-decoration:none;background:#fff;border-radius:16px;padding:18px 18px 20px;box-shadow:0 2px 10px rgba(0,0,0,.08);color:#202124}");
+            // min-width:0 is load-bearing and is not a style choice. A grid item's automatic
+            // minimum size is `auto`, i.e. its MIN-CONTENT width, and the titles below are
+            // `white-space:nowrap` -- so one long title made its `1fr` track as wide as the
+            // whole sentence. The grid then laid itself out past the viewport and the second
+            // column was clipped at the right edge, which is what the fitted-window screenshot
+            // of 0.2.3.4 showed. `overflow:hidden` alone would also do it (it zeroes the
+            // automatic minimum), but min-width:0 says what is meant: this item may shrink.
+            h.Append("a.tile{display:block;min-width:0;overflow:hidden;text-decoration:none;background:#fff;border-radius:16px;padding:18px 18px 20px;box-shadow:0 2px 10px rgba(0,0,0,.08);color:#202124}");
             h.Append(".tile .t{font-size:20px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}");
             h.Append(".tile .u{font-size:15px;color:#80868b;margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}");
             h.Append("</style></head><body>");
@@ -2354,14 +3152,14 @@ namespace Apotheosis
             h.Append("<div class='wrap'>");
             if (tiles.Count == 0)
             {
-                h.Append("<p class='sec'>Enter a URL in the address bar above.</p><div class='grid'>");
+                h.Append("<p class='sec'>" + Str.Get("HomeHint") + "</p><div class='grid'>");
                 string[][] defs = { new[] { "https://example.com", "example.com" }, new[] { "https://github.com", "github.com" }, new[] { "https://cn.bing.com", "bing.com" }, new[] { "https://en.wikipedia.org", "wikipedia.org" } };
                 foreach (var d in defs) { h.Append($"<a class='tile' href='{d[0]}'><div class='t'>{d[1]}</div><div class='u'>{d[0]}</div></a>"); }
                 h.Append("</div>");
             }
             else
             {
-                h.Append("<p class='sec'>Frequent Sites</p><div class='grid'>");
+                h.Append("<p class='sec'>" + Str.Get("FrequentSites") + "</p><div class='grid'>");
                 foreach (var e in tiles)
                 {
                     string href = HtmlEscape(e.Url);
@@ -2415,22 +3213,54 @@ namespace Apotheosis
         // 2.97 MB of Large Object Heap garbage per frame, which is what made long-page scrolling
         // progressively stutter and grind to a halt.
         //
-        // REVERTED, and this is the interesting part: a first attempt also cached the
+        // REVERTED once, and this is the interesting part: a first attempt also cached the
         // WriteableBitmap itself and re-assigned it as RenderImage.Source every frame. That made
         // scrolling feel much better, but it made IMAGES FLICKER on ya.ru -- cards blinked out and
         // back. The compositor holds a reference to the surface it is presenting, so overwriting one
         // bitmap in place while it is on screen is not safe; a fresh WriteableBitmap per frame is
-        // precisely what makes the old one stay intact until the new one is ready. Do not re-cache
-        // this object. See Doc/LESSONS.md.
+        // precisely what makes the old one stay intact until the new one is ready. See
+        // Doc/LESSONS.md.
+        //
+        // Apotheosis 2026-10-03: the fresh bitmap per frame is now a RING, not a cache of one.
+        // Neither extreme is right. One cached bitmap overwritten in place is the ya.ru flicker
+        // above. A new bitmap per frame costs a whole-window surface replacement per frame, and that
+        // is what the eye sees: measured on dzen.ru, the engine's frame changes ~1x/s (hash sampled
+        // every 500 ms: 1c7764ee ... 01617366, 01617366, 5d0428c1, 5d0428c1, 63ab9a26), and every
+        // one of those changes re-uploaded the entire window. Reported by a finger as "all the
+        // site's images twitch, as if they reload 1000 times", with the blank itself felt as half a
+        // second -- the gap between the Source swap and the new texture arriving.
+        //
+        // kBlitRing bitmaps are allocated once per geometry and written round-robin, so the surface
+        // being written is never the one the compositor is presenting (at ring size 3 there are two
+        // frames of slack) and everything assigned as Source is already complete. The blank window
+        // goes away; the in-place overwrite that broke ya.ru does not come back. The number to argue
+        // about later is kBlitRing, not "cache it or not".
+        //
+        // Cost of the ring: up to 3 x kW*kH*4 bytes held steady instead of 1, i.e. ~12 MB at the
+        // fitted bench viewport, against 3 fresh 4 MB surfaces and ~1.2 GB of LOH garbage across a
+        // 300-tick live run. The ring drops this in favour of the garbage.
+        const int kBlitRing = 3;
         static byte[] _blitScratch;
+        static WriteableBitmap[] _blitRing;
+        static int _blitRingNext;
+        static int _blitRingW, _blitRingH;   // the geometry the ring was built for
+        bool _blitErrLogged;
 
         void BlitToBitmap(byte[] rgba)
         {
             if (_gpuPresent) return;
             try
             {
-                if (_blitScratch == null)
-                    _blitScratch = new byte[kW * kH * 4];
+                // The scratch buffer is keyed on kW*kH, and kW/kH are no longer a constant: the
+                // window-fitted viewport changes them on every resize. Allocating only when the
+                // array is null therefore sizes it for the FIRST viewport and then writes past
+                // the end of it for every larger one -- IndexOutOfRange, thrown inside a bare
+                // catch, so the frame was silently never presented. Measured: the engine
+                // reported contents=1355x751 and nonwhite=1017605/1017605 while the window still
+                // showed the old 720-wide bitmap. Grow it whenever it is too short.
+                int need = kW * kH * 4;
+                if (_blitScratch == null || _blitScratch.Length < need)
+                    _blitScratch = new byte[need];
 
                 byte[] dst = _blitScratch;
                 int n = kW * kH;
@@ -2442,14 +3272,325 @@ namespace Apotheosis
                     dst[o + 3] = rgba[o + 3]; // A
                 }
 
-                // A fresh bitmap every frame, deliberately -- see the note above.
-                var wb = new WriteableBitmap(kW, kH);
+                // Round-robin over the ring -- see the note above. The ring is rebuilt whenever the
+                // geometry changes: a WriteableBitmap's size is fixed at construction, and kW/kH
+                // are rewritten by every fitted resize. Slots are filled lazily, so a ring that is
+                // only ever used for one frame costs one bitmap.
+                if (_blitRing == null || _blitRingW != kW || _blitRingH != kH)
+                {
+                    _blitRing = new WriteableBitmap[kBlitRing];
+                    _blitRingW = kW;
+                    _blitRingH = kH;
+                    _blitRingNext = 0;
+                }
+
+                int slot = _blitRingNext;
+                _blitRingNext = (_blitRingNext + 1) % kBlitRing;
+
+                var wb = _blitRing[slot];
+                if (wb == null)
+                {
+                    wb = new WriteableBitmap(kW, kH);
+                    _blitRing[slot] = wb;
+                }
+
                 using (var stream = wb.PixelBuffer.AsStream())
-                    stream.Write(dst, 0, dst.Length);
+                    stream.Write(dst, 0, need);
                 wb.Invalidate();
                 RenderImage.Source = wb;
             }
-            catch { }
+            catch (Exception ex)
+            {
+                // Once, not per frame: this runs on every live tick.
+                if (!_blitErrLogged)
+                {
+                    _blitErrLogged = true;
+                    AutoLog($"blit failed {ex.GetType().Name}: {ex.Message}" +
+                            $" (kW={kW} kH={kH} scratch={( _blitScratch == null ? -1 : _blitScratch.Length)})");
+                }
+            }
+        }
+
+        // ---- window-fitted viewport (fitwindow=1) --------------------------------------------
+        //
+        // The complaint this answers, measured on this bench: a 1368-DIP-wide content area showed a
+        // 720-DIP page with 647 DIP of white beside it. One rule replaced the two:
+        //
+        //   every mode -- the CSS viewport is the content area divided by the page zoom, so at the
+        //                 default 100% the layout width is the window's own width and one CSS px is
+        //                 one DIP. The zoom is the user's, not the UA's; see ViewportZoom().
+        //
+        // The two-mode version of this comment (desktop fills at 1.0, mobile re-lays out at 412 CSS
+        // px and magnifies) is what produced the 3.29 measured on 2026-10-03; it is spelled out on
+        // kViewportCeiling so that the trade does not have to be rediscovered.
+        //
+        // Software present draws the frame 1:1 in DIPs (RenderImage is Stretch="None"), so the
+        // viewport is in DIPs. The GPU path is the opposite case -- its surface is physical pixels
+        // and its zoom has to equal CompositionScale -- and since WebCoreGpuInit returns rc=-20 on
+        // x64 it is not the path this bench measures. The setting is refused while a GPU frame is
+        // live rather than doing half of each rule.
+        void OnContentAreaSizeChanged(object s, SizeChangedEventArgs e)
+        {
+            if (!_fitWindow) return;
+            int w = (int)(ContentArea.ActualWidth + 0.5);
+            int h = (int)(ContentArea.ActualHeight + 0.5);
+            if (w < 16 || h < 16) return;                  // no layout pass yet
+            if (w > kViewportCeiling || h > kViewportCeiling) return;
+            if (w == _vpW && h == _vpH) return;
+            _vpW = w; _vpH = h;
+            _vpZoom = ViewportZoom();
+
+            // The busy test comes FIRST, and it is not a style choice -- getting this order wrong
+            // produced a window full of sheared garbage on the first run of this feature.
+            //
+            // A load allocates its RGBA buffer, calls the engine and blits all under the size kW/kH
+            // had when it started; kW/kH is read again at the blit. Adopting a new size in that
+            // window makes the blit build a 1368x758 WriteableBitmap and read a 720x1080 buffer
+            // through it -- rows interleaved, the tail of the bitmap past the end of the data, and
+            // `diag` still reporting contents=720x1080 because the engine was never resized. A load
+            // or an interaction owns the engine at one size; it is adopted when that finishes.
+            if (_loading || _interacting) { _vpDirty = true; return; }
+
+            AdoptViewport();
+        }
+
+        // The one entry point for "the content area is a new size and the engine may be free now".
+        // OnContentAreaSizeChanged calls it when it is not busy, and every deferred pickup calls it
+        // once the load that owned the engine has finished.
+        //
+        // The deferred case is why this function exists at all. Those pickups used to call
+        // ApplyViewport() directly, which skipped the no-session branch below and asked a
+        // sessionless engine to resize itself -- WebCoreSessionResize failed, nothing repainted,
+        // and the first thing the user saw kept the geometry of whatever viewport had been
+        // current when the load started.
+        void AdoptViewport()
+        {
+            if (!_fitWindow) return;
+            if (_vpW < 16 || _vpH < 16) return;                 // no layout pass yet
+            if (_loading || _interacting) { _vpDirty = true; Crumb($"adopt: deferred (L{(_loading ? 1 : 0)}I{(_interacting ? 1 : 0)})"); return; }
+            _vpDirty = false;
+
+            // Computed here, not only in OnContentAreaSizeChanged: the zoom is the page-zoom
+            // setting, and that can change while the window size does not (the Settings slider, or
+            // the settings file being re-read), so the size-change path is not enough to keep it
+            // current.
+            _vpZoom = ViewportZoom();
+
+            if (_sessionActive) { ApplyViewport(); return; }
+
+            // No session, so there is nothing for WebCoreSessionResize to resize: the frame on
+            // screen came from a one-shot WebCoreRenderHtml, and the engine keeps no page for it.
+            // kW/kH are what the NEXT load reads, so adopt them -- and rebuild the one one-shot
+            // page worth rebuilding, because the home page is the first thing the user sees and a
+            // stale geometry there is exactly the white fields beside a 720-DIP home page.
+            bool same = (kW == _vpW && kH == _vpH && Math.Abs(_pageZoom - _vpZoom) < 0.001f);
+            kW = _vpW; kH = _vpH; _pageZoom = _vpZoom;
+            Crumb($"adopt: no session {_vpW}x{_vpH} z={_vpZoom:0.00} same={same} url={_currentUrl}");
+            if (same) return;
+            if (_currentUrl == "about:home") NavigateTo("about:home", false);
+        }
+
+        // Every deferred pickup, in one place, for both viewport modes.
+        //
+        // _vpDirty is the engine-busy flag that CommitPageZoom, ApplyViewport, AdoptViewport and
+        // OnContentAreaSizeChanged all set when they find a load or an interaction in flight. In the
+        // fitted mode the drain was AdoptViewport, and it re-derived the zoom and the geometry. The
+        // fixed 720x1080 line had no drain at all: AdoptViewport and ApplyViewport both return at
+        // once when _fitWindow is off, so a commit that landed while the engine was busy -- which is
+        // exactly a pinch on a heavy page, since the load's own zoom re-apply is still in flight --
+        // was dropped outright and the page stayed at the stale zoom. Reported from the Lumia as
+        // "питч не отрабатывает вообще" on a heavy page at the 0.50 floor.
+        //
+        // Fit-off has no geometry to adopt (the viewport is the constant kW x kH), so "drain" means
+        // re-run the zoom commit that was deferred. CommitPageZoom is the same body, late: it is
+        // idempotent here because _vpDirty is cleared first, so its already-at test can fire and
+        // there is no second copy of the clamp or the zoom-then-repaint order.
+        void DrainPendingZoom()
+        {
+            if (!_vpDirty) return;
+            if (_fitWindow) { AdoptViewport(); return; }
+            if (_gpuPresent) { Crumb("drain: skipped, GPU frame live"); return; }
+            if (_loading || _interacting)
+            {
+                Crumb($"drain: still busy (L{(_loading ? 1 : 0)}I{(_interacting ? 1 : 0)})");
+                return;
+            }
+            // Cleared before the commit, not after: CommitPageZoom's busy branch would set it again,
+            // and with it clear its already-at short-circuit can tell a real late commit from a
+            // re-post of one that has already reached the engine.
+            _vpDirty = false;
+            Crumb($"drain: applying deferred zoom {_vpZoom:0.00} (fit off)");
+            CommitPageZoom(_vpZoom, "drain");
+        }
+
+        void SetFitWindow(bool on)
+        {
+            if (_fitWindow == on) return;
+            _fitWindow = on;
+            if (!on)
+            {
+                // "Off" has to mean the state the ARM line runs: the fixed 720x1080 viewport at
+                // zoom 1. kW/kH and _pageZoom are deliberately NOT written here -- ApplyViewport's
+                // no-op test compares them against the wanted values, and pre-writing them would
+                // make it conclude there is nothing to do while the engine is still fitted.
+                //
+                // _vpZoom does follow the setting, because it IS the wanted value: the ApplyViewport
+                // call below is made directly rather than through AdoptViewport, so nothing else
+                // would recompute it first. (That call is inert either way -- ApplyViewport returns
+                // at once when _fitWindow is off -- but a wrong _vpZoom left here would be read by
+                // the next adopt.)
+                _vpW = 720; _vpH = 1080; _vpZoom = ViewportZoom();
+                if (_sessionActive) ApplyViewport();
+                else { kW = 720; kH = 1080; _pageZoom = 1f; RefreshFab(); }
+                return;
+            }
+            OnContentAreaSizeChanged(null, null);
+        }
+
+        // The wanted page zoom for the fitted viewport: the user's Settings value, and nothing else.
+        //
+        // It is CSS page zoom, so it is a WIDTH lever, not a magnifier: the engine re-lays the page
+        // out at `viewport / zoom` CSS px. 100% lays out at the window's own width, 50% at twice
+        // that (a desktop layout on a small screen), 200% at half (a phone-shaped "морда" on a wide
+        // one). Clamped to the slider's own range.
+        //
+        // Apotheosis 2026-10-03: this used to read the user agent -- `mobile` returned
+        // `dipW / 412` capped at 3.5, to hold a phone-width layout at any window width. That is the
+        // measured 3.29 above, and it is why the bench showed blown-up text. The UA is not a
+        // geometry input any more; see the note on kViewportCeiling.
+        float ViewportZoom()
+        {
+            float z = _defaultZoom / 100f;
+            if (z < 0.5f) z = 0.5f;
+            if (z > 2.0f) z = 2.0f;
+            return z;
+        }
+
+        // Must run on the UI thread, and only when the engine is idle. Decides whether the fitted
+        // page is out of date at all, then hands the work to PostZoomAndRepaint, which is where the
+        // zoom-then-resize order and the repaint are stated once for both callers.
+        void ApplyViewport()
+        {
+            if (!_fitWindow) return;
+            if (_gpuPresent) { Crumb("fitwindow: skipped, GPU frame live"); return; }
+            int w = _vpW, h = _vpH;
+            if (w < 16 || h < 16) return;
+            // Same rule as everywhere else in this file: a load or an interaction owns the engine
+            // at one size, and its buffer, viewport and blit have to agree on it.
+            if (_loading || _interacting) { _vpDirty = true; Crumb($"apply: deferred (L{(_loading ? 1 : 0)}I{(_interacting ? 1 : 0)})"); return; }
+            _vpDirty = false;
+            if (w == kW && h == kH && Math.Abs(_pageZoom - _vpZoom) < 0.001f)
+            {
+                Crumb($"apply: nothing to do, {w}x{h} z={_vpZoom:0.00} (current {_pageZoom:0.00})");
+                return;
+            }
+            PostZoomAndRepaint(w, h, _vpZoom, "fitwindow");
+        }
+
+        // The one posted body that applies a page zoom and repaints at w x h.
+        //
+        // Two callers and one implementation on purpose: ApplyViewport, when the fitted geometry or
+        // the settings zoom changed, and CommitPageZoom, when a pinch ended. The old pinch path had
+        // its own copy of this sequence (WebCoreSetPageScale + blit + a sequence guard that returned
+        // early and left the engine magnified), and that copy is exactly what the 2026-10-03 report
+        // "the popup lives in another layer" came out of. One body means the zoom-then-resize order,
+        // the buffer size, the supersede test and the repaint cannot drift between the two.
+        void PostZoomAndRepaint(int w, int h, float zoom, string why)
+        {
+            kW = w; kH = h;
+            _pageZoom = zoom;
+            _interacting = true;
+            long mySeq = ++_opSeq;
+            byte[] buf = new byte[w * h * 4];
+            var pin = GCHandle.Alloc(buf, GCHandleType.Pinned);
+            Crumb($"{why}: {w}x{h} zoom={zoom:0.00}");
+
+            WebEngine.Instance.Post(() =>
+            {
+                // ZOOM FIRST, RESIZE SECOND, and the order is the whole difference between a
+                // fitted page and a re-laid-out page that is never seen. The contract is the
+                // port's own, stated at WebCoreSetPageZoom: "It does NOT repaint, deliberately:
+                // both callers in the harness are a resize that repaints anyway." The resize is
+                // therefore the only repaint in this pair, so it has to be the LAST call -- with
+                // the previous order the resize painted the page at the OLD zoom into the buffer,
+                // SetPageZoom then re-laid it out correctly, and nothing ever photographed the
+                // result. Measured on 0.2.3.5: `fitwindow: resize rc=0 zoom rc=0 1355x751 z=3.29`
+                // in the log while the window kept showing the unzoomed layout.
+                //
+                // The resize is also how a pinch zooms WITHOUT changing the size: w x h arrives
+                // equal to the current viewport, and WebCoreSessionResize has no same-size early
+                // out -- it sets g_session->w/h and paints. A resize is the only repaint this ABI
+                // offers, so that is the one used.
+                int zrc = -1000;
+                try { zrc = WebCoreDriver.WebCoreSetPageZoom(zoom); }
+                catch (Exception ex)
+                {
+                    AutoLog($"{why}: SetPageZoom threw {ex.GetType().Name}: {ex.Message}");
+                }
+                // The zoom decides the CSS width the layout is made at (layout width = viewport /
+                // zoom), and the resize re-lays out at the new viewport and paints -- which is why
+                // the engine remembers the zoom across navigations (g_pageZoom plus
+                // apoReassertPageZoom from the present paths) but this call must still be re-armed
+                // after every RESIZE.
+                int rc = -1000;
+                try { rc = WebCoreDriver.WebCoreSessionResize(w, h, pin.AddrOfPinnedObject()); }
+                catch (Exception ex)
+                {
+                    // Name the exception, do not just set the sentinel. The first run of this
+                    // feature logged "resize rc=-1000 zoom rc=-1000" for a whole build cycle:
+                    // the cause was EntryPointNotFoundException, because the .def did not list
+                    // either name, and a bare `catch { }` had thrown the only evidence away.
+                    AutoLog($"{why}: SessionResize threw {ex.GetType().Name}: {ex.Message}");
+                }
+
+                var disp = Dispatcher;
+                disp.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    try
+                    {
+                        if (_opSeq != mySeq)
+                        {
+                            // The blit is skipped -- a newer op owns the engine and its own frame --
+                            // but _interacting is still cleared below, because this call is what set
+                            // it and nothing else will. The supersede case that motivated the old
+                            // pinch instrument is not reachable from here any more: this body posts
+                            // its engine work and its UI work as ONE unit, so a superseding op cannot
+                            // land between the zoom and the blit of the SAME frame. What can land is
+                            // an op posted earlier by someone else, which is what this test is for.
+                            AutoLog($"{why}: frame superseded seq {mySeq} -> {_opSeq} rc={rc}");
+                        }
+                        else if (rc == 0)
+                        {
+                            BlitToBitmap(buf);
+                        }
+                        // A live pinch preview may still be on the Image; the frame that replaces it
+                        // is the committed one, so the transform goes with the blit. ApplyViewport
+                        // has no preview pending and the write is a no-op there.
+                        if (GpuPanel != null) GpuPanel.RenderTransform = null;
+                        if (RenderImage != null) RenderImage.RenderTransform = null;
+                        _lastFrameHash = 0;
+                        _interacting = false;
+                        AutoLog($"{why}: resize rc={rc} zoom rc={zrc} {w}x{h} z={zoom:0.00}");
+                        // A size that landed while this resize owned the engine. AdoptViewport,
+                        // not ApplyViewport: it re-derives the zoom from the current setting and
+                        // re-checks _sessionActive, both of which ApplyViewport assumes.
+                        if (_vpDirty) AdoptViewport();
+                        StartLiveMode();
+                    }
+                    catch { }
+                    finally { pin.Free(); }
+                });
+            });
+        }
+
+
+        // reasons to hide it -- no live session, or the Settings switch is off -- so the decision
+        // cannot live at each call site; that is how it ends up half-applied. Every previous
+        // ScrollFab.Visibility assignment went through this instead.
+        void RefreshFab()
+        {
+            if (ScrollFab == null) return;
+            ScrollFab.Visibility = (_sessionActive && _showFab) ? Visibility.Visible : Visibility.Collapsed;
         }
 
         void OnScrollUp(object s, RoutedEventArgs e) => EngineScroll(-900);

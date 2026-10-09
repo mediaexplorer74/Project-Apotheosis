@@ -145,11 +145,11 @@
 
     $(Platform) picks the architecture:
       x64  -> native\x64\*.dll  (engine set built today)
-      ARM  -> native\ARM\*.dll  (folder currently empty: the glob matches
-                                 nothing, so an ARM build stages no engine
-                                 rather than accidentally shipping x64 DLLs)
+      ARM  -> native\ARM\*.dll  (populated 2026-10-03: 22 DLLs, the driver
+                                 relinked against WebCoreFull-arm32.lib)
     Dropping ARM binaries into native\ARM\ is therefore enough - no further
-    project-file editing needed.
+    project-file editing needed. (The on-disk folder is native\ARM in upper
+    case; the x64 one is lower case. Windows folds the difference.)
 
     WebCore.dll is explicitly EXCLUDED from both globs. Since 2026-09-26 the
     driver links WebCore statically (WebCoreFull-x64-19041.lib /
@@ -222,13 +222,6 @@
     <PackageCertificatePassword></PackageCertificatePassword>
     <AppxPackageSigningTimestampEnabled>false</AppxPackageSigningTimestampEnabled>
   </PropertyGroup>
-  <!--
-    Placeholder for the ARM engine binaries: drop them into native\ARM\ and the
-    conditional ItemGroup above picks them up for Platform=ARM automatically.
-  -->
-  <ItemGroup>
-    <Folder Include="native\ARM\" />
-  </ItemGroup>
   <ItemGroup>
     <None Include="Apotheosis_TemporaryKey.pfx" />
   </ItemGroup>

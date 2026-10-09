@@ -1,5 +1,11 @@
-; WebCoreDriver.exports.def — 30 essential C ABI exports for the C# UWP harness.
+; WebCoreDriver.exports.def — the C ABI export surface for the C# UWP harness.
 ; Build: link with /DEF:WebCoreDriver.exports.def to produce clean DLL exports.
+; (This file is the authority on what the DLL exports. A function declared in
+;  WebCoreDriver.h and implemented in WebCoreDriver.cpp is NOT reachable from C#
+;  unless it is listed below; the failure mode is EntryPointNotFoundException at
+;  runtime, not a compile or link error. The header comment used to read "30
+;  essential exports"; the list had grown to 37 before the viewport pair below
+;  was added, and the stale count is what made a missing name easy to overlook.)
 ;
 ; 9 functions removed from export surface:
 ;   WebCoreRenderHtmlStub   — test stub, never called
@@ -44,6 +50,16 @@ EXPORTS
     WebCoreSetPageScale
     WebCoreLiveTick
 
+    ; Viewport / scale — the re-layout pair, distinct from WebCoreSetPageScale above.
+    ; WebCoreSessionResize moves the session viewport (the page RE-LAYS OUT at the new
+    ; size), and WebCoreSetPageZoom is CSS page zoom (device px per CSS px), which also
+    ; re-lays out because the layout width is viewport / zoom. Together they are how the
+    ; app fits a page to the window instead of the fixed 720x1080 viewport. Both were
+    ; implemented and declared in the header long before this line existed, and the C#
+    ; side called them anyway -- every call failed at the P/Invoke boundary.
+    WebCoreSessionResize
+    WebCoreSetPageZoom
+
     ; Metadata / diagnostics
     WebCoreGetTitle
     WebCoreGetUrl
@@ -72,3 +88,11 @@ EXPORTS
     WebCoreEnableCompositing
     WebCoreGpuLayerInfo
     WebCoreSetGpuInitLogFile
+
+    ; Memory pressure -- frees decoded bitmaps (MemoryCache::pruneLiveResourcesToSize(0,
+    ; DestroyDecodedDataForAllLiveResources)) and the resource caches. Listed because the C# line
+    ; reaches the driver through THIS file alone: the C++ harness gets the symbol by compiling the
+    ; port into Harness.exe, which is not how the app links. Measured 2026-10-03: scrolling dzen.ru
+    ; drove the working set 100 -> 298 MB in 47 s and the process was reaped with no dump, and the
+    ; one callee known to free decoded bitmaps had no reachable caller from C#.
+    WebCoreReleaseMemory

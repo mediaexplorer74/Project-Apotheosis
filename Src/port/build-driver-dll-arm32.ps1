@@ -87,6 +87,7 @@ $Sources = @(
     'PortPlatformStrategies',
     'PortNetworkStorageSession',
     'PortStorage',
+    'PortWebSocket',
     'webcore-driver-stubs',
     'stubs-crypto',
     'stubs-pasteboard',
@@ -459,11 +460,29 @@ Write-Host "[link] EXIT=$linkExit  unresolved=$($unresolved.Count)  duplicate=$(
 
 if ($linkExit -eq 0) {
     # Also create import lib for linking
-    & 'C:\Program Files\LLVM\bin\llvm-lib.exe' /OUT:$LibOut /DEF:$DefFile 2>$null
+    # Apotheosis 2026-10-03: llvm-lib cannot infer the target machine from a .def alone -- MS
+    # lib.exe reads it off the .obj files, but here there are none, so the call needs /MACHINE.
+    # Without it llvm-lib writes "/def option requires /machine to be specified" to stderr, which
+    # under $ErrorActionPreference='Stop' terminated the script right here -- *before* the export
+    # count and, more importantly, before the payload staging below. The symptom is the one the
+    # staging comment warns about: the link is clean, native\<arch> keeps the previous DLL, and
+    # the fix reads as "did nothing". Verified by hand: with /MACHINE the same call produces a
+    # 10 KB import library, without it, nothing.
+    $prevEap = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'   # llvm-lib reports progress on stderr; that is not a failure
+    & 'C:\Program Files\LLVM\bin\llvm-lib.exe' /OUT:$LibOut /DEF:$DefFile /MACHINE:$Machine | Out-Null
+    $libExit = $LASTEXITCODE
+    $ErrorActionPreference = $prevEap
+    if ($libExit -ne 0) { throw "llvm-lib failed (exit $libExit) writing $LibOut" }
 
     $dllSize = if (Test-Path $DllOut) { [math]::Round((Get-Item $DllOut).Length / 1KB, 1) } else { 0 }
     Write-Host "==> $DllName built successfully (${dllSize} KB)" -ForegroundColor Green
-    Write-Host "    Exports: 30 functions (via .def)" -ForegroundColor Green
+    # Apotheosis 2026-10-03: was the literal "30 functions", which had been wrong for a while --
+    # the .def listed 37 before the viewport pair was added. A count that is typed by hand goes
+    # stale silently and then reads as an answer to "is my export in the list?", which is the one
+    # question it must not be trusted for. Count the list instead.
+    $exportCount = @(Select-String -Path $DefFile -Pattern '^\s+WebCore[A-Za-z0-9_]+$').Count
+    Write-Host "    Exports: $exportCount functions (via .def)" -ForegroundColor Green
     Write-Host "    Import lib: $LibName" -ForegroundColor Green
 
     # Apotheosis 2026-09-26: stage the fresh DLL into the appx payload, under the bare name the

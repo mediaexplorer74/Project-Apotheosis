@@ -28,8 +28,21 @@
 param(
     [string]$Ip = '192.168.1.35',
     [string]$OutDir,
+    # Which installed package's LocalState to read. This used to be hardcoded to the C++ harness, so
+    # the script answered "Harness is not installed on this device" on any machine where only the
+    # Apotheosis app was deployed -- the app being the thing the ARM line now ships. WDP needs the
+    # package FULL name (name_version_arch__publisher), which is also what makes it unambiguous when
+    # several versions are registered side by side; the pattern picks which one.
+    [string]$PackagePattern = 'EdgeHTMLReborn.Harness_*',
     [string[]]$Files = @(
         'port-trace.txt',       # driver: loader scheduling and the settle loop, appended and flushed per line
+        # The completed chunks, after the trace rotated at its 4 MB ceiling (2026-10-09). The driver
+        # writes .1 and the loader .2, so both are needed. Pulled by default because the rotation is
+        # invisible from here: a routine pull that takes only port-trace.txt would silently drop
+        # everything but the newest chunk, and the session being investigated is often the one that
+        # just rotated out.
+        'port-trace.1.txt',
+        'port-trace.2.txt',
         'gpuinit-steps.txt',    # driver: gpuLogMarker / DBG_STAGE markers, flushed per line
         'log.txt',              # harness: startup, navigation, STAGE markers, the diag line
         # The dying session's log.txt, copied aside by the crash-verdict code before LogInit truncates
@@ -47,6 +60,13 @@ param(
     ),
     [int]$TailLines = 0        # print this many trailing lines per file; 0 prints none
 )
+
+# `-Files a,b,c` does NOT arrive as three elements when this script is invoked as `pwsh -File`, which
+# is how the usage lines above call it. `-File` passes every argument as a single string, so a
+# comma-separated list binds to a ONE-element array holding "a,b,c" -- and the script then asks WDP for
+# a file literally named "a,b,c" and reports it "absent", which reads exactly like a missing log. That
+# cost a diagnosis on 2026-10-03. Splitting here makes the documented invocation mean what it says.
+$Files = @($Files | ForEach-Object { $_ -split ',' } | Where-Object { $_ -ne '' })
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Net.Http
 
@@ -101,10 +121,10 @@ Sync-Csrf $osInfo
 $pkgResp = Invoke-Wdp "$base/api/app/packagemanager/packages"
 Sync-Csrf $pkgResp
 $pkgs = ($pkgResp.Content.ReadAsStringAsync().Result | ConvertFrom-Json).InstalledPackages |
-        Where-Object { $_.PackageFullName -like 'EdgeHTMLReborn.Harness_*' }
-if (-not $pkgs) { Write-Host 'Harness is not installed on this device' -ForegroundColor Red; exit 3 }
+        Where-Object { $_.PackageFullName -like $PackagePattern }
+if (-not $pkgs) { Write-Host "no installed package matches '$PackagePattern'" -ForegroundColor Red; exit 3 }
 if ($pkgs.Count -gt 1) {
-    Write-Host "NOTE: $($pkgs.Count) Harness packages installed; using the highest version" -ForegroundColor Yellow
+    Write-Host "NOTE: $($pkgs.Count) packages match '$PackagePattern'; using the highest version" -ForegroundColor Yellow
     $pkgs = $pkgs | Sort-Object { [version]("{0}.{1}.{2}.{3}" -f $_.Version.Major, $_.Version.Minor, $_.Version.Build, $_.Version.Revision) } -Descending
 }
 $full = @($pkgs)[0].PackageFullName

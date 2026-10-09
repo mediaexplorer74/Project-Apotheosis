@@ -14,6 +14,8 @@
 
 #include "WebCoreDriverInternal.h"
 
+#include "PortWebSocket.h"
+
 extern void installPortPlatformStrategies();
 
 namespace {
@@ -402,6 +404,13 @@ int buildSession(const char* url, int w, int h, uint8_t* outRGBA)
     auto pageConfiguration = pageConfigurationWithEmptyClients(
         std::nullopt, PAL::SessionID::defaultSessionID());
 
+    // Apotheosis: replace the empty-provider default. EmptySocketProvider::createWebSocketChannel()
+    // returns nullptr, and WebCore::WebSocket::connect() RELEASE_ASSERTs on a null channel, so any
+    // page that opens a WebSocket (dzen.ru does -- Yandex Metrika) aborts the process. See
+    // PortWebSocket.cpp. Set again before the GPU rebuild below, because Page::create() moves the
+    // configuration and a moved-from Ref<SocketProvider> is null.
+    pageConfiguration.socketProvider = WebCorePort::createPortSocketProvider();
+
     auto& session = *g_session;
     session.load.mainDone = false;
     session.load.failed = false;
@@ -443,6 +452,7 @@ int buildSession(const char* url, int w, int h, uint8_t* outRGBA)
         page->settings().setAcceleratedCompositingEnabled(true);
         page->settings().setForceCompositingMode(true);
         pageConfiguration.chromeClient = WTFMove(chrome);
+        pageConfiguration.socketProvider = WebCorePort::createPortSocketProvider();
         page = Page::create(WTF::move(pageConfiguration));
         page->settings().setScriptEnabled(true);
         page->settings().setLoadsImagesAutomatically(true);

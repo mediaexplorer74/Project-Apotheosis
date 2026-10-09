@@ -3,8 +3,26 @@ using Windows.ApplicationModel.Resources;
 namespace Apotheosis
 {
     /// <summary>
-    /// Dual-source string loader: tries .resw ResourceLoader first, falls back to hardcoded kStr table.
-    /// Matches the C++ harness pattern (GetStr() with .resw + kStr[lang][id] fallback).
+    /// UI strings. One table, three languages, chosen at runtime.
+    ///
+    /// Apotheosis 2026-10-03 -- the .resw is no longer consulted, and that is the fix, not a
+    /// regression. This used to try ResourceLoader first and fall back to the table below, on
+    /// the theory that x:Uid and .resw were the UWP-correct route. They are, for an app whose
+    /// language is decided before launch. They are not for this one, for two measured reasons:
+    ///
+    ///   1. ResourceLoader.GetForCurrentView() is bound to the VIEW language (en-US here), so
+    ///      it answered every key in English no matter what the user picked -- and it answered
+    ///      for ~80 of the keys, because the .resw files use the same bare names as this table.
+    ///      The Russian column was unreachable in practice, which is exactly the reported
+    ///      symptom: "the language does not repaint the UI".
+    ///   2. The XAML side was worse. x:Uid="SettingsTitle" looks up "SettingsTitle.Text" in the
+    ///      .resw; the files define "SettingsTitle" with no property suffix, so the lookup missed
+    ///      and the label rendered EMPTY. The settings page shipped with uncaptioned controls.
+    ///
+    /// So: the table is authoritative, SetLang is a live switch, and the XAML carries x:Name
+    /// instead of x:Uid so RetranslateUi() in MainPage.xaml.cs can apply every label again
+    /// without a restart. Add a key here and to all three columns; the arrays are positional
+    /// and the enum is the index, so append -- never insert.
     /// </summary>
     static class Str
     {
@@ -21,6 +39,19 @@ namespace Apotheosis
             HistoryCleared, BookmarksCleared, DownloadsCleared,
             General, Advanced, VerboseLogging,
             Footer,
+            // Appended 2026-10-03 with the RetranslateUi() pass. The strings above this line were
+            // partly written into the .resw files as bare names, which is what made that route
+            // look like it worked; these have no .resw counterpart at all.
+            Favorites, Bookmarked, BookmarkRemoved, RemoveBookmark, NothingToShare, LinkCopied,
+            Clear, DownloadThisPage, NoBookmarks, NoHistory, NoDownloads,
+            LoggingOnHint, LoggingOffHint, FrequentSites, HomeHint,
+            On, Off,
+            // Appended 2026-10-03 (second pass). Both target platforms have a real touchscreen, so
+            // the on-screen scroll pair is clutter on the device it was written for; it needs a
+            // switch. Appended, not inserted -- the arrays are positional.
+            ShowScrollButtons,
+            FitPageToWindow,
+            AddressBarSuggestions,
             COUNT
         }
 
@@ -41,6 +72,15 @@ namespace Apotheosis
                 "History Cleared", "Bookmarks Cleared", "Downloads Cleared",
                 "General", "Advanced", "Verbose logging",
                 "EdgeHTML Reborn / Apotheosis — WebKit (WebCore) 2.52.4 — ARM32 UWP",
+                "Favorites", "Bookmarked", "Bookmark Removed", "Remove Bookmark", "Nothing to Share", "Link Copied",
+                "Clear", "Download This Page", "No Bookmarks", "No History", "No Downloads",
+                "setup-trace.txt is being written to LocalState.",
+                "Tracing is off. LocalState files stop growing; setup-trace.txt will not record new entries.",
+                "Frequent Sites", "Enter a URL in the address bar above.",
+                "On", "Off",
+                "On-screen scroll buttons",
+                "Fit the page to the window",
+                "Show suggestions from history and sites",
             },
             // Russian
             new string[] {
@@ -56,6 +96,15 @@ namespace Apotheosis
                 "История очищена", "Закладки очищены", "Загрузки очищены",
                 "Основные", "Продвинутые", "Подробный лог",
                 "EdgeHTML Reborn / Apotheosis — WebKit (WebCore) 2.52.4 — ARM32 UWP",
+                "Избранное", "В закладках", "Закладка удалена", "Удалить закладку", "Нечего опубликовать", "Ссылка скопирована",
+                "Очистить", "Скачать эту страницу", "Закладок нет", "История пуста", "Загрузок нет",
+                "setup-trace.txt записывается в LocalState.",
+                "Трассировка выключена: файлы LocalState не растут, setup-trace.txt не пополняется.",
+                "Частые сайты", "Введите адрес в строке выше.",
+                "Вкл.", "Откл.",
+                "Экранные кнопки прокрутки",
+                "Вписывать страницу в окно",
+                "Подсказки из истории и сайтов",
             },
             // Chinese
             new string[] {
@@ -71,40 +120,36 @@ namespace Apotheosis
                 "历史记录已清除", "书签已清除", "下载已清除",
                 "常规", "高级", "详细日志",
                 "EdgeHTML Reborn / Apotheosis — WebKit (WebCore) 2.52.4 — ARM32 UWP",
+                "收藏夹", "已加书签", "书签已删除", "删除书签", "无可分享", "链接已复制",
+                "清除", "下载此页面", "没有书签", "没有历史记录", "没有下载",
+                "setup-trace.txt 正在写入 LocalState。",
+                "跟踪已关闭：LocalState 文件停止增长，setup-trace.txt 不再记录新条目。",
+                "常用网站", "请在上方地址栏输入网址。",
+                "开", "关",
+                "屏幕滚动按钮",
+                "页面适配窗口",
+                "显示来自历史和网站的联想",
             },
         };
 
-        static ResourceLoader _loader;
         static int _langIndex = 0; // 0=en, 1=ru, 2=zh
-
-        static Str()
-        {
-            try { _loader = ResourceLoader.GetForCurrentView(); } catch { }
-        }
 
         public static void SetLang(int lang)
         {
             _langIndex = lang < 0 || lang > 2 ? 0 : lang;
         }
 
+        public static int Lang => _langIndex;
+
         public static string Get(string key)
         {
-            // Try .resw first
-            if (_loader != null)
-            {
-                try
-                {
-                    string val = _loader.GetString(key);
-                    if (!string.IsNullOrEmpty(val)) return val;
-                }
-                catch { }
-            }
-            // Fallback to hardcoded
-            if (System.Enum.TryParse<Id>(key, out var id) && _langIndex < kStr.Length)
+            if (System.Enum.TryParse<Id>(key, out var id))
             {
                 int idx = (int)id;
                 if (idx < kStr[_langIndex].Length) return kStr[_langIndex][idx];
             }
+            // Not a key this table knows. Returning the key itself keeps the gap visible on
+            // screen instead of painting an empty label, which is how the x:Uid defect hid.
             return key;
         }
     }

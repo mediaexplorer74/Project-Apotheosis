@@ -306,6 +306,8 @@ engine thread and appends per-command timings to `autocmd-log.txt`.
   goto <url>                 navigate
   scroll <dx> <dy>           one engine-path scroll step, timed
   swipe <dy> <steps> <gapMs> a finger: drives FreeScrollBy on the UI thread at ~60Hz
+  ui <what>                  drive the shell: settings | general | advanced | menu | tabs | home
+  lang <0|1|2>               pick a language in the settings combo (en | ru | zh)
   scrolln <dx> <dy> <n>      n engine-path steps, timed individually
   wait <ms>                  sleep on the engine thread
   hash                       log the frame hash
@@ -319,6 +321,36 @@ coalescing and the link sync, and *that* is the path a user exercises. `swipe` r
 so the real merge logic executes, and it awaits between steps rather than blocking, because a
 blocking sleep would freeze the dispatcher and the measurement would describe a stalled UI instead of
 a swipe.
+
+`lang` and `ui` exist for the same reason `swipe` does: they drive the **real control**. `lang 1`
+sets `SetLangCombo.SelectedIndex`, so the repaint goes through the `SelectionChanged` handler a finger
+would trigger, not through a private call to `Str.SetLang`. A measurement of a private path would not
+have caught the defect that mattered here — the `.resw` route answering from the *view* language.
+
+**`goto` must not be gated on the session being live.** It was, and the gate deadlocked the channel:
+a visit to Home calls `WebCoreCloseSession` and clears `_sessionActive`, and the only thing that can
+restore a session is a navigation — which the check refused to perform. A smoke run produced fifteen
+batches of `goto ignored: no session` and not one request. `NavigateTo` is what creates or replaces
+the session, so it is precisely the thing that has to stay reachable.
+
+## Where the UI strings live, and why not in `.resw`
+
+`Src/Apotheosis/Str.cs` holds one positional table, three columns, an `enum Id` as the index. It is
+authoritative, and the `.resw` files are not consulted. That is a deliberate departure from the UWP
+route, and both reasons are measured:
+
+- **`ResourceLoader.GetForCurrentView()` is bound to the view language**, which the platform fixes at
+  launch. It answered English for every key whatever the picker said, which is the maintainer's report
+  verbatim: "the language setting does not repaint the UI". A `.resw` is the right tool for an app
+  whose language is decided before it starts, and the wrong one for an app with a language picker.
+- **`x:Uid` looks up `<Key>.Text`.** The fork's `.resw` files define bare keys with no property
+  suffix, so every lookup missed and every label rendered empty. The settings page had shipped with
+  uncaptioned controls and nothing in the logs said so.
+
+So `SetLang` is a live switch, `RetranslateUi()` is one idempotent pass over every named element, and
+the XAML carries `x:Name` rather than `x:Uid`. The three `.resw` files remain in the package as the
+fork's translation corpus; removing them is a separate packaging decision. Add a key to all three
+columns and append — the arrays are positional and the enum is the index.
 
 ## What is actually measured, and what is not
 

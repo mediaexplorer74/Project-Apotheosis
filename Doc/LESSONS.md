@@ -59,6 +59,24 @@ These are short operating rules distilled from the detailed reports in [Archive/
   not a broken file. Either run `pwsh -NoProfile -ExecutionPolicy Bypass -File <script>`, or set
   `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once. A `Zone.Identifier` stream (download mark)
   additionally needs `Unblock-File` under `RemoteSigned`.
+- **A P/Invoke needs three edits, and the third one fails silently at runtime.**
+  `Src/port/WebCoreDriver.exports.def` is the authority on what `WebCoreDriver.dll` exports — the DLL is
+  linked with `/DEF:` and carries exactly the names in that file, no matter what `__declspec` says. A
+  function can be declared in `WebCoreDriver.h`, implemented in `WebCoreDriver.cpp` and bound by a
+  `DllImport` in `WebCoreDriver.cs`, and the call still fails with `EntryPointNotFoundException` — at
+  runtime, never at compile or link time. On x64: add the name under a group in the `.def`, then
+  `pwsh -File Src/port/build-driver-dll-arm32.ps1 -Arch x64` (it recompiles nothing when the
+  `Src/port/*.x64.obj` objects are newer than their sources, so a pure export change is a relink), then
+  copy `Src/port/WebCoreDriver-x64.dll` into `Src/Apotheosis/native/x64/` — the appx payload is a *copy*,
+  and `_build-csharp-x64.bat` does not refresh it. Verify with
+  `llvm-readobj --coff-exports <dll> | grep <name>` rather than by rebuilding the app.
+- **Never `catch { }` around a native call you have not yet seen succeed.** The window-fitted viewport
+  shipped with `try { rc = ...Resize(...); } catch { }` and logged only its own `-1000` sentinel, so the
+  `EntryPointNotFoundException` above cost a full build-install-measure cycle to find. Log
+  `ex.GetType().Name` and `ex.Message`; the type names the cause outright.
+- **The count in a hand-maintained list comment is a trap.** `WebCoreDriver.exports.def` said "30
+  essential exports" while listing 37. The stale number made "is the name I need in here" a question
+  about the count rather than about the list, which is exactly backwards. Trust the list.
 
 ## Ninja / build-tree mechanics (2026-09-26)
 
@@ -272,3 +290,333 @@ These are short operating rules distilled from the detailed reports in [Archive/
   allocation hiccup.
 - **`testurl.txt` takes a bare URL**, not a command. Writing `goto https://ya.ru/` navigates
   nowhere and `stage.txt` reports the whole string as the URL.
+
+## Measuring the UI and the sites (2026-10-03)
+
+- **A number about the window is not a number about the page.** The site verdict used to read
+  `nonwhite` from a screen capture, and the app's dark chrome fills the window: all twelve sites
+  scored an identical **99.68 %**, the same for a painted page and a blank one. It was not a wrong
+  answer — it was the wrong question. Use the engine's own `diag: nonwhite=A/B`, which counts
+  framebuffer pixels differing from white. Calibration is what makes it readable: example.com 100 %
+  (its body background is `#f0f0f2`, so almost no pixel *is* white), nokia-archive 99.64 %,
+  wikipedia-m 81.68 %, w3.org 43.23 %, habr 4.04 %, info.cern.ch 1.86 %, **dzen.ru 0.00 %**. The
+  last is the point: dzen returned `rc=0` and painted nothing — the failure `rc`-only checking
+  cannot see.
+- **A fixed sleep eventually reads the wrong page.** Sleeping a constant interval per site then
+  reading `stage.txt` meant that on a heavy site the load outlived the sleep and the script read the
+  *previous* site's `after-load` line and `diag`. The tell was two sites reporting the identical
+  `31.59`. Wait for the site's own URL to appear in an `after-load` line — the loader's own statement
+  that it finished — instead of guessing how long a load takes.
+- **A failure row cannot have a page number.** The loader writes its stage block (`rc`, then `diag`)
+  *before* it renders the error HTML, and a failed load has not replaced the engine's document, so
+  that `diag` describes the previous page. It showed up as `bad-domain` reporting dzen's reading byte
+  for byte. Report `n/a` rather than a number that belongs to another site.
+- **Screenshot the app window, DPI-aware.** This bench is 2736x1728 at 200 %. A DPI-unaware
+  PowerShell reports a 1368x864 working area, resizes the window in those virtual units, and then
+  `CopyFromScreen` crops — the first settings screenshots had no right edge and no bottom chrome, and
+  it looked like an app defect. `SetProcessDPIAware()` before any size query, then move the window
+  into the working area and capture exactly that rectangle.
+- **`Get-Process Apotheosis | .MainWindowHandle` is 0 for a UWP app.** The top-level window is
+  `ApplicationFrameWindow`, owned by `ApplicationFrameHost.exe`, and titled `Apotheosis`. Find it by
+  class and title. In the `EnumWindows` callback, write the **script** scope — a local declared in the
+  calling function is shadowed by the callback's own scope and the value is lost, which cost a round
+  of "no window found".
+- **A native string parameter declared `CharSet.Ansi` destroys non-ASCII text silently.** Cyrillic
+  arrived at the engine as literal `?` bytes (0x3F), in tile titles and in generated HTML alike.
+  Marshal by hand: a private `…Raw(byte[])` `DllImport` plus a public wrapper that encodes UTF-8 into
+  a NUL-terminated `byte[]`. A pinned blittable array needs no charset conversion and no
+  `[MarshalAs(UnmanagedType.LPUTF8Str)]`, whose behaviour under .NET Native is unverified. Note the
+  same files carried working Cyrillic elsewhere, so this is never a file-encoding problem.
+- **`x:Uid` looks up `<Key>.Text`, and a bare key in the `.resw` makes every label render empty
+  without an error.** `ResourceLoader.GetForCurrentView()` is additionally bound to the view
+  language, so it cannot serve a language picker: it answers the launch language forever. Use
+  `x:Name` plus one `RetranslateUi()` pass over a positional table.
+- **`Add-AppxPackage` can fail on the PRI stage of an in-place update while rolling back cleanly.**
+  `0x80073CF9`/`0x80004005`, `Failure in the SystemRegisterRemove state handler`, then `failed to
+  register the windows.MRT extension: The data is invalid`. The recovery is back up `LocalState`,
+  `Remove-AppxPackage`, `Add-AppxPackage`, restore `LocalState` — and the backup is not optional,
+  because `Remove-AppxPackage` deletes `LocalState`, which is where `settings.ini`, `history.tsv` and
+  every log live.
+- **Two frames that differ in no pixel say "this was never repainted", not "the change is invisible".**
+  A desktop-UA shot and a mobile-UA shot of the same URL in the same fitted window (2736x1728, one per
+  run, every second pixel sampled with a 12/255 tolerance) came out **identical**, and the useful
+  reading of that zero is not "the zoom does nothing to the picture" but "the second run put no new
+  frame on screen at all". A re-navigation cannot legitimately repaint byte-identically. Reach for
+  cross-run frame differencing early: it costs one script and it separates "the effect is subtle" from
+  "the effect never happened", which eyeballing a downscaled PNG cannot.
+- **A cache of engine state must be invalidated by the event that invalidates the state, not by
+  watching the value.** The shell cached `_pageZoom`; the port resets its own `g_pageZoom` to `1.0f` in
+  `teardownSession`, which `WebCoreSessionLoad` calls unconditionally, so **every navigation** built a
+  session laid out at zoom 1.0 while the shell still believed 3.29. Both numbers "agreed" — the cache
+  and the state were equal in value and different in existence — so the guard that compares them
+  (`|_pageZoom - _vpZoom| < 0.001` → "nothing to do") was silently a no-op, and the port's own
+  re-assert guard was disarmed by the same reset. The fix is at the producer: forget the cached value
+  at navigation completion. Two habits generalise: reset engine-derived caches on the lifecycle event
+  rather than trusting equality, and when a no-op path can be reached *by two different causes*, log
+  which one was taken (the port already does this for `WebCoreSetPageZoom`) — the missing log is what
+  made a four-hour hunt possible.
+- **Read `contentsSize()` as frame-view units, never as CSS px.** `[GPU] page zoom 1.00 -> 3.29
+  (layout 1355x2216 CSS-ish, viewport 1355x751)` looks like proof that the zoom failed to narrow the
+  layout, because the layout width equals the viewport width. It is the opposite: frame-view
+  coordinates already carry the page zoom, so `1355 / 3.29 = 412` and `2216 / 3.29 = 673` — a 412 CSS
+  px phone layout. The marker's own "CSS-ish" hedge is the warning. Confirm it with a page whose
+  document box equals its viewport (the Nokia archive logs `layout 1355x751` at the same zoom, i.e.
+  `412 x 3.29`), and leave the software paint scale alone: `FrameView::paint` applies the factor
+  itself, which is exactly why the size it is handed is in the enlarged units.
+
+## Page zoom replaces page scale (2026-10-03, `0.2.3.14`)
+
+- **Page scale is a magnification and page zoom is a re-layout, and only one of them can be the
+  only lever.** `WebCoreSetPageScale` "MAGNIFIES the finished layer tree without re-running layout
+  (the layout viewport is unchanged, so `documentElement.clientWidth` stays put)" — the port's own
+  words. So the layout the engine hit-tests against and the pixels on screen are two different
+  geometries, and every consumer that picks one of them (fixed-position overlays, tap mapping,
+  scroll extents) disagrees with the others. Reported by a finger on dzen.ru: *"всплывашка живёт
+  своей жизнью словно в другом слое — скроллю в её зоне, она не двигается, а скроллится сайт под
+  ней."* Page scale is now **removed from the C# line entirely** (the export stays declared; nothing
+  calls it), and this is the whole fix: one geometry, always.
+- **`contentsSize()` is the discriminator, and it is a one-line A/B.** Same page, same window, mobile
+  UA, `diag` after each: `zoom 100` → `contents=1355x1360`; `zoom 200` → `contents=1355x3062`. The
+  width is unchanged *because frame-view units carry the zoom* (see the bullet above): 1355 / 2 = 677
+  CSS px, and the list re-wrapped there, which is why the height grew 2.25x rather than 2x. A page
+  *scale* would have left both numbers untouched and stretched the pixels — that difference, not the
+  screenshot, is what proves the re-layout happened.
+- **One body applies a zoom, and both callers use it.** `PostZoomAndRepaint(w, h, zoom, why)` is
+  called by `ApplyViewport` (geometry or setting changed) and by `CommitPageZoom` (a pinch ended).
+  The retired pinch path had its own copy of the sequence — its own buffer, its own `_opSeq` test
+  that could return early and leave the engine magnified while the shell kept the old value, and its
+  own transform-clearing that the early return skipped. Two implementations of one protocol is what
+  made that possible; there is now one, and the supersede case logs `… frame superseded seq A -> B`
+  and still clears `_interacting` (the first measured hit was `seq 4 -> 5` on the very first run).
+- **A resize is a repaint at any size, and that is what makes zoom-without-geometry possible.**
+  `WebCoreSetPageZoom` deliberately does not paint ("a full repaint costs ~1.2 s ... both callers in
+  the harness resize right after"), and `WebCoreSessionResize` has **no same-size early-out** — it
+  assigns `g_session->w/h` and calls `finishInteractionPaint` unconditionally. So a pinch commits as
+  `SetPageZoom(z)` + `SessionResize(kW, kH)` with the size *unchanged*. This is also why the old
+  fitwindow-off branch needed page scale at all, and that reason is now gone.
+- **A gesture cannot set a private field and call it a measurement, so the zoom became a verb.**
+  `zoom <50..200>` goes through the real `SetZoomSlider`: `ShowSettings()` → set `Value` → 
+  `HideSettings()`, which is the only path that reads the slider, calls `ApplySettings()` and saves.
+  Assigning `_defaultZoom` directly would have skipped the repaint (`OnZoomChanged` only repaints the
+  *label*) — i.e. it would have measured a field, not the feature. Same argument as `ua`.
+- **The pinched zoom is the setting, not a per-page overlay.** A pinch writes `_defaultZoom` (clamped
+  to `kZoomMin`/`kZoomMax`, the same pair the slider and `ApplySettings` use), so there is exactly one
+  authority for the zoom and `AdoptViewport`'s recompute of `_vpZoom = ViewportZoom()` can never
+  fight it. `Tab.PageScale` is deleted for the same reason: a per-tab copy is a second authority.
+- **A scripted verb runs on the engine thread, so it may not touch XAML.** The first instrument added
+  to `diag` read `RenderImage.RenderTransform`; every `diag` in the batch died with
+  `RPC_E_WRONG_THREAD` / `0x8001010E` — "Приложение обратилось к интерфейсу, относящемуся к другому
+  потоку" — because a `DependencyObject` belongs to the UI thread. The verb now touches plain fields
+  only. A related trap: `xform=` (was the transform still on the Image?) is not moved elsewhere but
+  *deleted*, because with one geometry there is nothing left for it to report — the commit clears the
+  transform in the same dispatcher call that blits.
+- **`WebCoreGetDiag` (and every sibling `Get*`) returns `snprintf`'s return value — the length it
+  *would* have written — so it can exceed the buffer it was handed.** Used as the count for
+  `Encoding.UTF8.GetString(buf, 0, n)` it throws `ArgumentOutOfRangeException` and the whole line is
+  lost: measured on dzen.ru, where the run reported an exception instead of the page's own answer.
+  2048 was also too small for one page's `res:[...]` list; the buffer is 4096 now, read whole and
+  trimmed at the first NUL like every other `Get*` caller, and truncation is stated out loud because
+  a clipped `res:` list reads as "the page requested nothing".
+
+## The whole window blinks while live mode runs (2026-10-03, `0.2.3.14`)
+
+A finger on dzen.ru: *"очень неприятное подергивание всех картинок сайта (ощущение, что они
+перезагружаются 1000 раз, поджирая оперативную память)"*. After it had stopped on its own:
+*"картинки перестали перерисовываться наконец… время пропадания картинок ощущалось в пол-секунды"*.
+The report is accurate and the mechanism is not a leak.
+
+- **Measure the frame rate before blaming a repaint loop.** `hash` sampled at 500 ms
+  (`autocmd` batch 5, 15:03) gives `1c7764ee → 01617366 → 01617366 → 5d0428c1 → 5d0428c1 →
+  63ab9a26`: the engine's frame changes **~1×/s**, not 5×/s. So there is no runaway relayout — a
+  page JS timer spinning at 15 Hz would have moved the hash at 15 Hz. What is wrong is the *cost of
+  one frame*, not the number of frames.
+- **Each changed frame replaces the entire window surface.** `BlitToBitmap`
+  (`MainPage.xaml.cs`) allocates `new WriteableBitmap(kW, kH)`, swizzles `kW*kH` pixels and assigns
+  `RenderImage.Source`. Because the *Source* is swapped rather than the pixels under it, the
+  compositor drops the old texture at once and the new one lands a frame or two later — every image
+  on screen disappears together for a moment. That is the reported "all images reload at once", and
+  the "half a second" is that gap, not a re-fetch.
+- **The blink stops by itself because live mode stops itself.** `OnLiveTick` ends after
+  `_liveStaticTicks >= 40` (8 s of *unchanged* frames) or `_liveTotal >= 300`. On a live feed the
+  static condition never accumulates, so the run goes the full 300 ticks — ~30 s at 200 ms plus
+  ~150 s at the 1 s interval — and then quiesces. Hence "blinked for a few minutes, then stopped",
+  with no code change. A symptom that ends without an edit is still a defect; it is just bounded.
+- **It is churn, not a leak — say so with two readings.** `Get-Process Apotheosis` twice, minutes
+  apart: `RSS_MB=448 priv_MB=1267 handles=627` both times, identical (`cpu_s=501.8`, 20 threads,
+  one process since 14:24). A 4 MB `WriteableBitmap` plus a 4 MB `NewFrameBuffer()` per tick is
+  ~1.2 GB of short-lived garbage across a 300-tick run; the GC keeps up, so RSS is flat. "Поджирает
+  оперативную память" is a true perception of allocation pressure and a false diagnosis of a leak.
+- **The fresh bitmap per frame is deliberate — read `git show 2b17643` before "fixing" it.** That
+  commit is titled *"Stop reusing surfaces across frames: it fixed scrolling and broke images"*:
+  reusing one `WriteableBitmap` made images blink on ya.ru, because the compositor holds a reference
+  to the surface it is presenting, so writing into it in place is not safe. The commit names the
+  proper fix — *have `paintToRGBA` emit BGRA and the conversion buffer disappears entirely*.
+- **So the repair has two independent halves, and neither is "cache the bitmap".**
+  (1) The CPU/alloc half: emit BGRA from `paintToRGBA` so the 4 MP B/R swizzle and its buffer vanish.
+  (2) The blink half: a small **ring** of 2–3 bitmaps, so the surface being written is never the one
+  being presented — which is what the single-cached-surface attempt got wrong, and what a pool
+  addresses without reintroducing the tearing. Only (2) narrows the blank window; (1) alone would
+  make the same blink cheaper.
+- **Half (2) landed in `0.2.3.15` as `kBlitRing = 3`.** `BlitToBitmap` writes round-robin into three
+  `WriteableBitmap`s built once per geometry (`_blitRingW/_blitRingH` are the key, because a
+  `WriteableBitmap`'s size is fixed at construction and every fitted resize rewrites `kW/kH`) and
+  assigns the slot it just finished. Slots are filled lazily, so a geometry that only ever presents
+  one frame pays one bitmap. Cost: up to 3 × `kW*kH*4` held steady (~12 MB at the fitted bench
+  viewport) against 3 fresh 4 MB surfaces and ~1.2 GB of LOH garbage across a 300-tick live run.
+  **The number to argue about from here is `kBlitRing`, not "cache it or not".** Half (1) is still
+  open and is a native change (`paintToRGBA` in `WebCoreDriver.cpp`), so it is a driver rebuild and
+  not an app rebuild.
+- **Corollary for the `port-trace.txt` channel:** it is a debug channel shipped on, 41 MB in
+  `LocalState` over one session (180 845 `wtimer:` lines). It is not the blink's cause (37 B/s
+  while idle, 0.2 `wtimer` enters/s) but it is a shipping-build liability.
+
+## Double-tap to fit (`0.2.3.15`, same day)
+
+- **`Tapped` fires for the FIRST tap of a pair.** That is the whole difficulty of this gesture: a
+  handler that forwards the tap immediately has already sent a click into the page by the time
+  `DoubleTapped` arrives, and on a feed page the first tap of the pair lands on a card link — so the
+  "zoom" gesture would navigate away instead. The second tap raises `DoubleTapped` and *not* a second
+  `Tapped`, so cancelling the pending first tap is enough to make the pair do exactly one thing.
+  `OnPageTapped` therefore holds every tap for `kDoubleTapMs = 250` and forwards it from a one-shot
+  `DispatcherTimer`; `OnPageDoubleTapped` stops that timer. The 250 ms is a real tax on every link
+  tap in the app — it is what every mobile browser pays for this gesture, and it is small against the
+  engine's own click latency (seconds on a heavy page).
+- **The scripted verbs are deliberately NOT delayed.** `tap`/`taplink` call `HandleTapAt` directly: a
+  script has no double taps to disambiguate, and paying the wait there would make the bench slower
+  than the finger. `dtap` calls the same `DoubleTapFit()` the event handler calls — separated into
+  its own function for exactly that reason, because a verb that re-implemented the toggle would
+  measure the verb and not the feature (the `ua`/`zoom` rule).
+- **A stray second `Tapped` must be survivable.** The documentation says the platform does not raise
+  one, but that guarantee is the platform's to keep and not ours to assume; a wanderer would become a
+  click 250 ms after a zoom. `_lastDoubleTapMs` is set by the double-tap handler and swallows any
+  `Tapped` arriving inside the window. Compared as `uint`, so the subtraction still works when
+  `Environment.TickCount` goes negative on a long uptime.
+- **CSS page zoom has no focal point, so this gesture is a level toggle, not a zoom-to-point.**
+  Chrome's desktop double-tap zooms *around* the tapped point; ours cannot, because page zoom re-lays
+  the page out rather than magnifying a finished layer (the same fact that removed page scale). So:
+  at the fit zoom (100 %, where the layout width IS the window width) double-tap goes to the last
+  zoom the user chose; anywhere else it returns to fit. `_lastFitOffZoom` is written inside
+  `CommitPageZoom` — the one function every lever goes through — so no second bookkeeper is needed.
+- **Measured through the verb, in the app's own log:** `ui dtap: vz=1,00 default=100` →
+  `dtapfit: resize rc=0 zoom rc=0 1355x751 z=2,00` → `pzoom=2000 vz=2000 zoom=200` in the following
+  `diag`, then back to `z=1,00` / `pzoom=1000` on the second double-tap. `rc=0` on both halves.
+- **The same run also closed the `diag` trap from the entry above:** the buffer fix (4096 bytes, read
+  whole, trimmed at the first NUL) is in `0.2.3.15` and the verb now prints the page's full
+  `res:[...]` list instead of throwing. Worth stating because the fix had been in source but not in
+  the installed package, which is the difference between "fixed" and "measured".
+- **A dzen load that "succeeds" can still be a blank document, and `contents=` is how you tell.**
+  Two loads in a row: the first ended at `url=https://sso.dzen.ru/install?uuid=…` with
+  `lasterr=[phase=didFailProvisionalLoad type=Cancellation]`, `body=0`, `rootKids=-1`,
+  `nonwhite=0/1017605` — and `contents=1355x751` at *both* zoom 100 and zoom 200, because an empty
+  document's content height is the viewport height. The zoom had still been applied (`pzoom` moved),
+  so the geometry test was measuring a blank page and could not have shown the reflow. The second load
+  reached `url=https://dzen.ru/` with the real title and settled at a constant frame hash over six
+  500 ms samples. **Check the document before reading a geometry out of it.**
+
+## The address-box dropdown (`0.2.3.18`/`.19`, 2026-10-03)
+
+- **One symptom, three causes.** "Гигантское паразитное окно с кривым показом истории" was: Enter
+  navigating without hiding the list; `NavigateTo` hiding it only *after* its `_loading`
+  early-return, so a navigation dropped as "shell busy" left the panel hanging (the user's own
+  screenshot has the ✕ loading glyph in the address bar); and `MaxLines = 1` without
+  `TextWrapping = NoWrap` rendering a long title as two full lines. Fix one and the report is still
+  open — which is why the row geometry and the two hide paths had to be found in the same pass.
+- **A transient "I am writing this myself" flag cannot cover an asynchronous echo.** The commit
+  writes the URL into the box, `TextChanged` for that write arrives *after* `_urlSyncing` was
+  cleared, and the handler — box focused, text non-empty — matched the URL against the history the
+  commit had just appended and reopened the dropdown **after Enter**. `SetUrlBoxText` remembers the
+  string it wrote and `OnUrlChanged` treats that equality as a shell write. Any state carried in a
+  flag around an assignment is a guess about when the platform delivers the notification.
+- **A scripted verb must fake the *state* inputs, not just the text.** `suggest` set `UrlBox.Text`
+  without `_urlFocused`, and `OnUrlChanged` thereupon hid what the verb had just shown: log `vis=1`,
+  screen empty, twice. The conclusion drawn from that ("the panel does not render") was wrong, and
+  the fix was in the verb. A control cannot be focused from a script
+  (`synthetic-input-cannot-reach-uwp`), so the verb sets the field the handler actually reads.
+- **Read a visibility twice if the question is "did it stay?"** `ui suggest … vis=1` and
+  `ui suggest+700 vis=1 h=251 boxfoc=1` are different measurements; the first cannot distinguish
+  never-drawn from shown-then-hidden. The deferred probe costs a `DispatcherTimer` and settled a
+  question two screenshots had answered wrongly.
+- **A dropdown height must be a fraction of the window.** 250 DIP is a minority of a 912-DIP
+  notebook window and most of a 640-DIP phone window. `SuggestScroll.MaxHeight` is clamped in
+  `ShowSuggestions` to `max(120, min(250, contentArea × 0.34))` — the phone is the shipping target,
+  and "окультурить" has to mean "on the device that ships".
+- **`DisplayUrl` on the secondary line:** eight `https://` prefixes are eight wasted columns on a
+  360-DIP screen. Cosmetic on the bench, half the row on the Lumia.
+- **`AppxBundle=Never` is not a shortcut when the installed package has resource packs.** The update
+  fails with `0x80073CF3` (dependency or conflict validation) and no useful text; the install script
+  was looking for an `.appxbundle` for a reason. Build the C# line with `-p:AppxBundle=Always`.
+
+## The device death was a null WebSocket channel, and the instrument could not say so (`0.2.3.29`, 2026-10-09)
+
+- **`pageConfigurationWithEmptyClients()` is a field of landmines, not a default.** It installs an
+  `Empty*` for every client WebCore can ask for, and some of those empties answer `nullptr` where
+  WebCore `RELEASE_ASSERT`s that the embedder supplied the real one. Two so far: the
+  `NotificationController` supplement (an AV reading `0x8`, `.25`) and `EmptySocketProvider`'s null
+  channel (`RELEASE_ASSERT(m_channel)`, `WebSocket.cpp:288`, `.29`). **When a page dies on the device
+  and the trace's last work looks unrelated — MIME parsing, here — look for a supplement lookup on the
+  fatal path before theorising about the subsystem the last line names.** The last *completed* work is
+  where the engine died, not what killed it.
+- **A reader that computes the right length and forgets to copy is a reader that lies.** `ApoImageString()`
+  validated a string's shape and wrote only its terminator, so both of the assert reader's nets matched
+  uninitialised stack buffers and could never fire. Two builds (`.26`, `.27`) and two device runs went
+  into nets that could not have fired, and a third (`.28`) at least proved the walk itself now reads
+  memory. **The tell is a contradiction between the log and the source: when a host simulation of the
+  same logic matches and the build does not, disassemble — do not re-read the source.** Same family as
+  `out-of-bounds-stack-scan-is-dead-code` and `diagnostics-that-guess-will-lie`.
+- **A stack-spill offset is a codegen fact, not a property of the assert.** On `.28` the
+  `WTFCrashWithInfo` argument triple sits four words *above* the `frames[2]` return address, not below
+  it (`a = i + 1`, not `a = i - 4`). Scan both offsets, re-measure per build, and prefer naming the
+  assert by hand from the raw window when the nets are ambiguous — a 480-word window with real module
+  attribution is enough to resolve `file`/`function` in the local PE.
+- **A port-side subclass of a WebCore interface is linkable here, because the port links WebCore
+  statically** (`WebCoreFull-*.lib`), and `Src/port/PortWebSocket.cpp` is the worked example: a
+  `SocketProvider` whose channel returns `ConnectStatus::KO`, which `WebSocket::connect()` converts into
+  `failAsynchronously()`. Refcount it the way `WorkerThreadableWebSocketChannel` does — `RefCounted<T>`
+  **first**, then the interface, with `void ref() const final { RefCounted::ref(); }` —
+  `ThreadSafeRefCounted<T>` derives from `ThreadSafeRefCountedBase` and `RefCounted::ref()` does not
+  resolve there, while the interface's pure-virtual `ref()`/`deref()` must be supplied by the concrete
+  class. Include `<WebCore/WebTransportSession.h>` explicitly: `SocketProvider.h` only forward-declares
+  it, and `RefPtr`'s destructor needs the complete type.
+- **Fail observably.** The tempting shortcut is a channel that pretends to connect. The one that works
+  is the one whose failure the page can see: `connect()` says `KO`, WebCore raises an ordinary error
+  event, and the page's own error handling runs. Nothing is silently successful.
+- **A header-only cure cannot travel through a relink.** The ARM line relinks pre-built libraries, so a
+  change to `Source/WTF/wtf/RedBlackTree.h` — the 2026-09-19 `z->reset()` in `remove()` — reaches the
+  phone only if the ARM binary built from that header is rebuilt. It was not: the ARM
+  `JavaScriptCore.dll` is dated 2026-08-23, the bench's 2026-09-27, and the fix's own `TREE-BAD` probe
+  string is present 5 times in the bench binary and **0** times in the ARM one. The `.29` device death
+  is exactly that missing fix. **Check a binary's mtime against the source's date, and grep the binary
+  for a string the change introduced, before believing any fix is on the device** — a stale DLL and a
+  broken fix look identical at runtime.
+- **Not every abort can be named by a reader that looks for strings.** `CheckedRef.h:341` is
+  `static NO_RETURN_DUE_TO_CRASH NEVER_INLINE void crashDueToCheckedPtrToDeadObject() { CRASH(); }` —
+  plain `WTFCrash()`, not `WTFCrashWithInfo(line, file, function, counter)`. There is no argument triple
+  on that stack, so `no argument triple in 1024 words` was the *correct* answer, not a third instrument
+  bug. Read the crash function's source before doubting the reader, and expect the WebKit assertion
+  machinery to have both shapes.
+- **Symbolise ARM `JavaScriptCore.dll` from `jsc.map`, not from the PDB.** For RVA `0x1EA01B`,
+  `llvm-symbolizer` against `JavaScriptCore.pdb` answered `Vector<UniqueRef<InspectorAgentBase>>::
+  expandCapacity` — plausible, wrong, and 6.6 MB away from the truth; the linker map answered
+  `crashDueToCheckedPtrToDeadObject` (atomic instantiation). Same family as
+  `llvm-symbolizer-reads-the-pdb`.
+- **A guard macro that does not exist suppresses nothing.** `Src/port/WebCoreDriver.cpp` declared
+  `GetModuleHandleExW` behind `#if !defined(_LIBLOADERAPI_H_)` — an ARM workaround, because the ARM32
+  include chain does not reach `libloaderapi.h`. No SDK on this machine guards that header with
+  `_LIBLOADERAPI_H_`; both 19041 and 26100 use `_APISETLIBLOADER_`. So the fallback declaration was
+  emitted on **every** line, and on x64 — where the header *is* in the chain — it disagreed with the
+  real prototype (`HMODULE` versus the SDK's `BOOL`) and the driver stopped compiling:
+  `conflicting types for 'GetModuleHandleExW'`. **A wrong macro name and a missing macro behave
+  identically at the `#if` and oppositely at the compiler**, so check the guard against the header's
+  own `#ifndef`, do not trust that it "works on ARM". Nobody saw the break for six weeks because the
+  x64 driver object predated the block: `WebCoreDriver.gpu.x64.obj` was 2026-08-16 while the
+  declaration arrived 2026-09-26 — **a line that is not being built is not verifying anything**, the
+  same lesson as `arm-jsc-predates-the-redblacktree-cure` with the two lines swapped.
+- **A deferred flag needs a drain on every mode that can set it.** `_vpDirty` in `MainPage.xaml.cs`
+  records "the engine was busy, pick this up when it is free", and it is set by four different
+  functions. Its only drain was `AdoptViewport()`, which returns immediately when `fitwindow` is off —
+  so on the fixed 720x1080 line (the ARM configuration) a zoom committed while the engine was busy was
+  dropped outright; the device reported it as "питч не отрабатывает вообще". The cure is
+  `DrainPendingZoom()`, which is the same busy test plus, in the fit-off branch, a re-run of the
+  deferred commit instead of a geometry adopt. **Grep every write of a deferred flag and check each
+  one has a reader on the path it is written from** — a pickup that is guarded by a mode check the
+  writer does not share is a silent drop.

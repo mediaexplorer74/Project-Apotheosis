@@ -528,5 +528,118 @@ lever, and it is verified on the bench. A cleaner arrangement would set the surf
 independently, which this port cannot do today — `WebCoreGpuResize` drives the EGL surface, the engine
 viewport and `kW/kH` from one pair of numbers by construction.
 
+## 10. The C# line fails at `GLContext::create`, cleanly — and the harness does not
+
+**Measured 2026-10-03, x64 bench, `ME.Apotheosis 0.2.3.9` (the shipping C# line), `gpudefault=1`.**
+This is the first section of this document about the C# app rather than the C++/CX harness, and it
+exists because the two lines disagree on the *same bench* and the same engine.
+
+### 10.1 What the C# line does
+
+`LocalState\gpuinit.txt`:
+
+```
+WebCoreGpuInit(window) rc=-20
+```
+
+and the port's own last marker block in `LocalState\gpu-steps.txt`:
+
+```
+[GPU] enter
+[GPU] ensureWebCoreInitialized
+[GPU] sharedDisplay
+[GPU] GLContext::create
+[GPU] GLContext::create -> null
+```
+
+`-20` is not one of the port's `kErr*` codes (`WebCoreDriver.cpp:250-274`, which run `0…-17`). It is a
+literal at the single null site of `WebCoreGpuInit` (`:5265-5268`), and the *same* literal is returned by
+the `#else` stub at `:5454` that compiles when `USE(TEXTURE_MAPPER)` is off. The marker chain is what
+separates them, and it says the real path compiled in: a stub would have written nothing after
+`WebCoreGpuInit` was entered, and here the five markers up to `GLContext::create` are present.
+
+**Nothing crashes.** The process stays up, `stage.txt` reads `after-load … rc=0 compositing=0`, and the
+software path presents the page normally (`Images/scaling-0.2.3.9/gpu-probe.png`). This is the answer to
+the 2026-10-03 request to re-check GPU mode for crashes: there are none, on either line.
+
+### 10.2 The harness, same bench, does arm it
+
+`EdgeHTMLReborn.Harness_…\LocalState\log-prev-0925-150738.txt`, run of 2026-09-25 15:07, ya.ru:
+
+```
+15:07:13.757  EnableGpu: probing for document https://www.ya.ru/ (requested https://www.ya.ru)
+15:07:13.784  EnableGpu: WebCoreGpuInit returned 0
+15:07:13.806  EnableGpu: first frame after init: EnableCompositing=1 Composite=0
+15:07:13.810  EnableGpu: presenting through the GPU surface
+```
+
+`Composite=0` is `gpuPresent()` succeeding (§4). So the GPU path is reachable on this host, on this
+engine, from the other line — and `-20` is a **C#-line defect, not a bench limitation**. EGL itself is
+also fine here: the harness's own probe (`eglprobe.txt`) got `eglGetPlatformDisplayEXT(D3D11)` to return
+a real display and `eglInitialize` to answer `1 (v1.4)`, while the plain
+`eglGetPlatformDisplay(ANGLE, default, nullptr)` returned 0 with `err=0x3008`. `WK_WINUWP=1` is defined
+for the x64 build, so `PlatformDisplayWin::create()` takes that working EXT+D3D11 branch — consistent
+with `[GPU] sharedDisplay` being reached and the failure landing after it rather than at it.
+
+### 10.3 Why the cause is not named here
+
+The failing call is inside `GLContext::createWindowContext`
+(`WebKit/Source/WebCore/platform/graphics/egl/GLContext.cpp:163-210`), which has four null sites, each of
+which logs `RELEASE_LOG_INFO(Compositing, … lastErrorString())`. `lastErrorString()` is
+`errorString(eglGetError())` (`:100-103`) — and **`eglGetError()` consumes the error**. So by the time
+the port is back in control the EGL status has already been read once and cleared, and:
+
+* `RELEASE_LOG` reaches no file on this port — which is the reason
+  `WebKit/Source/WebCore/platform/network/ApoLoaderTrace.h` exists at all, and its header comment states
+  the boundary: `portDiagLog` is in `WebCoreDriver.cpp` and links into `Harness.exe`/the driver, while
+  WebCore's own code links into `WebCore.dll`, so a call across it is unresolved. Those four lines are
+  therefore written into nothing;
+* the port cannot re-read the error itself: `WebCoreDriver.cpp` has no EGL import, and the call has
+  already returned by then.
+
+This is the same shape as §5, one layer down: the diagnostic that would name the cause is emitted at the
+failure site, and the failure site is the one place the port does not own.
+
+### 10.4 The one input difference found
+
+`WebCoreGpuInit` forwards the window pointer verbatim —
+`GLContext::create(display, reinterpret_cast<GLNativeWindowType>(nativeWindow))`
+(`WebCoreDriver.cpp:5262-5264`) — so the pointer is the only input that can differ between the two lines,
+and it does:
+
+| | what is passed |
+|---|---|
+| harness | `reinterpret_cast<void*>(reinterpret_cast<IInspectable*>(props))` — an `IInspectable*` |
+| C# | `Marshal.GetIUnknownForObject(_gpuProps)` — an `IUnknown*` |
+
+Both carry an identical `PropertySet` (`EGLNativeWindowTypeProperty` = the `SwapChainPanel`,
+`EGLRenderSurfaceSizeProperty` = the size), and `GpuPanel` is a `SwapChainPanel` in both. **This was not
+tested**, and it is stated as a difference rather than as the cause: an `IUnknown*` of the same object is
+normally the same address, so it is not by itself an explanation for a failure inside EGL config or
+surface creation. It is listed because it is the only lever a managed build can move without touching
+native code.
+
+### 10.5 Status: not fixed, deliberately
+
+MVP v1 lists GPU presentation repair as explicitly out of scope and software presentation as the
+MVP-safe path (`Doc/MVP.md`). What the 2026-10-03 re-check was asked for — "re-check GPU mode and fix
+possible crashes" — is answered: **the C# line fails cleanly and does not crash**, and the failure is now
+named to a call, a return code and a file, rather than being an unexplained absent GPU.
+
+If it is ever taken up, in ascending cost:
+
+1. **C#-side pointer form** — one managed build, no native relink. Cheap, and it only tests §10.4.
+2. **Port-side EGL probe** — replay the `getDisplay → initialize → chooseConfig → createWindowSurface`
+   sequence inside `WebCoreGpuInit` and log `eglGetError()` after each step, as the harness's probe does
+   but **without** any `eglTerminate` (§3 is the rule). This names the failing step conclusively; the
+   cost is WinRT property extraction in a TU that deliberately avoids `windows.h`.
+3. **A marker beside each null site in `GLContext.cpp`** — conclusive and small in code, but it is a
+   WebCore `.cpp` edit and a relink of `WebCore.dll`.
+
+Until then the honest statement is: the C# line presents through software on this bench, and the GPU
+path is one native call away from working there, with the harness as the existence proof.
+
+
+
 
 

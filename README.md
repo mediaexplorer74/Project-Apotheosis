@@ -1,37 +1,20 @@
-# Project Apotheosis — EdgeHTML Reborn
+# Project Apotheosis 0.2.0.xx — EdgeHTML Reborn
+![Logo](Images/logo.png)
 
-> **Start here:** [Doc/INDEX.md](Doc/INDEX.md)  
-> **Live work and acceptance:** [Doc/PLAN.md](Doc/PLAN.md) · [Doc/MVP.md](Doc/MVP.md)  
-> Detailed dated investigations are retained locally in `Doc/Archive/`; they are history, not the current spec.
+## Documentation
+
+** Start here** [Doc/INDEX.md](Doc/INDEX.md)  
+
+**Live work and acceptance:** [Doc/PLAN.md](Doc/PLAN.md) · [Doc/MVP.md](Doc/MVP.md)  
+
+Detailed dated investigations are retained locally in `Doc/Archive/`; they are history, not the current spec.
+
+## Abstract
 
 Porting modern **WebKit/WebCore** to **Windows 10 Mobile (ARM32, UWP)** for a deliberately small Lumia 950
 browser: address bar, Back, painted pages, scrolling, and useful navigation.
->
-> **Sep 18, 2026 — x64 status update.** `0.1.9.97` (Release x64) was built and installed
-> **in-place** (existing package updated via `Add-AppxPackage`, LocalState backed up).
-> **Navseq completed all 8 URLs without crash**: example.com ×2, Hacker News, layertest.html,
-> and ya.ru all rendered correctly. **Ya.ru rendered a full page with images** (78 scripts,
-> nonwhite=234723). **CSS crash `0xc0000005 @ WebCore.dll+0x204901f` did NOT reproduce** on .97
-> for any tested site. The .96 guard (stale `CalculationValue` handle check) remains a candidate
-> fix; mechanism not proven. GPU readback: fail-closed guard verified (78 fallback messages,
-> 0 readPixels); Cairo fallback renders correctly. Process stable ~40 minutes. dzen.ru redirects
-> to SSO login — site requires login, not a browser bug. Full detail: [Doc/Archive/STATUS-2026-09-18.md](Doc/Archive/STATUS-2026-09-18.md).
 
-> **SUCCESS, 2026-09-26 (x64, Win 11 stand).** The rebuilt appx launches from `AppsFolder` and runs a real
-> WebCore session. `Harness.exe` stays alive >60 s, 19 threads, ~300 MB RSS, 133 modules loaded, no crash dumps.
-> `WebCore.dll` (44.7 MB) and `JavaScriptCore.dll` (18 MB) are mapped from the package root; logs stream to
-> `%LOCALAPPDATA%\Packages\EdgeHTMLReborn.Harness_*\LocalState\` (`log.txt`, `rh-trace.log`, `gpuinit-steps.txt`,
-> `port-trace.txt`). Real pages load: `dzen.ru` (contents=1368x2121, bodyKids=65, 50 scripts, 661908/1036944
-> nonwhite px), `ya.ru`, Hacker News. dzen.ru only renders on the **second** attempt — an SSO/auth
-> behaviour, not a browser bug (see the archived note below). C++/CX line, x64.
-
-Current configuration: ICU 78 via vcpkg; SDK 19041 harness / 26100 x64 engine; MSVC 14.44.
-The `26100` mention above is **deliberate, not stale**: the x64 *engine* tree is still configured against
-10.0.26100.0 in `Src/setenv.ps1:23` and `Src/port/x64-uwp-env.ps1:11`, so 26100 must stay installed until
-that tree is reconfigured (open item 0t in `Doc/PLAN.md`). Separately, 26100 ships no `um\arm` — the ARM lib
-dir there is a junction to 19041 created by `Src/tools/arm-bootstrap.ps1` — which is why the harness pins
-19041 unconditionally.
-No Debug harness or clean rebuild today. Memory/disk: 4 GB RAM, ~38 GB free.
+![RnD](Images/RnD.png)
 
 ## Historical record — August 2026 and earlier
 
@@ -240,14 +223,11 @@ Get-Content "$env:LOCALAPPDATA\Packages\EdgeHTMLReborn.Harness_edmb40rfkwsbg\Loc
 
 MIT (port layer); LGPL-2.1/BSD (upstream WebKit + dependencies).
 
----
+## ..
 
 *As is. No support. RnD only. DIY.*
-[M] Jul 20 2026
 
----
+## .
+[M][E] 2026
 
-### AI agents / ИИ-агенты / AI 助手
-
-- **opencode** — https://opencode.ai · model `deepseek-v4-flash-free` (opencode/deepseek-v4-flash-free) · Aug 2026
-- **Claude Opus 5** — *(to be added / добавится позже / 稍后添加)*
+![](Images/footer.png)

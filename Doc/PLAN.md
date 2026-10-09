@@ -8,6 +8,403 @@
 
 ---
 
+## 0. 2026-10-03 (second pass) — the post-MVP docket
+
+Section 0a closed the two MVP asks and left five items open. **This section is the plan for them** —
+it is the first place the post-MVP work is written down, which is what the maintainer asked for. The
+order below is the maintainer's order, and the ARM line (item 7) starts only after item 6.
+
+**Status, evening of the same day (`0.2.3.9`).** Items 1–5 are implemented and measured, and two
+claims further down this section are superseded. The "measurement that decides items 4 and 5" below
+was taken while the viewport was still the fixed `720x1080`, and item 4 has since removed that
+constant; on a fitted 1355-DIP bench window the two modes are now visibly different, so that
+measurement no longer describes item 5. Both suspicions about Nokia Design Archive are closed with
+reasons. The item-4 zoom cap settled at `3.5`, not `2.2`, and the re-arm after a navigation needed a
+fix this plan did not anticipate — both explained under item 4. Evidence:
+[Archive/Summary.md](Archive/Summary.md), "Status update — Oct 3, 2026 (evening)".
+
+### The measurement that decides items 4 and 5
+
+> **Superseded by item 4.** This measurement was taken while the viewport was still the fixed
+> `720x1080`; item 4 removed that constant, and the conclusion below ("the two modes are visually the
+> same") no longer holds — on a fitted 1355-DIP window the mobile mode now serves a real `412` CSS px
+> phone layout. It is kept because the *reason* it reached that conclusion is still worth knowing: the
+> site is viewport-driven, so the UA alone changes nothing.
+
+Nokia Design Archive was loaded twice from a fresh process into the same 1368-DIP window, once with
+the mobile UA (`ua=0`) and once with the desktop UA (`ua=1`):
+
+    contents=720x1080 body=1 nonwhite=774952/777600      (both runs, identical)
+    js=1/1 sheets=1 scripts=17  res: 24 entries, the same list in both
+
+**The desktop UA changed nothing** — the same `diag`, the same resource list, and two screenshots
+that are visually the same. The site is **viewport-driven, not UA-driven**: what selects the layout it
+serves is the width of the CSS layout viewport, and that width is `720` because `kW` is `720`. The
+"huge white fields left and right" are the rest of the window the 720-DIP page never covers. The UA
+path itself is wired correctly (`LoadingFrameLoaderClient.cpp:600-614`; a custom UA wins, else iPhone
+Safari 16.4 or Chrome/Edge 120 on Windows) — it is simply not a lever this site reads.
+
+That also means the missing **"Network" view is not a UA question** and is not fixed by the scaling
+work. It stays a separate hypothesis (item 5b) with its own probe.
+
+### 1. The script-made screenshots move into `Images/`
+
+`Src/tools/run-smoke.ps1` already writes one PNG per site; they land in
+`%USERPROFILE%\Documents\apotheosis-smoke`, which is outside the repository and is wiped by any
+cleanup. The thirteen site captures plus a `smoke.csv` copy become a checked-in record under
+`Images/smoke-<version>/`, with a short `README` naming the build and the date. This is documentation,
+not test output: the point is that a future session can see what "13/13 PASS" looked like.
+
+### 2. A Settings switch for the touch-scroll FAB
+
+`ScrollFab` (the `▲`/`▼` pair in `MainPage.xaml`) is a touch-emulation aid with **no way to turn it
+off**, and both target platforms have a real touchscreen, so on those it is pure clutter over the
+page. Add a General-tab toggle bound to a new `Str` key, persisted as `touchfab=0|1` in
+`settings.ini`, and AND it into the existing visibility gate that `_sessionActive` already drives.
+Default on for x64, off for a device with a touchscreen is *not* proposed — the platform cannot tell
+the two apart reliably, so the default is on everywhere and the switch is the answer.
+
+### 3. Desktop and Mobile are separate test cases
+
+The smoke list runs one mode; the user has to change `ua` in `settings.ini` by hand to see the other.
+Two additions, both on the same side of the ABI:
+
+- a new `autocmd` verb `ua mobile|desktop` that drives the **real control** the way `lang` drives the
+  language picker, so the test exercises the shipping path and not a back door;
+- `run-smoke.ps1 -Mode mobile|desktop`, which writes the mode into `smoke.csv` before the first `goto`
+  and records both modes as two files. The acceptance table then has a mode axis instead of a footnote.
+
+### 4. The engine viewport becomes the window (the scaling decision)
+
+The fixed `const int kW = 720, kH = 1080` is the root of item 5's white fields and is now scheduled
+rather than deferred. The design uses only exports that already exist:
+
+| mode | presentation size | `WebCoreSetPageZoom` | result |
+|---|---|---|---|
+| **desktop** | content area, device px | `1.0` | the desktop layout fills the content area exactly — item 5's "чётко вписываться" |
+| **mobile** | content area, device px | `clamp(areaW / 412, 1.0, kMobileMaxZoom)` | a phone-width layout *re-laid out and painted at the window's own resolution* (crisp), stretched to fill |
+
+`WebCoreSessionResize(w, h, outRGBA)` already re-sizes the session and keeps the compositor's idea of
+the surface in step, and `WebCoreSetPageZoom` re-lays out, so the layout viewport becomes
+`viewport / zoom` CSS px. Two constraints are already measured and must be respected:
+
+- **zoom is reset by a navigation** ([GPU-LIVENESS.md](GPU-LIVENESS.md), `desktopZoom`) — and the
+  mechanism is now named exactly: `WebCoreSessionLoad` calls `teardownSession()` unconditionally
+  (`WebCoreDriver.cpp:4432`) and `teardownSession` ends with `g_pageZoom = 1.0f` (`:1832`). Re-arming
+  after every `after-load` is therefore **not sufficient on its own**: the shell's `_pageZoom` cache
+  survives the navigation, so `ApplyViewport`'s no-op test compares two equal numbers and answers
+  "nothing to do", and the re-arm never runs. Measured in `0.2.3.8`: `ua mobile` logged
+  `fitwindow … z=3,29`, the following `goto` presented an unzoomed frame, and no further `fitwindow:`
+  line was written for the rest of the session. Fixed in `0.2.3.9` by invalidating the cache in the
+  navigation's completion, guarded on the **wanted** zoom so desktop spends no repaint;
+- on the GPU path **zoom must equal `CompositionScale`** — the surface is the panel's physical pixels
+  while the viewport is DIPs, and `deviceScaleFactor` cannot substitute.
+
+**The cap settled at `3.5`, not the `2.2` this plan first proposed** (`kMobileMaxZoom`). The target is
+not "a bounded tablet variant": `412` is a *phone* CSS width and the point of the mobile mode is to
+serve a phone layout, so the zoom should reach it whenever the window allows. On this bench (1355 DIP
+of content area) the cap is not even touched — `1355 / 3.5 = 387`, so the layout is a true `412` CSS px
+and the page fills the area edge to edge, which is the "незаметно". Only a window wider than
+`412 × 3.5 = 1442` DIP hits the cap, and from there the layout starts to widen again and margins
+appear — the "совсем уж широкая морда" the maintainer allowed but does not welcome. Because this
+changes the present path that currently works on ARM, it lands behind a setting, default off, and is
+proven on x64 before the ARM line picks it up.
+
+> **Superseded 2026-10-03 (`0.2.3.14`).** The `clamp(areaW / 412, …)` row of that table is gone, and
+> with it the whole two-mode idea of the zoom: the UA no longer decides any geometry. Measured on the
+> bench, the mobile row produced `1355 / 412 = 3.29` — 1 CSS px at 3.29 DIP, 6.58 physical, a 16 px
+> label at 106 physical px, reported by the maintainer as "масштаб сайта конский". The magnification
+> also bought nothing: `zoom = width / cssWidth` fills the window for *any* `cssWidth`, so paying 3.29x
+> for a layout that is 412 CSS px wide is a choice, not a requirement. The zoom is now the Settings
+> value and nothing else (50–200 %, `ViewportZoom()`), a pinch writes the same value, and **page scale
+> is removed from the C# line entirely** — it magnified the finished layer tree without re-running
+> layout, which is what a finger on dzen.ru reported as *"всплывашка живёт своей жизнью словно в другом
+> слое"*. See [LESSONS.md](LESSONS.md), "Page zoom replaces page scale". The `zoom` verb replaces the
+> need to hand-edit `settings.ini` to test any geometry.
+
+### 5. Nokia Design Archive: two separate suspicions, two separate probes
+
+- **5a. The white fields** — **CLOSED.** They are not reproducible in `0.2.3.9`: on the fitted
+  1355-DIP bench window the desktop mode lays out at exactly the content area and the mobile mode fills
+  it edge to edge, and the Nokia page shows no white on either side in either mode. They matched the
+  blit-scratch artefact (a frame larger than the scratch buffer) fixed in `0.2.3.3`.
+- **5b. The "Network" view that does not appear** — **CLOSED, and it was not the port.** The view is
+  there: on desktop the graph renders with its node labels, the filter panel and the date histogram,
+  and on mobile the page serves its phone layout. What covered it is the **usercentrics consent
+  modal**, whose backend this bench cannot reach — `nslookup uct.service.usercentrics.eu` answers
+  `0.0.0.0` from DNS.COMSS.ONE, and the engine logs `curlcode=6 Could not resolve hostname`. The modal
+  is local markup, so it paints; it simply cannot complete its own handshake. A network-policy
+  artefact of the stand, not a loader finding — the loader served every resource the page asked for
+  (`res:` lists all 18, no `RH: fail`). The hypothesis this bullet proposed (a JS route the loader
+  never serves) is **falsified**. Recorded gap, now closed: dismissing the modal by script needs a page
+  tap, and the C# line *did* lack one when this was written — `tap`/`taplink`/`links` have since been
+  added to the scripted channel and reach the same `HandleTapAt` a finger uses
+  ([LESSONS.md](LESSONS.md), "Driving the C# app from a script"). What is still open is different and
+  narrower: nobody has driven a tap onto *this* modal and confirmed it dismisses, because
+  `uct.service.usercentrics.eu` cannot resolve on this bench, so the modal's own Accept handler may be
+  dead — verify, do not assume.
+
+### 6. GPU mode, re-checked
+
+`gpu=1` is still off by default and still not proven on x64. The work is: run the smoke list once with
+`gpudefault=1`, keep `alive` and the engine `nonwhite` as the verdict, and treat any process death as a
+finding to name — with the known trap that most "crashes" in old logs were the wedge dumper's own
+first-chance AVs, so a death is not a death until the exit code says so (`cdb` first, per
+[this memory](../MEMORY.md) and §0a). The three GPU-hand-back guards documented for `.23` are the
+first thing to re-read before blaming the engine.
+
+### 7. Then, and only then, the ARM line
+
+The C# app has never been deployed to the Lumia. Requirement 9 is the phase exit criterion, and the
+device differs in the App Container, the ABI, the JIT and the font stack. Items 1-6 are all
+x64-visible work, so the ARM line starts from a known-good x64 state.
+
+**Opened as the priority on 2026-10-03.** Items 1-6 are done (screenshots into `Images/`, the
+`touchfab` switch, desktop/mobile as separate cases, the scaling decision, Nokia Archive, GPU
+re-checked), the maintainer is putting the device on charge, and item 7 is now the head of the queue.
+The measured state of the ARM payload, the ordered docket and the named suspects are in
+[BUILD-ARM32.md](BUILD-ARM32.md).
+
+**Docket steps 1-2 are done (2026-10-03), and both were worth doing before touching the phone.**
+Step 1: the staged ARM payload exported **37** symbols against **39** on x64, missing
+`WebCoreSessionResize` and `WebCoreSetPageZoom` — the first device run would have thrown
+`EntryPointNotFoundException` at startup. Relinked from current sources; the *packaged* DLL now
+carries all 39. Step 2: the ARM appx had never been built and now builds in both configurations,
+with every binary checked to be ARMNT and the resource PRI checked to carry its strings. The one
+obstacle found is not in the engine: **a Debug UWP package depends on `.Debug` framework packages a
+retail Lumia does not have**, so the device run must deploy **Release|ARM**, and the phone's
+`Microsoft.VCLibs.140.00` must be at least `14.0.33519.0` or the install is refused before our code
+runs. Both were found by inspecting artifacts, i.e. before spending a single minute of device time.
+
+**The first C# device run has happened (2026-10-03 evening), and it ended in a death.** `0.2.3.23` was
+built, passed `Test-AppxPayload.ps1` (30 binaries all arm, driver at the package root, `WebCore.dll`
+absent, 40/40 declared symbols exported) and deployed (`ME.Apotheosis_0.2.3.23_arm__cj4nrm0qt9s1y`,
+HTTP 202). On the phone the app **launches and paints dzen.ru** — once a blank white screen, once real
+content — and then **a real-finger scroll kills the process within about two seconds**. So requirement
+1 is demonstrated on the device and requirement 6 is refuted there, in the same run.
+
+The death is localised. Its `vtbl` resolves to `??_7Timer@WebCore@@6B@`, so the process ends **inside
+the callback of a one-shot `WebCore::Timer`** on the main thread, right after four tracker loads, with
+MIME content-type parsing the last work to complete (see [BUILD-ARM32.md](BUILD-ARM32.md) for the
+resolution table and the base-recovery method). It leaves no SEH line, no dump and no WER record.
+
+It cannot be probed from the engine side: `ninja -n -C build-arm32-gpu WebCore` wants **7400 edges**,
+and the single unified object carrying `ThreadTimers.cpp` still needs **6462**, because the generated
+`DerivedSources` are stale and the PCH regenerates everything. So the instrument is **port-only** — a
+Vectored Exception Handler plus `signal(SIGABRT)` and a cleared `_CALL_REPORTFAULT`, shipped in `.23`,
+which reaches `thumbv7a` because a VEH is a runtime call rather than a compiler feature. The next
+device run must scroll with a **real finger**: synthetic input cannot reach the UWP input stack, so a
+scripted gesture cannot produce this death.
+
+The net has since been exercised, and it changed the question. `.23`'s four engine sessions left
+**three** death signatures — one is an access violation reading `0x8` inside
+`Document::notificationClient()`, reached from a timer callback; the other two are `abort()`s at the
+very end of a **teardown** — and the memory quota was excluded by measurement (peak 179.5 MB against
+1536 MB). What that run also showed is the gap in the instrument: the trace has **no input
+vocabulary at all** (`swipe`, `pinch`, `zoom`, `tap`, `gesture`, `scroll`, `input`, `touch` all
+counted at zero), so it cannot tie a death to the gesture the maintainer made, and a teardown abort
+cannot be told apart from the app being closed. `0.2.3.24` (deployed 2026-10-03 night) closes that
+port-side, with `gesture:` bursts and a `teardown: enter/exit why=` bracket — the next real-finger run
+is the one that decides between a gesture and a close. See [Archive/Summary.md](Archive/Summary.md)
+for the grammar and [BUILD-ARM32.md](BUILD-ARM32.md) for how to read the pull.
+
+**The `.24` run answered it, and the answer is "neither" (2026-10-03, after late night).** In the
+maintainer's four tests — two of which ended in the frozen pinch and scroll they reported — the trace
+carries `gesture:` bursts for `close` and the idle `live` tick **only**: no `scroll`, `click`, `zoom`
+or `resize` anywhere. Both fatal sessions completed their teardown (`exit why=load dt=17ms` / `8ms`),
+ran ~1,400 more lines of load work, and then died **idle**: an access violation reading `0x8` inside
+`Document::notificationClient()`, in a one-shot `WebCore::Timer` callback — the same site as `.23`. The
+frozen gesture is a consequence of a dead process, not its cause.
+
+**The cause is named to the instruction and fixed port-side in `0.2.3.25`.** `Document::notificationClient()`
+has **no null check**, and it resolves its `NotificationController` through a `Supplement<Page>` that
+only the *embedder* installs (the only in-tree caller of `provideNotification()` is
+`WebKitLegacy/mac/WebView/WebView.mm`). This port builds every Page with
+`pageConfigurationWithEmptyClients()`, so the supplement is absent and the lookup faults at `+8`.
+`.25` installs a `PortNotificationClient` (permissions denied) at all four `Page::create` sites the
+driver has — a **relink, not a rebuild**, because `provideNotification` is already exported by
+`WebCoreFull-*`. Built for x64 first (clean compile, `unresolved=0`, 40 exports), relinked for ARM
+(40 exports), `AUDIT PASSED` on the bundle, and deployed to the Lumia **unlaunched**:
+`ME.Apotheosis_0.2.3.25_arm__cj4nrm0qt9s1y`. **The cure is unverified — the maintainer's next run is
+the test.** Two smaller results from the same pull: `.24` contains **no abort deaths at all** (the `.23`
+teardown-abort class did not recur), and four tests produced three engine processes, so one launch never
+reached engine init.
+
+**The assert reader shipped twice and named nothing; `0.2.3.28` is the build that can (2026-10-09).**
+`.26` shipped `ApoPortScanForAssert()`, which reads `WTFCrashWithInfo`'s four spilled arguments off the
+stack — there is no symbol to take, because the helper is `inline` in `Assertions.h` and is emitted
+into our own object. Both `.26` and `.27` were deployed and reproduced on the device, and the assert
+came back **identical every time**: the same `+0x1B` inside the helper (`+0xECEB` / `+0xEEC5` /
+`+0xEECD` across the three builds), so the death is deterministic and its class has not changed. But
+neither build named it, and the wide window `.27` printed was 384 lines **of the same word**: the walk
+was written as `void** p = (void**)&anchor;` with an out-of-bounds `p[i]`, which is undefined, so clang
+folded all 384 reads into one load and hoisted it out of the loop. `llvm-objdump` shows the loop
+loading `[sp,#0x20]` every iteration. The nets were dead code on both builds — the failure was never
+the window size. `.28` reads from the caller's captured-frame array (a pointer parameter) through a
+`void* volatile const*`, prints each slot's own address, and keeps both nets and the wide window.
+It is built on both lines (ARM `Compiled 14/14`, `duplicate=142`, `Exports: 40`, `SHA256 BF549277…`;
+x64 `Compiled 13/13`, `duplicate=0`, `Exports: 40`, `SHA256 77B3CA74…`), audited (`AUDIT PASSED`,
+30 binaries all arm, 40/40 exports, and linked == staged == packaged = `bf54927727c36400…`), and
+deployed (`ME.Apotheosis_0.2.3.28_arm__cj4nrm0qt9s1y`, `HTTP 202 in 509 s`). **The reader is still
+unverified on the device** — the next reproduction is the proof, and it must name the assert or print a
+window whose `slot` addresses differ line to line.
+
+**The maintainer's `.28` reproduction answered both questions at once, and `0.2.3.29` ships the result
+(2026-10-09).** Pulled as `Src/tools/device-logs/20261009-105721/port-trace.txt` (1,225,857 bytes). Two
+independent facts came out of it:
+
+* **The instrument had a second, fatal bug.** `ApoImageString()` computed the length of the string it
+  validated but never copied the characters into `out` — it wrote only the terminator. So `file[]`/`fn[]`
+  were uninitialised stack buffers, `ApoFileSuffixOk()` inspected garbage, and **both nets were dead code
+  from the day they shipped**, which is why `.26`, `.27` and `.28` all reported "no argument triple".
+  Found by disbelieving the source — a host simulation *did* match the window, so the compiled code had to
+  differ — and confirmed in `llvm-objdump`, which shows only `strb r3,[r7,r2]` (the terminator) and then
+  the `buf[n-4..n-1]` suffix read. Fix: `out[n] = c;`.
+* **The assert, read off the window by hand.** The argument spill sits at window slots 105–108
+  (`line=0x120=288`, file ptr, function ptr, `counter=0x13D=317`) — four words **above** slot 104, which
+  holds the `frames[2]` return address `5BE3F2CD`, so the frame net's `a = i - 4` was the wrong offset.
+  Resolved through the packaged DLL's PE (base `0x5BE30000`): `WebSocket.cpp:288`, function
+  `ExceptionOr<void> WebCore::WebSocket::connect(const String &, const Vector<String> &)` — i.e.
+  **`RELEASE_ASSERT(m_channel)`**. The channel is null because `pageConfigurationWithEmptyClients()`
+  installs `EmptySocketProvider`, whose `createWebSocketChannel()` returns `nullptr`, and dzen.ru opens a
+  WebSocket (Yandex Metrika, the last `loader: CALL` before the abort). **The same empty-client trap as
+  the `.25` `NotificationController` supplement, one supplement over.**
+
+`.29` fixes both: the reader copies its strings, and `Src/port/PortWebSocket.{h,cpp}` installs a
+port-side `SocketProvider` whose channel answers `ConnectStatus::KO`, which `WebSocket::connect()` turns
+into `failAsynchronously()` — an ordinary page-level error instead of a process abort. Relink on both
+lines (ARM `Compiled 15/15`, `duplicate=142`, `Exports: 40`, `SHA256 14E73E2A…`; x64 `Compiled 14/14`,
+`duplicate=0`, `Exports: 40`, `SHA256 B212351D…`), `AUDIT PASSED` with linked == staged == packaged =
+`14e73e2aa6a84516…`, deployed `ME.Apotheosis_0.2.3.29_arm__cj4nrm0qt9s1y` (`HTTP 202 in 88 s`,
+`Success`). **Unverified on the device:**
+the expectation is now *no death at all* on dzen.ru, and if something else kills it the repaired reader
+should name it.
+
+#### Readiness, assessed 2026-10-03
+
+| Line | Ready | Basis |
+|---|---|---|
+| The MVP contract (the ten requirements in [MVP.md](MVP.md)) | **~75 %** | 8 of 10 met on x64, each with a measurement. Open: requirement 5 (Back is not in the scripted channel) and requirement 9 — the same list on the Lumia, which *is* the phase exit criterion |
+| The product, for a real user on a Lumia | **~35 %** | the app launches and paints on the device, then dies **idle, mid-load**, ~2 s after a completed teardown — the blocked scroll the maintainer reported is the symptom, not the trigger; the `.25` fix is **confirmed against its own site** — the access violation reading `0x8` did not recur — but a release assert replaced it, and `.28` is the build that names it; no stable memory price across navigations, hangs with no way out, subframes absent entirely |
+| A general browser (what MVP excludes: GPU presentation, subframes, video/MSE) | **~15 %** | next phase by definition |
+
+The first figure is close to arithmetic. The second is a judgement, and it is the one that matters:
+**the project's remaining risk is concentrated in one place — the phone.** The five most mature
+pieces: the managed-host contract (SEH wrappers turning a native fault into `rc=-17` instead of a
+`FailFast(7)` death out of P/Invoke, plus the native `FONTCONFIG_FILE`), the ABI boundary, loading and
+painting (13 sites, `nonwhite` each, Cyrillic, TLS, a reported failure), the scripted `autocmd`
+channel as the acceptance instrument, and the single scale lever with the blit ring. The five rawest:
+the ARM line above, memory across navigations, GPU presentation (which does not even engage on the
+bench — `WebCoreGpuInit rc=-20`, `[GPU] paint path -> cairo`), hangs with no reliable kill-the-page
+path (the JSC watchdog fires, the termination does not stick), and the functional holes with the
+widest blast radius (no subframes, no auth flows, no video, `decodedB=0`, and the stale `ValueMap`
+handle that the containment guards only cover three call sites of). The "49 MB `port-trace.txt` inside
+the shipping appx" item that stood here is **withdrawn**: neither the ARM nor the x64 package contains
+any log file, because `port-trace.txt` is a runtime `LocalState` artifact and was never packaged.
+
+---
+
+### Deferred and switched-off features — a register, so nothing is lost quietly
+
+The maintainer asked for this on 2026-10-09: if a behaviour has to be turned off for a while to get a
+measurement, it gets an entry here with what turns it back on, so it is restored in a later phase
+instead of being rediscovered as a bug. **Nothing is switched off today** — both entries below are
+decisions to *keep* behaviour, recorded because both were open questions this week.
+
+| Feature | Status 2026-10-09 | Why it is the way it is | What restores / changes it |
+|---|---|---|---|
+| The saved page zoom is re-applied after **every** load in the fixed-viewport mode (`fitwindow=off`, the ARM configuration) | **ON — confirmed by the maintainer 2026-10-09** | `MainPage.xaml.cs` re-runs `CommitPageZoom(_defaultZoom / 100.0f, "reload")` when `!_fitWindow && _sessionActive && _defaultZoom != 100`. The maintainer chose to keep it: a fixed `zoom=50` on every load is a *known, repeatable* configuration, which is what a measurement needs, even though 50 % lays the page out at twice the window width. Under `fitwindow=on` the same zoom is re-derived by `AdoptViewport` instead, so the two modes disagree on purpose | Deleting that one call. Do not — it is now a decision, not a leftover |
+| Pinch-to-zoom on the fixed-viewport line | **ON — kept, on watch** | The device report "питч не отрабатывает вообще" was traced to `_vpDirty` having no drain when `fitwindow` is off; `DrainPendingZoom()` (2026-10-09) is that drain and is unverified on the phone. If a device run still shows the pinch misbehaving, disable it rather than let it corrupt a measurement | **Disable:** gate `OnImageManipDelta` on a flag (the whole gesture enters through `_pinching` there, and the commit is `CommitPageZoom(_vpZoom * live, "pinch")` in `OnImageManipCompleted`), and record it in the MVP table so the requirement does not silently read as met. **Restore:** flip the flag back — the commit path (`PostZoomAndRepaint`) and the `.15` double-tap fit toggle are untouched by the disable, so the feature is not half-removed |
+
+---
+
+## 0a. 2026-10-03 — the C# MVP: four of the ten requirements close on x64, ARM still untouched
+
+**The maintainer's two MVP asks are demonstrated on x64.** (1) Nokia Design Archive opens and paints;
+(2) the settings switch — including the interface language — takes effect without a restart. The
+thirteen-site acceptance list now runs end to end in one process.
+
+Installed and measured: `ME.Apotheosis_0.2.1.4_x64`.
+
+| | |
+|---|---|
+| Nokia Design Archive | `after-load url=https://nokiadesignarchive.aalto.fi/ rc=0 compositing=0`; `diag: contents=720x4431 body=1 nonwhite=766352/777600`; screen: hero, item image, Green "View on Aalto repository" `<a>`, correct Cyrillic |
+| Language switch | `lang 1` → every settings caption and both pivot headers repaint; `RetranslateUi()` is one idempotent pass; OS-supplied `OnContent`/`OffContent` replaced by the table's `Вкл.`/`Откл.` |
+| Thirteen-site list | **13/13 PASS** in one process, no restart, `alive=True` on every row — see [MVP.md](MVP.md) |
+| Home page Cyrillic | `Частые сайты`, `Яндекс — быстрый поиск в интернете`, hero `·` — the same strings rendered `??????` before |
+
+**Three UI defects, all three rooted in the UWP-correct route being the wrong route here:**
+
+1. **Cyrillic died between C# and the engine** as literal `?` bytes (F1). Every string-taking
+   `DllImport` was declared `CharSet.Ansi`; with UTF-8 bytes handed to an ANSI marshaller the
+   non-ASCII text did not survive. Fixed by marshalling by hand: a private `…Raw(byte[])` `DllImport`
+   plus a public `string` wrapper that encodes UTF-8 into a NUL-terminated `byte[]`. No `CharSet`, no
+   `[MarshalAs(UnmanagedType.LPUTF8Str)]` — the attribute's behaviour under .NET Native is unverified
+   and a blittable pinned array needs no verification. Both consumers (`history.tsv` tile titles and
+   the home HTML) go through `WebCoreRenderHtml`, which is why one fix repaired both.
+2. **Every settings label rendered empty** (F2). `x:Uid="SettingsTitle"` looks up
+   `SettingsTitle.Text` in the `.resw`; the files define bare `SettingsTitle`, so every lookup missed.
+   The page shipped with uncaptioned controls and nothing said so. Retired `x:Uid` for `x:Name`.
+3. **"The language setting does not repaint the UI"** (F3) is a property of the platform, not a bug:
+   `ResourceLoader.GetForCurrentView()` is bound to the **view language**, fixed at launch, so it
+   answered English for every key regardless of the picker. The `.resw` is no longer consulted at all;
+   the table in [Str.cs](../Src/Apotheosis/Str.cs) is authoritative and `Str.SetLang` is a live switch.
+   The three `.resw` files stay in the package as the fork's translation corpus.
+
+**A fourth defect was in the test channel, and it made twelve sites untestable.** The `goto` verb
+refused to run when `_sessionActive` was false — but a visit to Home calls `WebCoreCloseSession` and
+clears that flag, and only a navigation can bring a session back. The channel could not start itself:
+a smoke run produced **fifteen batches of `goto ignored: no session` and not one request**. The guard
+is gone (`goto` is exactly the thing that must stay reachable), and the channel is now verified to
+survive a Home visit.
+
+**Two instrument defects, because a measurement that lies is worse than no measurement:**
+
+- The site verdict read `nonwhite` from a **screen capture**, and the app's dark chrome fills the
+  window: all twelve sites scored an identical **99.68 %**. That is a question about the window
+  answered by a number about the page. The verdict now uses the engine's own `diag: nonwhite=A/B`.
+  Calibration from the checked-in `smoke.csv` ([Images/smoke-0.2.1.4/](../Images/smoke-0.2.1.4/)), and
+  the spread is what makes it usable: example.com 100 % (its body background is `#f0f0f2`, so almost
+  no pixel *is* white), ycombinator 99.99 %, nokia-archive 99.64 %, wikipedia-m 81.68 %,
+  reddit 75.91 %, w3.org 43.23 %, ya.ru 34.18 %, lenta.ru 34.03 %, dzen.ru 31.59 %, rbc.ru 7.85 %,
+  habr 4.04 %, info.cern.ch 1.86 %.
+- The run slept a fixed interval per site, so on a heavy site it read the **previous** site's result:
+  in an **earlier** run reddit came back with an empty `rc`, and dzen and bad-domain both reported the
+  identical `31.59`. Two sites cannot paint the same page. The loop now waits for the site's own URL
+  to appear in an `after-load` line.
+
+> **Correction, second pass (2026-10-03).** This section was first written mixing two runs' numbers:
+> the `dzen.ru 0.00 %` calibration figure above belonged to a run *before* the fixed-sleep fix, where
+> dzen was the one site that reported `rc=0` and painted nothing — the same failure the ARM line had
+> seen, and the reason requirement 8 exists. In the **final** run, the one whose `smoke.csv` is
+> checked in, dzen paints **31.59 %** and its screenshot shows a full feed with images. The earlier
+> `0.00` reading still stands for the run it came from; it is not the current state. **The artifact is
+> the authority, not the prose.**
+
+**Open, and deliberately not fixed now:**
+
+- **The engine viewport is a fixed `const int kW = 720, kH = 1080`** shared by the session, the GPU
+  surface and the `WriteableBitmap`, so on a large window the page occupies the left part and the rest
+  is white. **Superseded the same day: this is now scheduled work, not a deferral — see §0 item 4.**
+  A second measurement closed the UA explanation for it: the desktop UA renders this page byte for
+  byte identically to the mobile UA, so the white fields are the fixed viewport, not the user agent.
+- **On the failure path the stage `diag` describes the previous document**, because the loader writes
+  its stage block — `rc`, then `diag` — *before* it renders the error HTML. The failed row therefore
+  reports `n/a` rather than a number that belongs to the page before it.
+- Back navigation (requirement 5) and history/suggestions (7) are still unverified; the smoke list
+  does not drive them.
+
+**Install note, for the next iteration:** `Add-AppxPackage` on the `0.2.1.3 → 0.2.1.4` update failed
+twice with `0x80073CF9`/`0x80004005` — `Failure in the SystemRegisterRemove state handler`, then
+`failed to register the windows.MRT extension: The data is invalid` — while the deployment **rolled
+back cleanly** to the old version. The working route is back up `LocalState`, `Remove-AppxPackage`,
+`Add-AppxPackage`, restore `LocalState`; `Remove-AppxPackage` alone deletes `LocalState`, so the
+backup is not optional. New tooling: `_build-csharp-x64.bat` (the C# bundle — distinct from
+`_build-appx-x64.bat`, which builds the C++ harness), `install-apotheosis-x64.ps1`,
+`drive-csharp.ps1 -FitWindow` (DPI-aware capture; without `SetProcessDPIAware` the shot is a crop).
+
+---
+
 ## 0b. 2026-09-26 evening — the first page renders, and the next blocker is named
 
 **The phase goal is met: a real page is drawn.** Until today the x64 app died on a null call inside

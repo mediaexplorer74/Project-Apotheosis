@@ -47,6 +47,7 @@
 #include <cstdio>
 #include <cstdarg>                            // Apotheosis: gpuLogMarkerF (formatted stage markers)
 #include <cstdlib>                            // Apotheosis: _putenv_s, arming the WTF text trace
+#include <csignal>                            // Apotheosis: signal(SIGABRT) in the death net below
 // Apotheosis: the SEH filter below needs GetExceptionInformation()/EXCEPTION_EXECUTE_HANDLER.
 // This include has to stay here, at file scope: the filter lives inside this file's anonymous
 // namespace, and a header included *inside* a namespace declares its own namespaces there,
@@ -133,7 +134,9 @@ extern "C" __declspec(dllimport) void __stdcall OutputDebugStringA(const char*);
 // destroys a Ref<StorageNamespaceProvider>, and ~Ref needs the complete type.
 #include <WebCore/StorageNamespaceProvider.h>
 #include "PortStorage.h"                 // WebCorePort::createPortStorageNamespaceProvider
+#include "PortWebSocket.h"               // WebCorePort::createPortSocketProvider -- see PortWebSocket.cpp
 #include <WebCore/Page.h>                // WebCore::Page
+#include <WebCore/NotificationClient.h>  // WebCore::NotificationClient / provideNotification -- see installPortNotificationClient
 #include <WebCore/Settings.h>            // Page::settings()
 #include <WebCore/LocalFrame.h>          // WebCore::LocalFrame
 #include <WebCore/LocalFrameInlines.h>   // inline LocalFrame::document()/protectedDocument()
@@ -298,6 +301,83 @@ void WebCoreStage(const char* stage)
 // whole sequence survives a hard AV that produces no dump. Needed because DBG_STAGE only
 // reaches OutputDebugStringA, which nothing inside the AppContainer can observe -- a
 // crash in the driver used to leave no trail at all.
+// Apotheosis 2026-10-09: keep the driver trace bounded, because an unbounded one cannot be read
+// while this process owns it. Measured on the Lumia: /api/filesystem/apps/file returns HTTP 404 for
+// port-trace.txt on twenty consecutive attempts over 25 s with the engine idle, while a 3.9 MB JPEG
+// and the folder's other small files read fine -- and the same file pulled whole the moment the app
+// was closed. A crash's evidence therefore arrives only after the process dies, and the run whose
+// symptom is live is the run whose evidence is locked. Rotation does not lift that; it bounds the
+// damage: the append continues in a fresh port-trace.txt while the completed chunk becomes
+// port-trace.1.txt (this writer) or port-trace.2.txt (PortPlatformStrategies.cpp), so a pull reads
+// closed files instead of one arbitrarily long one, and the newest session always fits in one of them
+// (4 MB is ~3x the largest session measured so far). Each writer owns its own "previous" name on
+// purpose -- see the note at the destructive step below.
+static const long kPortTraceRotateBytes = 4 * 1024 * 1024;
+// PortPlatformStrategies.cpp writes this same file and keeps its own count, so each side re-probes
+// the real size periodically; neither can drift far from the ceiling.
+static const int kPortTraceProbeEvery = 512;
+static long g_portTraceBytes = -1;
+static int g_portTraceLines = 0;
+
+static void portTraceRotateIfNeeded(const std::string& path)
+{
+    if (g_portTraceBytes < 0 || ++g_portTraceLines >= kPortTraceProbeEvery) {
+        g_portTraceLines = 0;
+        g_portTraceBytes = 0;
+        if (FILE* probe = fopen(path.c_str(), "rb")) {
+            if (fseek(probe, 0, SEEK_END) == 0) {
+                long size = ftell(probe);
+                if (size > 0)
+                    g_portTraceBytes = size;
+            }
+            fclose(probe);
+        }
+    }
+    if (g_portTraceBytes < kPortTraceRotateBytes)
+        return;
+    // Never take the decision on the cached count. PortPlatformStrategies.cpp writes this same file,
+    // so the other writer's rotation makes our count a lie -- and rotating on a lie DELETES the chunk
+    // it just moved aside: remove() of port-trace.1.txt followed by a rename of the few hundred bytes
+    // that replaced it, i.e. the session being investigated is destroyed by the next line we write.
+    // Every decision is therefore taken on a fresh read of the real file, and the periodic probe above
+    // is only an optimisation that keeps this one rare.
+    long realBytes = 0;
+    if (FILE* probe = fopen(path.c_str(), "rb")) {
+        if (fseek(probe, 0, SEEK_END) == 0) {
+            long size = ftell(probe);
+            if (size > 0)
+                realBytes = size;
+        }
+        fclose(probe);
+    }
+    g_portTraceBytes = realBytes;
+    if (realBytes < kPortTraceRotateBytes) {
+        g_portTraceLines = 0;
+        return;                 // the other writer rotated: our count was stale, and the file is small
+    }
+    std::string previous = path.substr(0, path.size() - 4) + ".1.txt";
+    // This writer's chunk is port-trace.1.txt and the loader's is port-trace.2.txt, rather than both
+    // being .1: this remove() is destructive, and one shared name means the other writer rotating on a
+    // stale count would delete the chunk just moved aside. Distinct names make each remove() provably
+    // this writer's own file.
+    remove(previous.c_str());   // the older chunk is replaced: two files, not a ring
+    if (rename(path.c_str(), previous.c_str()) != 0)
+        return;                 // still over the ceiling; the next probe tries again
+    g_portTraceBytes = 0;
+    g_portTraceLines = 0;
+    // Mark the seam in both files: one session that rotated and two sessions otherwise look alike.
+    if (FILE* f = fopen(previous.c_str(), "ab")) {
+        fputs("trace: rotated out at the size ceiling", f);
+        fputc('\n', f);
+        fclose(f);
+    }
+    if (FILE* f = fopen(path.c_str(), "ab")) {
+        fputs("trace: rotated in from port-trace.1.txt at the size ceiling", f);
+        fputc('\n', f);
+        fclose(f);
+    }
+}
+
 void WebCorePortTrace(const char* fmt, ...)
 {
     if (!fmt)
@@ -314,13 +394,15 @@ void WebCorePortTrace(const char* fmt, ...)
     char buf[512];
     va_list ap;
     va_start(ap, fmt);
-    vsnprintf(buf, sizeof buf, fmt, ap);
+    const int want = vsnprintf(buf, sizeof buf, fmt, ap);
     va_end(ap);
+    portTraceRotateIfNeeded(path);
     if (FILE* f = fopen(path.c_str(), "ab")) {
         fputs(buf, f);
         fputc('\n', f);
         fflush(f);
         fclose(f);
+        g_portTraceBytes += (want > 0 ? want : 0) + 1;
     }
 }
 
@@ -381,8 +463,18 @@ static char g_fontInfo[1024] = "";           // last font probe summary (WebCore
 // C++/CX harness already see it -- GetModuleFileNameW next to it is declared on both -- so
 // declare it only when the SDK header has not. The call itself is AppContainer-safe: it is
 // the FROM_ADDRESS form, with no PEB walk and no tlsm32 on Mobile.
-#if !defined(_LIBLOADERAPI_H_)
-extern "C" __declspec(dllimport) HMODULE __stdcall GetModuleHandleExW(DWORD, LPCWSTR, HMODULE*);
+//
+// Apotheosis 2026-10-09: the guard was `_LIBLOADERAPI_H_`, which is not the macro this header
+// uses -- every SDK on this machine (19041 and 26100 alike) guards libloaderapi.h with
+// `_APISETLIBLOADER_`. So the declaration was compiled even on x64, where the real prototype is
+// already in the chain, and the two disagreed on the return type (`HMODULE` here, the SDK's
+// `BOOL`): "conflicting types for 'GetModuleHandleExW'" at this line, and the x64 driver stopped
+// compiling on 2026-10-09. Nobody saw it because the x64 driver object predates the block. The
+// condition now asks the question it always meant to -- is that header already in this TU? -- and
+// the return type is the SDK's own `BOOL` (an `int`), so that if the header does arrive later in
+// the translation unit the two declarations are identical rather than merely both present.
+#if !defined(_APISETLIBLOADER_)
+extern "C" __declspec(dllimport) int __stdcall GetModuleHandleExW(DWORD, LPCWSTR, HMODULE*);
 #endif
 static void ApoFormatAddress(void* addr, char* out, size_t outLen)
 {
@@ -469,6 +561,480 @@ static int ApoSehFilter(void* ep)
 #  define APO_SEH_RETURN_INT(expr)  return expr
 #  define APO_SEH_CALL_VOID(expr)   do { expr; return; } while (0)
 #endif
+
+// ---------------------------------------------------------------------------
+// Apotheosis 2026-10-03 (ARM32): the port-side death net.
+//
+// The paragraph above ends with "there is no ARM guard yet", and this closes that gap -- not by
+// repairing __try, which this compiler will not emit, but with a hook that needs no compiler
+// support at all.
+//
+// What a death inside a timer callback looks like without it, measured on the Lumia on 0.2.3.22:
+//
+//   wtimer: enter #132 tid=5360 obj=149EDE68 vtbl=61228B38 rep=0.0ms left=53
+//
+// and then the trace stops. 133 enters against 132 exits: that one unbalanced pair is the entire
+// autopsy, and it says only "inside some WebCore::Timer callback". No SEH line was written, no dump
+// and no WER record exist, and that is because three different mechanisms produce this signature --
+// each one invisible to the witnesses that catch the others:
+//
+//   * __builtin_trap(), i.e. WebKit's CRASH()/RELEASE_ASSERT, is an illegal instruction
+//     (0xC000001D) that the CRT turns into a Watson fast-fail, and a fast-fail runs no user handler;
+//   * abort() becomes that same fast-fail unless _CALL_REPORTFAULT is cleared;
+//   * a stack overflow (0xC00000FD) is an ordinary fault whose only witness is the fault address.
+//
+// A Vectored Exception Handler is a runtime call rather than a compiler feature, which is exactly
+// why it reaches thumbv7a where __try does not. Installed with First=1 it runs ahead of every SEH
+// frame, so it also sees a fault that the code raising it goes on to handle. It is purely an
+// observer -- it always returns EXCEPTION_CONTINUE_SEARCH and changes nothing -- so a run with the
+// net installed is still the same run, and a diagnosis made from it is made from the real thing.
+//
+// The handler is kept cheap, because WinRT and the CRT raise and catch exceptions as ordinary
+// control flow: only the codes that can end the process are logged in full, and those sparsely;
+// everything else is counted. Every address goes through ApoFormatAddress and therefore reads as
+// module+0xRVA. That matters more here than anywhere else in this file: the one thing the device
+// cannot be asked for afterwards is a module base, and the raw vtbl=61228B38 above is symbolizable
+// only once its module's load address is known -- a number that appears in no log this port writes.
+//
+// RtlAddVectoredExceptionHandler comes from ntdll, one layer below the kernel32 spelling that
+// <errhandlingapi.h> gates to the DESKTOP|SYSTEM partitions. ApoExcPointers above is the
+// layout-compatible stand-in for EXCEPTION_POINTERS, since this TU has no windows.h.
+//
+// It is reached by hand at run time rather than linked. The C++ harness added ntdll.lib (through a
+// #pragma comment) and that worked on x64, but linking it here would put ntdll in this driver's
+// import table on BOTH architectures -- a change to the bench line as well, for a diagnostic only
+// the device line needs, and one more thing that can differ between the two links. Resolving it
+// from the ntdll that is already mapped costs two calls and no link change at all; and when it
+// fails, the failure is a logged line instead of a build error on the maintainer's other line.
+typedef long (__stdcall* ApoVehHandler)(ApoExcPointers*);
+typedef void* (__stdcall* ApoAddVehFn)(unsigned long first, ApoVehHandler handler);
+
+#if !defined(_LIBLOADERAPI_H_)
+// Declared for the same reason GetModuleHandleExW above is: this TU has no windows.h. GetProcAddress
+// next to it needs no such treatment -- something in the include chain already declares it, and a
+// second declaration returning void* is a conflict rather than an overload (measured, 2026-10-03).
+extern "C" __declspec(dllimport) HMODULE __stdcall GetModuleHandleW(LPCWSTR);
+#endif
+
+// EXCEPTION_CONTINUE_SEARCH's value; winnt.h defines it as 0 and this TU has no windows.h. It is
+// spelled out separately from the macro of the same meaning above because that one is 1 on purpose
+// (a filter's "handle it" is a different constant from a handler's "pass it on").
+#define APO_VEH_CONTINUE_SEARCH 0
+
+static unsigned short ApoPortCaptureFrames(void** frames, unsigned short cap)
+{
+    return RtlCaptureStackBackTrace(0, cap, frames, nullptr);
+}
+
+static void ApoPortDumpStack(const char* tag, void* const* frames, unsigned short n)
+{
+    char mapped[200];
+    WebCorePortTrace("%s stack (%u frames):", tag, (unsigned)n);
+    for (unsigned short i = 0; i < n; ++i) {
+        ApoFormatAddress(frames[i], mapped, sizeof mapped);
+        WebCorePortTrace("  %s #%u %s", tag, (unsigned)i, mapped);
+    }
+}
+
+// --- the assert's own identity -------------------------------------------
+// A release assert on this port is `WTFCrashWithInfo(line, file, function, counter)` followed by a
+// call to abort(). The four arguments are spilled into that function's own frame before the call
+// (`str r3,[sp,#0xc]` … `str r0,[sp]` on ARM32, measured on 0.2.3.25) and they are still on the
+// stack while the CRT signal handler runs -- which makes them recoverable with no WebKit rebuild
+// and no debugger on the device. No symbol is needed to find them: that function is `inline` in
+// WTF/wtf/Assertions.h and is emitted into WebCoreDriver.arm32.obj itself, while this TU includes
+// no WTF header at all. What is used instead is shape: a `file` is a pointer into a mapped image
+// at printable NUL-terminated text, a `function` is the same one word later, and `line`/`counter`
+// bracket the pair. The chain measured on the device is three frames deep (handler <- ucrtbase <-
+// the assert), so a 2 KB upward scan reaches it with room to spare.
+#define APO_ASSERT_SCAN_WORDS 1024
+#define APO_ASSERT_STRING_MAX 160
+
+// A little-endian 32-bit read out of a PE header. Assembled byte by byte because the header
+// offsets are not 4-byte aligned as far as the type system is concerned, and a cast to a 32-bit
+// type raises -Wcast-align on both architectures (measured 2026-10-09).
+static unsigned long ApoRead32(const unsigned char* p)
+{
+    return (unsigned long)p[0] | ((unsigned long)p[1] << 8)
+         | ((unsigned long)p[2] << 16) | ((unsigned long)p[3] << 24);
+}
+
+// Is p inside a mapped image, and how large is that image? The loader call is the same one
+// ApoFormatAddress makes, so it is AppContainer-safe. The image's own SizeOfImage (e_lfanew at
+// +0x3C, the optional header at +24, SizeOfImage at +56 of it) bounds the read: a string in the
+// last page of an image would otherwise be read past the image's end.
+static bool ApoImageBounds(const void* p, const char** base, unsigned long* size)
+{
+    if (!p)
+        return false;
+    HMODULE mod = nullptr;
+    if (!GetModuleHandleExW(APO_FROM_ADDRESS_FLAG, (LPCWSTR)p, &mod) || !mod)
+        return false;
+    const unsigned char* b = (const unsigned char*)mod;
+    long lfanew = (long)ApoRead32(b + 0x3C);
+    if (lfanew <= 0 || lfanew > 0x1000)
+        return false;
+    unsigned long img = ApoRead32(b + lfanew + 24 + 56);
+    if (img < 0x1000 || img > 0x40000000u)
+        return false;
+    if ((const unsigned char*)p < b || (const unsigned char*)p >= b + img)
+        return false;
+    *base = (const char*)b;
+    *size = img;
+    return true;
+}
+
+// A NUL-terminated run of printable ASCII at p, entirely inside its own image. Refuses a run
+// shorter than minLen or one with no terminator before outLen, so a data word that merely happens
+// to point into an image is rejected instead of copied out as noise. On success *outLen (when
+// non-null) receives the length the terminator was found at, which is what the suffix test below
+// needs -- re-scanning `out` for its end would run past the buffer the caller owns.
+//
+// The copy into `out` is load-bearing and 0.2.3.29 is its fix. Until then this function only wrote
+// the terminator (`out[n] = '\0'`) and never the characters, so every caller's buffer was left
+// uninitialised: ApoFileSuffixOk() tested the tail of garbage, and the shape net could not match
+// the argument triple that was sitting in plain sight in the raw window (see the 0.2.3.28 device
+// run in Doc/BUILD-ARM32.md). The scan finds `n`; this is where the bytes actually land.
+static bool ApoImageString(const void* p, char* out, size_t outCap, size_t minLen, size_t* outLen)
+{
+    const char* base = nullptr;
+    unsigned long size = 0;
+    if (!ApoImageBounds(p, &base, &size))
+        return false;
+    const char* s = (const char*)p;
+    unsigned long room = (unsigned long)(base + size - s);
+    size_t n = 0;
+    bool terminated = false;
+    while (n < outCap - 1 && n < room) {
+        char c = s[n];
+        if (c == '\0') {
+            terminated = true;
+            break;
+        }
+        if (c < 0x20 || c > 0x7E)
+            return false;
+        out[n] = c;
+        ++n;
+    }
+    if (!terminated || n < minLen)
+        return false;
+    out[n] = '\0';
+    if (outLen)
+        *outLen = n;
+    return true;
+}
+
+// Does this string end in a source-file suffix? That is what actually separates the assert's own
+// `__FILE__` from the many other image strings a scan like this walks past -- a runtime constant, a
+// format string, a module path sitting in an image's data. A looser test (any '.' anywhere) admits
+// them, and a looser test plus "stop at the first hit" would let the first false positive hide the
+// real one.
+static bool ApoFileSuffixOk(const char* s, size_t n)
+{
+    static const char* const exts[] = { ".cpp", ".hpp", ".mm", ".cc", ".cxx", ".h", ".c" };
+    for (int e = 0; e < 7; ++e) {
+        const char* ext = exts[e];
+        size_t l = 0;
+        while (ext[l])
+            ++l;
+        if (n < l)
+            continue;
+        size_t i = 0;
+        while (i < l && s[n - l + i] == ext[i])
+            ++i;
+        if (i == l)
+            return true;
+    }
+    return false;
+}
+
+// Read the assert's own four arguments out of the stack. Two nets, because they catch different
+// shapes of the same call and the 0.2.3.26 device run proved the first one alone is not enough:
+// the shape net came up empty on a death where the frame net has a known address to aim at.
+//
+//   * the frame net: a captured return address from ApoPortDumpStack is, on the abort path, the
+//     address the assert helper's own `blx abort` pushed -- measured as WebCoreDriver.dll+0xECEB in
+//     0.2.3.25, +0xEEC5 in 0.2.3.26, +0xEECD in 0.2.3.27 and +0xF2CD in 0.2.3.28, always 0x1B into
+//     WTFCrashWithInfo -- and the helper's prologue spills the four arguments near that slot.
+//     Where exactly is a codegen fact, not a source one: the 0.2.3.28 run put them four words
+//     ABOVE the slot, so ApoTryArgTriple is tried at both offsets.
+//   * the shape net: the same pair found by its own appearance, for a path that leaves no pushed
+//     return address at all -- a RELEASE_ASSERT that traps rather than aborts.
+//
+// One word of the walk. Both halves are load-bearing, and the 0.2.3.27 device run is why the first
+// version was dead code: it anchored on `void** p = (void**)&anchor;` and indexed it out of bounds,
+// which is undefined, so clang treated all 384 window reads as reads of the one object `anchor`,
+// hoisted them out of the loop, and printed 384 copies of a null pointer. Neither net could have
+// matched anything. The base is now a caller-provided address (a pointer parameter: nothing for the
+// optimizer to promote) and the read is volatile (nothing for it to fold), so every slot is a real
+// load -- which is what a stack reader has to be.
+static void* ApoReadStackWord(const unsigned char* base, long i)
+{
+    return *(void* volatile const*)(base + (size_t)i * sizeof(void*));
+}
+
+// Is the four-word group at `base[a .. a+3]` a WTFCrashWithInfo argument spill? The helper is
+// `WTFCrashWithInfo(int line, const char* file, const char* function, int counter)`, so the group is
+// exactly `{line, file, function, counter}` in that order. `line` and `counter` must be small
+// integers; `file` must read as an image string ending in a source suffix (which is what separates
+// the assert's own `__FILE__` from the many other image strings the walk passes) and `function` as
+// an image string. Both offsets below are tried, because where the spill sits relative to the slot
+// that holds the return address into the helper is a property of the code generator, not of the
+// source: measured 2026-10-09 on 0.2.3.28, the four words sit four words ABOVE the frames[2] slot,
+// not below it as the first version of this net assumed.
+static bool ApoTryArgTriple(const unsigned char* base, long a, char* file, size_t fileCap,
+    char* fn, size_t fnCap, long* line, long* counter)
+{
+    long l = (long)ApoReadStackWord(base, a);
+    long c = (long)ApoReadStackWord(base, a + 3);
+    if (l < 0 || l > 100000000L || c < 0 || c > 100000000L)
+        return false;
+    size_t flen = 0;
+    if (!ApoImageString(ApoReadStackWord(base, a + 1), file, fileCap, 4, &flen))
+        return false;
+    if (!ApoFileSuffixOk(file, flen))
+        return false;
+    if (!ApoImageString(ApoReadStackWord(base, a + 2), fn, fnCap, 3, nullptr))
+        return false;
+    *line = l;
+    *counter = c;
+    return true;
+}
+
+// Called from both witnesses, the SIGABRT handler and the 0xC000001D first-chance slot.
+static void ApoPortScanForAssert(const char* tag, void* const* frames, unsigned short nframes)
+{
+    // Anchor on the caller's captured-frame array rather than on a local of this function: it is a
+    // real stack address inside the abort handler's frame, and the assert is *above* it, because
+    // every call in the chain -- abort, the CRT's signal dispatch, the handler -- pushed its own
+    // frame below.
+    if (!frames)
+        return;
+    const unsigned char* base = (const unsigned char*)frames;
+    char file[APO_ASSERT_STRING_MAX], fn[APO_ASSERT_STRING_MAX];
+    long hits = 0;
+
+    for (unsigned short f = 0; f < nframes && hits < 2; ++f) {
+        if (!frames[f])
+            continue;
+        for (long i = 6; i + 8 < APO_ASSERT_SCAN_WORDS; ++i) {
+            if (ApoReadStackWord(base, i) != frames[f])
+                continue;
+            // A shape check both ways round the slot: our own `frames` array holds copies of these
+            // same return addresses, and the words around those copies are not an argument triple.
+            // The measured layout puts the spill above the slot (`i + 1`); `i - 4` is kept as the
+            // one the 0.2.3.25 ARM prologue reading predicted, so a codegen change only costs the
+            // other branch.
+            long line = 0, counter = 0;
+            if (!ApoTryArgTriple(base, i + 1, file, sizeof file, fn, sizeof fn, &line, &counter)
+                && !ApoTryArgTriple(base, i - 4, file, sizeof file, fn, sizeof fn, &line, &counter))
+                continue;
+            WebCorePortTrace("%s assert(frame#%u): file=%s function=%s (line=%ld counter=%ld slot=%p)",
+                tag, (unsigned)f, file, fn, line, counter,
+                (void*)(base + (size_t)i * sizeof(void*)));
+            ++hits;
+            break;
+        }
+    }
+
+    // Every shape hit is logged rather than only the first, so a false positive cannot hide the
+    // real one; the cap is what keeps a pathological stack from filling the trace. Six leaves room
+    // for the two the frame net may add above.
+    for (long i = 8; i + 3 < APO_ASSERT_SCAN_WORDS && hits < 6; ++i) {
+        size_t flen = 0;
+        if (!ApoImageString(ApoReadStackWord(base, i), file, sizeof file, 4, &flen))
+            continue;
+        if (!ApoFileSuffixOk(file, flen))
+            continue;
+        if (!ApoImageString(ApoReadStackWord(base, i + 1), fn, sizeof fn, 3, nullptr))
+            continue;
+        WebCorePortTrace("%s assert(shape): file=%s function=%s (line=%ld counter=%ld slot=%p)",
+            tag, file, fn, (long)ApoReadStackWord(base, i - 1), (long)ApoReadStackWord(base, i + 2),
+            (void*)(base + (size_t)i * sizeof(void*)));
+        ++hits;
+    }
+
+    if (hits)
+        return;
+
+    WebCorePortTrace("%s assert-scan: no argument triple in %d words from %p",
+        tag, APO_ASSERT_SCAN_WORDS, (void*)base);
+    // Nothing matched, so leave raw words where the arguments would have been: below a captured
+    // frame's own slot. Bounded to three frame positions, and it is the thing to read by eye when
+    // both nets above come up empty.
+    for (unsigned short f = 0, shown = 0; f < nframes && shown < 3; ++f) {
+        for (long i = 6; i + 8 < APO_ASSERT_SCAN_WORDS; ++i) {
+            if (!frames[f] || ApoReadStackWord(base, i) != frames[f])
+                continue;
+            WebCorePortTrace("%s raw frame#%u at %p:", tag, (unsigned)f,
+                (void*)(base + (size_t)i * sizeof(void*)));
+            for (long k = i - 12; k <= i + 2; ++k) {
+                char mapped[200];
+                ApoFormatAddress(ApoReadStackWord(base, k), mapped, sizeof mapped);
+                WebCorePortTrace("%s raw[%+ld] %p %p %s", tag, k - i,
+                    (void*)(base + (size_t)k * sizeof(void*)), ApoReadStackWord(base, k), mapped);
+            }
+            ++shown;
+            break;
+        }
+    }
+
+    // A wide raw window as the last resort, and the one place that has to be right by construction:
+    // the 0.2.3.27 run printed 384 lines of it and every line held the same word, because the base
+    // was a promoted local (see ApoReadStackWord). Each line now carries its own address, so a
+    // repeated address is visible in the log itself rather than inferred from a silent failure.
+    for (long i = 0; i < 480; ++i) {
+        char mapped[200];
+        void* v = ApoReadStackWord(base, i);
+        ApoFormatAddress(v, mapped, sizeof mapped);
+        WebCorePortTrace("%s window[%ld] %p %p %s", tag, i,
+            (void*)(base + (size_t)i * sizeof(void*)), v, mapped);
+    }
+}
+
+static long ApoPortDeathNet(ApoExcPointers* ep)
+{
+    // Re-entrancy guard. The handler runs at the exception point, and the trace below opens and
+    // closes a file, so a fault raised inside the trace itself would re-enter here without end.
+    // Thread local, so a fault on another thread is still reported.
+    static thread_local bool s_inHandler = false;
+    if (s_inHandler)
+        return APO_VEH_CONTINUE_SEARCH;
+    struct Guard { bool& f; Guard(bool& b) : f(b) { f = true; } ~Guard() { f = false; } } guard(s_inHandler);
+
+    unsigned long code = 0;
+    void* addr = nullptr;
+    unsigned long nparams = 0;
+    unsigned long long access = 0, faultAddr = 0;
+    if (ep && ep->ExceptionRecord) {
+        code = ep->ExceptionRecord->ExceptionCode;
+        addr = ep->ExceptionRecord->ExceptionAddress;
+        nparams = ep->ExceptionRecord->NumberParameters;
+        if (code == 0xC0000005 && nparams >= 2) {
+            access = (unsigned long long)ep->ExceptionRecord->Information[0];
+            faultAddr = (unsigned long long)ep->ExceptionRecord->Information[1];
+        }
+    }
+
+    // One slot per code that can end the process; everything else shares the routine counter. The
+    // counters are deliberately plain increments rather than interlocked ones: this is a diagnostic
+    // read by a human, a miscount under concurrent faults costs nothing, and an interlocked
+    // increment would need windows.h or <intrin.h> in a TU that has neither by design. They are not
+    // volatile either -- that would only buy a deprecated-increment warning, since nothing here
+    // synchronises with another thread in the first place.
+    static long s_hits[10];
+    static long s_routine;
+    int slot = -1;
+    switch (code) {
+    case 0xC0000005: slot = 0; break;   // access violation
+    case 0xC000001D: slot = 1; break;   // illegal instruction: WebKit CRASH()/RELEASE_ASSERT
+    case 0xC0000409: slot = 2; break;   // fast fail
+    case 0xC00000FD: slot = 3; break;   // stack overflow
+    case 0xC0000374: slot = 4; break;   // heap corruption
+    case 0xC0000602: slot = 5; break;   // fail fast
+    case 0xC0000094: slot = 6; break;   // integer divide by zero
+    case 0xC0000096: slot = 7; break;   // privileged instruction
+    case 0x80000003: slot = 8; break;   // breakpoint / __debugbreak
+    case 0xC0000006: slot = 9; break;   // in-page error
+    default: break;
+    }
+    if (slot < 0) {
+        long n = ++s_routine;
+        if (n <= 8 || (n % 512) == 0)
+            WebCorePortTrace("VEH-routine: code=0x%08lX at %p n=%ld", code, addr, n);
+        return APO_VEH_CONTINUE_SEARCH;
+    }
+
+    long n = ++s_hits[slot];
+    if (n > 8 && (n % 256) != 0)
+        return APO_VEH_CONTINUE_SEARCH;   // stay cheap; the count rides on the next sparse line
+
+    char site[200];
+    ApoFormatAddress(addr, site, sizeof site);
+    if (code == 0xC0000005)
+        // ExceptionInformation[0] is read(0)/write(1)/execute(8) and [1] is the faulting *data*
+        // address -- the field that separates a wild pointer from a deliberate WebKit CRASH(),
+        // which stores through a poison address and so names itself by its operand.
+        WebCorePortTrace("VEH: code=0x%08lX at %s op=%llu faultaddr=0x%llX n=%ld",
+            code, site, access, faultAddr, n);
+    else
+        WebCorePortTrace("VEH: code=0x%08lX at %s params=%lu n=%ld", code, site, nparams, n);
+
+    if (n <= 4) {
+        void* frames[24];
+        unsigned short nf = ApoPortCaptureFrames(frames, 24);
+        ApoPortDumpStack("VEH", frames, nf);
+        // A RELEASE_ASSERT that traps (CRASH() -> __builtin_trap, 0xC000001D) never reaches the
+        // SIGABRT handler, so it needs the same scan from here -- gated harder, because this is a
+        // code a healthy run never raises at all.
+        if (slot == 1 && n <= 2)
+            ApoPortScanForAssert("VEH", frames, nf);
+    }
+    return APO_VEH_CONTINUE_SEARCH;
+}
+
+// abort(): the UCRT raises SIGABRT, and unless the report-fault behaviour is cleared the abort
+// becomes a Watson fast-fail that runs no handler at all -- one of the ways this family stays
+// silent. Log first; the abort then proceeds harmlessly, and the exit code becoming 3 is itself
+// part of the diagnosis.
+static void ApoPortAbortHandler(int)
+{
+    WebCorePortTrace("ABRT: abort() reached the CRT signal handler tid=%lu",
+        (unsigned long)GetCurrentThreadId());
+    void* frames[24];
+    unsigned short nf = ApoPortCaptureFrames(frames, 24);
+    ApoPortDumpStack("ABRT", frames, nf);
+    // The three frames above stop at the assert's own body, which is what the scan is for: frame
+    // #2 is the return address the assert helper's `blx abort` pushed, and the arguments it spilled
+    // are the four words under that slot.
+    ApoPortScanForAssert("ABRT", frames, nf);
+}
+
+static void ApoPortInstallDeathNet()
+{
+    // Idempotent, and process-wide rather than per-module: WebCoreSetFontConfigFile and
+    // WebCoreSetSehGuard both call it, and whichever the managed host reaches first installs it.
+    static bool s_done = false;
+    if (s_done)
+        return;
+    s_done = true;
+
+    HMODULE ntdll = GetModuleHandleW(L"ntdll.dll");
+    ApoAddVehFn addVeh = ntdll
+        ? reinterpret_cast<ApoAddVehFn>(GetProcAddress(ntdll, "RtlAddVectoredExceptionHandler"))
+        : nullptr;
+    if (!addVeh) {
+        // Also a finding: without the hook the device keeps dying silently, and this line is the
+        // only record of why. ntdll is mapped in every process, so a null handle here would mean
+        // the App Container denies the lookup rather than that the DLL is absent.
+        WebCorePortTrace("DEATHNET: RtlAddVectoredExceptionHandler not found (ntdll=%p)"
+            " -- no first-chance witness on this device", (void*)ntdll);
+        return;
+    }
+
+    void* h = addVeh(1, ApoPortDeathNet);
+    WebCorePortTrace("DEATHNET: RtlAddVectoredExceptionHandler -> %p", h);
+    if (!h) {
+        // A null handle is itself a finding worth keeping: if the App Container refuses this call
+        // then the device has no first-chance witness at all, and this line is the record of why
+        // the next silent death is still silent.
+        WebCorePortTrace("DEATHNET: refused -- no first-chance witness on this device");
+        return;
+    }
+
+    void (*prev)(int) = signal(SIGABRT, ApoPortAbortHandler);
+    unsigned old = (unsigned)_set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
+    WebCorePortTrace("DEATHNET: signal(SIGABRT) prev=%p _set_abort_behavior prev=0x%X",
+        (void*)prev, old);
+
+    _set_purecall_handler([] {
+        WebCorePortTrace("PURECALL: a pure virtual call was made tid=%lu",
+            (unsigned long)GetCurrentThreadId());
+        void* frames[24];
+        ApoPortDumpStack("PURECALL", frames, ApoPortCaptureFrames(frames, 24));
+    });
+    WebCorePortTrace("DEATHNET: installed");
+}
 
 // Read one <dir> or <cachedir> value out of the fontconfig file.
 static bool ApoConfValue(const ::std::string& conf, const char* tag, ::std::string& out)
@@ -1794,11 +2360,156 @@ void portLoaderMark(const char* tag);
 void portLoaderNextGeneration();
 }
 
-static void teardownSession()
+// ============================================================================
+// Apotheosis: the input bracketing (2026-10-03, the first device deaths on ARM32).
+// ============================================================================
+// Why this exists. The `.23` device trace caught three deaths and could not say which of them a
+// finger caused: its 4019 lines contain no input vocabulary at all (`swipe`, `pinch`, `zoom`,
+// `tap`, `gesture`, `scroll`, `input`, `touch` all counted at zero), so "the maintainer scrolled
+// down and it died" and "the maintainer left the app and a teardown died" are the same file. The
+// two teardown aborts in that trace land after a clean settle, which is exactly what a closed app
+// leaves behind -- and exactly what a gesture that has already returned leaves behind too.
+//
+// So the engine entry points a finger can reach are bracketed, and what the reader gets is a burst:
+//
+//   gesture: scroll enter
+//   gesture: scroll cont n=12 dt=612ms
+//   gesture: scroll end n=37 dt=1902ms idle=1600ms
+//   gesture: live n=142
+//
+// The rules, each for its own reason:
+//   * One `enter` per burst, not one line per call. A one-finger drag drives WebCoreScrollBy from
+//     PumpScroll, which re-posts only after the previous call has returned, so a drag is many
+//     sequential calls -- a line per call would bury the file it exists to explain.
+//   * A `cont` at most every contMs, carrying the running call count, so a long drag still has a
+//     cadence but a bounded one.
+//   * An `end` when the burst has been idle for APO_GESTURE_IDLE_S. The sweep that writes it runs
+//     from every mark, including the live tick, which ticks at 1 Hz whenever the app is idle and in
+//     the foreground. This is the honest part: without it a finished drag and a drag that was still
+//     in flight when the process died would both end the trace with a `cont` line.
+//   * Therefore a `cont` as the last gesture line, with no `end` after it, IS the statement "the
+//     engine died during this gesture" -- the same enter/exit balance argument that made the timer
+//     death readable (100 wtimer enters against 99 exits; Doc/BUILD-ARM32.md).
+//   * A burst can be split if a single engine call takes longer than APO_GESTURE_IDLE_S, which a
+//     heavy page can make happen: the count is then split in two, but the bracket still reads
+//     correctly, because what the reader looks for is whether an `end` followed the last gesture
+//     line.
+//   * `live` is a liveness cadence, not a gesture: WebCoreLiveTick runs on a 200 ms timer whenever
+//     the app is idle and foreground, so it is rate-limited hard. It is the port saying "still
+//     alive, still presenting" between gestures -- which is what the device's stale `diag:` line
+//     cannot say.
+//
+// One export a finger can reach that is NOT marked: WebCoreSetPageScale. Page scale left the
+// managed line when page zoom replaced it (0.2.3.14), so a verb for it would be one nothing can
+// trigger. WebCoreSetPageZoom, which replaced it, *is* marked -- and the reason a mark on its entry
+// cannot fire once per frame is that the present path's re-assert does not come through the export
+// at all (apoReassertPageZoom sets the factor on the frame directly).
+//
+// Cost: one relink, no engine rebuild.
+enum {
+    kGestScroll = 0,
+    kGestClick,
+    kGestZoom,
+    kGestResize,
+    kGestClose,
+    kGestCount
+};
+
+// Also the second half of every line, so the verbs are greppable by name.
+static const char* const kGestureName[kGestCount] = {
+    "scroll", "click", "zoom", "resize", "close"
+};
+
+// A burst is over when this long has passed with no call; the live cadence is the heartbeat.
+#define APO_GESTURE_IDLE_S   1.5
+#define APO_GESTURE_LIVE_MS  2000.0
+
+struct ApoGestureBurst {
+    unsigned open;
+    unsigned count;      // engine calls in the burst, as the port saw them
+    double   start;      // seconds, first call of the burst
+    double   lastCall;   // seconds, most recent call
+    double   lastLine;   // seconds, last line written for this burst
+};
+
+static ApoGestureBurst g_gesture[kGestCount];
+static unsigned g_gestureLiveCalls;
+static double   g_gestureLiveLine;
+
+// A wall clock is neither needed nor wanted: every delta below is read as a duration, and a
+// monotonic source cannot go backwards under the device's clock adjustments.
+static double apoGestureNow()
+{
+    return WTF::MonotonicTime::now().secondsSinceEpoch().value();
+}
+
+static void ApoGestureSweep(double now)
+{
+    for (unsigned i = 0; i < kGestCount; ++i) {
+        ApoGestureBurst& b = g_gesture[i];
+        if (!b.open)
+            continue;
+        const double idle = now - b.lastCall;
+        if (idle < APO_GESTURE_IDLE_S)
+            continue;
+        WebCorePortTrace("gesture: %s end n=%u dt=%.0fms idle=%.0fms",
+            kGestureName[i], b.count, (b.lastCall - b.start) * 1000.0, idle * 1000.0);
+        b.open = 0;
+        b.count = 0;
+    }
+}
+
+static void ApoGestureMark(int verb, double contMs)
+{
+    if (verb < 0 || verb >= kGestCount)
+        return;
+    const double now = apoGestureNow();
+    ApoGestureSweep(now);
+    ApoGestureBurst& b = g_gesture[verb];
+    b.lastCall = now;
+    if (!b.open) {
+        b.open = 1;
+        b.count = 1;
+        b.start = now;
+        b.lastLine = now;
+        WebCorePortTrace("gesture: %s enter", kGestureName[verb]);
+        return;
+    }
+    ++b.count;
+    if ((now - b.lastLine) * 1000.0 < contMs)
+        return;
+    b.lastLine = now;
+    WebCorePortTrace("gesture: %s cont n=%u dt=%.0fms", kGestureName[verb], b.count,
+        (now - b.start) * 1000.0);
+}
+
+// The one entry point that is a cadence rather than a gesture. It also runs the sweep, and that is
+// what closes a finished burst while the app sits idle -- deliberately unthrottled, because the
+// sweep is arithmetic and only the line below costs anything.
+static void ApoGestureLiveTick()
+{
+    const double now = apoGestureNow();
+    ApoGestureSweep(now);
+    ++g_gestureLiveCalls;
+    if (g_gestureLiveLine != 0.0 && (now - g_gestureLiveLine) * 1000.0 < APO_GESTURE_LIVE_MS)
+        return;
+    g_gestureLiveLine = now;
+    WebCorePortTrace("gesture: live n=%u", g_gestureLiveCalls);
+}
+
+static void teardownSession(const char* why)
 {
     using namespace WebCore;
     if (!g_session)
         return;
+    // Apotheosis: who asked for this teardown, and did it finish. The `.23` trace lost two sessions
+    // to an abort at the very end of a teardown and could not name the caller: teardownSession has
+    // five of them, two of which are gesture paths (a click that found the frame gone, an
+    // interaction paint that did the same), one a new navigation, one a failed build, one the app
+    // closing. A `teardown: enter` with no matching `teardown: exit` names the caller without
+    // guessing, and `why=` is the caller.
+    const double apoTeardownT0 = apoGestureNow();
+    WebCorePortTrace("teardown: enter why=%s", why);
     // Apotheosis: the loader state at the three points that matter. The stale-callback question is
     // "how much was still in flight when the session went away, and did stopping the loaders plus
     // four run-loop cycles actually retire it" -- and until these marks existed the trace showed
@@ -1835,6 +2546,10 @@ static void teardownSession()
     WebCorePort::portLoaderMark("teardown after drain");
     // Everything started from here belongs to the next session.
     WebCorePort::portLoaderNextGeneration();
+    // The last line of a completed teardown. If a session's trace stops between this function's
+    // `enter` and this line, the teardown is where it died -- and `why=` names who asked for it.
+    WebCorePortTrace("teardown: exit why=%s dt=%.0fms", why,
+        (apoGestureNow() - apoTeardownT0) * 1000.0);
 }
 
 // Apotheosis: per-step stage marker file (harness passes its LocalState path via
@@ -2686,6 +3401,67 @@ long long WebCoreGetFetchProgress(void)
 #endif
 }
 
+// Apotheosis 2026-10-03: the notification client -- a Page that has none cannot be asked
+// for one without the engine dereferencing a null supplement entry.
+//
+// `Document::notificationClient()` (dom/Document.cpp) ends with
+//
+//     return &NotificationController::from(page.get())->client();      // no null check
+//
+// and `NotificationController::from(Page*)` (NotificationController.h:45) is
+// `downcast<NotificationController>(Supplement<Page>::from(page, "NotificationController"_s))`.
+// Nothing in the engine installs that supplement -- the only caller of
+// `provideNotification()` in the whole tree is WebKitLegacy/mac WebView.mm -- and
+// `pageConfigurationWithEmptyClients()` installs none, so on this port the lookup answers
+// "absent" and the unguarded `->client()` faults on the null entry.
+//
+// Measured 2026-10-03 on the Lumia in 0.2.3.24 (twice, and the same site in 0.2.3.23):
+// while the dzen.ru feed was still loading, the engine thread died with
+// `WebCoreDriver.dll+0x37D161 op=0 faultaddr=0x8`, which disassembles to
+// `ldr r5, [r0, #0x8]` at `Document::notificationClient()+0x42` with r0 == 0 -- the missing
+// supplement's value pointer, read out of a null hash-table entry. Every call site of
+// notificationClient() (Notification::show, Notification::requestPermission) null-checks the
+// *result*, which cannot help: the fault is inside the callee, before it can return.
+//
+// The fix belongs here, not in WebCore: installing the supplement is the embedder's job, and a
+// WebCore edit on this line means a full rebuild. The client refuses everything, which is the
+// right answer for a museum browser -- the page is told "denied" and nothing is shown, instead
+// of the page taking the process down. `WebCoreFull-*` carries provideNotification in both
+// build lines (map-verified: arm32 0x1086a05c, x64 0x180ba06e0), so this is a relink, not a
+// rebuild, on either line.
+//
+// It is deliberately never deleted, and one instance serves every Page: `NotificationController`
+// holds `NotificationClient& m_client` (a reference, not an owner), so the Page owns the
+// controller and nothing owns the client. The Mac port leaks one per WebView for the same reason.
+namespace WebCorePort {
+
+class PortNotificationClient final : public WebCore::NotificationClient {
+public:
+    bool show(WebCore::ScriptExecutionContext&, WebCore::NotificationData&&, RefPtr<WebCore::NotificationResources>&&, WTF::CompletionHandler<void()>&&) final
+    {
+        return false;   // "not shown" -- Notification::show stays Idle and dispatches its error event
+    }
+    void cancel(WebCore::NotificationData&&) final { }
+    void notificationObjectDestroyed(WebCore::NotificationData&&) final { }
+    void notificationControllerDestroyed() final { }
+    void requestPermission(WebCore::ScriptExecutionContext&, PermissionHandler&& handler) final
+    {
+        handler(Permission::Denied);
+    }
+    Permission checkPermission(WebCore::ScriptExecutionContext*) final
+    {
+        return Permission::Denied;
+    }
+};
+
+void installPortNotificationClient(WebCore::Page& page)
+{
+    static auto* const client = new PortNotificationClient;
+    WebCore::provideNotification(&page, client);
+}
+
+} // namespace WebCorePort
+
 extern "C" void WebCorePortRecordNetError(const char* phase, const char* type, int code, const char* domain, const char* desc, const char* url);
 // Apotheosis: GS check OFF to avoid 0xc0000409 stack canary crash during frame->init()
 #pragma strict_gs_check(push, off)
@@ -2724,6 +3500,14 @@ static int buildSession(const char* url, int w, int h, uint8_t* outRGBA)
     // section 10f. The backend is in-memory (Src/port/PortStorage.h explains why it
     // cannot be durable here); it is process-scoped, not absent.
     pageConfiguration.storageNamespaceProvider = WebCorePort::createPortStorageNamespaceProvider();
+
+    // Apotheosis 0.2.3.29: and the same trap for sockets. EmptySocketProvider::createWebSocketChannel()
+    // returns nullptr, while WebCore::WebSocket::connect() RELEASE_ASSERTs that a channel exists
+    // ("Every ScriptExecutionContext should have a SocketProvider", Modules/websockets/WebSocket.cpp:288).
+    // dzen.ru opens a WebSocket (Yandex Metrika), so on the device the assert fired and abort() killed the
+    // browser. Our provider's channel reports ConnectStatus::KO, which connect() turns into an ordinary
+    // asynchronous failure. See Src/port/PortWebSocket.cpp for the run that named the assert.
+    pageConfiguration.socketProvider = WebCorePort::createPortSocketProvider();
 
     // GPU path: a GPU session (GL context + TextureMapper) needs a ChromeClient that can
     // hand back a root GraphicsLayer -- PortChromeClient::attachRootGraphicsLayer -- plus
@@ -2789,6 +3573,7 @@ static int buildSession(const char* url, int w, int h, uint8_t* outRGBA)
     OutputDebugStringA("[BUILD] Page::create ok\n");
     g_session->page = page.ptr();
     DBG_STAGE("Page::create ok");
+    WebCorePort::installPortNotificationClient(*page.ptr());   // 0.2.3.25: without it Document::notificationClient() faults on a null supplement
 #if defined(WK_WINUWP)
     apoArmJsWatchdog();
 #endif
@@ -3307,7 +4092,9 @@ static int finishInteractionPaint(uint8_t* outRGBA)
         return kErrNoSession;
     RefPtr<LocalFrame> lf = g_session->page->localMainFrame();
     if (!lf) {
-        teardownSession();
+        // A gesture's own paint found the frame gone. This is the route by which a finger can reach
+        // a teardown, so it must not be confused with a close in the trace.
+        teardownSession("paint:frameGone");
         return kErrFrameGone;
     }
     g_session->mainFrame = lf;
@@ -3480,6 +4267,10 @@ extern "C" void WebCoreSetFontConfigFile(const char* path)
         return;
     _putenv_s("FONTCONFIG_FILE", path);
     WebCorePortTrace("SetFontConfigFile: %s", path);
+    // The death net goes up here, at the first call the managed host makes, because this is the
+    // call that arms the trace channel the net writes to: installing any earlier would leave the
+    // handler with nowhere to report. See ApoPortInstallDeathNet for what it catches and why.
+    ApoPortInstallDeathNet();
     ApotheosisAdoptFontsDirFromConf(path);
     ApoDumpFontConfigOnce("env");
 }
@@ -3491,6 +4282,9 @@ extern "C" void WebCoreSetSehGuard(int on)
 {
     g_sehGuardEnabled = on ? 1 : 0;
     WebCorePortTrace("SetSehGuard: %d", g_sehGuardEnabled);
+    // Belt and braces: WebCoreSetFontConfigFile normally got here first, and the guard is
+    // idempotent, but the managed host may arm the guard on a path that skipped the font config.
+    ApoPortInstallDeathNet();
 }
 
 // Last native fault caught by the guard, or empty when none happened. Readable from the
@@ -3678,6 +4472,8 @@ static int WebCoreRenderHtmlImpl(const char* utf8Html, int w, int h, uint8_t* ou
 
     // Apotheosis 2026-09-18: real Web Storage, as in buildSession -- see Src/port/PortStorage.h.
     pageConfiguration.storageNamespaceProvider = WebCorePort::createPortStorageNamespaceProvider();
+    // Apotheosis 0.2.3.29: real SocketProvider, as in buildSession -- see Src/port/PortWebSocket.cpp.
+    pageConfiguration.socketProvider = WebCorePort::createPortSocketProvider();
 
     // Replace the EmptyLocalFrameLoaderClient factory with ours so that
     // Frame::init() can proceed through its policy checks.
@@ -3697,6 +4493,7 @@ static int WebCoreRenderHtmlImpl(const char* utf8Html, int w, int h, uint8_t* ou
     Ref<Page> page = Page::create(WTF::move(pageConfiguration));
     OutputDebugStringA("[WCRH] Page::create ok\n"); WebCoreStage("WCRH:page-created");
     gpuLogMarkerF("SL: createPage @WebCoreRenderHtml this=%p", (const void*)page.ptr());
+    WebCorePort::installPortNotificationClient(*page.ptr());   // 0.2.3.25: without it Document::notificationClient() faults on a null supplement
     OutputDebugStringA("[WCRH] settings start\n");
 
     // Headless software render: no script, no compositing, no media.
@@ -3881,6 +4678,8 @@ int WebCoreLoadUrl(const char* url, int w, int h, uint8_t* outRGBA)
 
     // Apotheosis 2026-09-18: real Web Storage, as in buildSession -- see Src/port/PortStorage.h.
     pageConfiguration.storageNamespaceProvider = WebCorePort::createPortStorageNamespaceProvider();
+    // Apotheosis 0.2.3.29: real SocketProvider, as in buildSession -- see Src/port/PortWebSocket.cpp.
+    pageConfiguration.socketProvider = WebCorePort::createPortSocketProvider();
 
     // Shared terminal-state signal. The client completion handler, settle timer and
     // watchdog all run on this (main) thread, so no locking is needed.
@@ -3921,6 +4720,7 @@ int WebCoreLoadUrl(const char* url, int w, int h, uint8_t* outRGBA)
     // ---- Page ----
     Ref<Page> page = Page::create(WTF::move(pageConfiguration));
     gpuLogMarkerF("SL: createPage @WebCoreLoadUrl this=%p", (const void*)page.ptr());
+    WebCorePort::installPortNotificationClient(*page.ptr());   // 0.2.3.25: without it Document::notificationClient() faults on a null supplement
 
     // Apotheosis: enable JavaScript (LLInt plus the baseline JIT -- no higher tiers here),
     // or a modern page is static text: no DOM behaviour, no SPA, no rendering updates.
@@ -4430,7 +5230,10 @@ static int WebCoreSessionLoadImpl(const char* url, int w, int h, uint8_t* outRGB
     }
     apoLogLivePages("at entry");
     DBG_STAGE("WebCoreSessionLoad calling teardownSession");
-    teardownSession();
+    // Every navigation tears the old session down first, so this is the `why=` a teardown abort
+    // carries when the death is a *load* and not a close -- §3/§4 of the `.23` trace could not tell
+    // the two apart, and the difference decides whether there is a bug at all.
+    teardownSession("load");
     DBG_STAGE("WebCoreSessionLoad teardownSession done");
     // Apotheosis 2026-09-24: release the process-wide caches on every navigation, right where the old
     // session is gone and the new one does not exist yet.
@@ -4514,7 +5317,7 @@ static int WebCoreSessionLoadImpl(const char* url, int w, int h, uint8_t* outRGB
     DBG_STAGE("WebCoreSessionLoad buildSession returned rc=%d", rc);
     if (rc != kOK) {
         DBG_STAGE("WebCoreSessionLoad buildSession failed, tearing down");
-        teardownSession();
+        teardownSession("load-failed");
     }
     DBG_STAGE("WebCoreSessionLoad exit rc=%d", rc);
     return rc;
@@ -4523,9 +5326,12 @@ static int WebCoreSessionLoadImpl(const char* url, int w, int h, uint8_t* outRGB
 // Close the session: tear down the Page and everything hanging off it
 static void WebCoreCloseSessionImpl()
 {
-    if (g_inPump)
+    if (g_inPump) {
+        // The refusal is the interesting case: the caller asked to close and nothing happened.
+        WebCorePortTrace("gesture: close refused (in pump)");
         return;
-    teardownSession();
+    }
+    teardownSession("close");
 }
 
 // Synthesise a tap at (x,y). Coordinates are viewport-relative; EventHandler applies
@@ -4832,7 +5638,8 @@ static int WebCoreClickAtImpl(int x, int y, uint8_t* outRGBA)
     // re-read view/frame and re-size before painting
     lf = g_session->page->localMainFrame();
     if (!lf) {
-        teardownSession();
+        // The other gesture route into a teardown: the tap's own frame went away under it.
+        teardownSession("click:frameGone");
         return kErrFrameGone;
     }
     g_session->mainFrame = lf;
@@ -5160,6 +5967,9 @@ int WebCoreGetPageScale()
 int WebCoreSetPageZoom(float zoom)
 {
     using namespace WebCore;
+    // Marked before the early returns, so a request the port is about to refuse (no session, bad
+    // value) still leaves the finger's trace behind.
+    ApoGestureMark(kGestZoom, 500.0);
     if (!g_session || !g_session->page || !g_session->mainFrame)
         return kErrNoSession;
     if (!(zoom > 0.0f))
@@ -5196,9 +6006,15 @@ int WebCoreSetPageZoom(float zoom)
         doc->updateLayoutIgnorePendingStylesheets();
     g_session->page->isolatedUpdateRendering();
 
-    const int dw = view->contentsSize().width();
-    gpuLogMarkerF("[GPU] page zoom %.2f -> %.2f (layout %dx%d CSS-ish, viewport %dx%d)",
-        (double)before, (double)zoom, dw, view->contentsSize().height(), g_session->w, g_session->h);
+    const IntSize cs = view->contentsSize();
+    // "layout 720x1080 CSS-ish" was ambiguous exactly where it mattered: on `.29` on the device the
+    // diag read `contents=724x1080` while this line said `layout 720x1080` at a factor of 0.50, so
+    // which number moved -- and in which space -- could not be told from the line. Name all three:
+    // `contents` is the document's own size in CSS px, `viewport` is the surface in DIP, and `w/zoom`
+    // is the width the port's contract ("layout width = viewport / zoom") says the layout would be.
+    gpuLogMarkerF("[GPU] page zoom %.2f -> %.2f (contents %dx%d css | viewport %dx%d dip | w/zoom %.0f css)",
+        (double)before, (double)zoom, cs.width(), cs.height(), g_session->w, g_session->h,
+        zoom > 0.0f ? (double)g_session->w / (double)zoom : (double)g_session->w);
     return kOK;
 }
 
@@ -5741,6 +6557,10 @@ int WebCoreSessionPaint(uint8_t* outRGBA)
 int WebCoreSessionResize(int w, int h, uint8_t* outRGBA)
 {
     using namespace WebCore;
+    // A pinch commits through here as well as through WebCoreSetPageZoom, and a window change does
+    // too -- which is why the mark is on the entry rather than on the zoom: a resize with no zoom
+    // change is still a finger.
+    ApoGestureMark(kGestResize, 500.0);
     // 8192 is an arbitrary but generous sanity ceiling: paintToRGBA has to create a cairo
     // surface of exactly this size, and a bogus value from the harness would be a huge
     // allocation failure deep inside cairo rather than a clean error here.
@@ -5902,7 +6722,10 @@ int WebCoreRenderHtmlStub(const char* utf8Html, int w, int h, uint8_t* outRGBA)
     auto cfg = pageConfigurationWithEmptyClients(std::nullopt, PAL::SessionID::defaultSessionID());
     // Apotheosis 2026-09-18: real Web Storage, as in buildSession -- see Src/port/PortStorage.h.
     cfg.storageNamespaceProvider = WebCorePort::createPortStorageNamespaceProvider();
+    // Apotheosis 0.2.3.29: real SocketProvider, as in buildSession -- see Src/port/PortWebSocket.cpp.
+    cfg.socketProvider = WebCorePort::createPortSocketProvider();
     Ref<Page> page = Page::create(WTF::move(cfg));
+    WebCorePort::installPortNotificationClient(*page.ptr());   // 0.2.3.25: without it Document::notificationClient() faults on a null supplement
     if (!page->localMainFrame())
         return kErrNoMainFrame;
     for (int i = 0; i < w * h; ++i) {
@@ -5940,16 +6763,21 @@ int WebCoreSessionLoad(const char* url, int w, int h, uint8_t* outRGBA)
 
 void WebCoreCloseSession()
 {
+    // Marked at the boundary, not inside the impl: the impl refuses when the engine is in a pump,
+    // and "the app asked to close and the port said no" is exactly the case the trace must not lose.
+    ApoGestureMark(kGestClose, 500.0);
     APO_SEH_CALL_VOID(WebCoreCloseSessionImpl());
 }
 
 int WebCoreClickAt(int x, int y, uint8_t* outRGBA)
 {
+    ApoGestureMark(kGestClick, 500.0);
     APO_SEH_RETURN_INT(WebCoreClickAtImpl(x, y, outRGBA));
 }
 
 int WebCoreScrollBy(int dx, int dy, uint8_t* outRGBA)
 {
+    ApoGestureMark(kGestScroll, 500.0);
     APO_SEH_RETURN_INT(WebCoreScrollByImpl(dx, dy, outRGBA));
 }
 
@@ -5990,6 +6818,9 @@ int WebCoreKeyAction(int action, uint8_t* outRGBA)
 
 int WebCoreLiveTick(uint8_t* outRGBA)
 {
+    // A cadence, not a gesture: 200 ms while the app is idle and foreground (see the bracketing
+    // block above for why this is not a burst).
+    ApoGestureLiveTick();
     APO_SEH_RETURN_INT(WebCoreLiveTickImpl(outRGBA));
 }
 

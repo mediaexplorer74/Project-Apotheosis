@@ -107,6 +107,74 @@ static void portLoaderSinkReportOnce(const std::string& what)
     portDiagLog(what.c_str());
 }
 
+// Apotheosis 2026-10-09: the same bounded-trace rule as the driver's own writer, and for the same
+// measured reason -- WDP cannot read port-trace.txt while this process owns it (HTTP 404 on twenty
+// consecutive attempts, 3.9 MB files from the same device read fine, and the file pulls whole the
+// moment the app closes). Two files instead of one unbounded one: a pull always gets closed file(s)
+// holding the newest lines. Kept a separate copy rather than shared, because the two writers are
+// deliberately independent translation units and the driver's copy is not exported.
+static const long kPortLoaderTraceRotateBytes = 4 * 1024 * 1024;
+static const int kPortLoaderTraceProbeEvery = 512;
+static long g_portLoaderTraceBytes = -1;
+static int g_portLoaderTraceLines = 0;
+
+static void portLoaderTraceRotateIfNeeded(const std::string& path)
+{
+    if (g_portLoaderTraceBytes < 0 || ++g_portLoaderTraceLines >= kPortLoaderTraceProbeEvery) {
+        g_portLoaderTraceLines = 0;
+        g_portLoaderTraceBytes = 0;
+        if (FILE* probe = fopen(path.c_str(), "rb")) {
+            if (fseek(probe, 0, SEEK_END) == 0) {
+                long size = ftell(probe);
+                if (size > 0)
+                    g_portLoaderTraceBytes = size;
+            }
+            fclose(probe);
+        }
+    }
+    if (g_portLoaderTraceBytes < kPortLoaderTraceRotateBytes)
+        return;
+    // Never take the decision on the cached count. WebCoreDriver.cpp writes this same file, so the
+    // other writer's rotation makes our count a lie -- and rotating on a lie would move a few hundred
+    // bytes aside over the chunk it had just written, i.e. the session being investigated is destroyed
+    // by the next line we write. Every decision is therefore taken on a fresh read of the real file,
+    // and the periodic probe above is only an optimisation that keeps this one rare.
+    long realBytes = 0;
+    if (FILE* probe = fopen(path.c_str(), "rb")) {
+        if (fseek(probe, 0, SEEK_END) == 0) {
+            long size = ftell(probe);
+            if (size > 0)
+                realBytes = size;
+        }
+        fclose(probe);
+    }
+    g_portLoaderTraceBytes = realBytes;
+    if (realBytes < kPortLoaderTraceRotateBytes) {
+        g_portLoaderTraceLines = 0;
+        return;                 // the other writer rotated: our count was stale, and the file is small
+    }
+    // This writer's chunk goes to port-trace.2.txt and the driver's to port-trace.1.txt, rather than
+    // both to .1: the destructive step below is remove(previous), and one shared name means the driver
+    // rotating the 4 MB session aside and the loader then rotating on a stale count would delete it.
+    // Two names make each remove() provably its own file's, so no interleaving can destroy evidence.
+    std::string previous = path.substr(0, path.size() - 4) + ".2.txt";
+    remove(previous.c_str());
+    if (rename(path.c_str(), previous.c_str()) != 0)
+        return;
+    g_portLoaderTraceBytes = 0;
+    g_portLoaderTraceLines = 0;
+    if (FILE* f = fopen(previous.c_str(), "ab")) {
+        fputs("trace: rotated out at the size ceiling", f);
+        fputc('\n', f);
+        fclose(f);
+    }
+    if (FILE* f = fopen(path.c_str(), "ab")) {
+        fputs("trace: rotated in from port-trace.2.txt at the size ceiling", f);
+        fputc('\n', f);
+        fclose(f);
+    }
+}
+
 static void portLoaderTraceV(bool alsoDiag, const char* fmt, va_list args)
 {
     if (!fmt)
@@ -114,7 +182,7 @@ static void portLoaderTraceV(bool alsoDiag, const char* fmt, va_list args)
     char buf[512];
     va_list copy;
     va_copy(copy, args);
-    vsnprintf(buf, sizeof buf, fmt, copy);
+    const int want = vsnprintf(buf, sizeof buf, fmt, copy);
     va_end(copy);
 
     if (alsoDiag)
@@ -135,6 +203,7 @@ static void portLoaderTraceV(bool alsoDiag, const char* fmt, va_list args)
         return;
     }
     path = path.substr(0, pos + 1) + "port-trace.txt";
+    portLoaderTraceRotateIfNeeded(path);
 
     // Apotheosis 2026-09-18 (ST-5): mirror the driver's proven WebCorePortTrace exactly -- plain
     // fopen(.., "ab") with fflush before fclose, not fopen_s. This is not superstition: on 0.1.9.101
@@ -154,6 +223,7 @@ static void portLoaderTraceV(bool alsoDiag, const char* fmt, va_list args)
     fputc('\n', file);
     fflush(file);
     fclose(file);
+    g_portLoaderTraceBytes += (want > 0 ? want : 0) + 1;
 }
 
 // Bulk channel: one line per request, file only.
