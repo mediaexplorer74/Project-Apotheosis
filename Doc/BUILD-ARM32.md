@@ -1239,8 +1239,10 @@ out at 1440 CSS px into a 720-px buffer — one buffer pixel per two CSS pixels 
 then upscales to the panel. The port states the rule at `WebCoreSetPageZoom`
 (`Src/port/WebCoreDriver.cpp:5947-5960`): software present "has a DIP-sized viewport and must stay at
 zoom 1.0", while GPU present uses the panel's physical size and `zoom = CompositionScale`, "which is
-where the sharpness comes from". GPU has never been armed on this device (`EnableGpu()` writes
-`gpuinit.txt`; no pull contains it). **One-step test: set the zoom back to 100%.** The residual
+where the sharpness comes from". On this device the engine has never composited:
+`WebCoreEnableCompositing()` returns `g_session->chrome->rootLayer() != nullptr ? 1 : 0`, the harness
+calls it on every load, and **`compositing=0` in all ten pulled `stage.txt` files** (2026-10-03 and
+2026-10-09); `gpudefault=0` as well. **One-step test: set the zoom back to 100%.** The residual
 DIP -> physical upscale is structural to the software path.
 
 Not measured this run: the trace rotation (3.29 MB < the 4 MB ceiling, so `.1`/`.2` were absent) and

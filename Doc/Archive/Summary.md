@@ -2316,9 +2316,13 @@ it halves the raster resolution on top of the unavoidable DIP→physical upscale
 for the display scale at all — there is no `DisplayInformation` / `RawPixelsPerViewportPixel` /
 `ResolutionScale` anywhere in `Src/Apotheosis`.
 
-The sharp path is the GPU one, and it has **never been armed on the device**: `EnableGpu()` writes
-`gpuinit.txt`, and no pull in `Src/tools/device-logs/*/` has ever contained it (`gpudefault=0` in the
-settings file above).
+The sharp path is the GPU one, and on this device the engine has never composited:
+`WebCoreEnableCompositing()` returns `g_session->chrome->rootLayer() != nullptr ? 1 : 0`, and the
+harness calls it on every load — `compositing=0` in **all ten** pulled `stage.txt` files (2026-10-03
+and 2026-10-09 alike). `gpudefault=0` in the settings file above. (An earlier note here argued from
+`gpuinit.txt` being absent from every pull; that proves nothing, because `gpuinit.txt` is not in
+`pull-device-logs.ps1`'s default list and was never requested. The `compositing=` field is the
+evidence that was actually pulled.)
 
 Two consequences worth keeping:
 
