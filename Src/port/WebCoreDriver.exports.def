@@ -47,6 +47,14 @@ EXPORTS
     WebCoreTypeText
     WebCoreKeyAction
     WebCoreFocusedEditable
+
+    ; Back/forward history of the live session. The engine's own back/forward list, not the host's
+    ; _navStack: link clicks, in-page navigations and redirects enter it and the host never sees
+    ; them, so a Back driven from the host's stack alone cannot return to where the user came from.
+    WebCoreGoBack
+    WebCoreGoForward
+    WebCoreCanGoBack
+    WebCoreCanGoForward
     WebCoreSetPageScale
     WebCoreLiveTick
 

@@ -335,6 +335,31 @@ namespace Apotheosis
                     {
                         AutoLog("hash 0x" + WebCoreDriver.WebCoreGetFrameHash().ToString("x8"));
                     }
+                    else if (verb == "back" || verb == "forward")
+                    {
+                        // Routed through AutoUi, not run here: NavigateHistory drives the shell's
+                        // toolbar state and the engine, so it belongs on the dispatcher like `goto`.
+                        // The FIRST version of this verb was added only to AutoUi's inner switch --
+                        // the one reached by the `ui <what>` verb -- and a run logged a bare
+                        // "unknown verb: back" while looking exactly like a Back that the engine had
+                        // refused. A verb that is not in this chain does not exist.
+                        AutoLog(verb);
+                        AutoUi(verb);
+                    }
+                    else if (verb == "hist")
+                    {
+                        // Reads only -- no navigation, no repaint. It exists so an acceptance run can
+                        // ask "where does each history stand" BEFORE and AFTER a `back`, which is the
+                        // only way to tell "Back was refused" from "Back moved and the page looked
+                        // the same". Runs on the engine thread, so the P/Invokes are legal here; the
+                        // host stack is plain data and needs no dispatcher.
+                        RefreshEngineHistory();
+                        AutoLog("hist engine back=" + WebCoreDriver.WebCoreCanGoBack()
+                                + " fwd=" + WebCoreDriver.WebCoreCanGoForward()
+                                + " cached=" + _engineBack + "/" + _engineFwd
+                                + " host idx=" + _navIndex + "/" + (_navStack.Count - 1)
+                                + " url=" + _currentUrl);
+                    }
                     else if (verb == "diag")
                     {
                         // 4096, not 2048: the diag carries the resource table and the last error, and a
@@ -425,6 +450,8 @@ namespace Apotheosis
                             case "advanced": ShowSettings(); if (SettingsPivot != null) SettingsPivot.SelectedIndex = 1; break;
                             case "tabs": TabSwitcher.Visibility = Visibility.Visible; break;
                             case "home": NavigateTo(_homeUrl, true); break;
+                            case "back": NavigateHistory(-1); break;
+                            case "forward": NavigateHistory(+1); break;
                             default:
                                 if (what != null && what.StartsWith("goto ", StringComparison.OrdinalIgnoreCase))
                                 {

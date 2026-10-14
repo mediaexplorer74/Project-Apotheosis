@@ -88,6 +88,7 @@ $Sources = @(
     'PortNetworkStorageSession',
     'PortStorage',
     'PortWebSocket',
+    'PortBackForward',
     'webcore-driver-stubs',
     'stubs-crypto',
     'stubs-pasteboard',

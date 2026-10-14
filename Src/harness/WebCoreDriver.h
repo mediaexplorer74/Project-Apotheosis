@@ -130,6 +130,19 @@ int WebCoreFocusedEditable();                          // 1 if an editable eleme
 int WebCoreTypeText(const char* utf8, uint8_t* outBuf); // insert UTF-8 into focused editable; 0 on success
 int WebCoreKeyAction(int action, uint8_t* outBuf);     // 0=Backspace, 1=Enter (may submit form); 0 on success
 
+// ---- back/forward history of the live session ----
+// One step through the ENGINE's history list, then repaint the destination. This is deliberately not
+// the host's own URL stack: it follows link clicks, in-page navigations and redirects the host never
+// initiated, which is exactly what "back returns to the previous page" means. BackForwardCache is
+// disabled process-wide, so an entry reloads rather than restoring a snapshot.
+// Returns 0 on success; kErrNoHistory (-18) when there is nothing that way, in which case the
+// current page is left painted and untouched; kErrNoSession (-12); kErrBusy (-13).
+int WebCoreGoBack(uint8_t* outBuf);
+int WebCoreGoForward(uint8_t* outBuf);
+// 1 if a step that way is available, else 0. Reads only -- safe between interactions, does not repaint.
+int WebCoreCanGoBack();
+int WebCoreCanGoForward();
+
 // User agent switch: mobile=1 mobile iPhone UA (default), 0 desktop Edge UA. Requires reload.
 void WebCoreSetUserAgentMobile(int mobile);
 // Custom UA override (non-empty wins over mobile/desktop; empty string clears → reverts). Requires reload.

@@ -87,7 +87,9 @@ extern "C" __declspec(dllimport) void __stdcall OutputDebugStringA(const char*);
 #include <wtf/text/WTFString.h>      // WTF::String, _s literal
 #include <wtf/text/CString.h>        // String::utf8() for render diagnostics
 #include <wtf/text/MakeString.h>     // makeString() for building WTF::String values (IME text path)
-#include <wtf/URL.h>                 // WTF::URL
+#include <wtf/URL.h>                 // WTF::URL -- WebCore spells it plain `URL`: the enclosing
+                                     // `using namespace WebCore` (line ~259) is what makes it visible,
+                                     // and the QUALIFIED name WebCore::URL does not exist in this tree
 
 // ---- JavaScriptCore ----
 // E:\Apotheosis\build-clang-webcore\JavaScriptCore\PrivateHeaders\JavaScriptCore\...
@@ -115,6 +117,16 @@ extern "C" __declspec(dllimport) void __stdcall OutputDebugStringA(const char*);
 #include <WebCore/WebCoreJITOperations.h>// WebCore::populateJITOperations (no-op w/ C_LOOP)
 #include <WebCore/EmptyClients.h>        // pageConfigurationWithEmptyClients
 #include <WebCore/BackForwardCache.h>    // Apotheosis: disable back-forward cache (OOM prevention)
+#include <WebCore/BackForwardController.h> // Apotheosis: WebCoreGoBack -- Page::backForward() is inline
+                                           // and returns the controller by reference, so UniqueRef::get()
+                                           // needs the complete type; Page.h does not pull this header
+#include <WebCore/HistoryController.h>   // Apotheosis: apoRecordSessionNavigation -- the port has to
+                                           // write down its own loads by hand; see the helper below
+#include <WebCore/HistoryItem.h>         // the complete type: createItemTree returns RefPtr<HistoryItem>
+#include <WebCore/DocumentPage.h>        // Apotheosis: inline Frame::page() -- it is declared in Frame.h
+                                           // but DEFINED here, so without this the link asks for an
+                                           // out-of-line Frame::page() that WebCoreFull does not carry
+#include <WebCore/BackForwardItemIdentifier.h> // BackForwardItemIdentifier::generate()
 #include <WebCore/MemoryCache.h>         // Apotheosis: resource cache caps
 #include <WebCore/MemoryRelease.h>       // Apotheosis: WebCore::releaseMemory on pressure
 #include <WebCore/PerformanceLogging.h> // Apotheosis: memoryUsageStatistics -- the JSC-heap reading
@@ -135,6 +147,7 @@ extern "C" __declspec(dllimport) void __stdcall OutputDebugStringA(const char*);
 #include <WebCore/StorageNamespaceProvider.h>
 #include "PortStorage.h"                 // WebCorePort::createPortStorageNamespaceProvider
 #include "PortWebSocket.h"               // WebCorePort::createPortSocketProvider -- see PortWebSocket.cpp
+#include "PortBackForward.h"             // WebCorePort::createPortBackForwardClient -- see PortBackForward.cpp
 #include <WebCore/Page.h>                // WebCore::Page
 #include <WebCore/NotificationClient.h>  // WebCore::NotificationClient / provideNotification -- see installPortNotificationClient
 #include <WebCore/Settings.h>            // Page::settings()
@@ -270,6 +283,9 @@ enum : int {
     kErrCurlDownload = -16,   // curl_easy_perform failed
     kErrSeh          = -17,   // Apotheosis: native fault caught by the guard (WebCoreSetSehGuard);
                              // WebCoreGetSehInfo carries the code and faulting module+offset
+    kErrNoHistory    = -18,   // WebCoreGoBack/WebCoreGoForward: the back/forward list has no entry
+                             // that way. NOT an error in the session -- the page is untouched and
+                             // stays painted; the caller simply cannot go back from here.
 };
 
 // Run the WebCore one-time process initialization exactly once.
@@ -3474,6 +3490,89 @@ void installPortNotificationClient(WebCore::Page& page)
 } // namespace WebCorePort
 
 extern "C" void WebCorePortRecordNetError(const char* phase, const char* type, int code, const char* domain, const char* desc, const char* url);
+
+// ---- Apotheosis: write the port's own loads into the engine's back/forward list ----
+//
+// Where a normal commit becomes history. FrameLoader::transitionToCommitted() ends with
+//
+//     case FrameLoadType::Standard:
+//         history().updateForStandardLoad();          (FrameLoader.cpp:2702)
+//
+// and that reaches HistoryController::updateBackForwardListClippedAtTarget(true) ->
+// FrameLoaderClient::createHistoryItemTree -> BackForwardController::addItem. The port never
+// takes that path for its own loads: it fetches with curl and feeds the bytes straight into the
+// active DocumentWriter, so transitionToCommitted() never runs and nothing is ever written down.
+// That is why the engine reported no history at all after a document had been painted and a link
+// followed -- measured on the x64 bench 2026-10-10.
+//
+// The tap path is the control case, and it is what showed the missing half. A tap synthesises real
+// mouse events, so the engine follows the anchor itself through FrameLoader::load() and DOES record
+// that one: the trace held `PBF: createHistoryItemTree clip=1 item=https://www.iana.org/help/example-domains`
+// followed by `PBF: addItem ... n=1 cursor=0` -- n=1, i.e. the list was empty before it. example.com
+// was never in it. This helper closes that gap for the port's own navigations.
+//
+// Two halves, and both are needed:
+//
+//  1. The item's URL comes from DocumentLoader::urlForHistory(), which returns
+//     m_originalRequestCopy.url(). The loader this port feeds was made by FrameLoader::init() from
+//     `ResourceRequest(URL({ }, emptyString()))` (FrameLoader.cpp:431) -- an EMPTY url -- so
+//     urlForHistory() is empty, and upstream's own guard
+//     `if (...->urlForHistory().isEmpty()) return;` (HistoryController.cpp:1006) would drop the item
+//     even if the rest ran. The URL is therefore written down first.
+//     `replaceRequestURLForSameDocumentNavigation` is the setter the engine uses for a same-document
+//     navigation and it touches exactly m_originalRequestCopy and m_request, which is what url()
+//     (and so urlForHistory()) reads. It is deliberately used only when the loader has no URL yet: a
+//     client redirect during the parse installs a NEW loader that already carries its own target URL,
+//     and that document is the one being committed.
+//
+//  2. updateBackForwardListClippedAtTarget() itself is not exported (HistoryController.h:127), but its
+//     three lines are reproducible from what is: createItemTree(LocalFrame&, ...) is WEBCORE_EXPORTed
+//     (HistoryController.h:104), and it also sets HistoryController::m_currentItem (via createItem),
+//     which is the engine's own notion of where in the list we are. The item then goes to the
+//     BackForwardController's client -- the port's recording PortBackForwardClient, installed in place
+//     of EmptyBackForwardClient. The rest of updateForStandardLoad() -- global history and visited
+//     links -- is deliberately not reproduced: this port has no global history database and no
+//     visited-link store, and neither is needed for "back returns to the previous page".
+static void apoRecordSessionNavigation(WebCore::LocalFrame& frame, const URL& url)
+{
+    using namespace WebCore;
+    using namespace WebCorePort;
+
+    Ref loader = frame.loader();
+    RefPtr documentLoader = loader->documentLoader();
+    if (!documentLoader)
+        return;
+    if (documentLoader->isClientRedirect()) {
+        // Upstream replaces the current item in this case instead of adding one (HistoryController::
+        // updateForStandardLoad, the else branch). The port has no item to replace yet at this point,
+        // so doing nothing is the honest answer rather than growing the list by one.
+        apoBackForwardTrace("PBF: commit url=%s skipped -- the loader is a client redirect", url.string().utf8().data());
+        return;
+    }
+
+    if (documentLoader->url().isEmpty())
+        documentLoader->replaceRequestURLForSameDocumentNavigation(url);
+
+    URL recorded = documentLoader->url();
+    if (recorded.isEmpty()) {
+        apoBackForwardTrace("PBF: commit url=%s skipped -- the loader still has no URL", url.string().utf8().data());
+        return;
+    }
+
+    RefPtr page = frame.page();
+    if (!page)
+        return;
+
+    RefPtr item = loader->history().createItemTree(frame, /*clipAtTarget*/ true, BackForwardItemIdentifier::generate());
+    if (!item) {
+        apoBackForwardTrace("PBF: commit url=%s createItemTree returned null", recorded.string().utf8().data());
+        return;
+    }
+    page->backForward().client().addItem(item.releaseNonNull());
+    apoBackForwardTrace("PBF: commit url=%s back=%u fwd=%u", recorded.string().utf8().data(),
+                        page->backForward().backCount(), page->backForward().forwardCount());
+}
+
 // Apotheosis: GS check OFF to avoid 0xc0000409 stack canary crash during frame->init()
 #pragma strict_gs_check(push, off)
 __declspec(safebuffers)
@@ -3519,6 +3618,15 @@ static int buildSession(const char* url, int w, int h, uint8_t* outRGBA)
     // browser. Our provider's channel reports ConnectStatus::KO, which connect() turns into an ordinary
     // asynchronous failure. See Src/port/PortWebSocket.cpp for the run that named the assert.
     pageConfiguration.socketProvider = WebCorePort::createPortSocketProvider();
+
+    // Apotheosis 2026-10-10: and the same trap a third time, for history. EmptyBackForwardClient's
+    // addItem() is `{ }` and backListCount() returns 0, so the engine's back/forward list was
+    // permanently empty and a Back could never move. Measured on the bench: example.com loaded, a
+    // link was followed (frame hash 0xd8431c54 -> 0x52cad7f7, URL www.iana.org), and
+    // canGoBackOrForward(-1) still answered false. NOTE this line is not on its own the fix -- the
+    // list is only ever populated once LoadingFrameLoaderClient::createHistoryItemTree stops
+    // returning nullptr and shouldGoToHistoryItem stops vetoing. See Src/port/PortBackForward.cpp.
+    pageConfiguration.backForwardClient = WebCorePort::createPortBackForwardClient();
 
     // GPU path: a GPU session (GL context + TextureMapper) needs a ChromeClient that can
     // hand back a root GraphicsLayer -- PortChromeClient::attachRootGraphicsLayer -- plus
@@ -4033,6 +4141,13 @@ static int buildSession(const char* url, int w, int h, uint8_t* outRGBA)
     // next happens to cycle the loop -- possibly after the next teardown.
     WebCorePort::portLoaderMark("pumpLoop done");
 
+    // Apotheosis 2026-10-14: the port's own load becomes a history item here, because nothing else
+    // will do it -- this path never goes through FrameLoader::transitionToCommitted(). See the
+    // comment on apoRecordSessionNavigation for why the URL has to be written down first and which
+    // upstream call this reproduces. Placed after the pump, so a client redirect issued by the
+    // document's own inline JS (which installs its own loader) is what gets recorded.
+    apoRecordSessionNavigation(*localMainFrame, parsedURL);
+
     // WebKit can replace the LocalFrameView during the parse, so re-read it here
     view = localMainFrame->view();
     if (!view)
@@ -4485,6 +4600,8 @@ static int WebCoreRenderHtmlImpl(const char* utf8Html, int w, int h, uint8_t* ou
     pageConfiguration.storageNamespaceProvider = WebCorePort::createPortStorageNamespaceProvider();
     // Apotheosis 0.2.3.29: real SocketProvider, as in buildSession -- see Src/port/PortWebSocket.cpp.
     pageConfiguration.socketProvider = WebCorePort::createPortSocketProvider();
+    // Apotheosis 2026-10-10: real back/forward history, as in buildSession -- see PortBackForward.cpp.
+    pageConfiguration.backForwardClient = WebCorePort::createPortBackForwardClient();
 
     // Replace the EmptyLocalFrameLoaderClient factory with ours so that
     // Frame::init() can proceed through its policy checks.
@@ -4691,6 +4808,10 @@ int WebCoreLoadUrl(const char* url, int w, int h, uint8_t* outRGBA)
     pageConfiguration.storageNamespaceProvider = WebCorePort::createPortStorageNamespaceProvider();
     // Apotheosis 0.2.3.29: real SocketProvider, as in buildSession -- see Src/port/PortWebSocket.cpp.
     pageConfiguration.socketProvider = WebCorePort::createPortSocketProvider();
+    // Apotheosis 2026-10-10: real back/forward history, as in buildSession. Inert on this path --
+    // WebCoreLoadUrl builds a Page for one URL and tears it down -- but installed so that no Page in
+    // the port is ever created with the silent no-op list. See Src/port/PortBackForward.cpp.
+    pageConfiguration.backForwardClient = WebCorePort::createPortBackForwardClient();
 
     // Shared terminal-state signal. The client completion handler, settle timer and
     // watchdog all run on this (main) thread, so no locking is needed.
@@ -6526,6 +6647,58 @@ static int WebCoreKeyActionImpl(int action, uint8_t* outRGBA)
     return finishInteractionPaint(outRGBA);
 }
 
+// Apotheosis 2026-10-10 (MVP requirement 5): walk the engine's own back/forward list, then repaint.
+//
+// The list is the engine's, not the port's, and that is the whole point. The app kept its own
+// `_navStack` and moved through it by re-navigating to a remembered URL, so anything the engine did
+// on its own -- following an <a href>, a page's own in-page navigation, a redirect -- never entered
+// that stack, and Back after a link click went to the wrong page or nowhere. `WebCoreGetUrl` had
+// carried the comment "for the address bar and forward/back history stack" since the beginning while
+// nothing could address that stack; this is the missing half.
+//
+// BackForwardCache is disabled process-wide (setMaxSize(0), OOM prevention), so an entry is a real
+// reload rather than a snapshot restore: slower, and the only mode the port runs in.
+// `goBackOrForward` is used instead of the separate goBack()/goForward() because it is one
+// WEBCORE_EXPORTed entry point covering both directions, paired with one canGoBackOrForward probe.
+static int WebCoreHistoryMoveImpl(int delta, uint8_t* outRGBA)
+{
+    using namespace WebCore;
+    if (!outRGBA || delta == 0)
+        return kErrBadArgs;
+    if (!g_session || !g_session->page || !g_session->mainFrame)
+        return kErrNoSession;
+    if (g_inPump)
+        return kErrBusy;
+    // Probed before the pump is armed, so "nothing to go back to" costs nothing and leaves the
+    // current page painted and untouched.
+    if (!g_session->page->backForward().canGoBackOrForward(delta))
+        return kErrNoHistory;
+
+    g_inPump = true;
+    PumpGuard guard;
+    RefPtr<LocalFrame> lf = g_session->mainFrame;
+
+    // Same setup as WebCoreKeyActionImpl: a history move IS a navigation, so the pump must wait for
+    // the restored document instead of settling against the page it is replacing.
+    g_session->load = DriverLoadState{};
+    if (g_session->client) {
+        g_session->client->resetLoadState();
+        DriverLoadState* lp = &g_session->load;
+        g_session->client->setLoadCompletionHandler([lp](bool failed) {
+            if (lp->mainDone) return;
+            lp->mainDone = true;
+            lp->failed = failed;
+        });
+    }
+
+    g_session->page->backForward().goBackOrForward(delta);
+
+    // The LocalFrame object survives a same-frame traversal, so `lf` stays valid; finishInteractionPaint
+    // re-reads the main frame from the Page, which is where a replacement would show up.
+    pumpLoop(*lf, &g_session->load.mainDone, true, 160, 30.0, g_session->page.get());
+    return finishInteractionPaint(outRGBA);
+}
+
 // Repaint the session as it stands (no input, no pump); 0 on success
 int WebCoreSessionPaint(uint8_t* outRGBA)
 {
@@ -6825,6 +6998,36 @@ int WebCoreTypeText(const char* utf8, uint8_t* outRGBA)
 int WebCoreKeyAction(int action, uint8_t* outRGBA)
 {
     APO_SEH_RETURN_INT(WebCoreKeyActionImpl(action, outRGBA));
+}
+
+// Apotheosis 2026-10-10 (MVP requirement 5): one step back / forward in the engine's history, with
+// the paint of the destination. kErrNoHistory when there is nothing that way; the current page is
+// left painted and untouched in that case, so a caller can treat -18 as "back is not available"
+// without repainting.
+int WebCoreGoBack(uint8_t* outRGBA)
+{
+    APO_SEH_RETURN_INT(WebCoreHistoryMoveImpl(-1, outRGBA));
+}
+
+int WebCoreGoForward(uint8_t* outRGBA)
+{
+    APO_SEH_RETURN_INT(WebCoreHistoryMoveImpl(+1, outRGBA));
+}
+
+// 1 if a step that way is available, 0 otherwise. A cheap probe for the affordance -- it does not
+// touch the page, so it is safe to call between interactions and while the address bar updates.
+int WebCoreCanGoBack()
+{
+    if (!g_session || !g_session->page)
+        return 0;
+    return g_session->page->backForward().canGoBackOrForward(-1) ? 1 : 0;
+}
+
+int WebCoreCanGoForward()
+{
+    if (!g_session || !g_session->page)
+        return 0;
+    return g_session->page->backForward().canGoBackOrForward(+1) ? 1 : 0;
 }
 
 int WebCoreLiveTick(uint8_t* outRGBA)

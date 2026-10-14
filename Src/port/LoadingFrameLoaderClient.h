@@ -32,6 +32,7 @@
 #include <WebCore/LocalFrameLoaderClient.h>
 #include <wtf/Function.h>
 #include <wtf/Platform.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCorePort {
 
@@ -39,6 +40,7 @@ class LoadingFrameLoaderClient : public WebCore::LocalFrameLoaderClient {
 public:
     explicit LoadingFrameLoaderClient(WebCore::FrameLoader& frameLoader)
         : WebCore::LocalFrameLoaderClient(frameLoader)
+        , m_portLoader(frameLoader)
     { }
 
     // ---- driver-pollable load state -------------------------------------
@@ -224,6 +226,12 @@ private:
     bool m_loadFinished { false };
     bool m_loadFailed { false };
     WTF::Function<void(bool failed)> m_loadCompletionHandler;
+
+    // The frame this client belongs to. LocalFrameLoaderClient keeps its own FrameLoader in a
+    // PRIVATE member, so createHistoryItemTree -- which needs the frame, not just the loader --
+    // cannot reach it through the base class and has to hold its own reference. WeakRef because the
+    // loader owns this client: a strong reference here would be a cycle.
+    WTF::WeakRef<WebCore::FrameLoader> m_portLoader;
 };
 
 } // namespace WebCorePort

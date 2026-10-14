@@ -146,6 +146,25 @@ namespace Apotheosis
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
         public static extern int WebCoreFocusedEditable();
 
+        // ── Back/forward history of the live session ───────────────────────
+        // A step through the ENGINE's back/forward list -- the one that link clicks, in-page
+        // navigations and redirects enter. The app's own _navStack only ever holds URLs the app
+        // itself navigated to, so it cannot answer "back to where the user came from".
+        // 0 on success; -18 (kErrNoHistory) when there is nothing that way (the current page is
+        // left painted and untouched); -12 (kErrNoSession); -13 (kErrBusy).
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int WebCoreGoBack(IntPtr outBuf);
+
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int WebCoreGoForward(IntPtr outBuf);
+
+        // 1 if a step that way is available, else 0. Reads only; does not touch the frame buffer.
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int WebCoreCanGoBack();
+
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int WebCoreCanGoForward();
+
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
         public static extern int WebCoreSetPageScale(float scale, int focalX, int focalY, IntPtr outBuf);
 

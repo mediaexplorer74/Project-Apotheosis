@@ -285,6 +285,13 @@ namespace Apotheosis
         // --- Navigation state ---
         List<string> _navStack = new List<string>();
         int _navIndex = -1;
+        // The ENGINE's own back/forward answer, cached from the engine thread so the UI thread can
+        // enable the toolbar without a P/Invoke (every engine call must run on the engine thread).
+        // Plain ints on purpose: written where the engine calls happen, read in UpdateNavButtons.
+        // They are why Back can be enabled for a link click the host never saw: `_navIndex > 0`
+        // alone asks only whether the APP navigated, which is not the same question.
+        int _engineBack;
+        int _engineFwd;
         bool _loading;
         bool _interacting;
         long _opSeq;
@@ -879,8 +886,27 @@ namespace Apotheosis
         // ===== Navigation =====
         void UpdateNavButtons()
         {
-            if (BackBtn != null) BackBtn.IsEnabled = (_navIndex > 0);
-            if (FwdBtn != null) FwdBtn.IsEnabled = (_navIndex >= 0 && _navIndex < _navStack.Count - 1);
+            // Back is available either because the ENGINE has an entry behind the current one (which
+            // covers link clicks, in-page navigations and redirects -- none of which the host drives)
+            // or because the host's own stack has somewhere to go back to. Forward is the same in
+            // the other direction. Before the engine pair existed only the host stack was consulted,
+            // so Back stayed greyed out on a session that had followed a link, and "back returns to
+            // the previous page" could not be satisfied at all.
+            if (BackBtn != null) BackBtn.IsEnabled = (_engineBack != 0) || (_navIndex > 0);
+            if (FwdBtn != null) FwdBtn.IsEnabled = (_engineFwd != 0) || (_navIndex >= 0 && _navIndex < _navStack.Count - 1);
+        }
+
+        // Ask the engine where its back/forward list stands, and cache both answers. MUST run on the
+        // engine thread: every WebCore* call is serialized there. `_engineBack`/`_engineFwd` are
+        // plain ints precisely so that the UI thread may then read them without touching the engine.
+        void RefreshEngineHistory()
+        {
+            try
+            {
+                _engineBack = WebCoreDriver.WebCoreCanGoBack();
+                _engineFwd = WebCoreDriver.WebCoreCanGoForward();
+            }
+            catch { _engineBack = 0; _engineFwd = 0; }
         }
 
         void SetLoading(bool loading)
@@ -1026,6 +1052,11 @@ namespace Apotheosis
                     }
                 }
                 catch { rc = -1000; loadOk = false; title = Str.Get("RenderError"); }
+
+                // Both branches above may have replaced the session (a load creates a fresh Page, an
+                // about:home render closes it), so the cached back/forward answer is stale by
+                // construction. Re-read it here rather than in either branch: one place, both paths.
+                RefreshEngineHistory();
 
                 var links = ExtractLinks();
                 string titleCopy = title;
@@ -1326,6 +1357,10 @@ namespace Apotheosis
                 bool changed = (hashAfter != hashBefore);
                 int editable = 0;
                 try { if (rc == 0) editable = WebCoreDriver.WebCoreFocusedEditable(); } catch { }
+                // A tap is the main way the engine's history grows -- a link click, an in-page route
+                // change, a redirect -- and none of it goes through the host. Ask the engine here so
+                // the toolbar shows Back as available for a trail the host never saw.
+                RefreshEngineHistory();
 
                 string navUrl = "", title = "";
                 var links = new List<PageLink>();
@@ -1349,6 +1384,10 @@ namespace Apotheosis
                         if (_opSeq != mySeq) return;
                         _interacting = false;
                         if (_loadWatchdog != null) _loadWatchdog.Stop();
+                        // The engine answered above; make the toolbar show it. Needed as its own
+                        // call because a tap that only repaints (navUrl empty) never reaches
+                        // ApplyEngineFrame's URL branch, where the other UpdateNavButtons lives.
+                        UpdateNavButtons();
                         if (rcCopy == 0)
                         {
                             if (string.IsNullOrEmpty(navW) && !changedCopy && !string.IsNullOrEmpty(linkHit))
@@ -1386,7 +1425,45 @@ namespace Apotheosis
             });
         }
 
-        void ApplyEngineFrame(byte[] rgba, string title, string navUrl, List<PageLink> links)
+        // `historyDelta` says the engine's own back/forward list produced this frame, and it changes
+        // only how the host stack is kept in step. Zero means a normal navigation (a tap, an
+        // address-bar entry) started something NEW, so anything ahead of the cursor is discarded and
+        // the URL is appended. Non-zero -- -1 Back, +1 Forward -- went to a page that already
+        // existed, so the forward entries must SURVIVE: the cursor is moved to wherever that URL
+        // already sits in the stack, and an append-and-truncate here would delete the very entries
+        // Forward exists to reach -- which is how a Back would silently disarm Forward after a
+        // single use.
+        //
+        // The search runs FROM THE OLD CURSOR IN THE DIRECTION OF TRAVEL, not from the front of the
+        // stack, and that detail is the whole reason the parameter is a delta rather than a flag.
+        // A stack can hold the same URL twice ([A, B, A], which is what a Back after a Back-to-A-of
+        // two visits produces) and `IndexOf` would answer with the oldest A on the way forward as
+        // well as on the way back. Measured on the x64 bench 2026-10-14: one Back out of a four-entry
+        // stack with a repeated URL moved the cursor from 3 to 1 and jumped over the entry it had
+        // actually landed on. Scanning outward from the cursor in the direction of travel names the
+        // entry the engine really selected.
+        // The entry a Back (delta < 0) or a Forward (delta > 0) just landed on, searched outward from
+        // where the cursor was. See the note on ApplyEngineFrame for why the direction has to be part
+        // of the question: a URL can appear more than once in the stack, and only the direction says
+        // which of the copies the engine selected. Returns -1 when the URL is not in that direction,
+        // which leaves the caller's append branch to add it -- the honest answer for a move whose
+        // target the host never recorded.
+        int NearestInDirection(int delta, string url)
+        {
+            if (delta < 0)
+            {
+                for (int i = _navIndex - 1; i >= 0; i--)
+                    if (_navStack[i] == url) return i;
+            }
+            else
+            {
+                for (int i = _navIndex + 1; i < _navStack.Count; i++)
+                    if (_navStack[i] == url) return i;
+            }
+            return -1;
+        }
+
+        void ApplyEngineFrame(byte[] rgba, string title, string navUrl, List<PageLink> links, int historyDelta = 0)
         {
             if (!_gpuPresent)
                 BlitToBitmap(rgba);
@@ -1404,15 +1481,25 @@ namespace Apotheosis
                 SetUrlBoxText(navUrl);
                 UpdateLockIcon();
                 UpdateUrlActionGlyph();
-                bool dup = (_navIndex >= 0 && _navIndex < _navStack.Count && _navStack[_navIndex] == navUrl);
-                if (!dup)
+                int at = historyDelta == 0 ? -1 : NearestInDirection(historyDelta, navUrl);
+                if (at >= 0)
                 {
-                    if (_navIndex >= 0 && _navIndex < _navStack.Count - 1)
-                        _navStack.RemoveRange(_navIndex + 1, _navStack.Count - _navIndex - 1);
-                    _navStack.Add(navUrl);
-                    _navIndex = _navStack.Count - 1;
-                    UpdateNavButtons();
+                    // Already in the stack: move the cursor, keep everything else (the forward tail
+                    // included). No truncation, no append.
+                    _navIndex = at;
                 }
+                else
+                {
+                    bool dup = (_navIndex >= 0 && _navIndex < _navStack.Count && _navStack[_navIndex] == navUrl);
+                    if (!dup)
+                    {
+                        if (_navIndex >= 0 && _navIndex < _navStack.Count - 1)
+                            _navStack.RemoveRange(_navIndex + 1, _navStack.Count - _navIndex - 1);
+                        _navStack.Add(navUrl);
+                        _navIndex = _navStack.Count - 1;
+                    }
+                }
+                UpdateNavButtons();
                 AddHistory(_currentUrl, _currentTitle);
             }
         }
@@ -1878,23 +1965,135 @@ namespace Apotheosis
                 if (FindBar.Visibility == Visibility.Visible) { OnFindClose(this, null); e.Handled = true; return; }
                 if (SuggestPanel.Visibility == Visibility.Visible) { SuggestPanel.Visibility = Visibility.Collapsed; e.Handled = true; return; }
                 if (ActionMenu.Visibility == Visibility.Visible) { HideActionMenu(); e.Handled = true; return; }
-                if (!_loading && _navIndex > 0) { OnBack(this, null); e.Handled = true; }
+                // "Is there anywhere to go back to" is asked of the engine first, because the host
+                // stack alone answers a narrower question: it knows only the URLs the app itself
+                // navigated to, so a session that reached its page by following a link looked like
+                // the root of history and the key fell through to the shell, closing the app.
+                if (!_loading && (_engineBack != 0 || _navIndex > 0)) { OnBack(this, null); e.Handled = true; }
             }
             catch { }
         }
 
-        void OnBack(object s, RoutedEventArgs e)
+        void OnBack(object s, RoutedEventArgs e) => NavigateHistory(-1);
+
+        void OnForward(object s, RoutedEventArgs e) => NavigateHistory(+1);
+
+        // Back/forward through the host's own stack. This is the fallback, not the main path: it is
+        // reached when the ENGINE has nothing that way (a page rendered with WebCoreRenderHtml has
+        // no history at all) or when there is no live session to ask. It navigates by URL, so it
+        // does not preserve a forward tail -- NavigateTo(url, false) never pushes.
+        void NavigateHostHistory(int delta)
         {
-            if (_loading || _navIndex <= 0) return;
-            --_navIndex;
+            if (_loading) return;
+            int want = _navIndex + delta;
+            if (want < 0 || want >= _navStack.Count) return;   // nothing that way; stay put
+            _navIndex = want;
             NavigateTo(_navStack[_navIndex], false);
         }
 
-        void OnForward(object s, RoutedEventArgs e)
+        // One step of the ENGINE's own back/forward list, then blit the destination. This is what
+        // requirement 5 ("back returns to the previous page") actually means: the list holds link
+        // clicks, in-page navigations and redirects, none of which the host ever initiates, so a
+        // Back driven from _navStack alone cannot follow the trail the user actually walked. The
+        // host stack is consulted only when the engine reports nothing that way.
+        //
+        // Same shape as the tap path (see OnTapAt): _interacting + SetLoading(true) claim the engine
+        // exclusively, the P/Invoke runs on the engine thread, and only the finished frame reaches
+        // the UI thread. WebCoreGoBack RELOADS the entry rather than restoring a snapshot (the
+        // back/forward cache is disabled process-wide), so this may take as long as a navigation.
+        void NavigateHistory(int delta)
         {
-            if (_loading || _navIndex >= _navStack.Count - 1) return;
-            ++_navIndex;
-            NavigateTo(_navStack[_navIndex], false);
+            if (_loading || _interacting) return;
+            if (!_sessionActive)
+            {
+                // No live session: no engine list exists to consult, so the host stack is all there is.
+                NavigateHostHistory(delta);
+                return;
+            }
+
+            _interacting = true;
+            SetLoading(true);
+            if (_loadWatchdog != null) _loadWatchdog.Start();
+            if (TitleText != null) TitleText.Text = Str.Get("Loading") + "…";
+
+            string prevUrl = _currentUrl;
+            CoreDispatcher disp = Dispatcher;
+            long mySeq = ++_opSeq;
+
+            WebEngine.Instance.Post(() =>
+            {
+                byte[] rgba = new byte[kW * kH * 4];
+                int rc = -99;
+                bool moved = false;
+                GCHandle h = GCHandle.Alloc(rgba, GCHandleType.Pinned);
+                try
+                {
+                    int can = (delta < 0) ? WebCoreDriver.WebCoreCanGoBack() : WebCoreDriver.WebCoreCanGoForward();
+                    if (can != 0)
+                    {
+                        rc = (delta < 0) ? WebCoreDriver.WebCoreGoBack(h.AddrOfPinnedObject())
+                                         : WebCoreDriver.WebCoreGoForward(h.AddrOfPinnedObject());
+                        moved = (rc == 0);
+                    }
+                    RefreshEngineHistory();
+                }
+                finally { h.Free(); }
+                int canBack = _engineBack, canFwd = _engineFwd;
+
+                string navUrl = "", title = "";
+                var links = new List<PageLink>();
+                if (moved)
+                {
+                    byte[] tBuf = new byte[512];
+                    WebCoreDriver.WebCoreGetTitle(tBuf, tBuf.Length);
+                    title = Encoding.UTF8.GetString(tBuf).TrimEnd('\0');
+                    byte[] uBuf = new byte[1024];
+                    WebCoreDriver.WebCoreGetUrl(uBuf, uBuf.Length);
+                    string newUrl = Encoding.UTF8.GetString(uBuf).TrimEnd('\0');
+                    if (!string.IsNullOrEmpty(newUrl) && newUrl != prevUrl) navUrl = newUrl;
+                    links = ExtractLinks();
+                }
+                // One line per move, always: the engine's answer (rc), whether a frame actually
+                // arrived, where the list now stands, and the URL the engine reports. A `back` that
+                // did nothing and a `back` that moved to the same URL look identical on screen.
+                AutoLog("history " + (delta < 0 ? "back" : "fwd") + " rc=" + rc
+                        + " moved=" + (moved ? 1 : 0) + " can=" + canBack + "/" + canFwd
+                        + " url=" + navUrl);
+
+                int rcCopy = rc;
+                bool movedCopy = moved;
+                string titleW = title;
+                string navW = string.IsNullOrEmpty(navUrl) ? null : navUrl;
+                try
+                {
+                    disp.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        if (_opSeq != mySeq) return;
+                        _interacting = false;
+                        if (_loadWatchdog != null) _loadWatchdog.Stop();
+                        if (movedCopy)
+                        {
+                            ApplyEngineFrame(rgba, titleW, navW, links, delta);
+                            CloseKeyboard();
+                            UpdateNavButtons();
+                            SetLoading(false);
+                        }
+                        else
+                        {
+                            SetLoading(false);
+                            if (rcCopy == -12 || rcCopy == -16)
+                            {
+                                // The session went away under us; the engine half of history is gone
+                                // with it. Say so -- otherwise Back silently turns into a URL load.
+                                _sessionActive = false;
+                                RefreshFab();
+                            }
+                            NavigateHostHistory(delta);
+                        }
+                    });
+                }
+                catch { }
+            });
         }
 
         void OnHome(object s, RoutedEventArgs e) => NavigateTo(_homeUrl, true);

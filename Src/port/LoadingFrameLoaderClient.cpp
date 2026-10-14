@@ -19,9 +19,11 @@
 #include <WebCore/FrameLoaderTypes.h>             // PolicyAction enum
 #include <WebCore/FrameNetworkingContext.h>
 #include <WebCore/HistoryItem.h>
+#include <WebCore/HistoryController.h>            // createItemTree -- the real back/forward item builder
 #include <WebCore/LocalFrame.h>
 #include <WebCore/NetworkStorageSession.h>
 #include "PortNetworkStorageSession.h"   // cookie persistence: a real storageSession
+#include "PortBackForward.h"             // WebCorePort::apoBackForwardTrace -- diagnostic only
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -648,7 +650,12 @@ void LoadingFrameLoaderClient::updateGlobalHistoryRedirectLinks()
 
 ShouldGoToHistoryItem LoadingFrameLoaderClient::shouldGoToHistoryItem(HistoryItem&, IsSameDocumentNavigation, ProcessSwapDisposition) const
 {
-    return ShouldGoToHistoryItem::No;
+    // Yes, not No. This is a POLICY check -- "may we navigate to this history item" -- and the port
+    // has no policy to apply, so the answer is "yes, of course". Returning No, which is what this
+    // did (copied from EmptyFrameLoaderClient, where No means "there is no history feature at all"),
+    // made HistoryController::goToItem return at its first line and drop the traversal on the floor:
+    // the engine's own Back would have been a no-op even with a working list behind it.
+    return ShouldGoToHistoryItem::Yes;
 }
 
 bool LoadingFrameLoaderClient::supportsAsyncShouldGoToHistoryItem() const
@@ -722,9 +729,30 @@ void LoadingFrameLoaderClient::prefetchDNS(const String&)
 {
 }
 
-RefPtr<HistoryItem> LoadingFrameLoaderClient::createHistoryItemTree(bool, BackForwardItemIdentifier) const
+RefPtr<HistoryItem> LoadingFrameLoaderClient::createHistoryItemTree(bool clipAtTarget, BackForwardItemIdentifier itemID) const
 {
-    return nullptr;
+    // This is the ONLY producer of back/forward entries. HistoryController::updateBackForwardList
+    // ClippedAtTarget calls it on every committed navigation and bails out when it returns nullptr
+    // ("if (!item) return;" before page->backForward().addItem(...)), so returning nullptr -- which
+    // is what this did -- means nothing is ever recorded no matter which BackForwardClient is
+    // installed. Together with EmptyBackForwardClient and the shouldGoToHistoryItem veto above,
+    // these were three separate reasons the engine could not go back, and fixing any one alone
+    // would still have left Back dead.
+    //
+    // HistoryController::createItemTree is the real builder and is WEBCORE_EXPORTed, so the port
+    // does not reimplement the frame-tree walk: it hands over the frame and the identity and lets
+    // WebCore build the item.
+    RefPtr frameLoader = m_portLoader.ptr();
+    if (!frameLoader) {
+        WebCorePort::apoBackForwardTrace("PBF: createHistoryItemTree DECLINED -- no frame loader");
+        return nullptr;
+    }
+    LocalFrame& frame = frameLoader->frame();
+    RefPtr item = frame.loader().history().createItemTree(frame, clipAtTarget, itemID);
+    WebCorePort::apoBackForwardTrace("PBF: createHistoryItemTree clip=%d item=%s",
+                                     clipAtTarget ? 1 : 0,
+                                     item ? item->urlString().utf8().data() : "(null)");
+    return item;
 }
 
 #if USE(QUICK_LOOK)
