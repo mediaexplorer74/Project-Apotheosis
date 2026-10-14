@@ -48,7 +48,18 @@ $ErrorActionPreference = 'Continue'
 $pkg = Get-AppxPackage -Name '*Apotheosis*'
 if (-not $pkg) { Write-Host "Apotheosis is not installed" -ForegroundColor Red; exit 1 }
 $ls = Join-Path $env:LOCALAPPDATA ('Packages\' + $pkg.PackageFamilyName + '\LocalState')
-New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
+New-Item -ItemType Directory -Force -Path $OutDir -ErrorAction SilentlyContinue | Out-Null
+# Fail loudly if the output directory cannot be made.
+#
+# Measured 2026-10-14: a run was started with `-OutDir "$env:USERPROFILE\Documents\..."` from a bash
+# shell, which ate `$env` before PowerShell ever saw it. The literal path was invalid on Windows, so
+# `New-Item` failed -- and the run carried on for ten minutes without a single screenshot, reporting
+# `screen_nonwhite` as an empty column. Every other failure in this script is loud; this one was a
+# parameter mistake turning into a silently incomplete artifact, so it is checked up front.
+if (-not (Test-Path -LiteralPath $OutDir)) {
+  Write-Host "cannot create output directory '$OutDir' -- refusing to run without a place to write" -ForegroundColor Red
+  exit 1
+}
 
 Add-Type -AssemblyName System.Windows.Forms, System.Drawing
 

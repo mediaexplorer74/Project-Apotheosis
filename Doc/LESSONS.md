@@ -745,7 +745,26 @@ not the browser's.** Recorded here because each produced a confident, specific, 
   URL already displayed. That is browser semantics and the app is right to leave the host cursor
   alone. **When a third legitimate outcome appears, add it to the check by name** (`back_case`), and
   print the breakdown next to the pass count — a bare `13/13` would have hidden which of the two
-  successes each row was.
+  successes each row was. The outcome was first a prediction from the trace and then a measured row in
+  the desktop run: `back via engine rc=0 … => ok (the page pushed its own URL)`, with
+  `fwd_attempts=3`, because the first two Forwards did not move the host cursor — both rows carry the
+  same URL, so the loop re-tried. **A re-try count that is part of the record is what makes that
+  legible instead of looking like a flaky poll.**
+- **A run that is not repeated is not a measurement.** The first desktop-mode run was `10 / 13` with
+  two extra misses — `01-example-com` at `rc=-16` on a fresh process and `06-w3-org` painting
+  `0.00 %`. Neither recurred in the repeat minutes later, on the same build and the same mode: `01`
+  returned `rc=0`, `06` painted `36.85 %`. Only `11-dzen-ru` failed in all three runs, and that one is
+  a known item. **The check's own headline moved 10 → 12 with no code change in between**, which is the
+  point: the first number was about the process's position, not about the sites. Same discipline as
+  [[two-windows-are-not-two-arms]] — and the difference between a flake and a verdict is a second run,
+  not a longer look at the first.
+- **A harness that cannot write its output must refuse before it starts.** A run was launched with an
+  `OutDir` whose `$env:USERPROFILE` the calling shell had eaten, so the path was invalid on Windows and
+  `New-Item` failed — and the run proceeded for ten minutes, with every screenshot failing and
+  `screen_nonwhite` an empty column, because `$ErrorActionPreference = 'Continue'` applies here too.
+  The script now verifies `Test-Path` on the directory and exits with a message. **The rule is the one
+  the rest of this script already follows: no silent degradation of the artifact.** A parameter mistake
+  is the easiest way to produce one, because it looks like the run is working.
 - **A batch is one unit of work.** The pre-Back reading was a batch of its own, and that batch went
   unanswered in some rows (the app skips a command while another is running), leaving an empty
   `hist_before` for a site whose Back was in fact correct. Folding it into the same batch as the verb
@@ -756,4 +775,8 @@ not the browser's.** Recorded here because each produced a confident, specific, 
   nothing painted, while the same URL issued by hand against a process started the same way returned
   `rc=0`. The list now opens with a handshake that waits until the shell answers. **It deliberately
   does not retry a failing load — a run that retried its failures would be a run that hides them.**
+  The handshake reduces the cost, it does not remove it: in the first desktop run the handshake was in
+  place and the first site still came back `rc=-16`, while the repeat's first site loaded normally. So
+  the honest reading of a first-site failure is "the process was still paying", and only a second run
+  says whether it was that or the site.
 

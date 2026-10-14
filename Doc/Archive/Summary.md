@@ -2681,8 +2681,67 @@ load, then `addItem url=<nokia> n=2 cursor=1` from the document's own history pu
 same URL twice, so an engine Back moves between two identical entries and `WebCoreGetUrl` returns the
 URL already displayed; the app correctly leaves the host cursor alone. **Three outcomes, not two**, so
 the row now carries `back_case` (`prev` / `same-url` / `other`) and the summary prints the breakdown —
-a bare `13 / 13` would have hidden which of the two successes each row was. It did not occur in the
-final run; the check carries it by name.
+a bare `13 / 13` would have hidden which of the two successes each row was.
+
+### The desktop axis, and why the list is run twice
+
+The `-Mode desktop` axis had never been used. Run on the same build, in its own process, into
+`apotheosis-smoke-desktop`:
+
+```
+site             mode     rc eng_nonwhite screen_nonwhite swipe_ms verdict back_path    back_case back_ok back_restored
+01-example-com   desktop -16                        31,58          FAIL    host-skipped prev         True          True
+02-info-cern-ch  desktop   0 1,42                   19,82 911      PASS    host         prev         True          True
+03-ycombinator   desktop   0 83,16                  85,69 993      PASS    host         prev         True          True
+04-ya-ru         desktop   0 5,66                   41,97 911      PASS    host         prev         True          True
+05-wikipedia-m   desktop   0 63,85                  39,18 971      PASS    host         prev         True          True
+06-w3-org        desktop   0 0,00                   18,33 862      FAIL    host         prev         True          True
+07-rbc-ru        desktop   0 10,52                  22,51 825      PASS    host         prev         True          True
+08-lenta-ru      desktop   0 52,31                  43,05 843      PASS    host         prev         True          True
+09-habr-com      desktop   0 1,76                   30,31 736      PASS    host         prev         True          True
+10-reddit-com    desktop   0 59,40                  54,74 737      PASS    host         prev         True          True
+11-dzen-ru       desktop   0 0,00                   18,33 848      FAIL    host         prev         True          True
+12-bad-domain    desktop -16                        31,97          PASS    host-skipped prev         True          True
+13-nokia-archive desktop   0 99,83                  99,85 777      PASS    engine       same-url     True          True
+
+passed 10 / 13 in desktop mode;  back 13 / 13;  forward returned 13 / 13
+back breakdown: prev 12, same-url 1, other 0
+```
+
+Three things came out of it, and only the third survived a repeat:
+
+1. **`01-example-com` returned `rc=-16` on a fresh process** — the first-navigation cost the startup
+   handshake exists to absorb, and this time the handshake did not absorb it. The Back that followed
+   is the `host-skipped` path, and the row carries its own explanation.
+2. **`06-w3-org` painted nothing in desktop mode** (`0.00 %` against `36.85 %` in the mobile run
+   minutes earlier).
+3. **The `same-url` outcome is real and it was measured here** — site 13, `back via engine rc=0`,
+   `fwd_attempts=3`, `=> ok (the page pushed its own URL)`. Until this run the third outcome was a
+   prediction from one trace; now it has a row.
+
+So the list was run again, same build, same mode, a new process, into `apotheosis-smoke-desktop-2`:
+
+```
+passed 12 / 13 in desktop mode;  back 13 / 13;  forward returned 13 / 13
+back breakdown: prev 13, same-url 0, other 0
+```
+
+`01` returned `rc=0` and `06` painted `36.85 %`. **Both of the first run's anomalies were one-offs:
+the fresh-process first-navigation flake and the intermittent parser stall, not site verdicts.** The
+only miss common to all three runs is `11-dzen-ru` (`0.00 %` engine `nonwhite`), which is requirement
+4's known dzen blank-page item.
+
+**The stable finding is the one that did not move.** Across three runs, two modes and three processes,
+**Back 13/13 and forward returned 13/13, every row**, the cursor walking `idx=N/N` → `N-1/N` → `N/N`.
+Which carrier answered did move — `13-nokia-archive` was `host` in two runs and `engine` in the third
+— and every answer was correct, because the fallback is a fallback and not a failure.
+
+**A run that is not repeated is not a measurement.** Two of the three desktop findings dissolved on
+the second run, and the check's own `passed` column moved 10 → 12 without a single line of code
+changing in between. The harness also had to be taught one thing by this: started with an `-OutDir`
+whose `$env:` had been eaten by the calling shell, it ran ten minutes and produced no screenshots
+instead of refusing. It now verifies the directory exists before the first site and exits with a
+message if it does not.
 
 ### And one thing the list must do to itself
 
