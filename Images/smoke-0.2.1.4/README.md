@@ -31,7 +31,9 @@ app's `_currentUrl` both carry the URL that was *requested*. `Src/tools/run-smok
 
 **What this run does not settle.** The redirect is a property of the *first* visit to `dzen.ru`, but
 this run was one process with dzen as site 11 of 13 and it painted `31,59 %` — so the variable is not
-the process's lifetime, as a first reading of the cold/warm difference assumed. Whether it is a cookie
-that a reinstall clears, or something else dzen stores, is unmeasured. See
-[Doc/LESSONS.md](../../Doc/LESSONS.md), *`dzen.ru` is not a blank page, it is a redirect*, for the trace
-pair and the open question.
+the process's lifetime, as a first reading of the cold/warm difference assumed. What dzen stores on a
+visit, and what would clear it, is unmeasured. Note that it is **not** the installer:
+[Src/tools/install-apotheosis-x64.ps1](../../Src/tools/install-apotheosis-x64.ps1) updates in place and
+preserves `LocalState` — it contains no `Remove-AppxPackage` — so a fresh build does not reset anything
+dzen may have left behind. See [Doc/LESSONS.md](../../Doc/LESSONS.md), *`dzen.ru` is not a blank page, it
+is a redirect*, for the trace pair and the open question.

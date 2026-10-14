@@ -810,10 +810,12 @@ redirect.
   cold process". The checked-in 0.2.1.4 run contradicts that: it was **one process with dzen as site 11
   of 13** — by that account the process was warm and it should not have redirected, yet it painted
   `31,59 %`. So the state is not the process lifetime. What dzen sets on a visit, and what clears it
-  between app runs (a reinstall, which is what this bench does per version, would clear `LocalState`),
-  is **not settled and is stated here as open**. The instrument fix below does not depend on the
-  answer, which is the point of fixing the instrument first: **a record that names its document turns
-  an argument about mechanism into a fact you can look up.**
+  between app runs, is **not settled and is stated here as open** — and the obvious candidate is ruled
+  out: the bench installer does not clear anything, because
+  [Src/tools/install-apotheosis-x64.ps1](../Src/tools/install-apotheosis-x64.ps1) updates in place and
+  preserves `LocalState`. The instrument fix below does not depend on the answer, which is the point of
+  fixing the instrument first: **a record that names its document turns an argument about mechanism into
+  a fact you can look up.**
 - **An acceptance list that restarts the app per run only ever measures the first visit.** dzen appears
   once in the list, so every run is a first visit whatever the mechanism turns out to be. That is the
   right thing for a list to do — every row then starts from the same place — but it means a site whose
