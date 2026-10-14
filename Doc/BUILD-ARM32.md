@@ -1189,8 +1189,9 @@ resource pack. To run it by hand from `bash`, the equivalent is:
 Use `-p:` (a dash), not `/p:` — Git Bash rewrites `/p:` into a path. Use `AppxBundle=Always`: a plain
 `.appx` (`AppxBundle=Never`) is refused by `Add-AppxPackage` when updating an existing bundled install.
 The artifact lands at `Src/Apotheosis/AppPackages/Apotheosis_<version>_Test/Apotheosis_<version>_arm.appxbundle`
-(version follows `Package.appxmanifest`; the current one is `0.2.3.31`, the build that carries the
-font-stub relink). **Bump the version first** — `pwsh -File Src/tools/Set-AppVersion.ps1` — because the
+(version follows `Package.appxmanifest`; the last ARM build was `0.2.3.31`, the one that carries the
+font-stub relink — the manifest is shared with the x64 line and read `0.2.3.36` on 2026-10-14, so read
+the file rather than this sentence). **Bump the version first** — `pwsh -File Src/tools/Set-AppVersion.ps1` — because the
 device refuses an install whose identity matches the installed one while the contents differ: 0x80073CFB.
 
 Run MSBuild and the ARM driver script under **`pwsh`** (PowerShell 7), not `powershell.exe` (5.1):

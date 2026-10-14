@@ -568,6 +568,39 @@ The report is accurate and the mechanism is not a leak.
   it (`a = i + 1`, not `a = i - 4`). Scan both offsets, re-measure per build, and prefer naming the
   assert by hand from the raw window when the nets are ambiguous — a 480-word window with real module
   attribution is enough to resolve `file`/`function` in the local PE.
+
+## Back did not work, and three stubs had to go together (`0.2.3.36`, 2026-10-14)
+
+- **The same empty-client trap, a fourth time — and this one was silent rather than fatal.**
+  `EmptyBackForwardClient::addItem` is `{ }` and `backListCount()` returns 0, so the engine's
+  back/forward list was permanently empty and `canGoBackOrForward(-1)` was permanently false. Because
+  nothing aborted and nothing logged, the defect read as "Back is not implemented yet" rather than as a
+  client that lies. **`EmptyStorageNamespaceProvider` (a silent success), `EmptySocketProvider` (a
+  `RELEASE_ASSERT`), `EmptyBackForwardClient` (a silent nothing): when a feature is dead and no error
+  appears, look for the empty client before looking for the missing feature.**
+- **Lift the whole behavioural chain, not the one call the symptom names.** Fixing the empty client
+  alone left Back dead: the port's own `LoadingFrameLoaderClient` still returned `nullptr` from
+  `createHistoryItemTree` (so `updateBackForwardListClippedAtTarget` returned before it ever called
+  `addItem`) and `No` from `shouldGoToHistoryItem` (a policy veto that makes `goToItem` return on its
+  first line). **Three stubs, one symptom: when a client is a copy of an `Empty*` base, audit every
+  override with a behaviour, not just the one on the failing path.**
+- **A port that feeds the parser by hand owns the bookkeeping the loader normally does.** This port
+  fetches with curl and calls `DocumentWriter` directly, so `FrameLoader::transitionToCommitted()` — and
+  with it `case FrameLoadType::Standard: history().updateForStandardLoad()` — never runs for its own
+  loads. Nothing is written into history, so a document the port painted is not in the list at all.
+  **The control case is what made this visible: a link *tap* goes through a real `FrameLoader::load()`
+  and was recorded (`n=1 cursor=0`) while the document before it was not.** When a port substitutes for
+  the loader, check which of the loader's *state* duties it has also taken over.
+- **A URL the engine stores comes from the loader's request, and this port's loader was born empty.**
+  `HistoryController::updateBackForwardListClippedAtTarget` guards on
+  `documentLoader->urlForHistory().isEmpty()` — which reads `m_originalRequestCopy.url()` — and the
+  loader `FrameLoader::init()` creates is built from `ResourceRequest(URL({ }, emptyString()))`. So the
+  URL has to be written down before the item can exist at all.
+- **A history cursor reconciled by URL needs a direction.** A `_navStack` such as `[A, B, A]` makes
+  `IndexOf` answer with the oldest `A` on the way forward as well as on the way back; measured, one
+  Back moved the cursor from 3 to 1 and jumped over the entry it had landed on. **Search outward from
+  the cursor in the direction of travel — a move has a direction, and a lookup that ignores it is
+  guessing between identical entries.**
 - **A port-side subclass of a WebCore interface is linkable here, because the port links WebCore
   statically** (`WebCoreFull-*.lib`), and `Src/port/PortWebSocket.cpp` is the worked example: a
   `SocketProvider` whose channel returns `ConnectStatus::KO`, which `WebSocket::connect()` converts into

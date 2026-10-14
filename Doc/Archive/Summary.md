@@ -4,6 +4,47 @@
 > Original repo: [Jimmyxiao2009/Project-Apotheosis](https://github.com/Jimmyxiao2009/Project-Apotheosis)
 > Reddit thread: [r/windowsphone — Porting WebKitGTK 2.52.4 to Windows 10 Mobile](https://www.reddit.com/r/windowsphone/comments/1ugn2kn/porting_webkitgtk_2524_to_windows_10_mobile/)
 
+## 0. Requirement 5 closes on the x64 bench — Back is the engine's list (`0.2.3.36`, Oct 14, 2026)
+
+The last MVP requirement with no measurement at all now has one, and reaching it named a fourth
+member of the `pageConfigurationWithEmptyClients()` family.
+
+- **The engine's back/forward list was empty, and no error said so.** `EmptyBackForwardClient` is a
+  silent no-op — `addItem` is `{ }`, `backListCount()` returns 0 — so `canGoBackOrForward(-1)` was
+  permanently false however many links were followed. Replaced by `PortBackForward.cpp`: a recording
+  client (a `Vector` of `Ref<HistoryItem>` plus a cursor) that answers the five questions
+  `BackForwardController` asks. Same shape as `PortStorage.cpp` and `PortWebSocket.cpp`.
+- **Two more stubs had to go with it, or Back stays dead.** The port's `LoadingFrameLoaderClient`,
+  itself a copy of `EmptyFrameLoaderClient`, returned `nullptr` from `createHistoryItemTree` (so
+  `updateBackForwardListClippedAtTarget` bailed before `addItem`) and `No` from
+  `shouldGoToHistoryItem` (a policy veto that makes `HistoryController::goToItem` return on line one).
+  `createHistoryItemTree` now calls the WEBCORE_EXPORTed
+  `HistoryController::createItemTree(LocalFrame&, bool, BackForwardItemIdentifier)` — the real
+  frame-tree walk — and `shouldGoToHistoryItem` answers `Yes`.
+- **The port's own loads were never recorded, and the control case proved it.** A tap synthesises real
+  mouse events, so the engine follows the anchor through `FrameLoader::load()` and that one *was*
+  recorded: the trace held exactly `PBF: createHistoryItemTree clip=1 item=https://www.iana.org/...`
+  then `PBF: addItem ... n=1 cursor=0`. `n=1` — `example.com`, the document the port had painted, was
+  not in the list. The port fetches with curl and feeds `DocumentWriter` directly, so
+  `FrameLoader::transitionToCommitted()` never runs and neither does its
+  `case FrameLoadType::Standard: history().updateForStandardLoad()`.
+- **`apoRecordSessionNavigation` closes both halves.** It writes the URL into the loader
+  `FrameLoader::init()` built from an *empty* `ResourceRequest` (that is what
+  `DocumentLoader::urlForHistory()` reads, and upstream's own guard drops an empty one), then
+  reproduces `updateBackForwardListClippedAtTarget`'s three lines from the exported pieces. Global
+  history and visited links, the rest of `updateForStandardLoad`, are deliberately not reproduced —
+  this port has neither.
+- **Measured, one process, driven only through `LocalState\autocmd.txt`** (`0.2.3.36`):
+  `hist engine back=1 fwd=0` → `back` `rc=0 moved=1 url=https://example.com/` → `forward`
+  `rc=0 moved=1 url=https://www.iana.org/help/example-domains`. `rc=0` is the engine answering; the
+  host-stack fallback logs `rc=-99`.
+- **The host stack's cursor was reconciled by `IndexOf`, and a repeated URL broke it.** With
+  `[A, B, A]` the lookup answers the oldest `A` in both directions; measured, one Back moved the
+  cursor from 3 to 1 and jumped over the entry it had landed on. `ApplyEngineFrame` now takes the
+  delta rather than a flag and searches outward from the cursor in the direction of travel.
+
+---
+
 ## 0a. Current status — Sep 18, 2026 (morning)
 
 > Current evidence: [STATUS-2026-09-18.md](STATUS-2026-09-18.md) (renamed from

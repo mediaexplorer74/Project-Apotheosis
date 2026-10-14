@@ -60,12 +60,55 @@ engine's own view of the page, `diag:`. `13/13 PASS`, `alive=True` on every row.
 | 2 | address bar, navigate on Enter | **met** | not run | navigation via `testurl.txt`, the `goto` verb and a real tap |
 | 3 | ten sites in sequence | **met** (13) | not run | `smoke.csv`: 13 sites, one process, no restart, no death |
 | 4 | paints visible content | **met** | not run | engine `diag: nonwhite` per site (99.64 % nokia-archive, 1.86 % info.cern.ch) plus a screenshot each |
-| 5 | back returns to previous page | **not verified** | not run | the smoke list does not drive Back; unchanged from 2026-09-27 |
+| 5 | back returns to previous page | **met** | not run | driven by the new `back` / `forward` verbs through the controller, on the ENGINE's own history list. Measured `0.2.3.36`, one process, `example.com` → tap a link → `www.iana.org`: `hist` reports `engine back=1`, `back` answers `rc=0 moved=1` and lands on `https://example.com/`, `forward` answers `rc=0 moved=1` and returns to the link target, and the frame is repainted at each step. Before the fix the same probe reported `engine back=0 fwd=0` — the list was empty (see the note below) |
 | 6 | scrolling moves a tall page | **met** | **failed** | a real touch-path swipe per site, 667–872 ms, logged as `swipe end totalMs=`; on the Lumia the process dies **idle, mid-load**, ~2 s after a completed teardown (`Document::notificationClient()`, in a `WebCore::Timer` callback) — the trace shows no scroll ever reached the engine, so the blocked scroll is the symptom; port-side fixes are deployed in `.25` and again in `.29` (null `SocketProvider`), both **unverified** |
 | 7 | history and suggestions | **met** | not run | the home page renders `history.tsv` tiles with correct Cyrillic, and the dropdown is now inside the scripted path: `suggest dzen` → `rows=6 vis=1`, `+700 vis=1 h=251 boxfoc=1` (never more than a third of the content area, one clipped line per row, scheme-less URLs), `enter` → `vis=0` with the page clean 14 s later |
 | 8 | failure reported, not a white page | **met** | not run | `12-bad-domain` → `rc=-16`, error page drawn, process alive — a failure is *reported* |
 | 9 | same list on x64 then device | **partial** | **started** | the x64 pass is complete; on the Lumia the app launches and paints, and the process dies **idle, mid-load** before any gesture reaches it — the list has not been attempted in sequence |
 | 10 | usable after the list | **met** (x64) | **failed** | process alive after all thirteen; the list is followed by no restart, no `WEDGE`, no `VEH:` — on the Lumia the process dies idle mid-load, so nothing past the first paint survives |
+
+### Requirement 5: Back is the engine's list, not the host's stack (2026-10-14)
+
+Back was the last requirement with no measurement at all. It now has one, and getting there named a
+fourth member of the `pageConfigurationWithEmptyClients` family.
+
+**The list was empty, and could not have been otherwise.** `EmptyBackForwardClient` answers every
+question with nothing -- `addItem` is `{ }`, `backListCount()` returns 0 -- so
+`BackForwardController::canGoBackOrForward(-1)` was permanently false however many links the user
+followed. `PortBackForward.cpp` replaces it with a recording client (a `Vector` plus a cursor),
+exactly as `PortStorage.cpp` replaced `EmptyStorageNamespaceProvider` and `PortWebSocket.cpp` replaced
+`EmptySocketProvider` before it.
+
+**Three stubs had to be lifted together, not one.** Removing the empty client alone would have left
+Back dead, because two history calls in the port's own `LoadingFrameLoaderClient` were still stubs
+copied from `EmptyFrameLoaderClient`: `createHistoryItemTree` returned `nullptr` (and
+`updateBackForwardListClippedAtTarget` bails on a null item before it ever reaches `addItem`), and
+`shouldGoToHistoryItem` answered `No`, a policy veto that makes `HistoryController::goToItem` return
+on its first line. All three are fixed, and each one is a call that *looks* like a working default.
+
+**The port's own loads were never written down.** A tap synthesises real mouse events, so the engine
+follows the anchor itself through `FrameLoader::load()` and that navigation *was* recorded — the
+trace showed exactly one item, `n=1 cursor=0`, for the link target, and none for the document the
+port had painted. The port fetches with curl and feeds the bytes straight into the active
+`DocumentWriter`, so `transitionToCommitted()` never runs and neither does its
+`case FrameLoadType::Standard: history().updateForStandardLoad()`. `apoRecordSessionNavigation`
+(WebCoreDriver.cpp) closes that gap: it writes the URL into the loader `FrameLoader::init()` created
+from an *empty* `ResourceRequest` (`urlForHistory()` reads it, and upstream's own guard drops an empty
+one), then reproduces `updateBackForwardListClippedAtTarget`'s three lines from the exported pieces.
+
+**The measured result** (`0.2.3.36`, one process, driven entirely through `LocalState\autocmd.txt`):
+
+```
+hist   engine back=1 fwd=0 cached=1/0 host idx=2/2 url=https://www.iana.org/help/example-domains
+back   history back rc=0 moved=1 can=0/1 url=https://example.com/
+hist   engine back=0 fwd=1 cached=0/1 host idx=1/2 url=https://example.com/
+forward history fwd rc=0 moved=1 can=1/0 url=https://www.iana.org/help/example-domains
+```
+
+`rc=0` is the engine answering, not the host fallback (`rc=-99`). The engine's list is per session —
+a new `goto` builds a new page and therefore a new client — so the host stack still carries Back
+across sessions, and `NavigateHistory` consults the engine first and falls back.
+
 
 ### The Lumia column is no longer empty (2026-10-03)
 
@@ -160,9 +203,10 @@ the list runs unattended, each row carries its own URL, return code, painted-pix
 cost, and two of the three ways that record could have lied have been found and closed. The remaining
 work in order:
 
-1. add a `back` verb and drive Back through the controller, closing requirement 5 — the suggestion
-   list moved into the scripted path on 2026-10-03 (`suggest` / `enter`), and requirement 7 closed
-   with it;
+1. ~~add a `back` verb and drive Back through the controller, closing requirement 5~~ — **done
+   2026-10-14** (`0.2.3.36`): `back` / `forward` / `hist` are in the scripted channel and the engine's
+   own history list answers them; see the requirement 5 note above. The suggestion list had moved
+   into the scripted path on 2026-10-03 (`suggest` / `enter`), so requirement 7 closed with it;
 2. run the same list on the Lumia 950, closing requirement 9 — the C# line has not been deployed there
    at all, and the App Container, the ABI, the JIT and the font stack each differ. The ARM package
    itself now exists as of 2026-10-03 (`Apotheosis_0.2.3.19_arm.appxbundle`, Release|ARM: 22 ARMNT

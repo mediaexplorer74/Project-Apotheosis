@@ -284,7 +284,7 @@ should name it.
 
 | Line | Ready | Basis |
 |---|---|---|
-| The MVP contract (the ten requirements in [MVP.md](MVP.md)) | **~75 %** | 8 of 10 met on x64, each with a measurement. Open: requirement 5 (Back is not in the scripted channel) and requirement 9 — the same list on the Lumia, which *is* the phase exit criterion |
+| The MVP contract (the ten requirements in [MVP.md](MVP.md)) | **~80 %** | 9 of 10 met on x64, each with a measurement. Open: requirement 9 — the same list on the Lumia, which *is* the phase exit criterion. Requirement 5 (Back) closed 2026-10-14 in `0.2.3.36`: the engine's own history list now answers `back` / `forward`, `rc=0 moved=1` each way |
 | The product, for a real user on a Lumia | **~35 %** | the app launches and paints on the device, then dies **idle, mid-load**, ~2 s after a completed teardown — the blocked scroll the maintainer reported is the symptom, not the trigger; the `.25` fix is **confirmed against its own site** — the access violation reading `0x8` did not recur — but a release assert replaced it, and `.28` is the build that names it; no stable memory price across navigations, hangs with no way out, subframes absent entirely |
 | A general browser (what MVP excludes: GPU presentation, subframes, video/MSE) | **~15 %** | next phase by definition |
 
@@ -391,8 +391,8 @@ survive a Home visit.
 - **On the failure path the stage `diag` describes the previous document**, because the loader writes
   its stage block — `rc`, then `diag` — *before* it renders the error HTML. The failed row therefore
   reports `n/a` rather than a number that belongs to the page before it.
-- Back navigation (requirement 5) and history/suggestions (7) are still unverified; the smoke list
-  does not drive them.
+- Back navigation (requirement 5) closed 2026-10-14 — `back` / `forward` / `hist` are in the scripted
+  channel and answered by the engine's own list; history/suggestions (7) closed on 2026-10-03.
 
 **Install note, for the next iteration:** `Add-AppxPackage` on the `0.2.1.3 → 0.2.1.4` update failed
 twice with `0x80073CF9`/`0x80004005` — `Failure in the SystemRegisterRemove state handler`, then
