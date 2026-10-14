@@ -3,13 +3,19 @@
 # MVP requires a per-site record of: URL, load result, painted pixels/content,
 # scroll result, back result, crash or hang marker -- and it says explicitly that
 # a test which only checks rc=0 is incomplete. So for each site this captures
-# four independent things, and fails the site when the first two disagree:
+# five independent things, and fails the site when the first two disagree:
 #
 #   1. rc        -- the engine's return code for the load
 #   2. nonwhite  -- the share of non-background pixels in a real screenshot,
 #                   the only evidence that something was actually PAINTED
 #   3. swipe_ms  -- a real touch-path drag, timed
-#   4. alive     -- is the process still running afterwards
+#   4. back_ok   -- MVP requirement 5: a Back afterwards must land on the row above
+#                   (from the first row that is the app's own Home), and a Forward
+#                   issued straight after must come back to this site. `back_case` says
+#                   which of three outcomes it was: `prev` (the row above), `same-url`
+#                   (the page pushed an entry of its own URL, so an engine Back moves
+#                   between two identical rows), or `other` (a real mismatch)
+#   5. alive     -- is the process still running afterwards
 #
 # A site that loads with rc=0 but paints nothing is a FAIL, not a pass. That is
 # the point of the exercise: the blank-white-page failure mode is indistinguishable
@@ -158,6 +164,104 @@ $sites = @(
   [pscustomobject]@{ Name='13-nokia-archive'; Url='https://nokiadesignarchive.aalto.fi/'; Note='MVP target: SPA archive, tall page' }
 )
 
+# --- Reading the app's answers ------------------------------------------------------------------
+#
+# Everything below talks to the running app through two files: `autocmd.txt` (one command per
+# line, a batch per write) and `autocmd-log.txt` (the app's own account of what it did). The
+# rules for reading the log were paid for one wrong measurement at a time.
+#
+# A hist line ALREADY in the log is not this verb's answer, and the first version of this reader
+# treated any hist line as the completion marker -- so the `forward` poll returned the `back`
+# line it found in the same file, one millisecond identical, and a whole run reported "forward
+# did not return" thirteen times. Measured in the log it was plainly false: the Forward ran after
+# every Back and moved the cursor back to the site.
+#
+# The marker must be the COMPLETE line, not its opening fields. The app appends to this file
+# while it runs, so a read can catch a line flushed only as far as `fwd=0` -- enough to match a
+# prefix pattern, and its `url=` field then reads as empty. That is what a run against the bench
+# reported: every row `moved_to=''` while the app was moving correctly and the field had simply
+# not been written yet.
+$histRe = 'hist engine back=\d+ fwd=\d+ cached=-?\d+/-?\d+ host idx=-?\d+/\d+ url=\S*$'
+$script:ls = $ls
+$script:logFile = Join-Path $ls 'autocmd-log.txt'
+
+function Invoke-NavVerb([string]$verb, [int]$waitMs = 10000, [switch]$SampleBefore) {
+  # The `@(...)` around every read here is load-bearing, not decoration. A function's return
+  # value travels the pipeline, which UNROLLS a one-element array, so a helper that returned
+  # `@(...)` handed back a bare STRING whenever the log held exactly one hist line -- and a
+  # string's [-1] is its LAST CHARACTER. Measured on the bench: the first sample of every row
+  # came back as a single letter ('m' for ...url=about:home, '/' for the Nokia URL), because
+  # that sample is taken when the log holds one hist line and every later sample is taken when
+  # it holds two. `@()` forces the array back at every step.
+  #
+  # The answer is read from the lines APPENDED after this call, not from a match anywhere in
+  # the file: the log is append-only across batches, so an older line of the same shape is a
+  # different verb's answer.
+  #
+  # `-SampleBefore` puts the pre-verb reading in the SAME batch as the verb, as `hist`, settle,
+  # verb, settle, `hist`. It was a batch of its own first, and that batch went unanswered in
+  # some rows -- the reader then waited its full 45 s and filed an empty `hist_before` for a
+  # site whose Back was in fact correct. Two readings in one batch cannot be separated that way:
+  # a batch is one unit of work, and if it runs at all, both of its samples are written.
+  $linesBefore = @(Get-Content $script:logFile -ErrorAction SilentlyContinue).Count
+  $script:navHist = ''; $script:navFirst = ''; $script:navRc = $null; $script:navSkip = ''
+  $batch = @()
+  if ($SampleBefore) { $batch += @("hist", "wait 3000") }
+  if ($waitMs -gt 0) { $batch += @($verb, "wait $waitMs", "hist") } else { $batch += @("hist") }
+  $wantSamples = 2 - ($SampleBefore ? 0 : 1)
+  Set-Content (Join-Path $script:ls 'autocmd.txt') -Value $batch -Encoding UTF8
+  $deadline = (Get-Date).AddSeconds(45)
+  while ((Get-Date) -lt $deadline) {
+    Start-Sleep -Milliseconds 300
+    $new = @(Get-Content $script:logFile -ErrorAction SilentlyContinue | Select-Object -Skip $linesBefore)
+    $hl = @($new | Where-Object { $_ -match $histRe })
+    if ($hl.Count -lt $wantSamples) { continue }
+    # The verb's own `history <verb> rc=` line belongs to this batch too. It is usually already
+    # there; give it two bounded seconds more before accepting a sample without one, so a
+    # missing number means the app never logged it rather than that the poll outran the write.
+    #
+    # A Back can also legitimately have no `rc=` at all: the app skips the engine and answers
+    # from the host stack when there is no live session, or while a load or a gesture owns the
+    # engine. Since 0.2.3.37 it says so -- `history back skipped reason=no-session` -- and that
+    # line is kept as the row's explanation. Before that build the same state was silent, and a
+    # Back that left no record was indistinguishable from a Back that never arrived.
+    if ($verb -ne 'hist') {
+      for ($i = 0; $i -lt 10; $i++) {
+        $rc = @($new | Where-Object { $_ -match 'history (?:back|fwd) rc=(-?\d+)' })
+        $sk = @($new | Where-Object { $_ -match 'history (?:back|fwd) skipped ' })
+        if ($rc.Count -or $sk.Count) { break }
+        Start-Sleep -Milliseconds 200
+        $new = @(Get-Content $script:logFile -ErrorAction SilentlyContinue | Select-Object -Skip $linesBefore)
+      }
+      $rc = @($new | Where-Object { $_ -match 'history (?:back|fwd) rc=(-?\d+)' })
+      if ($rc.Count) { $script:navRc = [int]([regex]::Match($rc[-1], 'rc=(-?\d+)').Groups[1].Value) }
+      $sk = @($new | Where-Object { $_ -match 'history (?:back|fwd) skipped ' })
+      if ($sk.Count) { $script:navSkip = ($sk[-1] -replace '\s+', ' ').Trim() }
+    }
+    if ($SampleBefore) { $script:navFirst = ($hl[0] -replace '\s+', ' ').Trim() }
+    $script:navHist = ($hl[-1] -replace '\s+', ' ').Trim()
+    break
+  }
+}
+
+# `host idx=<cursor>/<lastIndex>` -- the app prints the cursor and the LAST index, so a stack
+# of three reads "2". Used only to tell whether forward moved the cursor at all.
+function Get-HistCursor([string]$line) {
+  if ($line -match 'host idx=(\d+)/') { return [int]$Matches[1] }
+  return -1
+}
+
+# Wait for the shell to answer before the first site is driven.
+#
+# A fresh process does not answer at once, and the first `goto` of a run is the one that pays:
+# measured on the bench, the first row of a run came back rc=-16 (`kErrCurlDownload`, curl_easy_perform
+# failed) with no page painted, while the same navigation issued by hand against an app started
+# the same way returned rc=0, and every later row of that run loaded normally. The handshake
+# below does not retry the load -- a run that retried its failures would be a run that hides
+# them -- it only waits until the app is demonstrably listening before the list starts.
+Invoke-NavVerb 'hist' 0
+Start-Sleep -Seconds 4
+
 $rows = @()
 foreach ($s in $sites) {
   Write-Host ("--> {0}  {1}" -f $s.Name, $s.Url) -ForegroundColor Cyan
@@ -215,6 +319,94 @@ foreach ($s in $sites) {
   Save-Shot $shot
   $nonwhite = Get-NonWhiteShare $shot
 
+  # Batch 3, Back -- and then Forward, to put the stack back. It has to come after the
+  # screenshot: Back repaints the PREVIOUS page, so capturing after it would file one
+  # site's picture under another site's name.
+  #
+  # This is MVP requirement 5, "back returns to the previous page", measured rather than
+  # asserted. The expectation comes from the list itself: the previous row's URL.
+  #
+  # Forward is not decoration, and the first version of this check omitted it -- which cost
+  # a full run of thirteen MISMATCHes that were the CHECK's fault, not the app's. A Back
+  # onto Home leaves the cursor at Home, and the NEXT site's `goto` then truncates the
+  # forward tail, which by then contains every site already visited. So the stack never grew
+  # past [Home, current], and every later Back correctly answered with Home. Restoring with
+  # Forward keeps the entry the site occupied, so the next `goto` appends instead of trimming
+  # and the stack accumulates the whole list, which is what makes "the previous page" a real
+  # expectation for every row after the first.
+  #
+  # `back` is read from the engine's own line and `back_to` from the `hist` verb's, because
+  # they answer different questions: the engine logs `rc` and whether IT moved (rc=-99 is the
+  # host-stack fallback, which is what carries Back across sessions at all), while `hist`
+  # states where the app actually is. A Back can be served by the fallback and still land
+  # correctly; only `hist` can say where it landed.
+  # The `hist` reads and the two helpers they need are defined once above the loop -- see the
+  # notes there. They were inside it first, which redefined them thirteen times and, worse, put
+  # them out of reach of the startup handshake that waits for the shell to answer.
+
+  Invoke-NavVerb 'back' 10000 -SampleBefore
+  $histBefore = $script:navFirst
+  $backRc = $script:navRc; $histAfterBack = $script:navHist
+  $backSkip = $script:navSkip
+
+  # The Forward is issued up to three times and the retry count is recorded, because a Forward
+  # dropped by the app is indistinguishable from a Forward the app refused unless the attempt
+  # count is kept. NavigateHistory returns at its first line while a load is in flight, and the
+  # Back above starts a full reload (the back/forward cache is disabled process-wide), so on a
+  # heavy site the first Forward can arrive before the Back's own load has finished. Retrying
+  # measures "can the app come back", which is the question; one blind attempt would measure
+  # "was ten seconds enough for that site".
+  $backCursor = Get-HistCursor $histAfterBack
+  $fwdAttempts = 0
+  $histAfterForward = ''
+  while ($fwdAttempts -lt 3) {
+    $fwdAttempts++
+    Invoke-NavVerb 'forward'
+    $histAfterForward = $script:navHist
+    if ((Get-HistCursor $histAfterForward) -ne $backCursor) { break }
+  }
+
+  $backTo = ''
+  if ($histAfterBack -match 'url=(\S*)\s*$') { $backTo = $Matches[1] }
+  # Which of the lists answered the Back, read off the engine's own return code: 0 is the
+  # engine's list, anything else (measured: -99) is the host stack's fallback. The column is
+  # here because the two are different claims about requirement 5 and a bare "ok" hides which
+  # one was tested. In this list every row answers `host` -- a scripted `goto` builds a new
+  # engine session, so the engine's list holds one item and rc is never 0. See the note in
+  # Doc/Archive/Summary.md; the engine's list is exercised by the tap path, not by this list.
+  #
+  # `host-skipped` is a third state, not a rounding of `host`: the app answered from the host
+  # stack without asking the engine at all, and said so on its own line (`history back skipped
+  # reason=no-session` / `busy loading=1`). The rows whose load had failed are the ones that hit
+  # it -- there is no live session to consult. `unknown` is kept separate on purpose: it means
+  # no rc line AND no skip line, i.e. the app left no record, which is a defect in the app or
+  # in this reader and must not be silently filed as a Back the host served.
+  $backPath = if ($backRc -eq 0) { 'engine' }
+              elseif ($backRc -ne $null) { 'host' }
+              elseif ($backSkip -ne '') { 'host-skipped' }
+              else { 'unknown' }
+  # Site 01 is the only row with Home behind it; every other row must land on the row above.
+  # This works only because the Forward above restored the cursor -- see the note at the top.
+  $prevWant = if ($rows.Count -gt 0) { $rows[-1].url.TrimEnd('/') } else { 'about:home' }
+  # Three outcomes, not two, because a Back that lands on this very URL is a legitimate one when
+  # the PAGE put an entry of its own URL on the list.
+  #
+  # Measured on `0.2.3.37`, site 13: the engine served the Back (`rc=0`), and its list held
+  # `nokia` twice -- `addItem ... n=1 cursor=0` for the load, then `addItem ... n=2 cursor=1`
+  # from the document's own same-URL history push (the archive is an SPA). The engine then moved
+  # from entry 2 to entry 1, which are the same URL, so `WebCoreGetUrl` returned the URL the app
+  # was already showing and the app correctly left alone. Filed as a MISMATCH, that reads as a
+  # broken Back; it is the engine behaving exactly like a browser, and the port's own list is
+  # right. A page that pushes its own URL is the one case where "the previous page" has the same
+  # address, so it gets its own name rather than a pass/fail vote.
+  $backCase = if (($backTo.TrimEnd('/')) -eq $prevWant) { 'prev' }
+              elseif ($backPath -eq 'engine' -and ($backTo.TrimEnd('/')) -eq ($s.Url.TrimEnd('/'))) { 'same-url' }
+              else { 'other' }
+  $backOk = ($backCase -ne 'other')
+  $restored = ''
+  if ($histAfterForward -match 'url=(\S*)\s*$') { $restored = $Matches[1] }
+  $backRestored = (($restored.TrimEnd('/')) -eq ($s.Url.TrimEnd('/')))
+
   $proc = Get-Process -Name 'Apotheosis' -ErrorAction SilentlyContinue
   $alive = [bool]$proc
   $hashLine = ''; $engNonwhite = $null
@@ -266,11 +458,26 @@ foreach ($s in $sites) {
   $rows += [pscustomobject]@{
     site = $s.Name; url = $s.Url; note = $s.Note; mode = $Mode
     rc = $rc; eng_nonwhite = $engNonwhite; screen_nonwhite = $nonwhite; painted = $painted
-    swipe_ms = $swipeLine; alive = $alive; verdict = $verdict
+    swipe_ms = $swipeLine
+    # requirement 5, kept as its own column rather than folded into `verdict`. The verdict is
+    # the load/paint question the list was built around; `back_ok` is a second question with a
+    # different expectation per row (site 01 must NOT move, every other row must land on the
+    # row above it). Folding a new expectation into the pass rule on its first run would make
+    # one bad expectation look like thirteen broken sites.
+    back_rc = $backRc; back_url = $backTo; back_case = $backCase; back_ok = $backOk
+    back_restored = $backRestored
+    back_path = $backPath; back_note = $backSkip; fwd_attempts = $fwdAttempts
+    hist_before = $histBefore; hist = $histAfterBack; hist_after_fwd = $histAfterForward
+    alive = $alive; verdict = $verdict
     screenshot = (Split-Path $shot -Leaf)
   }
   Write-Host ("    rc={0} eng_nonwhite={1}% swipe={2}ms alive={3} => {4}" -f $rc, $engNonwhite, $swipeLine, $alive, $verdict) `
     -ForegroundColor $(if ($verdict -eq 'PASS') { 'Green' } else { 'Yellow' })
+  $backVerdict = if ($backCase -eq 'prev') { 'ok' } elseif ($backCase -eq 'same-url') { 'ok (the page pushed its own URL)' } else { 'MISMATCH' }
+  if (-not $backRestored) { $backVerdict += ' (forward did not return)' }
+  Write-Host ("    back via {0} rc={1} from idx={2} moved_to='{3}' expect='{4}' fwd_attempts={5} => {6}" -f $backPath, $backRc, (Get-HistCursor $histBefore), $backTo, $prevWant, $fwdAttempts, $backVerdict) `
+    -ForegroundColor $(if ($backOk -and $backRestored) { 'Green' } else { 'Yellow' })
+  if ($backSkip -ne '') { Write-Host ("      ($backSkip)") -ForegroundColor DarkGray }
 
   if (-not $alive) {
     Write-Host "    process died at $($s.Name); restarting for the rest" -ForegroundColor Red
@@ -283,6 +490,18 @@ foreach ($s in $sites) {
 $rows | Export-Csv (Join-Path $OutDir 'smoke.csv') -NoTypeInformation -Encoding UTF8
 Write-Host ''
 Write-Host '=== SUMMARY ==='
-$rows | Format-Table site, mode, rc, eng_nonwhite, screen_nonwhite, swipe_ms, verdict -AutoSize | Out-String -Width 200 | Write-Host
+$rows | Format-Table site, mode, rc, eng_nonwhite, screen_nonwhite, swipe_ms, verdict, back_path, back_case, back_ok, back_restored -AutoSize | Out-String -Width 200 | Write-Host
+$backPass = @($rows | Where-Object { $_.back_ok }).Count
+$restorePass = @($rows | Where-Object { $_.back_restored }).Count
 $pass = @($rows | Where-Object { $_.verdict -eq 'PASS' }).Count
-Write-Host ("passed {0} / {1} in {2} mode;  report in {3}" -f $pass, $rows.Count, $Mode, $OutDir)
+# `back_case` is broken out because `back_ok` folds two different successes into one number:
+# a Back that landed on the row above (`prev`) and a Back that the engine served onto this very
+# URL (`same-url`, a page that pushed its own URL onto the list). A bare `back 13 / 13` would
+# hide which of the two each row was, and the second kind is exactly the one that used to be
+# filed as a MISMATCH -- so the count that must stay 13 is `back_ok`, and the breakdown is there
+# to say why it is 13.
+$prevCase = @($rows | Where-Object { $_.back_case -eq 'prev' }).Count
+$sameCase = @($rows | Where-Object { $_.back_case -eq 'same-url' }).Count
+$otherCase = @($rows | Where-Object { $_.back_case -eq 'other' }).Count
+Write-Host ("passed {0} / {1} in {2} mode;  back {3} / {4};  forward returned {5} / {4};  report in {6}" -f $pass, $rows.Count, $Mode, $backPass, $rows.Count, $restorePass, $OutDir)
+Write-Host ("back breakdown: prev {0}, same-url {1}, other {2}" -f $prevCase, $sameCase, $otherCase)

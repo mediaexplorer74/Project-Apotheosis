@@ -699,3 +699,61 @@ The report is accurate and the mechanism is not a leak.
 - The general shape: **a build flag that is correct on one line is not evidence for the other line.**
   Same family as [[two-lines-two-sdk-header-versions]] — verify per line, with an artifact you can
   count, not with a green checkmark.
+
+## A check that reported its own bugs before it reported the app's (`0.2.3.37`, 2026-10-14)
+
+Requirement 5's evidence in this file was a hand-driven three-command probe. Extending it to the
+standing thirteen-site list — one Back and one Forward after every site, in the row's own CSV — took
+four wrong measurements before it took one right one, and **three of the four were the check's fault,
+not the browser's.** Recorded here because each produced a confident, specific, false number.
+
+- **A completion marker must be the verb's OWN answer, not any line of that shape.** The `forward`
+  poll accepted "any `hist` line", and the `back` it was measuring had already written one, one
+  millisecond earlier. Both samples came back byte-identical and the run reported *forward did not
+  return* for all thirteen sites — while the log plainly showed the cursor moving back. **Count the
+  lines of that shape before issuing the verb and require the count to grow**; "a line exists" is not
+  "this verb answered".
+- **Read the complete line, not its opening fields.** `autocmd-log.txt` is append-only and the app
+  writes to it *while* the reader reads, so a read can catch a line flushed only as far as `... ur`.
+  A prefix regex accepts it and its `url=` field then reads as empty: every row said `moved_to=''`
+  while the app was moving correctly. Anchor the pattern on the end (`url=\S*$`) so a partial line
+  simply does not match yet.
+- **A function's return value travels the pipeline and unrolls a one-element array.** A helper
+  returning `@(...)` hands back a bare **string** whenever the log holds exactly one hist line, and a
+  string's `[-1]` is its last *character*. Measured: the first sample of every row came back as one
+  letter — `m` for `...url=about:home`, `/` for the Nokia URL — because that sample is taken when the
+  log holds one line and every later sample when it holds two. **`@()` around every read**, and
+  remember the unrolling happens on the way *out* of the function, not at the call site.
+- **Silence is a state, and only the app can name it.** Two rows in five runs had a Back with no
+  `rc=` at all. Reproduced deliberately (example.com → bad-domain → back) and traced to
+  `NavigateHistory`'s `!_sessionActive` early return: the app answered from the host stack and logged
+  **nothing**. A Back that was skipped and a Back that never arrived were indistinguishable. Since
+  `0.2.3.37` the app says `history back skipped reason=no-session` (and `busy loading=/interacting=`
+  for the other branch). **A harness field that reads empty is a question, not a null** — this one
+  found an app defect, not a check defect, and it was found only because the field was made
+  impossible to ignore.
+- **A check's own expectation can destroy the state it measures.** A Back leaves the host cursor one
+  entry up, and the next site's `goto` pushes with `pushHistory=true`, which truncates the forward
+  tail. Without a Forward after every Back, the stack never grew past `[Home, current]` and the whole
+  list would have been "measured" against a two-entry stack. **Step back, step forward, then move on:
+  a probe that leaves the cursor where it found it is the only kind that can measure a sequence.**
+- **Two outcomes are sometimes three.** Site 13 (`nokiadesignarchive`, an SPA) reported a MISMATCH
+  with the engine having served the Back (`rc=0`). The port trace says why:
+  `addItem url=<nokia> n=1 cursor=0` for the port's own recorded load, then
+  `addItem url=<nokia> n=2 cursor=1` from the document's own history push — the list holds the same
+  URL twice, so an engine Back moves between two identical entries and `WebCoreGetUrl` returns the
+  URL already displayed. That is browser semantics and the app is right to leave the host cursor
+  alone. **When a third legitimate outcome appears, add it to the check by name** (`back_case`), and
+  print the breakdown next to the pass count — a bare `13/13` would have hidden which of the two
+  successes each row was.
+- **A batch is one unit of work.** The pre-Back reading was a batch of its own, and that batch went
+  unanswered in some rows (the app skips a command while another is running), leaving an empty
+  `hist_before` for a site whose Back was in fact correct. Folding it into the same batch as the verb
+  — `hist`, settle, `back`, settle, `hist` — removed the whole class: if the batch runs at all, both
+  samples are written.
+- **A fresh process pays for the first navigation, and the answer is to wait, not to retry.** The
+  first `goto` of a run came back `rc=-16` (`kErrCurlDownload`, `curl_easy_perform` failed) with
+  nothing painted, while the same URL issued by hand against a process started the same way returned
+  `rc=0`. The list now opens with a handshake that waits until the shell answers. **It deliberately
+  does not retry a failing load — a run that retried its failures would be a run that hides them.**
+

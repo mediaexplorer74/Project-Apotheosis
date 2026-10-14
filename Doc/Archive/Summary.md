@@ -2592,6 +2592,107 @@ the fix is measured, not inferred from a quiet log.
 
 ---
 
+## `0.2.3.37`: requirement 5 is measured by the standing list, and the check lied four times first (2026-10-14)
+
+Back already had a measurement — a hand-driven three-command probe on `0.2.3.36` (`example.com` → tap a
+link → `www.iana.org`, `engine back=1`, `rc=0 moved=1` both ways). What it did not have was a place in
+the standing acceptance list. Item 5 of the list says *record the back result per site*, and the list was
+asserting it rather than measuring it.
+
+### The result
+
+`0.2.3.37`, one process, thirteen sites, driven entirely through `LocalState\autocmd.txt` by
+`Src/tools/run-smoke.ps1`:
+
+```
+site             mode    rc eng_nonwhite screen_nonwhite swipe_ms verdict back_path    back_case back_ok back_restored
+01-example-com   mobile   0       100,00           99,86 981      PASS    host         prev         True          True
+02-info-cern-ch  mobile   0         1,42           19,82 928      PASS    host         prev         True          True
+03-ycombinator   mobile   0        83,16           85,69 1034     PASS    host         prev         True          True
+04-ya-ru         mobile   0         5,95           25,79 905      PASS    host         prev         True          True
+05-wikipedia-m   mobile   0        63,85           37,58 1023     PASS    host         prev         True          True
+06-w3-org        mobile   0        36,85           45,56 867      PASS    host         prev         True          True
+07-rbc-ru        mobile   0        10,61           21,65 836      PASS    host         prev         True          True
+08-lenta-ru      mobile   0        52,08           41,98 986      PASS    host         prev         True          True
+09-habr-com      mobile   0         1,76           20,79 779      PASS    host         prev         True          True
+10-reddit-com    mobile   0        66,05           63,12 808      PASS    host         prev         True          True
+11-dzen-ru       mobile   0         0,00           18,33 907      FAIL    host         prev         True          True
+12-bad-domain    mobile -16                        31,95          PASS    host-skipped prev         True          True
+13-nokia-archive mobile   0        99,99           99,75 686      PASS    host         prev         True          True
+
+passed 12 / 13 in mobile mode;  back 13 / 13;  forward returned 13 / 13
+back breakdown: prev 13, same-url 0, other 0
+```
+
+**Back 13/13, forward returned 13/13** and the host cursor walks the stack exactly one step and back
+on every row — `hist_before` `idx=N/N`, after the Back `idx=N-1/N`, after the Forward `idx=N/N`, with
+the URL changing to the row above and back in each case. The one non-PASS is the known dzen blank-page
+item (engine `diag: nonwhite` 0.00 % against a screenshot of 18.33 %); its Back and Forward are both
+correct, so requirement 5 is clean on all thirteen.
+
+### `back_path` — the engine's list is not what answered, and that is correct
+
+Every row reads `back via host rc=-99`. `rc=-99` is the host-stack fallback, and the reason is
+structural rather than a defect: the list navigates with `goto`, and **the port builds a new engine
+session per top-level navigation**, so the engine's back/forward list holds exactly one item when the
+Back arrives. The trace says so before every load — `PBF: createPortBackForwardClient -> a recording
+list`. The engine's list is exercised by the *tap* path, where the document follows its own anchor
+inside one session, and was measured that way on `.36`.
+
+### The host path was silent, and that was an app defect the harness found
+
+`12-bad-domain` fails to load (`rc=-16`, `kErrCurlDownload`), so no session is live when its Back
+arrives; `NavigateHistory` takes its `!_sessionActive` early return and answers from the host stack.
+Until `0.2.3.37` that path logged **nothing**, so a Back that was skipped and a Back that never
+arrived were indistinguishable — two rows in five runs had an empty `back_rc` for exactly that reason.
+The early returns now name their state, and the row carries the line:
+
+```
+11:09:22.208 history back skipped reason=no-session
+```
+
+**This is the shape of the finding: the harness asked a question it could not interpret, and the
+answer was an app change.** The rule the fix follows is the same one the navigation path already
+follows — every way out of the method writes a line, including the ones that do nothing.
+
+### Four wrong measurements, three of them the check's own fault
+
+Each produced a specific, confident, false number, and all four are now recorded in
+[LESSONS.md](../LESSONS.md):
+
+1. **`forward did not return` ×13.** The Forward poll's completion marker was "any `hist` line", and
+   the Back it was measuring had just written one. Both samples were byte-identical in the same
+   millisecond. The marker must be the verb's *own* answer — count the lines of that shape before the
+   verb and require the count to grow.
+2. **`moved_to=''` on every row.** The log is append-only and the reader ran against a live writer, so
+   a read caught a line flushed only as far as `... ur`. The prefix regex accepted it and its `url=`
+   field read empty. The pattern now ends in `url=\S*$`, so a partial line simply does not match yet.
+3. **`from idx=-1` on every row.** A PowerShell function's return value travels the pipeline, which
+   *unrolls a one-element array*: the helper handed back a bare string whenever the log held one hist
+   line, and a string's `[-1]` is its last character (`m` for `...about:home`, `/` for the Nokia URL).
+   Fixed with `@()` around every read.
+4. **A `hist`-only batch went unanswered in one row,** leaving an empty `hist_before` for a site whose
+   Back was in fact correct. Two readings in one batch cannot be separated that way; the pre-Back
+   sample is now in the same batch as the verb.
+
+There is also a fifth, in the app: **site 13 filed as a MISMATCH with the engine having served the
+Back**. The port trace explains it — `addItem url=<nokia> n=1 cursor=0` for the port's own recorded
+load, then `addItem url=<nokia> n=2 cursor=1` from the document's own history push. The list holds the
+same URL twice, so an engine Back moves between two identical entries and `WebCoreGetUrl` returns the
+URL already displayed; the app correctly leaves the host cursor alone. **Three outcomes, not two**, so
+the row now carries `back_case` (`prev` / `same-url` / `other`) and the summary prints the breakdown —
+a bare `13 / 13` would have hidden which of the two successes each row was. It did not occur in the
+final run; the check carries it by name.
+
+### And one thing the list must do to itself
+
+A Back leaves the host cursor one entry up, and the next site's `goto` pushes with `pushHistory=true`,
+which truncates the forward tail. Without a Forward after every Back the stack would never have grown
+past `[Home, current]` and the whole run would have measured a two-entry stack. **A probe that leaves
+the cursor where it found it is the only kind that can measure a sequence.**
+
+---
+
 *"Reviving the Windows Phone web for the people who never let it die."*
 
 ---

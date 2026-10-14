@@ -2003,10 +2003,27 @@ namespace Apotheosis
         // back/forward cache is disabled process-wide), so this may take as long as a navigation.
         void NavigateHistory(int delta)
         {
-            if (_loading || _interacting) return;
+            // Every way out of this method writes a line, including the three that do nothing.
+            //
+            // Measured on the bench 2026-10-14, running the acceptance list: the rows whose load
+            // had failed came back from `back` with NO line at all -- the engine's `history back
+            // rc=` is written inside the posted body below, and these early returns never reach it.
+            // A Back that leaves no record is indistinguishable from a Back that never arrived,
+            // which is the same failure mode the scripted-channel work was built to remove from
+            // the navigation path (see the note on NavigateTo's "nav DROPPED" line). The reason
+            // is named rather than implied, because "no session", "still loading" and "a gesture
+            // owns the engine" are three different states that need three different answers.
+            const string skip = "history ";
+            if (_loading || _interacting)
+            {
+                AutoLog(skip + (delta < 0 ? "back" : "fwd") + " skipped busy loading="
+                        + (_loading ? 1 : 0) + " interacting=" + (_interacting ? 1 : 0));
+                return;
+            }
             if (!_sessionActive)
             {
                 // No live session: no engine list exists to consult, so the host stack is all there is.
+                AutoLog(skip + (delta < 0 ? "back" : "fwd") + " skipped reason=no-session");
                 NavigateHostHistory(delta);
                 return;
             }

@@ -26,11 +26,14 @@ features unrelated to opening and reading pages. Software presentation is the MV
 ## Current baseline
 
 - The shipping target is the **C# UWP app** (`Src/Apotheosis`, `ME.Apotheosis`); the C++/CX harness is
-  a debugging tool for the native side. The acceptance run below was measured on
-  `ME.Apotheosis_0.2.1.4_x64`; the current build is `0.2.3.9_x64`, and the viewport/scaling work that
+  a debugging tool for the native side. The acceptance table below was measured on
+  `ME.Apotheosis_0.2.1.4_x64`; the current build is `0.2.3.37_x64`, and the viewport/scaling work that
   landed in between is not yet covered by it (see the note at the end of this file).
-- The thirteen-site list runs unattended over the `LocalState` `autocmd` channel, in one process,
-  13/13 PASS. The per-site record is written to `smoke.csv`.
+- The thirteen-site list runs unattended over the `LocalState` `autocmd` channel, in one process. The
+  per-site record is written to `smoke.csv`. The most recent run (`0.2.3.37`, 2026-10-14) is
+  **12/13 PASS**, the single miss being `11-dzen-ru` — `rc=0` with an engine `diag: nonwhite` of
+  `0.00 %`, which is requirement 4's known blank-page item, not a Back failure. **Back and Forward are
+  correct on all thirteen.**
 - Software presentation is the MVP-safe path. GPU direct-present is not required for v1 and is off by
   default in the bench settings; the GPU investigation is tracked in [GPU-LIVENESS.md](GPU-LIVENESS.md).
 - Device validation is still required before calling v1 complete: nothing in this document has been
@@ -60,7 +63,7 @@ engine's own view of the page, `diag:`. `13/13 PASS`, `alive=True` on every row.
 | 2 | address bar, navigate on Enter | **met** | not run | navigation via `testurl.txt`, the `goto` verb and a real tap |
 | 3 | ten sites in sequence | **met** (13) | not run | `smoke.csv`: 13 sites, one process, no restart, no death |
 | 4 | paints visible content | **met** | not run | engine `diag: nonwhite` per site (99.64 % nokia-archive, 1.86 % info.cern.ch) plus a screenshot each |
-| 5 | back returns to previous page | **met** | not run | driven by the new `back` / `forward` verbs through the controller, on the ENGINE's own history list. Measured `0.2.3.36`, one process, `example.com` → tap a link → `www.iana.org`: `hist` reports `engine back=1`, `back` answers `rc=0 moved=1` and lands on `https://example.com/`, `forward` answers `rc=0 moved=1` and returns to the link target, and the frame is repainted at each step. Before the fix the same probe reported `engine back=0 fwd=0` — the list was empty (see the note below) |
+| 5 | back returns to previous page | **met** | not run | measured per site by the standing thirteen-site list (`smoke.csv`, columns `back_path`, `back_case`, `back_ok`, `back_restored`): `0.2.3.37`, one process, **back 13/13, forward returned 13/13**, every row landing on the row above and returning to its own site. The engine's own list was demonstrated separately on `0.2.3.36` — because the port builds a new session per top-level navigation, the list's Backs in this sequence are served by the host-stack fallback (`rc=-99`), which is correct behaviour, not a gap. Before the fix the same probe reported `engine back=0 fwd=0` — the list was empty (see the note below) |
 | 6 | scrolling moves a tall page | **met** | **failed** | a real touch-path swipe per site, 667–872 ms, logged as `swipe end totalMs=`; on the Lumia the process dies **idle, mid-load**, ~2 s after a completed teardown (`Document::notificationClient()`, in a `WebCore::Timer` callback) — the trace shows no scroll ever reached the engine, so the blocked scroll is the symptom; port-side fixes are deployed in `.25` and again in `.29` (null `SocketProvider`), both **unverified** |
 | 7 | history and suggestions | **met** | not run | the home page renders `history.tsv` tiles with correct Cyrillic, and the dropdown is now inside the scripted path: `suggest dzen` → `rows=6 vis=1`, `+700 vis=1 h=251 boxfoc=1` (never more than a third of the content area, one clipped line per row, scheme-less URLs), `enter` → `vis=0` with the page clean 14 s later |
 | 8 | failure reported, not a white page | **met** | not run | `12-bad-domain` → `rc=-16`, error page drawn, process alive — a failure is *reported* |
@@ -108,6 +111,44 @@ forward history fwd rc=0 moved=1 can=1/0 url=https://www.iana.org/help/example-d
 `rc=0` is the engine answering, not the host fallback (`rc=-99`). The engine's list is per session —
 a new `goto` builds a new page and therefore a new client — so the host stack still carries Back
 across sessions, and `NavigateHistory` consults the engine first and falls back.
+
+**The requirement is now measured per site, by the standing list, not only by one hand-driven probe.**
+`run-smoke.ps1` issues a Back and then a Forward after every site and carries the answer in the row:
+`back_rc`, `back_url`, `back_case`, `back_path`, `back_ok`, `back_restored`, plus the raw `hist` lines
+before, between and after. `0.2.3.37`, one process, thirteen sites:
+
+```
+passed 12 / 13 in mobile mode;  back 13 / 13;  forward returned 13 / 13
+back breakdown: prev 13, same-url 0, other 0
+```
+
+The one non-PASS is `11-dzen-ru`, whose engine `diag: nonwhite` is `0.00 %` while its screenshot is
+`18.33 %` — that is requirement 4's known dzen blank-page item, not a Back failure; its Back and
+Forward are both correct.
+
+**`back_path` says which list answered, and on this list that is always the host stack.** Every row
+reads `back via host rc=-99`: the sequence's navigations are `goto`s, and each one builds a new page
+and therefore a new engine client, so the engine's own list holds a single item at the moment the Back
+arrives. That is not a defeated check — the engine's list is exercised by the *tap* path, where the
+document follows its own anchor inside one session — it is the two carriers doing what they are for.
+
+**The host-stack path used to be silent, and the fix is an app change, not a harness change.**
+`12-bad-domain` fails to load (`rc=-16`), so no session is live when the Back arrives;
+`NavigateHistory` takes its `!_sessionActive` early return and answers from the host stack. Until
+`0.2.3.37` it wrote nothing, so a Back that was *skipped* and a Back that never *arrived* looked the
+same — and two rows in five runs had an empty `back_rc` for exactly that reason. The early returns now
+name themselves:
+
+```
+11:09:22.208 history back skipped reason=no-session
+```
+
+`back_case` is the third outcome this list needed. A page that pushes an entry of its own URL onto
+the list (the Nokia archive is an SPA) makes an engine Back move between two identical entries, so
+`WebCoreGetUrl` returns the URL already displayed and the app correctly leaves the host cursor alone.
+Filed as a two-outcome mismatch that reads as a broken Back; `same-url` names it, and the breakdown
+line keeps it from hiding inside the `13 / 13`. It did not occur in this run — all thirteen rows are
+`prev` — but the check carries it by name.
 
 
 ### The Lumia column is no longer empty (2026-10-03)
@@ -205,7 +246,9 @@ work in order:
 
 1. ~~add a `back` verb and drive Back through the controller, closing requirement 5~~ — **done
    2026-10-14** (`0.2.3.36`): `back` / `forward` / `hist` are in the scripted channel and the engine's
-   own history list answers them; see the requirement 5 note above. The suggestion list had moved
+   own history list answers them; see the requirement 5 note above. The same day, `0.2.3.37` moved the
+   measurement into the standing list itself — a Back and a Forward after every site, with the answer
+   in the row (`back 13/13`, `forward returned 13/13`). The suggestion list had moved
    into the scripted path on 2026-10-03 (`suggest` / `enter`), so requirement 7 closed with it;
 2. run the same list on the Lumia 950, closing requirement 9 — the C# line has not been deployed there
    at all, and the App Container, the ABI, the JIT and the font stack each differ. The ARM package
