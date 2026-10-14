@@ -460,12 +460,18 @@ foreach ($s in $sites) {
   if (-not $loadOk) { $engNonwhite = $null; $finalUrl = '' }
   # WHICH document the engine ended up with -- which is not always the one that was asked for.
   #
-  # Measured 2026-10-14, and it is the whole of `11-dzen-ru`'s FAIL: a `goto https://dzen.ru` in a
-  # FRESH process is answered with a redirect to `https://sso.dzen.ru/install?uuid=<uuid>`, the engine
-  # performs that navigation itself (`loader: CALL type=0 main=1 https://sso.dzen.ru/install?...`,
-  # then `PBF: createHistoryItemTree` / `addItem`), and `sso.dzen.ru/install` paints
-  # `nonWhite=0` -- a legitimately blank page. The SECOND visit in the same process does not
-  # redirect and paints 40-47 %.
+  # Measured 2026-10-14, and it is the whole of `11-dzen-ru`'s FAIL: a `goto https://dzen.ru` is
+  # answered with a redirect to `https://sso.dzen.ru/install?uuid=<uuid>`, the engine performs that
+  # navigation itself (`loader: CALL type=0 main=1 https://sso.dzen.ru/install?...`, then
+  # `PBF: createHistoryItemTree` / `addItem`), and `sso.dzen.ru/install` paints `nonWhite=0` -- a
+  # legitimately blank page. A SECOND visit to dzen.ru in the same process does not redirect and
+  # paints 40-47 %.
+  #
+  # So the redirect depends on dzen-side state that a visit itself creates. Which state, and what
+  # clears it between app runs, is NOT settled: the checked-in 0.2.1.4 run was also one process with
+  # dzen as its first dzen visit (site 11 of 13) and it painted 31.59 %. What is settled is that every
+  # 13-site run visits dzen exactly once, so every run measures the first visit; and that this column,
+  # not the process lifetime, is what makes a `nonWhite=0` row readable.
   #
   # `after-load url=` cannot show this: it carries the URL the port REQUESTED, and so do the app's
   # `_currentUrl` and its host stack. The engine's own `diag: url=&hellip;` is the only field in the

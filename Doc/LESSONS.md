@@ -774,7 +774,8 @@ trace in [MVP.md](MVP.md) already shows the first session loading `sso.dzen.ru/i
 `nonWhite=0`, and a 2026-09-18 analysis had the `https://dzen.ru` → 302 → `sso.passport.yandex.ru/push`
 chain. What was missing is that **the row could not name its own document**, so the list kept reporting
 a site defect for what is a page. The measurement below closes that, and adds the part that was not
-known: the redirect is a property of the *first visit in a cold process*.
+known: the redirect is a property of the **first visit** to `dzen.ru` — a second visit does not
+redirect.
 
 - **The trace is unambiguous, and it names the redirect.** From the acceptance run's `port-trace.txt`,
   in order, for dzen's own `goto`:
@@ -798,20 +799,29 @@ known: the redirect is a property of the *first visit in a cold process*.
   engine's own `diag: url=`. **A per-site record that cannot name the document cannot tell "this site
   does not render" from "this site sent us somewhere else"**, and the list carried the first reading
   for weeks.
-- **A first visit and a second visit are different experiments, and the difference is state.** Fresh
-  process: redirect, blank. Second load of the same URL in the same process: no redirect, 40–47 %.
-  Measured both ways, repeatedly: eight probes on warm processes all painted (35–47 %), four
-  acceptance runs on cold processes all blanked. Both results were *consistent*, which is exactly why
-  they looked like a property of the site — the variable was the process's cookie state, not the engine
-  and not the page. **When a reading is stable within one kind of process and flips in another, the
-  difference between the processes IS the experiment.**
-- **An acceptance list that restarts the app per run only ever measures the first visit.** That is the
-  right thing to do — every row then starts from the same place — but it means a site whose behaviour
-  depends on a cookie will always be measured in its coldest state. The answer is not to warm it up
-  (that would be editing the site's behaviour to suit the check) and not to call the site broken: it is
-  to record **which document the engine actually loaded**, which the harness now does in a `final_url`
-  column, with a `redirected` note and a summary line. What the check is allowed to conclude from a
-  `nonWhite=0` is now bounded by whether the document is the one that was asked for.
+- **A first visit and a second visit are different experiments, and the difference is state.** First
+  visit to `dzen.ru`: redirect, blank. Second load of the same URL in the same process: no redirect,
+  40–47 %. Eight probes on warm processes painted (35–47 %); the acceptance runs, which had not been
+  near dzen before, all blanked. Both results were *consistent*, which is exactly why they looked like
+  a property of the site — the variable was state that the visit itself creates, not the engine and not
+  the page. **When a reading is stable within one kind of process and flips in another, the difference
+  between the processes IS the experiment.**
+- **…but say which state, or the finding is not finished.** My first write-up called the variable "a
+  cold process". The checked-in 0.2.1.4 run contradicts that: it was **one process with dzen as site 11
+  of 13** — by that account the process was warm and it should not have redirected, yet it painted
+  `31,59 %`. So the state is not the process lifetime. What dzen sets on a visit, and what clears it
+  between app runs (a reinstall, which is what this bench does per version, would clear `LocalState`),
+  is **not settled and is stated here as open**. The instrument fix below does not depend on the
+  answer, which is the point of fixing the instrument first: **a record that names its document turns
+  an argument about mechanism into a fact you can look up.**
+- **An acceptance list that restarts the app per run only ever measures the first visit.** dzen appears
+  once in the list, so every run is a first visit whatever the mechanism turns out to be. That is the
+  right thing for a list to do — every row then starts from the same place — but it means a site whose
+  behaviour depends on stored state will always be measured in its coldest state. The answer is not to
+  warm it up (that would be editing the site's behaviour to suit the check) and not to call the site
+  broken: it is to record **which document the engine actually loaded**, which the harness now does in a
+  `final_url` column, with a `redirected` note and a summary line. What the check is allowed to conclude
+  from a `nonWhite=0` is now bounded by whether the document is the one that was asked for.
 - **The column paid for itself on its first run.** `final_url` flagged two rows, and the second was
   not dzen: `10-reddit-com` requested `https://reddit.com` and landed on
   `https://www.reddit.com/?solution=…&js_challenge=1&jsc_token=…` — reddit's anti-bot challenge URL.
