@@ -7,7 +7,10 @@
 #
 #   1. rc        -- the engine's return code for the load
 #   2. nonwhite  -- the share of non-background pixels in a real screenshot,
-#                   the only evidence that something was actually PAINTED
+#                   the only evidence that something was actually PAINTED, and
+#                   `final_url` -- the document the engine actually loaded, which
+#                   is not always the one asked for (a redirect is recorded, and
+#                   the paint figure then describes the redirect target)
 #   3. swipe_ms  -- a real touch-path drag, timed
 #   4. back_ok   -- MVP requirement 5: a Back afterwards must land on the row above
 #                   (from the first row that is the app's own Home), and a Forward
@@ -454,7 +457,32 @@ foreach ($s in $sites) {
   # eng_nonwhite=31.59, byte for byte dzen's reading one row above. Reporting it would be a
   # measurement that lies, so it is reported as n/a; the verdict for this row is the reported
   # failure itself, which is what MVP item 8 asks for.
-  if (-not $loadOk) { $engNonwhite = $null }
+  if (-not $loadOk) { $engNonwhite = $null; $finalUrl = '' }
+  # WHICH document the engine ended up with -- which is not always the one that was asked for.
+  #
+  # Measured 2026-10-14, and it is the whole of `11-dzen-ru`'s FAIL: a `goto https://dzen.ru` in a
+  # FRESH process is answered with a redirect to `https://sso.dzen.ru/install?uuid=<uuid>`, the engine
+  # performs that navigation itself (`loader: CALL type=0 main=1 https://sso.dzen.ru/install?...`,
+  # then `PBF: createHistoryItemTree` / `addItem`), and `sso.dzen.ru/install` paints
+  # `nonWhite=0` -- a legitimately blank page. The SECOND visit in the same process does not
+  # redirect and paints 40-47 %.
+  #
+  # `after-load url=` cannot show this: it carries the URL the port REQUESTED, and so do the app's
+  # `_currentUrl` and its host stack. The engine's own `diag: url=&hellip;` is the only field in the
+  # record that names the document actually loaded, so it is lifted into its own column. Without it,
+  # "dzen painted nothing" reads as a broken site, when what happened is that dzen.ru was never the
+  # document in the first place.
+  $finalUrl = ''
+  $finalLine = if ($dl.Count) { $dl[-1] } else { '' }
+  if ($finalLine -match 'diag:\s+url=(\S+)') { $finalUrl = $Matches[1] }
+  # The CSV gets the whole URL; the on-screen table gets the host only, because a reddit JS-challenge
+  # URL is 180 characters and pushed every numeric column off the right edge of the summary.
+  $finalHost = ''
+  if ($finalUrl -match '^[a-z]+://([^/]+)') { $finalHost = $Matches[1] }
+  $redirected = $false
+  if ($loadOk -and $finalUrl -ne '') {
+    $redirected = (($finalUrl -replace '/$','') -ne ($s.Url -replace '/$',''))
+  }
   # The stage file keeps only the LAST after-load, so a stale rc from the previous site
   # would otherwise be read as this site's result. Compare the URL to be sure.
   $urlMatched = ($stageUrl -ne '') -and (($s.Url -replace '/$','') -eq ($stageUrl -replace '/$',''))
@@ -468,7 +496,8 @@ foreach ($s in $sites) {
 
   $rows += [pscustomobject]@{
     site = $s.Name; url = $s.Url; note = $s.Note; mode = $Mode
-    rc = $rc; eng_nonwhite = $engNonwhite; screen_nonwhite = $nonwhite; painted = $painted
+    rc = $rc; final_url = $finalUrl; final_host = $finalHost; redirected = $redirected
+    eng_nonwhite = $engNonwhite; screen_nonwhite = $nonwhite; painted = $painted
     swipe_ms = $swipeLine
     # requirement 5, kept as its own column rather than folded into `verdict`. The verdict is
     # the load/paint question the list was built around; `back_ok` is a second question with a
@@ -489,6 +518,11 @@ foreach ($s in $sites) {
   Write-Host ("    back via {0} rc={1} from idx={2} moved_to='{3}' expect='{4}' fwd_attempts={5} => {6}" -f $backPath, $backRc, (Get-HistCursor $histBefore), $backTo, $prevWant, $fwdAttempts, $backVerdict) `
     -ForegroundColor $(if ($backOk -and $backRestored) { 'Green' } else { 'Yellow' })
   if ($backSkip -ne '') { Write-Host ("      ($backSkip)") -ForegroundColor DarkGray }
+  # Say when the document is not the one that was asked for. A redirected row's paint figure
+  # describes the redirect TARGET, so a 0 here is not automatically a broken site.
+  if ($redirected) {
+    Write-Host ("      (redirected: the document is {0}, not the requested {1})" -f $finalUrl, $s.Url) -ForegroundColor DarkGray
+  }
 
   if (-not $alive) {
     Write-Host "    process died at $($s.Name); restarting for the rest" -ForegroundColor Red
@@ -501,7 +535,7 @@ foreach ($s in $sites) {
 $rows | Export-Csv (Join-Path $OutDir 'smoke.csv') -NoTypeInformation -Encoding UTF8
 Write-Host ''
 Write-Host '=== SUMMARY ==='
-$rows | Format-Table site, mode, rc, eng_nonwhite, screen_nonwhite, swipe_ms, verdict, back_path, back_case, back_ok, back_restored -AutoSize | Out-String -Width 200 | Write-Host
+$rows | Format-Table site, mode, rc, final_host, eng_nonwhite, screen_nonwhite, swipe_ms, verdict, back_path, back_case, back_ok, back_restored -AutoSize | Out-String -Width 220 | Write-Host
 $backPass = @($rows | Where-Object { $_.back_ok }).Count
 $restorePass = @($rows | Where-Object { $_.back_restored }).Count
 $pass = @($rows | Where-Object { $_.verdict -eq 'PASS' }).Count
@@ -516,3 +550,10 @@ $sameCase = @($rows | Where-Object { $_.back_case -eq 'same-url' }).Count
 $otherCase = @($rows | Where-Object { $_.back_case -eq 'other' }).Count
 Write-Host ("passed {0} / {1} in {2} mode;  back {3} / {4};  forward returned {5} / {4};  report in {6}" -f $pass, $rows.Count, $Mode, $backPass, $rows.Count, $restorePass, $OutDir)
 Write-Host ("back breakdown: prev {0}, same-url {1}, other {2}" -f $prevCase, $sameCase, $otherCase)
+# A redirected row is called out separately because its paint figure is about the redirect target.
+# Without this line, `11-dzen-ru` reads as a site that does not render; measured, it is a site whose
+# first visit in a cold profile is answered with dzen's own SSO page, which is blank by construction.
+$redir = @($rows | Where-Object { $_.redirected })
+if ($redir.Count) {
+  Write-Host ("redirected rows ({0}): {1}" -f $redir.Count, (($redir | ForEach-Object { $_.site + ' -> ' + $_.final_url }) -join '; '))
+}

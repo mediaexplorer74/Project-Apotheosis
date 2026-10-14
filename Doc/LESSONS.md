@@ -765,6 +765,54 @@ not the browser's.** Recorded here because each produced a confident, specific, 
   The script now verifies `Test-Path` on the directory and exits with a message. **The rule is the one
   the rest of this script already follows: no silent degradation of the artifact.** A parameter mistake
   is the easiest way to produce one, because it looks like the run is working.
+
+## `dzen.ru` is not a blank page, it is a redirect (2026-10-14)
+
+For weeks this project's record said dzen.ru loads with `rc=0` and paints nothing. It does not. On a
+**first visit in a cold process** the engine never has `dzen.ru` as its document at all — dzen answers
+the request with a redirect, the engine follows it, and the document it lands on is blank.
+
+- **The trace is unambiguous, and it names the redirect.** From the acceptance run's `port-trace.txt`,
+  in order, for dzen's own `goto`:
+
+  ```
+  loader: CALL type=0 main=1 https://sso.dzen.ru/install?uuid=660fcbf6-c828-4b8d-9e78-745634df7e15
+  PBF: createHistoryItemTree clip=1 item=https://sso.dzen.ru/install?uuid=660fcbf6-…-745634df7e15
+  PBF: addItem url=https://sso.dzen.ru/install?uuid=660fcbf6-…-745634df7e15 n=1 cursor=0 back=0 fwd=0
+  tail: paintToRGBA exit rc=0 nonWhite=0
+  ```
+
+  `nonWhite=0` is every pixel white. The control is in the same file, one navigation later — the same
+  process's **second** visit to the same URL: `PBF: addItem url=https://dzen.ru/ n=1 cursor=0` followed
+  by `tail: paintToRGBA exit rc=0 nonWhite=450125` (44 %). **Same URL, same process, two different
+  documents: the first visit is the SSO install page, the second is dzen.**
+- **The record could not see it, because every URL field in it is the REQUESTED one.** `after-load
+  url=` is written from the port's own `surl`, the app's `_currentUrl` is written by harness-initiated
+  navigation, and the host stack stores that same string — so all three say `https://dzen.ru` while the
+  engine's document is `sso.dzen.ru/install`. The only field that names the loaded document is the
+  engine's own `diag: url=`. **A per-site record that cannot name the document cannot tell "this site
+  does not render" from "this site sent us somewhere else"**, and the list carried the first reading
+  for weeks.
+- **A first visit and a second visit are different experiments, and the difference is state.** Fresh
+  process: redirect, blank. Second load of the same URL in the same process: no redirect, 40–47 %.
+  Measured both ways, repeatedly: eight probes on warm processes all painted (35–47 %), four
+  acceptance runs on cold processes all blanked. Both results were *consistent*, which is exactly why
+  they looked like a property of the site — the variable was the process's cookie state, not the engine
+  and not the page. **When a reading is stable within one kind of process and flips in another, the
+  difference between the processes IS the experiment.**
+- **An acceptance list that restarts the app per run only ever measures the first visit.** That is the
+  right thing to do — every row then starts from the same place — but it means a site whose behaviour
+  depends on a cookie will always be measured in its coldest state. The answer is not to warm it up
+  (that would be editing the site's behaviour to suit the check) and not to call the site broken: it is
+  to record **which document the engine actually loaded**, which the harness now does in a `final_url`
+  column, with a `redirected` note and a summary line. What the check is allowed to conclude from a
+  `nonWhite=0` is now bounded by whether the document is the one that was asked for.
+- **What is still open, and stated as open:** `sso.dzen.ru/install` painting `nonWhite=0` means this
+  engine rendered nothing for it. Whether that page has visible content a desktop browser would show —
+  a login form, a QR code — is a question this measurement does not answer, and it is a much smaller
+  and better-posed question than "why is dzen blank". **Naming the document turned a site-shaped
+  mystery into a page-shaped one.**
+
 - **A batch is one unit of work.** The pre-Back reading was a batch of its own, and that batch went
   unanswered in some rows (the app skips a command while another is running), leaving an empty
   `hist_before` for a site whose Back was in fact correct. Folding it into the same batch as the verb

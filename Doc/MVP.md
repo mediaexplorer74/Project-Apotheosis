@@ -30,11 +30,11 @@ features unrelated to opening and reading pages. Software presentation is the MV
   `ME.Apotheosis_0.2.1.4_x64`; the current build is `0.2.3.37_x64`, and the viewport/scaling work that
   landed in between is not yet covered by it (see the note at the end of this file).
 - The thirteen-site list runs unattended over the `LocalState` `autocmd` channel, in one process. The
-  per-site record is written to `smoke.csv`. On `0.2.3.37` (2026-10-14) the list was run three times
+  per-site record is written to `smoke.csv`. On `0.2.3.37` (2026-10-14) the list was run several times
   across both modes: **Back and Forward were correct on all thirteen rows every time**; the load/paint
-  column was 12/13 in the mobile run and in the second desktop run, and 10/13 in the first desktop
-  run, whose two extra misses **did not recur**. The one miss common to all three is `11-dzen-ru` —
-  `rc=0` with an engine `diag: nonwhite` of `0.00 %`, requirement 4's known blank-page item.
+  column moved between 10/13 and 12/13, and every miss except one **did not recur** on a repeat run.
+  The one that did recur is `11-dzen-ru` (`rc=0`, engine `diag: nonwhite` `0.00 %`) — and it is a
+  redirect to dzen's own SSO page, not a site defect. Rows carry `final_url` for exactly this reason.
 - Software presentation is the MVP-safe path. GPU direct-present is not required for v1 and is off by
   default in the bench settings; the GPU investigation is tracked in [GPU-LIVENESS.md](GPU-LIVENESS.md).
 - Device validation is still required before calling v1 complete: nothing in this document has been
@@ -63,7 +63,7 @@ engine's own view of the page, `diag:`. `13/13 PASS`, `alive=True` on every row.
 | 1 | starts and reaches the UI | **met** | **met** | appx installs and launches; `boot.txt` shows `app-ctor → onlaunched → mainpage-ctor → mainpage-xaml-ok`; on the Lumia `0.2.3.23` launches and paints dzen.ru — a blank screen on one attempt, real content on the next |
 | 2 | address bar, navigate on Enter | **met** | not run | navigation via `testurl.txt`, the `goto` verb and a real tap |
 | 3 | ten sites in sequence | **met** (13) | not run | `smoke.csv`: 13 sites, one process, no restart, no death |
-| 4 | paints visible content | **met** | not run | engine `diag: nonwhite` per site (99.64 % nokia-archive, 1.86 % info.cern.ch) plus a screenshot each |
+| 4 | paints visible content | **met** | not run | engine `diag: nonwhite` per site (99.99 % nokia-archive, 1.42 % info.cern.ch) plus a screenshot each, and since 2026-10-14 the *document* that was measured (`final_url`) — because a row whose requested URL was redirected is describing the redirect target, which is what `11-dzen-ru`'s `0.00 %` turned out to be |
 | 5 | back returns to previous page | **met** | not run | measured per site by the standing thirteen-site list (`smoke.csv`, columns `back_path`, `back_case`, `back_ok`, `back_restored`), on `0.2.3.37` in **three runs across both modes**: **back 13/13 and forward returned 13/13 every time**, every row landing on the row above and returning to its own site. The engine's own list was demonstrated separately on `0.2.3.36` — because the port builds a new session per top-level navigation, the list's Backs in this sequence are served by the host-stack fallback (`rc=-99`), which is correct behaviour, not a gap. Before the fix the same probe reported `engine back=0 fwd=0` — the list was empty (see the note below) |
 | 6 | scrolling moves a tall page | **met** | **failed** | a real touch-path swipe per site, 667–872 ms, logged as `swipe end totalMs=`; on the Lumia the process dies **idle, mid-load**, ~2 s after a completed teardown (`Document::notificationClient()`, in a `WebCore::Timer` callback) — the trace shows no scroll ever reached the engine, so the blocked scroll is the symptom; port-side fixes are deployed in `.25` and again in `.29` (null `SocketProvider`), both **unverified** |
 | 7 | history and suggestions | **met** | not run | the home page renders `history.tsv` tiles with correct Cyrillic, and the dropdown is now inside the scripted path: `suggest dzen` → `rows=6 vis=1`, `+700 vis=1 h=251 boxfoc=1` (never more than a third of the content area, one clipped line per row, scheme-less URLs), `enter` → `vis=0` with the page clean 14 s later |
@@ -129,7 +129,8 @@ desktop, 13 sites:  passed 12 / 13;  back 13 / 13;  forward returned 13 / 13;  p
 returning to the site's own URL. That is the requirement, measured rather than asserted.
 
 The `passed` column moves between runs and none of it is Back: `11-dzen-ru` is `0.00 %` engine
-`nonwhite` in all three (requirement 4's known blank-page item), while the desktop-mode first run's
+`nonwhite` in all three — and that row's blank is a **redirect**, not a site defect (`final_url` is
+`https://sso.dzen.ru/install?uuid=…`; see the caution below) — while the desktop-mode first run's
 other two misses — `01-example-com` at `rc=-16` and `06-w3-org` at `0.00 %` — **did not recur** in the
 desktop repeat, where `01` returned `rc=0` and `06` painted `36.85 %`. They are the fresh-process
 first-navigation flake and the intermittent parser stall, not site verdicts; the repeat is what says
@@ -245,8 +246,20 @@ gestures with no death at all.
 **`nonwhite` is the engine's framebuffer count, not a screen measurement.** The verdict originally
 used a screen-capture pixel share and it returned an identical **99.68 %** for all twelve sites —
 because the app's dark chrome fills the window, so the number described the window and not the page.
-dzen.ru is the row that shows why the distinction matters: `rc=0` **and** `nonwhite=0.00`, a load that
-reported success and painted nothing.
+dzen.ru is the row that shows why the distinction matters: `rc=0` **and** `nonwhite=0.00` — a load that
+reported success and painted nothing. But see the next caution: that row's document is not dzen.ru.
+
+**A row must say which document it measured.** `after-load url=`, the app's `_currentUrl` and the host
+stack all carry the URL that was *requested*; only the engine's `diag: url=` names the document the
+engine actually loaded. Measured 2026-10-14: a first visit to `https://dzen.ru` in a cold process is
+redirected by dzen to `https://sso.dzen.ru/install?uuid=…`, the engine follows that navigation itself
+(`loader: CALL type=0 main=1`, `PBF: addItem … n=1 cursor=0`), and the SSO page paints `nonWhite=0`.
+The second load of the same URL in the same process does not redirect and paints 40–47 %. So
+`11-dzen-ru`'s blank is **the redirect target**, not dzen — and until the record could name the
+document, "this site does not render" and "this site sent us somewhere else" were the same reading.
+The row now carries `final_url` and a `redirected` note, and the summary names every redirected row.
+The same `sso.dzen.ru/install` load is already in this document's Lumia evidence (`.29`, above), which
+is what it looks like from the other side.
 
 **Requirement 8's row cannot report a page number.** On the failure path the loader writes its `diag`
 before it renders the error HTML, and a failed load has not replaced the engine's document, so that

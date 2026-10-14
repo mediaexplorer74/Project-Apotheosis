@@ -2626,9 +2626,9 @@ back breakdown: prev 13, same-url 0, other 0
 
 **Back 13/13, forward returned 13/13** and the host cursor walks the stack exactly one step and back
 on every row — `hist_before` `idx=N/N`, after the Back `idx=N-1/N`, after the Forward `idx=N/N`, with
-the URL changing to the row above and back in each case. The one non-PASS is the known dzen blank-page
-item (engine `diag: nonwhite` 0.00 % against a screenshot of 18.33 %); its Back and Forward are both
-correct, so requirement 5 is clean on all thirteen.
+the URL changing to the row above and back in each case. The one non-PASS is `11-dzen-ru`, and it is
+not a site defect: see *The one site that never passed was never the site* below. Requirement 5 is
+clean on all thirteen.
 
 ### `back_path` — the engine's list is not what answered, and that is correct
 
@@ -2728,8 +2728,8 @@ back breakdown: prev 13, same-url 0, other 0
 
 `01` returned `rc=0` and `06` painted `36.85 %`. **Both of the first run's anomalies were one-offs:
 the fresh-process first-navigation flake and the intermittent parser stall, not site verdicts.** The
-only miss common to all three runs is `11-dzen-ru` (`0.00 %` engine `nonwhite`), which is requirement
-4's known dzen blank-page item.
+only miss common to all three runs is `11-dzen-ru` (`0.00 %` engine `nonwhite`) — and chasing that one
+down is the section below. It is not a site verdict either.
 
 **The stable finding is the one that did not move.** Across three runs, two modes and three processes,
 **Back 13/13 and forward returned 13/13, every row**, the cursor walking `idx=N/N` → `N-1/N` → `N/N`.
@@ -2742,6 +2742,54 @@ changing in between. The harness also had to be taught one thing by this: starte
 whose `$env:` had been eaten by the calling shell, it ran ten minutes and produced no screenshots
 instead of refusing. It now verifies the directory exists before the first site and exits with a
 message if it does not.
+
+### The one site that never passed was never the site (2026-10-14, later)
+
+`11-dzen-ru` is the row that has failed in every acceptance run since 2026-10-03: `rc=0`, engine
+`nonwhite=0.00`, screenshot 18.33 % (the app's chrome on a white page). It was recorded as a known
+site defect. It is not.
+
+**The engine was never given dzen.ru as a document on a cold profile.** From the run's own
+`port-trace.txt`, in order, for dzen's `goto`:
+
+```
+loader: CALL type=0 main=1 https://sso.dzen.ru/install?uuid=660fcbf6-c828-4b8d-9e78-745634df7e15
+PBF: createHistoryItemTree clip=1 item=https://sso.dzen.ru/install?uuid=660fcbf6-…-745634df7e15
+PBF: addItem url=https://sso.dzen.ru/install?uuid=660fcbf6-…-745634df7e15 n=1 cursor=0 back=0 fwd=0
+tail: paintToRGBA exit rc=0 nonWhite=0
+```
+
+dzen answered with a redirect, **the engine followed it as its own navigation**, and the document it
+loaded is `sso.dzen.ru/install` — every pixel white. The control sits a few hundred lines further
+down the same file: the *second* load of the same URL in the same process runs
+`PBF: addItem url=https://dzen.ru/ n=1 cursor=0` and paints `nonWhite=450125` (44 %).
+
+**Measured both ways, deliberately.** A fresh process, first `goto https://dzen.ru` →
+`diag: url=https://sso.dzen.ru/install?uuid=50c1f679-…` and `nonWhite=0`. The very next `goto` to the
+same URL in the same process → `diag: url=https://dzen.ru/` and `nonWhite=450125`. Eight probes on
+warm processes all painted (35–47 %); four acceptance runs on cold ones all blanked. Both readings
+were consistent, and that is what made the wrong one look like a property of the site — the variable
+was the process's cookie state, not the engine and not the page.
+
+**The record could not have seen it, because every URL in it is the requested one.** `after-load url=`
+is written from the port's own `surl`; the app's `_currentUrl` is written by harness-initiated
+navigation; the host stack stores that same string. All three say `https://dzen.ru` while the engine's
+document is `sso.dzen.ru/install`. The engine's own `diag: url=` is the only field that names the
+loaded document.
+
+So the harness now lifts it into a column:
+
+- `final_url` — the document the engine actually loaded, parsed from the diag that was already being
+  read for `nonwhite`;
+- `redirected` — whether it differs from the requested URL (and `false` for a failed load, where the
+  diag describes the *previous* page and would be a measurement that lies);
+- a `(redirected: the document is …, not the requested …)` note under the row, and a summary line
+  naming every redirected row.
+
+**What is still open is much smaller and much better posed.** `sso.dzen.ru/install` painting
+`nonWhite=0` says this engine rendered nothing for it. Whether that page has visible content a desktop
+browser would show — a login form, a QR code — is a question this measurement does not answer. The
+previous question was "why is dzen blank"; the question now has a URL attached.
 
 ### And one thing the list must do to itself
 
