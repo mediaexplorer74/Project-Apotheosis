@@ -768,9 +768,13 @@ not the browser's.** Recorded here because each produced a confident, specific, 
 
 ## `dzen.ru` is not a blank page, it is a redirect (2026-10-14)
 
-For weeks this project's record said dzen.ru loads with `rc=0` and paints nothing. It does not. On a
-**first visit in a cold process** the engine never has `dzen.ru` as its document at all — dzen answers
-the request with a redirect, the engine follows it, and the document it lands on is blank.
+The acceptance list has carried `11-dzen-ru` as `rc=0` with `nonwhite=0.00` since 2026-10-03, and the
+row read as a site that does not render. The redirect behind it was not unknown — the `.29` device
+trace in [MVP.md](MVP.md) already shows the first session loading `sso.dzen.ru/install` and painting
+`nonWhite=0`, and a 2026-09-18 analysis had the `https://dzen.ru` → 302 → `sso.passport.yandex.ru/push`
+chain. What was missing is that **the row could not name its own document**, so the list kept reporting
+a site defect for what is a page. The measurement below closes that, and adds the part that was not
+known: the redirect is a property of the *first visit in a cold process*.
 
 - **The trace is unambiguous, and it names the redirect.** From the acceptance run's `port-trace.txt`,
   in order, for dzen's own `goto`:
@@ -785,7 +789,8 @@ the request with a redirect, the engine follows it, and the document it lands on
   `nonWhite=0` is every pixel white. The control is in the same file, one navigation later — the same
   process's **second** visit to the same URL: `PBF: addItem url=https://dzen.ru/ n=1 cursor=0` followed
   by `tail: paintToRGBA exit rc=0 nonWhite=450125` (44 %). **Same URL, same process, two different
-  documents: the first visit is the SSO install page, the second is dzen.**
+  documents: the first visit is the SSO install page, the second is dzen, and both were already in the
+  record without either being labelled.**
 - **The record could not see it, because every URL field in it is the REQUESTED one.** `after-load
   url=` is written from the port's own `surl`, the app's `_currentUrl` is written by harness-initiated
   navigation, and the host stack stores that same string — so all three say `https://dzen.ru` while the
@@ -807,6 +812,11 @@ the request with a redirect, the engine follows it, and the document it lands on
   to record **which document the engine actually loaded**, which the harness now does in a `final_url`
   column, with a `redirected` note and a summary line. What the check is allowed to conclude from a
   `nonWhite=0` is now bounded by whether the document is the one that was asked for.
+- **The column paid for itself on its first run.** `final_url` flagged two rows, and the second was
+  not dzen: `10-reddit-com` requested `https://reddit.com` and landed on
+  `https://www.reddit.com/?solution=…&js_challenge=1&jsc_token=…` — reddit's anti-bot challenge URL.
+  That row still painted `45.81 %` and passed, but "the requested URL is not the document" is now a
+  fact the record states rather than something a reader has to reconstruct from a 180-character diag.
 - **What is still open, and stated as open:** `sso.dzen.ru/install` painting `nonWhite=0` means this
   engine rendered nothing for it. Whether that page has visible content a desktop browser would show —
   a login form, a QR code — is a question this measurement does not answer, and it is a much smaller
