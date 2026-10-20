@@ -1393,3 +1393,118 @@ target that paints nothing — which is what the x64 harness now does by naming 
 is the smaller change and does not touch the cookie model. **Note the trap:** a per-site acceptance list
 on the device will report dzen as a failure forever until one of the two is chosen, and it will be
 right — that is what the page does.
+
+## Running the acceptance list on the device (2026-10-20)
+
+Device Portal can **read** the app's `LocalState` and cannot **write** it — every spelling of a write
+returns HTTP 500 (measured 2026-10-03). So the device list cannot be driven from the bench the way
+`Src/tools/run-smoke.ps1` drives the x64 app by rewriting `LocalState\autocmd.txt` and polling
+`stage.txt`. The list travels inside the package instead and paces itself with `wait` commands:
+
+```
+Src/tools/device-accept/device-run.txt      the 13-site list -- the ARM twin of run-smoke.ps1's list:
+                                            same sites, same order, same per-site verbs
+Src/tools/device-accept/probe-error.txt     a short three-row probe for one specific gap
+Src/tools/build-app-accept.ps1 -Batch <f>   stages <f> into Assets\device-run.txt, validates the verbs,
+                                            bumps the version, builds, and removes the staged copy
+Src/tools/analyze-device-run.ps1 -Log <f>   turns autocmd-log.txt into one row per site
+```
+
+`MainPage.TryStartPackagedBatch()` reads `Assets\device-run.txt` at startup and runs it **once per
+package version**: it writes `LocalState\device-run.done` containing the version and the batch's byte
+length *before* the first command, so a run that dies at command 3 does not silently replay forever on
+every launch. A new version — or an edited list of a different length — runs again. The csproj item is
+`Condition="Exists(...)"`, so a product build carries no batch at all, and `build-app-accept.ps1`
+removes the staged file in a `finally` block: a leftover would hijack every later build.
+
+The log is `LocalState\autocmd-log.txt`, the same file the x64 harness writes, and it **appends for
+the life of the install** — and LocalState survives a version update, because the package identity
+that owns it is the *family*, not the version. The analyzer therefore slices from the last
+`---- packaged batch` header; before it did, the `.41` probe's report opened with all thirteen rows of
+`.40`. It also prints `NO PACKAGED BATCH` and `THE BATCH DID NOT REACH ITS LAST COMMAND`, so a run
+that never started is distinguishable from one that started and died.
+
+### Measured on the Lumia
+
+**`0.2.3.40`, full list, one process 2026-10-20.** 161 commands, **13/13 sites in sequence**, no death,
+no crash report; the trace holds no `VEH:`/`CRASH`/`RELEASE_ASSERT`/`WTFCrash` hits, and at the end
+the process sat at 956.7 MB of 1536 (62 %). Every row carries its document URL. Swipes went through
+the real touch path at 752–1041 ms. Back and Forward are served by the host-stack fallback
+(`rc=-99`) with the host index advancing on every row — the same shape as x64, where a new engine
+session per top-level navigation is the documented reason. dzen was the SSO page (`sso.dzen.ru/install`,
+`nonwhite=0`, `body=0`) on the first visit and **29.01 %** after Back+Forward *in the same process* —
+the x64 first-visit mechanism, confirmed on the device. reddit landed on its challenge URL.
+
+**`0.2.3.41`, probe, same day.** Three gaps closed:
+
+1. *The failed navigation is now readable.* The `.40` bad-domain row named the **previous** site,
+   because `WebCoreRenderHtmlImpl()` — the synchronous render the shell uses for its error page — never
+   called `writeDiag`. Fixed in the driver: the swizzle loop counts non-white and the diag is written
+   before `return kOK`. The probe row now says `(error page)` with `body=1`, `contents=720x1080`,
+   `nonwhite=95517/777600` (12.28 %), `scripts=0`, `lasterr=[phase=toplevel-fetch curlcode=6 ...]`.
+   Its own `url=` is empty: the error document is synthetic and has no URL. Do not read that as "no
+   document" — the requested URL is the shell's half of the diag line, and the `lasterr` entry names
+   the failed request.
+2. *The swipe moves a tall page.* With the hash taken after the gesture as well as before it,
+   ycombinator (`contents=720x1549`, viewport 720x1080) went `hash 0x9bc468b7` → `0xa2a82d90` inside
+   the 807 ms swipe window, and the same `0xa2a82d90` 1.2 s later. The page had been settled for 25 s
+   before the gesture (`pending=0`, `js=1/1`), so the change is the scroll. **Requirement 6 is met on
+   the device.**
+3. *dzen repeats outside the first position.* The probe navigated dzen after two other sites and got
+   the SSO page again, `body=0`, `nonwhite=0`, new `uuid` (`d078874e-…`). The trace names the chain:
+   `loader: CALL type=0 main=1 https://sso.dzen.ru/install?uuid=…` → `/log?…` →
+   `PBF: commit url=https://dzen.ru/ skipped -- the loader is a client redirect`. So the condition is
+   "first visit per jar", not "first navigation of the process".
+
+**One instrument caveat, recorded rather than hidden.** `hash` reads `g_lastFrameHash`, which the live
+paint path (`paintToRGBA`, and the GPU path behind its `contentPx` gate) updates on every frame — but
+`WebCoreRenderHtmlImpl` does **not** update it. On the error row the hash is therefore the previous
+page's frame (the probe's error hash is byte-identical to the post-swipe ycombinator hash). The diag is
+the error row's witness; the hash is not.
+
+### Device Portal facts that cost time (2026-10-20)
+
+- **Terminate** is `DELETE /api/taskmanager/app?package=<base64(package full name)>`. The plain family
+  name returns HTTP 500; the CSRF token must come from the `Set-Cookie` header of any GET response
+  and be echoed in `X-CSRF-Token` (a 403 without it). `Src/tools/device-stop.ps1` packages this and
+  verifies the process is gone.
+- The process-list JSON field is **`ImageName`**, not `Name`. A filter on `Name` matches nothing and
+  "proves" the app is gone while it is still running.
+- The app must be **closed** before pulling `port-trace.txt`; while it runs, the file 404s over WDP
+  and reads short. Pull it whole — the rotation ceiling applies at startup, not per line, so a long
+  session can grow far past it (the `.40` file reached 10 MB).
+
+**`0.2.3.42`, full list with the fixed instrument, same day.** Twelve rows complete and every one of
+them readable: the error page reports itself (`(error page)`, 12.28 %), dzen again blanks on the first
+visit (`sso.dzen.ru/install`, `nonwhite=0`) and paints **25.23 %** after Back+Forward in the same
+process, `moved=yes` on every tall page, swipes 674–1041 ms, host index `0/1 → 12/13`.
+
+Then the process **disappeared** during the thirteenth site (`nokiadesignarchive.aalto.fi`), 39 s
+after `ui goto nokia done`, and this is recorded as an open anomaly rather than explained:
+
+- The engine was **idle and healthy** at the last trace line: the nokia page had loaded (all assets,
+  `serve started=1683 inflight=0 pending=0 hosts=0`) and the final ~380 lines are ordinary RunLoop
+  ticks with `gesture: live` marks.
+- The memory sampler kept writing until 18:24:39.959 — the death is between that sample and the next
+  one, while nothing was being navigated.
+- There is **no fault marker of any kind**: no `VEH-routine` with a fault code (the 51 `VEH` lines are
+  all `0x40010006`, i.e. `OutputDebugString`), no `RELEASE_ASSERT`, no `WTFCrash`, no crash report,
+  and no `suspending`/`EXC` marker (those two were added in `.43`, after the fact).
+- At 61 % of the 1536 MB device limit, an out-of-memory kill is not supported by the reading.
+
+**`0.2.3.43`, targeted probe.** A four-minute list with nokia **first** and the `.42` order
+(error page, then a healthy navigation) ran to its last command in one process, with no suspension
+marker and the app still alive afterwards. It did not reproduce the death — but it did not exercise
+nokia either: the host failed with `curlcode=28 desc=Resolving timed out after 3013 milliseconds`
+(the phone's DNS was unreliable that evening; a WDP deploy also timed out at 15 s). What it did
+prove: a DNS-timeout failure is reported exactly like the bad-domain one, and the process carries on
+with the rest of the list.
+
+**So the two candidate causes are still open**, and the instrument for the next run exists: `App`
+writes `suspending`, `resuming` and `EXC <type>: <message>` into `boot.txt`. An external
+lifecycle termination (screen lock → suspend → reap) and a managed fatal error now leave different
+marks; a fault inside the engine would leave a `VEH-routine` line with a real code. Do not describe
+the `.42` end as a crash — nothing in the evidence says so, and the idle, ticking trace argues against
+it.
+
+

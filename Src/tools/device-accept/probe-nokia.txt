@@ -1,0 +1,56 @@
+# Apotheosis 2026-10-20 -- does the .42 death reproduce at nokia, or was it external?
+#
+# 0.2.3.42 ran the full thirteen-site list in one process: twelve rows are complete and readable,
+# then the process disappeared during the LAST site (nokiadesignarchive) at 18:24:39, ~39 s after
+# `ui goto nokia done`, with the engine idle and its RunLoop still ticking in the trace. There is no
+# VEH fault line, no RELEASE_ASSERT, no WTFCrash, no crash-report.txt -- and the memory sampler kept
+# writing until the end. That shape has two possible causes and they need different fixes:
+#
+#   a) an in-process fatal error somewhere the native net does not see (a .NET Native unhandled
+#      exception is the obvious one), or
+#   b) an external termination -- the OS lifecycle (screen lock -> suspend -> reap) or a person.
+#
+# Two instruments were added in 0.2.3.43 to tell them apart: App now writes `suspending`, `resuming`
+# and `EXC <type>: <message>` to boot.txt. A lifecycle cause therefore leaves a marker of its own.
+#
+# The page that was being loaded at the moment of death goes FIRST, so a repeat is not hidden behind
+# nine earlier sites and a ten-minute session. The error-then-live order of .42 is kept, because the
+# error page is the one thing .42 did that .40 did not.
+#
+# ~3.5 minutes. One process, no restart.
+
+wait 15000
+
+# the site that was loading when the process vanished
+goto https://nokiadesignarchive.aalto.fi/
+wait 50000
+diag
+hash
+swipe 1200 25 16
+wait 2000
+hash
+diag
+
+# a heavy live page right after it, so "left the SPA for another engine session" is exercised
+goto https://dzen.ru
+wait 40000
+diag
+hash
+
+# failure followed by a healthy navigation -- the .42 order
+goto https://no-such-host-apotheosis-xyzzy.invalid
+wait 30000
+diag
+hash
+goto https://news.ycombinator.com
+wait 25000
+diag
+hash
+
+# the shell still responds; also the analyzer's "batch finished" anchor
+ui settings
+wait 1500
+ui settings-close
+wait 1000
+diag
+hash

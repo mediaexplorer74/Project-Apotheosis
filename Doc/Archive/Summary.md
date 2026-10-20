@@ -2798,6 +2798,42 @@ which truncates the forward tail. Without a Forward after every Back the stack w
 past `[Home, current]` and the whole run would have measured a two-entry stack. **A probe that leaves
 the cursor where it found it is the only kind that can measure a sequence.**
 
+## `0.2.3.40`–`.43`: the acceptance list runs on the Lumia itself (2026-10-20)
+
+The device could never be driven from the bench — Device Portal reads `LocalState` and every write
+returns HTTP 500 — so the list now travels inside the package. `Assets\device-run.txt` is executed by
+`MainPage.TryStartPackagedBatch()` once per package version, with a `device-run.done` marker written
+before the first command so a dying run cannot replay itself. `Src/tools/build-app-accept.ps1` stages
+a list and builds; `Src/tools/analyze-device-run.ps1` turns `autocmd-log.txt` into the same row-per-site
+table the x64 smoke produces.
+
+**`.40` — the full thirteen-site list, one process, 161 commands, 13/13.** No death, no fault marker,
+no crash report; 956.7 MB of 1536 at the end. Every row names the document it loaded. Swipes ran at
+752–1041 ms, Back/Forward are served by the host-stack fallback (`rc=-99`) with the index advancing on
+every row, and dzen confirmed the x64 first-visit mechanism on the device: `sso.dzen.ru/install`,
+`nonwhite=0`, `body=0` first, then **29.01 %** on the same process's restored visit.
+
+**The instrument had three defects, all of them its own.** The error row named the previous site,
+because `WebCoreRenderHtmlImpl` — the synchronous render behind the shell's error page — never wrote a
+diag; fixed, and `.41` reads `(error page)`, `body=1`, **12.28 %**. The analyzer's `url=` was
+unanchored and picked the `lasterr=[… url=…]` request instead of the empty document URL; anchored, with
+`(error page)` as the named empty case. And the analyzer read the whole appended log, so a new run's
+report opened with the previous install's rows; it now slices from the last `---- packaged batch`.
+
+**`.41` — requirement 6, measured rather than inferred.** With the frame hash taken after the swipe as
+well as before, a settled 720×1549 ycombinator page changed `0x9bc468b7 → 0xa2a82d90` inside an 807 ms
+swipe and held that hash 1.2 s later. The gesture moves the page.
+
+**`.42` opened a new question instead of closing one.** Twelve rows complete and readable, then the
+process disappeared during the last site, 39 s after the navigation, with the engine idle and its
+RunLoop still ticking in the trace, the memory sampler writing to the end, and no fault of any kind —
+no `VEH` with a real code (all 51 are `OutputDebugString`), no assert, no crash report, 61 % of the
+device limit. Nothing in the evidence calls that a crash. `.43` added `suspending`/`resuming`/`EXC`
+markers to `boot.txt` and re-ran a short list without reproducing it (nokia itself failed on
+`curlcode=28`, a DNS timeout, so the page was not exercised). The next long run decides between an
+external lifecycle termination and an in-process fatal error; until then the honest statement is
+"the process ended, and why is not known".
+
 ---
 
 *"Reviving the Windows Phone web for the people who never let it die."*

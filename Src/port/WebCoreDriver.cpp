@@ -4744,6 +4744,11 @@ static int WebCoreRenderHtmlImpl(const char* utf8Html, int w, int h, uint8_t* ou
     const unsigned char* src = cairo_image_surface_get_data(surface);
     const int stride = cairo_image_surface_get_stride(surface);   // bytes per row, >= 4*w
 
+    // Apotheosis 2026-10-20: nonWhite is counted here, in the loop that already touches every
+    // pixel, so the diag written below carries the same measurement WebCoreLoadUrl reports. It
+    // was not counted before, and the missing number is why this function never wrote a diag at
+    // all -- see the writeDiag call after the loop.
+    int nonWhite = 0;
     for (int y = 0; y < h; ++y) {
         const unsigned char* srow = src + static_cast<size_t>(y) * stride;
         uint8_t* drow = outRGBA + static_cast<size_t>(y) * w * 4;
@@ -4764,10 +4769,22 @@ static int WebCoreRenderHtmlImpl(const char* utf8Html, int w, int h, uint8_t* ou
                 drow[x * 4 + 2] = static_cast<uint8_t>((b * 255 + a / 2) / a);
                 drow[x * 4 + 3] = a;
             }
+            // Same rule as paintToRGBA: a pixel is white when R=G=B=255, alpha ignored.
+            if (drow[x * 4 + 0] != 255 || drow[x * 4 + 1] != 255 || drow[x * 4 + 2] != 255)
+                ++nonWhite;
         }
     }
 
     cairo_surface_destroy(surface);
+
+    // Apotheosis 2026-10-20: write the diag for this document, exactly as WebCoreLoadUrl does.
+    //
+    // Why it matters, measured on the Lumia 2026-10-20 (0.2.3.40 device acceptance list): after a
+    // navigation failed, the app rendered its error page through this function, and the `diag` verb
+    // -- which returns this cached global -- still described the PREVIOUS site. The device row for
+    // `12-bad-domain` therefore named dzen.ru and could not say whether an error page was shown.
+    // A render that does not refresh the diag is a render the instrument cannot see.
+    writeDiag(*document, *view, w, h, nonWhite);
 
     // Page/frame/view are released here as the RefPtrs go out of scope.
     return kOK;

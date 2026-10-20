@@ -27,6 +27,25 @@ namespace Apotheosis
             BootMark("app-ctor");
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            // Apotheosis 0.2.3.43: a terminating app must leave a cause behind. The .42 device run
+            // ended with the engine idle and its RunLoop still ticking, no VEH line, no abort and no
+            // crash report -- which is what BOTH an external lifecycle termination and a managed
+            // fatal error look like. These two markers separate them: a suspension writes
+            // `suspending`, a .NET Native unhandled exception writes `EXC <type>: <message>` before
+            // the process goes down. Neither changes behaviour -- the exception is not marked
+            // handled, so the app still terminates the way it did before.
+            this.UnhandledException += OnUnhandledException;
+            this.Resuming += OnResuming;
+        }
+
+        void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            try { BootMark("EXC " + e.Exception.GetType().Name + ": " + e.Exception.Message); } catch { }
+        }
+
+        void OnResuming(object sender, object e)
+        {
+            BootMark("resuming");
         }
 
         protected override void OnLaunched(LaunchActivatedEventArgs e)
@@ -57,6 +76,7 @@ namespace Apotheosis
 
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
+            BootMark("suspending");
             var deferral = e.SuspendingOperation.GetDeferral();
             deferral.Complete();
         }

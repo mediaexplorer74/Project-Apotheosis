@@ -872,3 +872,41 @@ is ever a second one.
   the honest reading of a first-site failure is "the process was still paying", and only a second run
   says whether it was that or the site.
 
+## The device list ran itself, and the instrument hid two rows (`0.2.3.40`–`.42`, 2026-10-20)
+
+The Lumia cannot be driven from the bench: Device Portal reads `LocalState` and every write returns
+HTTP 500. So the acceptance list ships inside the appx (`Assets\device-run.txt`) and is executed by
+`MainPage.TryStartPackagedBatch()`, once per package version, with a `device-run.done` marker written
+*before* the first command so a crash-loop cannot replay it. That works — 161 commands, 13/13 sites in
+one process — and it exposed four instrument defects, none of which the app had.
+
+**A synchronous render is a different code path, and it is easy not to instrument.** The app draws its
+error page through `WebCoreRenderHtmlImpl()`, not through the live paint loop. That function never
+called `writeDiag`, so the diag after a failed navigation still described the *previous* site, and a
+row that looked measured was stale. Worse, the same function does not update `g_lastFrameHash`, so the
+frame hash on that row was the previous page's pixels. Rule: when a second path can put pixels on
+screen, instrument it as carefully as the first, and do not assume a shared-looking reading
+(`hash`, `diag`) comes from the path you are testing. The fixed function now counts non-white in its
+swizzle loop and writes the diag before returning; the error row reads `(error page)`, `body=1`,
+12.28 % painted.
+
+**A field that can contain another field's name needs an anchored match.** The engine diag begins
+`| url=<document>` and later contains `lasterr=[... url=<failed request>]`. The error page's own
+`url=` is empty (the document is synthetic), and an unanchored `url=(\S+)` matched the `lasterr` one —
+the analyzer reported the *request* as the document. Anchor at the start of the engine half of the
+line, and give the empty case a name (`(error page)`) instead of falling back to a nearby value.
+
+**The log appends across installs.** `autocmd-log.txt` lives in `LocalState`, which belongs to the
+package *family* — a version update keeps it. The `.41` report therefore opened with all thirteen rows
+of `.40`, indistinguishable from the new run. The analyzer now slices from the last
+`---- packaged batch` header. The same is true of `port-trace.txt`: its rotation ceiling is checked at
+startup, so one session grew to 10 MB before the next launch rotated it in.
+
+**Two WDP traps, both of which produce a confident false answer.** Terminate is a `DELETE` whose
+`package` parameter is **base64 of the full name** (a plain name answers HTTP 500) and which needs the
+CSRF token copied from a response's `Set-Cookie` header (403 without it) — `Src/tools/device-stop.ps1`.
+And the process list names the field **`ImageName`**, not `Name`; a filter on `Name` matches nothing,
+which reads exactly like "the app is gone". After stopping, confirm the process is absent before
+pulling files the app had open.
+
+

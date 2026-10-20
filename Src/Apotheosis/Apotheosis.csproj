@@ -132,6 +132,22 @@
       <Link>Assets\fonts\%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <!--
+      Apotheosis 2026-10-20: an acceptance-only command batch for the ARM line.
+
+      Device Portal can read LocalState but every spelling of a write to it returns HTTP 500
+      (see Src\tools\pull-device-logs.ps1), so the only way to script a run on the Lumia is to
+      ship the batch inside the appx. MainPage.AutoCmd.cs reads this file at startup and runs it
+      once per package version.
+
+      The Exists condition keeps it out of a normal build: the file is staged by
+      Src\tools\build-app-accept.ps1 for the duration of an acceptance build and removed
+      afterwards, so a product appx carries no batch and the app's first check finds nothing.
+    -->
+    <Content Include="Assets\device-run.txt" Condition="Exists('Assets\device-run.txt')">
+      <Link>Assets\device-run.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <!--
     Native WebKit driver payload, selected by $(Platform).

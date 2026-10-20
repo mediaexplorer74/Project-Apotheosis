@@ -1,0 +1,55 @@
+# Apotheosis 2026-10-20 -- the probe that closes the three gaps the first device run exposed.
+#
+# The full list (device-run.txt) ran 13/13 sites in one process on 0.2.3.40. Three rows could not
+# be read to the end, and each needs a SHORT run rather than another ten minutes:
+#
+# 1. 12-bad-domain. The load failed exactly as it does on the bench (SL: fetch ... http=0 crc=6,
+#    rc=-16), but the app renders its error page through WebCoreRenderHtml(), which did not write
+#    a diag -- so the row still named the PREVIOUS site. Fixed in the driver on 2026-10-20 (the
+#    swizzle loop now counts nonWhite and writeDiag runs before return). This probe checks that the
+#    row after the failure names the error document and a painted fraction.
+#
+# 2. Requirement 6, "scrolling moves a tall page". The full list logged swipe end totalMs= for
+#    every site, which shows the gesture ran, not that the page moved. The frame hash is now taken
+#    AFTER the swipe as well as before it: on a tall page the two hashes must differ.
+#
+# 3. 11-dzen-ru. Already measured once (diag url=sso.dzen.ru/install, nonwhite=0, body=0), and
+#    repeated here because this run's dzen is not the first page of the process, which is the one
+#    condition that could change it.
+#
+# Order matters: ycombinator first so the swipe has a tall page; the error page second so the diag
+# that follows can only be the error render (it is the page immediately before it); dzen last.
+#
+# ~3 minutes. One process, no restart.
+
+wait 15000
+
+# tall page + the swipe that must move it (hash before and after)
+goto https://news.ycombinator.com
+wait 25000
+diag
+hash
+swipe 1200 25 16
+wait 2000
+hash
+diag
+
+# the failed navigation: its diag must now describe the error page, not ycombinator
+goto https://no-such-host-apotheosis-xyzzy.invalid
+wait 30000
+diag
+hash
+
+# dzen: expect the SSO document and a blank paint
+goto https://dzen.ru
+wait 40000
+diag
+hash
+
+# the shell still responds
+ui settings
+wait 1500
+ui settings-close
+wait 1000
+diag
+hash

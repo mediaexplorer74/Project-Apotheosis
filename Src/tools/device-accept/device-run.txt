@@ -1,0 +1,233 @@
+# Apotheosis 2026-10-20 -- the device acceptance list, run by the app itself.
+#
+# This is the ARM twin of Src/tools/run-smoke.ps1's thirteen-site list. The x64 script drives the
+# app from outside by rewriting LocalState\autocmd.txt and polling stage.txt between sites; Device
+# Portal cannot write LocalState (every spelling returns HTTP 500), so on the phone the sequence
+# has to travel inside the package and be paced by its own `wait` commands. Same sites, same order,
+# same per-site verbs -- the instrument differs, the list does not.
+#
+# Every site gets, in this order:
+#   goto           the navigation (fire-and-forget; the wait below is what observes it)
+#   wait <ms>      paced, not polled: the device has no side channel to poll from
+#   diag           the engine's own view -- `diag url=` names the DOCUMENT (requirement 4), and on
+#                  dzen.ru it is the only field that follows the SSO redirect
+#   hash           the frame hash, so two consecutive equal hashes mean a settled frame
+#   swipe          the real touch path (requirement 6); logs `swipe end totalMs=`
+#   back / hist / forward / diag
+#                  requirement 5 on the device -- `hist` separates "Back was refused" from
+#                  "Back moved and the page looked the same"
+#
+# The waits are sized per site from the x64 run's own measurements. They are a ceiling, not a
+# prediction: a slow site is simply still loading when the next goto replaces it, and the diag that
+# precedes the swipe is the record of what was on screen at that moment. Do not tighten them to
+# make the run shorter -- a too-short wait on lenta.ru measures the previous page.
+#
+# One process, no restart, ten minutes. If the app dies mid-list, the `device-run.done` marker it
+# writes before the first command keeps the next launch from silently replaying the same batch.
+# Redeploy with a new version to run it again.
+
+# let the home page and the engine session settle before the first navigation
+wait 15000
+
+# 01-example-com -- flat HTML, baseline
+goto https://example.com
+wait 25000
+diag
+hash
+swipe 1200 25 16
+wait 1500
+hash
+back
+wait 3000
+hist
+forward
+wait 3000
+diag
+
+# 02-info-cern-ch -- first web page ever, no CSS
+goto https://info.cern.ch
+wait 25000
+diag
+hash
+swipe 1200 25 16
+wait 1500
+hash
+back
+wait 3000
+hist
+forward
+wait 3000
+diag
+
+# 03-ycombinator -- subresources, table layout
+goto https://news.ycombinator.com
+wait 25000
+diag
+hash
+swipe 1200 25 16
+wait 1500
+hash
+back
+wait 3000
+hist
+forward
+wait 3000
+diag
+
+# 04-ya-ru -- known baseline, images + widget
+goto https://ya.ru
+wait 40000
+diag
+hash
+swipe 1200 25 16
+wait 1500
+hash
+back
+wait 3000
+hist
+forward
+wait 3000
+diag
+
+# 05-wikipedia-m -- many small assets
+goto https://en.m.wikipedia.org
+wait 40000
+diag
+hash
+swipe 1200 25 16
+wait 1500
+hash
+back
+wait 3000
+hist
+forward
+wait 3000
+diag
+
+# 06-w3-org -- legacy table layout
+goto https://w3.org
+wait 30000
+diag
+hash
+swipe 1200 25 16
+wait 1500
+hash
+back
+wait 3000
+hist
+forward
+wait 3000
+diag
+
+# 07-rbc-ru -- news, many images
+goto https://rbc.ru
+wait 45000
+diag
+hash
+swipe 1200 25 16
+wait 1500
+hash
+back
+wait 3000
+hist
+forward
+wait 3000
+diag
+
+# 08-lenta-ru -- news, lazy loading; the x64 run measured a ~125 s load on this box, so the wait
+# is the longest in the list and still expected to end before the page is complete
+goto https://lenta.ru
+wait 60000
+diag
+hash
+swipe 1200 25 16
+wait 1500
+hash
+back
+wait 3000
+hist
+forward
+wait 3000
+diag
+
+# 09-habr-com -- blog layout
+goto https://habr.com
+wait 45000
+diag
+hash
+swipe 1200 25 16
+wait 1500
+hash
+back
+wait 3000
+hist
+forward
+wait 3000
+diag
+
+# 10-reddit-com -- heavy JS; the document it lands on is a challenge page, which `diag url=` names
+goto https://reddit.com
+wait 45000
+diag
+hash
+swipe 1200 25 16
+wait 1500
+hash
+back
+wait 3000
+hist
+forward
+wait 3000
+diag
+
+# 11-dzen-ru -- SPA + autologin redirect. EXPECT A BLANK PAINT: the jar is in memory, so every
+# launch is a first visit and dzen answers with its SSO page (sso.dzen.ru/install). The row is a
+# success if `diag url=` names that document and the process survives; see Doc/BUILD-ARM32.md.
+goto https://dzen.ru
+wait 40000
+diag
+hash
+swipe 1200 25 16
+wait 1500
+hash
+back
+wait 3000
+hist
+forward
+wait 3000
+diag
+
+# 12-bad-domain -- must report failure, not paint nothing (requirement 8)
+goto https://no-such-host-apotheosis-xyzzy.invalid
+wait 30000
+diag
+hash
+back
+wait 3000
+hist
+forward
+wait 3000
+diag
+
+# 13-nokia-archive -- MVP target: SPA archive, tall page (the best case for the swipe)
+goto https://nokiadesignarchive.aalto.fi/
+wait 50000
+diag
+hash
+swipe 1200 25 16
+wait 1500
+hash
+back
+wait 3000
+hist
+forward
+wait 3000
+diag
+
+# requirement 10: the shell still responds after the whole list
+ui settings
+wait 2000
+ui settings-close
+wait 1000
+diag
+hash

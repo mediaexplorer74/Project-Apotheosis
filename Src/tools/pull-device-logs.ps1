@@ -34,6 +34,7 @@ param(
     # package FULL name (name_version_arch__publisher), which is also what makes it unambiguous when
     # several versions are registered side by side; the pattern picks which one.
     [string]$PackagePattern = 'EdgeHTMLReborn.Harness_*',
+    [int]$TimeoutSec = 90,
     [string[]]$Files = @(
         'port-trace.txt',       # driver: loader scheduling and the settle loop, appended and flushed per line
         # The chunks the rotation is *supposed* to move aside, as the driver's (.1) and the loader's
@@ -98,7 +99,10 @@ $handler.ServerCertificateCustomValidationCallback =
     [System.Net.Http.HttpClientHandler]::DangerousAcceptAnyServerCertificateValidator
 $handler.CookieContainer = [System.Net.CookieContainer]::new()
 $cli = [System.Net.Http.HttpClient]::new($handler)
-$cli.Timeout = [TimeSpan]::FromSeconds(90)
+# A long session's trace can grow past what 90 s of WDP read gets through (the .42 run timed out at
+# 90 s on port-trace.txt alone). Callers with a known-big file pass a longer -TimeoutSec; the value
+# bounds the whole download, not the per-read idle time.
+$cli.Timeout = [TimeSpan]::FromSeconds($TimeoutSec)
 
 $script:Csrf = $null
 function Sync-Csrf($resp) {

@@ -49,6 +49,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -78,8 +79,54 @@ namespace Apotheosis
                 _autoCmdTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(250) };
                 _autoCmdTimer.Tick += (s, e) => PollAutoCmd();
                 _autoCmdTimer.Start();
+
+                TryStartPackagedBatch();
             }
             catch { }
+        }
+
+        // Apotheosis 2026-10-20: a batch shipped INSIDE the appx, for the ARM acceptance line.
+        //
+        // Device Portal can read LocalState but every spelling of a write to it returns HTTP 500
+        // (Src/tools/pull-device-logs.ps1, header). That makes the channel above unusable from
+        // outside on the phone: a scripted run would have to start from a file that cannot be
+        // written there. So an acceptance build stages Assets\device-run.txt into the package --
+        // the csproj item is conditional on the file existing, so a product build carries no batch
+        // and this method returns on its third line -- and the app runs that batch once per
+        // package version.
+        //
+        // The marker is written BEFORE the batch runs, not after. A run that dies mid-list then
+        // stays dead instead of restarting into the same ten minutes of navigation on every
+        // relaunch, which is the evidence-obscuring loop `gpu-crash.flag` already protects the GPU
+        // path against. To repeat a list, redeploy with a new version -- which the ARM line
+        // requires anyway, because AppxBundle=Always refuses an in-place update of the same one.
+        void TryStartPackagedBatch()
+        {
+            try
+            {
+                string src = Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "device-run.txt");
+                if (!File.Exists(src)) return;
+
+                var v = Package.Current.Id.Version;
+                string stamp = string.Format("{0}.{1}.{2}.{3} {4}", v.Major, v.Minor, v.Build, v.Revision,
+                                             new FileInfo(src).Length);
+                string done = Path.Combine(ApplicationData.Current.LocalFolder.Path, "device-run.done");
+                if (File.Exists(done) && File.ReadAllText(done).Trim() == stamp) return;
+
+                var batch = new List<string>();
+                foreach (var raw in File.ReadAllLines(src))
+                {
+                    string t = (raw ?? "").Trim();
+                    if (t.Length > 0 && !t.StartsWith("#")) batch.Add(t);
+                }
+                if (batch.Count == 0) return;
+
+                File.WriteAllText(done, stamp);
+                _autoCmdBatch++;
+                AutoLog("---- packaged batch " + _autoCmdBatch + " (" + batch.Count + " cmds), source=" + stamp + " ----");
+                RunAutoBatch(batch);
+            }
+            catch (Exception ex) { AutoLog("packaged batch FAILED " + ex.GetType().Name + ": " + ex.Message); }
         }
 
         void PollAutoCmd()
