@@ -1405,6 +1405,8 @@ returns HTTP 500 (measured 2026-10-03). So the device list cannot be driven from
 Src/tools/device-accept/device-run.txt      the 13-site list -- the ARM twin of run-smoke.ps1's list:
                                             same sites, same order, same per-site verbs
 Src/tools/device-accept/probe-error.txt     a short three-row probe for one specific gap
+Src/tools/device-accept/probe-nokia.txt     the .42 death probe (nokia first, then the error page)
+Src/tools/device-accept/probe-address.txt   requirements 2 and 7: suggest + enter on the real UrlBox
 Src/tools/build-app-accept.ps1 -Batch <f>   stages <f> into Assets\device-run.txt, validates the verbs,
                                             bumps the version, builds, and removes the staged copy
 Src/tools/analyze-device-run.ps1 -Log <f>   turns autocmd-log.txt into one row per site
@@ -1533,6 +1535,25 @@ jumping `12/13 → 14/14` — where every other row's Back is the host fallback 
 client-side `?node=A0001` history push on that SPA, the engine session evidently held an entry. Both
 paths restore the page; which one answers depends on whether the current session has history, and
 the diag after Back+Forward confirms the restore either way.
+
+**`0.2.3.45` closed the last two device gaps — the address box itself.** `goto` is the shell's own
+load call and bypasses the UrlBox, so requirements 2 and 7 were the only ones still "not run" on the
+Lumia. `probe-address.txt` drives the real controls instead: `suggest` fills the real UrlBox and opens
+the real dropdown, `enter` calls the same `CommitUrlBox()` the key handler calls. Measured:
+
+- home page: `diag url=about:home`, `hash 0x00000000` (no engine frame yet) — the shell's own page;
+- `suggest example.com` → `rows=1 vis=1`, `+700 vis=1 h=62 boxfoc=1`; `enter` → `'https://example.com' vis=0`,
+  then `diag` names `https://example.com/`, `title=Example Domain`, `body=1` — the box navigated;
+- `suggest dzen` → `rows=2 vis=1 h=111`; `enter` → `'https://cn.bing.com/search?q=dzen' vis=0`, and the
+  engine loads exactly that URL (`nonwhite=756321/777600`, 21 scripts, `rs=C`) — the commit follows the
+  selected row rather than a fixed target;
+- `vis=0` after each commit: the panel does not reopen on the shell's own URL write;
+- after both commits `ui settings`/`ui settings-close` answer, and the process is alive.
+
+The dropdown heights (62 px for one row, 111 px for two) are well under a third of the 1080-px window,
+which is the layout rule requirement 7 states. With that, **all ten requirements now have a device
+measurement**; the only open item on this line is the intermittent `.42` termination above.
+
 
 
 

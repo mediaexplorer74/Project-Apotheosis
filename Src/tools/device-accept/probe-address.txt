@@ -1,0 +1,53 @@
+# Apotheosis 2026-10-20 -- requirements 2 and 7 on the device: the address box itself.
+#
+# The acceptance list navigates with `goto`, which is the shell's own load call and therefore never
+# touches the address box. Requirements 2 (address bar, navigate on Enter) and 7 (history and
+# suggestions) are exactly the controls that `goto` bypasses, so they have been "not run" on the
+# Lumia while everything else was measured.
+#
+# The verbs exist and are not stubs: `suggest <text>` puts the text in the real UrlBox and opens the
+# real dropdown (ShowSuggestions/MakeRow), and `enter` calls the same CommitUrlBox() the key handler
+# calls. Both are shell-only, so unlike a tap they do not need the gesture stack that a packaged run
+# cannot drive.
+#
+# What the log must show, in order:
+#   suggest example.com   -> the dropdown's own fields (rows=/vis=/h=/boxfoc=) and, after `enter`,
+#                            a diag whose url= is https://example.com/ -- the address box navigated,
+#                            not `goto`.
+#   enter                  -> vis=0: the panel closed rather than reopening on the shell's own URL
+#                            write (the \"gigantic window\" defect fixed in 0.2.3.18).
+#   suggest dzen           -> a suggestion list for a bare word.
+#   enter                  -> dzen via the address box: expect the SSO document and a blank paint,
+#                            as on every first visit in a fresh process.
+#
+# ~2.5 minutes. One process, no restart.
+
+wait 10000
+
+# requirement 2: type a URL, commit it with Enter
+suggest example.com
+wait 2000
+diag
+hash
+enter
+wait 25000
+diag
+hash
+
+# requirement 7: a bare word, the dropdown's own numbers, then commit
+suggest dzen
+wait 2000
+diag
+hash
+enter
+wait 35000
+diag
+hash
+
+# the shell is still responsive after both commits
+ui settings
+wait 1500
+ui settings-close
+wait 1000
+diag
+hash

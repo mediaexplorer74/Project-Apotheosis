@@ -2842,6 +2842,17 @@ not a known crash. That evening's DNS was unreliable (a deploy timed out, `.43`'
 resolve), which explains `.44`'s low first readings on a few sites — their restored values show the
 pages arriving.
 
+**`.45` left only the controls `goto` bypasses, and closed them.** The acceptance list navigates
+through the shell's own load call, so requirements 2 (address bar, navigate on Enter) and 7
+(suggestions) had never been exercised on the Lumia. `probe-address.txt` uses `suggest`, which puts
+the text in the real `UrlBox` and opens the real dropdown, and `enter`, which calls the same
+`CommitUrlBox()` the key handler calls. Measured: `suggest example.com` → `rows=1 vis=1`, then
+`h=62 boxfoc=1`, `enter` → `vis=0`, and the engine loads `https://example.com/` (`body=1`, fully
+painted); `suggest dzen` → `rows=2 vis=1 h=111`, `enter` → `'https://cn.bing.com/search?q=dzen'`, and
+the engine loads exactly that URL (97.26 % painted, 21 scripts). The panel does not reopen on the
+shell's own URL write, the heights are a fraction of the window, and the shell still answers after
+both commits. All ten requirements now have a device measurement.
+
 ---
 
 *"Reviving the Windows Phone web for the people who never let it die."*
