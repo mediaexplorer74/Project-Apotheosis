@@ -457,27 +457,39 @@ foreach ($s in $sites) {
   # eng_nonwhite=31.59, byte for byte dzen's reading one row above. Reporting it would be a
   # measurement that lies, so it is reported as n/a; the verdict for this row is the reported
   # failure itself, which is what MVP item 8 asks for.
-  if (-not $loadOk) { $engNonwhite = $null; $finalUrl = '' }
+  #
+  # The reset itself lives further down, after both `$loadOk` tests, together with `$final_url`'s --
+  # see the guard note there for why it must not run before the extraction it is meant to protect.
   # WHICH document the engine ended up with -- which is not always the one that was asked for.
   #
-  # Measured 2026-10-14, and it is the whole of `11-dzen-ru`'s FAIL: a `goto https://dzen.ru` is
-  # answered with a redirect to `https://sso.dzen.ru/install?uuid=<uuid>`, the engine performs that
-  # navigation itself (`loader: CALL type=0 main=1 https://sso.dzen.ru/install?...`, then
-  # `PBF: createHistoryItemTree` / `addItem`), and `sso.dzen.ru/install` paints `nonWhite=0` -- a
-  # legitimately blank page. A SECOND visit to dzen.ru in the same process does not redirect and
-  # paints 40-47 %.
+  # Measured 2026-10-14, and it is the whole of `11-dzen-ru`'s FAIL. A `goto https://dzen.ru` is
+  # answered 302 with three Set-Cookie headers, and the chain ends on
+  # `https://sso.passport.yandex.ru/push?uuid=<uuid>&retpath=...dzen.ru%2F%3Fis_autologin_ya%3Dtrue`
+  # -- 200, 2883 bytes, a JS redirect page. The engine then navigates itself to
+  # `https://sso.dzen.ru/install?uuid=<uuid>`, COMMITs it, and that document paints `nonWhite=0`; its
+  # own redirect to `dzen.ru/?is_autologin_ya=true&sso_failed=blocked` comes back as a cancelled
+  # `didFailProvisionalLoad`. So the row is a legitimately blank page, not a lost load.
   #
-  # So the redirect depends on dzen-side state that a visit itself creates. Which state, and what
-  # clears it between app runs, is NOT settled: the checked-in 0.2.1.4 run was also one process with
-  # dzen as its first dzen visit (site 11 of 13) and it painted 31.59 %. What is settled is that every
-  # 13-site run visits dzen exactly once, so every run measures the first visit; and that this column,
-  # not the process lifetime, is what makes a `nonWhite=0` row readable.
+  # A SECOND visit in the same process is a different page -- three redirects out through
+  # `login.vk.com/?act=autologin` and `dzen.ru/api/auth/web/autologin-vk?errorCode=11300&errorText=invalid+user`,
+  # then 200 with 3 090 069 bytes of real dzen. What changed is the request's cookie set, and that
+  # lives in the process: the handle's cookie count climbs 0 -> 11 -> 17 -> 23 -> 32 -> 34 across a
+  # run (`SL: fetch ... cookies=N`) and starts at 0 in every run, because the port's jar is the
+  # ephemeral in-memory one -- `PortNetworkStorageSession.cpp` deliberately uses `:memory:` rather
+  # than the on-disk `cookie.jar.db`, which the App Container cannot write. There is no cookie file
+  # anywhere under the package folder; measured, not assumed.
   #
-  # `after-load url=` cannot show this: it carries the URL the port REQUESTED, and so do the app's
-  # `_currentUrl` and its host stack. The engine's own `diag: url=&hellip;` is the only field in the
-  # record that names the document actually loaded, so it is lifted into its own column. Without it,
-  # "dzen painted nothing" reads as a broken site, when what happened is that dzen.ru was never the
-  # document in the first place.
+  # Checked by running the whole list twice in two cold processes with the same LocalState: both runs
+  # blanked, so nothing about dzen survives the process. (The checked-in 0.2.1.4 run painted 31,59 %
+  # for this row. That is not a counter-example to the above -- it is one number with two candidate
+  # explanations, a manual dzen visit in that process before the run and a late `diag` read that caught
+  # this list's own Forward, and the artifact cannot say which. See its README.)
+  #
+  # `after-load url=` cannot show any of this: it carries the URL the port REQUESTED, and so do the
+  # app's `_currentUrl` and its host stack. The engine's own `diag: url=&hellip;` is the only field in
+  # the record that names the document actually loaded, so it is lifted into its own column. Without
+  # it, "dzen painted nothing" reads as a broken site, when what happened is that dzen.ru was never
+  # the document in the first place.
   $finalUrl = ''
   $finalLine = if ($dl.Count) { $dl[-1] } else { '' }
   if ($finalLine -match 'diag:\s+url=(\S+)') { $finalUrl = $Matches[1] }
@@ -493,6 +505,12 @@ foreach ($s in $sites) {
   # would otherwise be read as this site's result. Compare the URL to be sure.
   $urlMatched = ($stageUrl -ne '') -and (($s.Url -replace '/$','') -eq ($stageUrl -replace '/$',''))
   if (-not $urlMatched) { $loadOk = $false }
+  # A row that did not load has no document and no page number of its own -- see the guard note
+  # above. This sits after BOTH ways `$loadOk` can go false (a non-zero rc, and a stage line that
+  # names another site), because the resets used to run before the extraction that overwrites them:
+  # two runs in a row reported `12-bad-domain` with `final_host=dzen.ru`, and a URL-mismatch row
+  # kept a page number measured on the site before it.
+  if (-not $loadOk) { $engNonwhite = $null; $finalUrl = ''; $finalHost = ''; $redirected = $false }
   $painted = ($engNonwhite -ne $null) -and ($engNonwhite -ge 1.0)
   $expectFail = ($s.Name -eq '12-bad-domain')
   # For the unreachable domain a blank page IS the pass. For everything else,

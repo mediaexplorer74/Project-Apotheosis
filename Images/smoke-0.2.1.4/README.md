@@ -29,11 +29,21 @@ missing was any field naming the document the engine had actually loaded: `after
 app's `_currentUrl` both carry the URL that was *requested*. `Src/tools/run-smoke.ps1` now records
 `final_url` / `final_host` / `redirected` for exactly that.
 
-**What this run does not settle.** The redirect is a property of the *first* visit to `dzen.ru`, but
-this run was one process with dzen as site 11 of 13 and it painted `31,59 %` — so the variable is not
-the process's lifetime, as a first reading of the cold/warm difference assumed. What dzen stores on a
-visit, and what would clear it, is unmeasured. Note that it is **not** the installer:
-[Src/tools/install-apotheosis-x64.ps1](../../Src/tools/install-apotheosis-x64.ps1) updates in place and
-preserves `LocalState` — it contains no `Remove-AppxPackage` — so a fresh build does not reset anything
-dzen may have left behind. See [Doc/LESSONS.md](../../Doc/LESSONS.md), *`dzen.ru` is not a blank page, it
-is a redirect*, for the trace pair and the open question.
+**Why this run's own `11-dzen-ru` says `31,59` — and what that does and does not settle (2026-10-14).**
+The engine's document on a first visit is `sso.dzen.ru/install`, which paints nothing; the *second*
+visit in the same process is real dzen (3 MB, `redirects=3`). Two explanations fit `31,59`, and this
+README cannot choose between them from the outside:
+
+- the app's process had already visited `dzen.ru` before the run started — the run is one process with
+  no restart, but nothing records what that process had browsed before the script was launched, and a
+  manual visit is enough to make the script's own `goto` a second visit; or
+- the `diag` was read at a moment that caught the **forward** — the list issues a Back and a Forward
+  after every site, so dzen is reached a second time inside the run, which the text above notes this
+  harness was known to mis-time.
+
+Both require the same thing, and that is the part that is measured: the variable is state held **inside
+the process**. It cannot be a warm-up that persists, because two later runs of the list — each a cold
+process with the same `LocalState` — both blanked this row. The port's cookie jar is in memory:
+`Src/port/PortNetworkStorageSession.cpp` creates it with `SessionID::generateEphemeralSessionID()` and
+says in its own comment that cookies do not persist across restarts. See
+[Doc/LESSONS.md](../../Doc/LESSONS.md), *`dzen.ru` is not a blank page, it is a redirect*.

@@ -775,7 +775,8 @@ trace in [MVP.md](MVP.md) already shows the first session loading `sso.dzen.ru/i
 chain. What was missing is that **the row could not name its own document**, so the list kept reporting
 a site defect for what is a page. The measurement below closes that, and adds the part that was not
 known: the redirect is a property of the **first visit** to `dzen.ru` — a second visit does not
-redirect.
+redirect, and because the port's cookie jar is in memory the state dies with the process, so no visit
+is ever a second one.
 
 - **The trace is unambiguous, and it names the redirect.** From the acceptance run's `port-trace.txt`,
   in order, for dzen's own `goto`:
@@ -806,16 +807,34 @@ redirect.
   a property of the site — the variable was state that the visit itself creates, not the engine and not
   the page. **When a reading is stable within one kind of process and flips in another, the difference
   between the processes IS the experiment.**
-- **…but say which state, or the finding is not finished.** My first write-up called the variable "a
-  cold process". The checked-in 0.2.1.4 run contradicts that: it was **one process with dzen as site 11
-  of 13** — by that account the process was warm and it should not have redirected, yet it painted
-  `31,59 %`. So the state is not the process lifetime. What dzen sets on a visit, and what clears it
-  between app runs, is **not settled and is stated here as open** — and the obvious candidate is ruled
-  out: the bench installer does not clear anything, because
-  [Src/tools/install-apotheosis-x64.ps1](../Src/tools/install-apotheosis-x64.ps1) updates in place and
-  preserves `LocalState`. The instrument fix below does not depend on the answer, which is the point of
-  fixing the instrument first: **a record that names its document turns an argument about mechanism into
-  a fact you can look up.**
+- **The trace names the mechanism, and it is the request's cookie set.** `SL: fetch … cookies=N` in
+  `gpu-steps.txt` counts the cookies the curl handle holds: within one run it climbs `0 → 11 → 17 → 23
+  → 32 → 34`, and in **every** run it starts at 0. dzen's first request therefore arrives with no dzen
+  cookies and is answered `302` (three `Set-Cookie`) → `sso.passport.yandex.ru/push?uuid=…&retpath=…` →
+  200, 2883 bytes, a JS redirect page → the engine navigates itself to `sso.dzen.ru/install` and
+  COMMITs it. That page's own redirect to `dzen.ru/?is_autologin_ya=true&sso_failed=blocked` comes back
+  as a cancelled `didFailProvisionalLoad`, which is why what remains on screen is the blank install
+  page. On the **second** visit the same request carries cookies and takes another road entirely:
+  `redirects=3`, out through `login.vk.com/?act=autologin` and
+  `dzen.ru/api/auth/web/autologin-vk?errorCode=11300&errorText=invalid+user`, then `200` with
+  3 090 069 bytes of real dzen. **Two different pages, one variable, and the variable is a header.**
+- **…and the jar is deliberately per-process, which is why the state never survives.** The port does
+  not use curl's on-disk `cookie.jar.db`: `PortNetworkStorageSession.cpp` creates the session with
+  `SessionID::generateEphemeralSessionID()`, which makes `NetworkStorageSessionCurl` use a `:memory:`
+  jar, and says in its own comment that the App Container cannot write the on-disk path and that the
+  cost is "cookies do not persist across restarts". There is **no cookie file anywhere** under the
+  package folder — `LocalState` has none, and the App Container's `AC\INetCookies` is an empty
+  directory the port never writes to. **So the honest version of the finding is not "a first visit
+  redirects" but "a first visit in a process redirects, and no visit is ever the second one."**
+- **The way to tell a mechanism from a story is to run it twice on purpose.** The first write-up of
+  this called the variable "a cold process". The checked-in 0.2.1.4 artifact is the one number that
+  could contradict it — dzen as site 11 of 13, painting `31,59 %` — and it cannot decide the question
+  either way, because **two** explanations fit it: that process may have visited dzen before the run
+  was launched (nothing records what it had browsed), or the harness of that era read the `diag` at a
+  moment that caught the list's own Forward, which reaches dzen a second time. One number, two stories,
+  no way in from the outside. What settled it was **two cold processes with the same `LocalState`:
+  both blanked** — which is the mechanism's own condition, run on purpose. **A single anomalous number
+  is not evidence for a mechanism; a repeated experiment under the mechanism's own condition is.**
 - **An acceptance list that restarts the app per run only ever measures the first visit.** dzen appears
   once in the list, so every run is a first visit whatever the mechanism turns out to be. That is the
   right thing for a list to do — every row then starts from the same place — but it means a site whose
@@ -829,11 +848,14 @@ redirect.
   `https://www.reddit.com/?solution=…&js_challenge=1&jsc_token=…` — reddit's anti-bot challenge URL.
   That row still painted `45.81 %` and passed, but "the requested URL is not the document" is now a
   fact the record states rather than something a reader has to reconstruct from a 180-character diag.
-- **What is still open, and stated as open:** `sso.dzen.ru/install` painting `nonWhite=0` means this
-  engine rendered nothing for it. Whether that page has visible content a desktop browser would show —
-  a login form, a QR code — is a question this measurement does not answer, and it is a much smaller
-  and better-posed question than "why is dzen blank". **Naming the document turned a site-shaped
-  mystery into a page-shaped one.**
+- **What is still open, and much smaller now.** (a) Whether `sso.dzen.ru/install` has visible content a
+  desktop browser would show — the measurement says this engine rendered nothing for it, not that the
+  page is empty. (b) Whether the jar *should* persist: `PortNetworkStorageSession.cpp` names the
+  follow-up itself (`WebCoreSetCookieJarPath` pointed at `LocalState`), and this finding supplies the
+  cost of not doing it — **a site with an autologin flow pays its whole SSO dance on every launch**, and
+  a user who logged in yesterday is logged out today. That is a product decision, not a defect, and it
+  is now written down with a number attached. **Naming the document turned one site-shaped mystery into
+  two page-shaped questions, and one of them has a price tag.**
 
 - **A batch is one unit of work.** The pre-Back reading was a batch of its own, and that batch went
   unanswered in some rows (the app skips a command while another is running), leaving an empty
