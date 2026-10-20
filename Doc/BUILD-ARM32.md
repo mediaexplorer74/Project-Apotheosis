@@ -1350,3 +1350,46 @@ stale-object diagnosis and this measurement agree, on hardware.
 touching `build-arm32-gpu`'s cmake — that tree cannot be reconfigured and any WebKit cmake edit regenerates
 `build.ninja` and breaks the device configuration. Recompiling the one file through `$Sources` sidesteps the
 tree entirely.
+
+## The "white window" on the Lumia is dzen's own SSO page, not a platform blank (2026-10-20)
+
+This is the same finding as the x64 one of 2026-10-14 (`Doc/LESSONS.md`, *`dzen.ru` is not a blank
+page, it is a redirect*), and it transfers to the device because the cookie jar is the **same source
+file** on both lines: `PortNetworkStorageSession` is in the ARM `$Sources` list, and it creates its
+session with `SessionID::generateEphemeralSessionID()` no matter which line builds it. Cookies are
+therefore per-process on the Lumia exactly as on the bench — there is no ARM-specific difference to
+look for.
+
+**The device trace already said so.** In the `.25` pull (`Src/tools/device-logs/20261003-224203/`,
+`port-trace.txt`), two *separate launches* each load the SSO page as a main-resource document and paint
+nothing:
+
+```
+ 81  loader: CALL type=0 main=1 https://sso.dzen.ru/install?uuid=6347e882-78e2-4c23-a5b0-2e596d8641cb
+343  tail: paintToRGBA exit rc=0 nonWhite=0
+428  loader: CALL type=0 main=1 https://sso.dzen.ru/install?uuid=589c9df8-7a62-41bd-8d39-60dca48626a2
+684  tail: paintToRGBA exit rc=0 nonWhite=0
+1553 tail: paintToRGBA exit rc=0 nonWhite=265380      <- real dzen, later in the same session
+```
+
+Two launches, two different `uuid`s, two blank paints, and then real content — the exact shape measured
+on x64 (first visit blanks, a later visit in the same process paints). So:
+
+- **The "white window" is not a rendering failure.** The engine painted the page dzen served it, and that
+  page is blank by construction. Nothing in the XAML or compositor path needs fixing for it.
+- **The `.25` attempt-2 verdict stands for the death, not for the blankness.** That session *also* has
+  `VEH: SharedLibrary.dll+0x363B4D` and `CoreUIComponents.dll+0xD4347`, so it did die on the .NET
+  Native/XAML pair; the white screen it was reported with is the SSO page underneath.
+- **It will recur on every cold launch**, because the jar is in memory. Launching dzen.ru once and
+  waiting a second for the SSO dance does not help the *next* launch.
+- **The ARM line has no `SL:` tracing** (`grep -c "SL: fetch"` = 0 in that pull), so the cookie chain
+  cannot be followed on the device the way it is on the bench. The `loader: CALL type=0 main=1` line and
+  the paint count are the available evidence, and they are enough to name the document.
+
+**What the ARM answer would be.** Two options, and they are a product decision, not a port defect:
+make the jar persist (`WebCoreSetCookieJarPath` pointed at `LocalState`, the follow-up the source
+comment names), or show the user something other than a blank page when the document is a redirect
+target that paints nothing — which is what the x64 harness now does by naming `final_url`. The second
+is the smaller change and does not touch the cookie model. **Note the trap:** a per-site acceptance list
+on the device will report dzen as a failure forever until one of the two is chosen, and it will be
+right — that is what the page does.
