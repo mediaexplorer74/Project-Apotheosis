@@ -910,3 +910,29 @@ which reads exactly like "the app is gone". After stopping, confirm the process 
 pulling files the app had open.
 
 
+## An unattended device run ends when the display sleeps (`0.2.3.46`–`.48`, 2026-10-20)
+
+**The first rule of a long device run: the app must not be the only thing keeping the phone awake.**
+`0.2.3.46` ran the thirteen-site list and, 11 s into a `wait 40000`, `boot.txt` wrote `suspending` and
+the process was gone by the next pull — no fault, no assert, no crash report, the log ending cleanly.
+Nothing had been done to the phone since the previous stop. That is suspend-then-reap: a UWP app that
+makes no touch input lets the display time out, and suspension is where an unattended run ends. It is
+also the most plausible explanation for `.42`'s silent end, which predates the lifecycle marker. The
+`.48` probe is the control: 73 s after its batch released the display request, with nothing else
+happening, `boot.txt` wrote `suspending`.
+
+**A lifecycle marker is worth more than a long trace.** Before `.43`, every marker described work —
+`rlife:`, `wtimer:`, loader lines. None described *the app going away*, so a suspension and a crash
+looked identical. `App` now writes `suspending`, `resuming` and `EXC <type>: <message>` into `boot.txt`,
+and the same 3-minute run that was unreadable in `.42` names its channel in `.46`.
+
+**The cure belongs inside the batch, not in the instructions.** "Keep the phone awake" is not an
+acceptance run; an instrument that needs a hand on the device does not measure an unattended one. Since
+`.47` a packaged batch holds a `Windows.System.Display.DisplayRequest` from the first command to the last
+(`MainPage.AutoCmd.cs`, `HoldBatchDisplay`/`ReleaseBatchDisplay`), logs `display: held awake` and
+`display: released`, and `.47` then ran 13/13 in 11 min 05 s without a suspension. The request is created
+on the UI thread, so it must also be **released** there: `.47`'s release ran on the engine thread and
+threw `InvalidCastException … Arg_NoMarshalCreatedObjectUsedOutOfTreadContext`, leaving the display held
+until the process was stopped. `.48` marshals the release through `Dispatcher.RunAsync`.
+
+
