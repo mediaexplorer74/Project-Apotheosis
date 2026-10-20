@@ -1601,6 +1601,16 @@ marshals the release through `Dispatcher.RunAsync`, and the short `probe-address
 same run is also the control for the mechanism: once the request was gone, `boot.txt` wrote `suspending`
 73 s later with nothing else happening — an idle, unattended app lets the display time out.
 
+**`0.2.3.49` is the product bundle of this line** — the acceptance evidence above was collected from
+batch-carrying packages, and this one is what a user runs. It is built by `build-app-arm.bat` (Release,
+`AppxBundle=Always`, all six resource packs) with **no `Assets\device-run.txt`** (the csproj item is
+conditional, and the staged copy was removed by the acceptance build), audited `AUDIT PASSED` /
+44/44 exports, and deployed as `ME.Apotheosis_0.2.3.49_arm__cj4nrm0qt9s1y`. Launched for a smoke check,
+its `boot.txt` shows `app-ctor → onlaunched → mainpage-ctor → mainpage-xaml-ok` and then `suspending`
+within a second: the phone's screen was locked by then, which is the documented launch-on-lock
+behaviour, not a product defect. A product launch never holds the display request; only a packaged
+batch does.
+
 
 
 

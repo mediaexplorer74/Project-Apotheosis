@@ -1,8 +1,8 @@
-MainPackage=C:\Users\media\source\repos\Vibe\Apotheosis\Src\Apotheosis\bin\ARM\Release\Apotheosis_0.2.3.48_ARM.appx
-SymbolPackage=C:\Users\media\source\repos\Vibe\Apotheosis\Src\Apotheosis\obj\ARM\Release\Symbols\Apotheosis_0.2.3.48_ARM.appxsym
-ResourcePack=C:\Users\media\source\repos\Vibe\Apotheosis\Src\Apotheosis\bin\ARM\Release\Apotheosis_0.2.3.48_language-ru.appx
-ResourcePack=C:\Users\media\source\repos\Vibe\Apotheosis\Src\Apotheosis\bin\ARM\Release\Apotheosis_0.2.3.48_language-zh-hans.appx
-ResourcePack=C:\Users\media\source\repos\Vibe\Apotheosis\Src\Apotheosis\bin\ARM\Release\Apotheosis_0.2.3.48_scale-100.appx
-ResourcePack=C:\Users\media\source\repos\Vibe\Apotheosis\Src\Apotheosis\bin\ARM\Release\Apotheosis_0.2.3.48_scale-125.appx
-ResourcePack=C:\Users\media\source\repos\Vibe\Apotheosis\Src\Apotheosis\bin\ARM\Release\Apotheosis_0.2.3.48_scale-150.appx
-ResourcePack=C:\Users\media\source\repos\Vibe\Apotheosis\Src\Apotheosis\bin\ARM\Release\Apotheosis_0.2.3.48_scale-400.appx
+MainPackage=C:\Users\media\source\repos\Vibe\Apotheosis\Src\Apotheosis\bin\ARM\Release\Apotheosis_0.2.3.49_ARM.appx
+SymbolPackage=C:\Users\media\source\repos\Vibe\Apotheosis\Src\Apotheosis\obj\ARM\Release\Symbols\Apotheosis_0.2.3.49_ARM.appxsym
+ResourcePack=C:\Users\media\source\repos\Vibe\Apotheosis\Src\Apotheosis\bin\ARM\Release\Apotheosis_0.2.3.49_language-ru.appx
+ResourcePack=C:\Users\media\source\repos\Vibe\Apotheosis\Src\Apotheosis\bin\ARM\Release\Apotheosis_0.2.3.49_language-zh-hans.appx
+ResourcePack=C:\Users\media\source\repos\Vibe\Apotheosis\Src\Apotheosis\bin\ARM\Release\Apotheosis_0.2.3.49_scale-100.appx
+ResourcePack=C:\Users\media\source\repos\Vibe\Apotheosis\Src\Apotheosis\bin\ARM\Release\Apotheosis_0.2.3.49_scale-125.appx
+ResourcePack=C:\Users\media\source\repos\Vibe\Apotheosis\Src\Apotheosis\bin\ARM\Release\Apotheosis_0.2.3.49_scale-150.appx
+ResourcePack=C:\Users\media\source\repos\Vibe\Apotheosis\Src\Apotheosis\bin\ARM\Release\Apotheosis_0.2.3.49_scale-400.appx
