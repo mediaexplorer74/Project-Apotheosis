@@ -20,6 +20,9 @@
 #                   between two identical rows), or `other` (a real mismatch)
 #   5. alive     -- is the process still running afterwards
 #
+# `-Only 11-dzen-ru,12-bad-domain` measures just those rows, for a probe. It is not an acceptance
+# run and its summary says so.
+#
 # A site that loads with rc=0 but paints nothing is a FAIL, not a pass. That is
 # the point of the exercise: the blank-white-page failure mode is indistinguishable
 # from success if you only read the return code.
@@ -27,7 +30,10 @@ param(
   [string]$OutDir = "$env:USERPROFILE\Documents\apotheosis-smoke",
   [ValidateSet('mobile','desktop')][string]$Mode = 'mobile',
   [int]$SettleMs = 6000,          # retained for callers; the loop now waits on the load itself
-  [int]$LoadTimeoutSec = 45       # per site, for the after-load line to name the site's URL
+  [int]$LoadTimeoutSec = 45,      # per site, for the after-load line to name the site's URL
+  # Comma-separated site names, for probing one row without paying for thirteen (quoted, because a
+  # bare `-Only 11-dzen-ru,12-bad-domain` is one word to the shell and two to this parameter).
+  [string]$Only = ''
 )
 
 # Mode is a first-class axis, not a footnote.
@@ -177,6 +183,27 @@ $sites = @(
   # actually asked for and not only a generic list.
   [pscustomobject]@{ Name='13-nokia-archive'; Url='https://nokiadesignarchive.aalto.fi/'; Note='MVP target: SPA archive, tall page' }
 )
+
+# Optional site filter, for a probe rather than an acceptance run.
+#
+# It filters the LIST and leaves the machinery alone, so `$prevWant` (the row above, taken from
+# `$rows[-1]`) is the previous row IN THIS RUN -- which is what the engine's history will actually
+# hold after a filtered run, so the Back expectation stays honest. Two rules keep it from being
+# mistaken for evidence: an unknown name is a hard error rather than a silently empty run (the same
+# reason the OutDir guard exists), and the summary says FILTERED in capitals, because "passed 2 / 2"
+# quoted as if it were the list would be exactly the kind of measurement this script exists to stop.
+$sitesAll = $sites.Count
+if ($Only -ne '') {
+  $want = @($Only.Split(',') | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne '' })
+  $unknown = @($want | Where-Object { $_ -notin $sites.Name })
+  if ($unknown.Count) {
+    Write-Host ("-Only names not in the list: {0}" -f ($unknown -join ', ')) -ForegroundColor Red
+    Write-Host ("known sites: {0}" -f (($sites.Name) -join ', ')) -ForegroundColor Red
+    exit 1
+  }
+  $sites = @($sites | Where-Object { $_.Name -in $want })
+  Write-Host ("FILTERED RUN: {0} of {1} sites -- {2}" -f $sites.Count, $sitesAll, (($sites.Name) -join ', ')) -ForegroundColor Yellow
+}
 
 # --- Reading the app's answers ------------------------------------------------------------------
 #
@@ -573,6 +600,9 @@ $prevCase = @($rows | Where-Object { $_.back_case -eq 'prev' }).Count
 $sameCase = @($rows | Where-Object { $_.back_case -eq 'same-url' }).Count
 $otherCase = @($rows | Where-Object { $_.back_case -eq 'other' }).Count
 Write-Host ("passed {0} / {1} in {2} mode;  back {3} / {4};  forward returned {5} / {4};  report in {6}" -f $pass, $rows.Count, $Mode, $backPass, $rows.Count, $restorePass, $OutDir)
+if ($Only -ne '') {
+  Write-Host ("FILTERED: {0} of {1} sites measured -- a probe, not an acceptance run; do not quote this as `"{2} / {1}`"" -f $rows.Count, $sitesAll, $pass) -ForegroundColor Yellow
+}
 Write-Host ("back breakdown: prev {0}, same-url {1}, other {2}" -f $prevCase, $sameCase, $otherCase)
 # A redirected row is called out separately because its paint figure is about the redirect target.
 # Without this line, `11-dzen-ru` reads as a site that does not render; measured, it is a site whose
