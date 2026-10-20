@@ -1507,4 +1507,33 @@ marks; a fault inside the engine would leave a `VEH-routine` line with a real co
 the `.42` end as a crash — nothing in the evidence says so, and the idle, ticking trace argues against
 it.
 
+**`0.2.3.43` idled for fifteen minutes after its batch** — past the `.42` death time by more than four
+minutes — without being terminated (`pid 4832`, `ws 116.7 MB`), so there is no fixed-time reaper on an
+idle app. The idle control does not cover a heavy engine session, though: that `.43` process had
+released its memory (91.6 MB device-wide) and was sitting on a light page.
+
+**`0.2.3.44`, the full list again under the `.42` conditions — the death did not reproduce.** The same
+thirteen sites, the same order, the same error-then-nokia tail, one process, **13/13 rows and the shell
+check**, `nokiadesignarchive` at **99.53 %**, dzen `sso.dzen.ru/install` → **24.89 %** restored, error
+page 12.28 %, swipes 622–887 ms. The app was still alive 16 minutes after launch (`pid 5000`,
+836.4 MB of 1536, 54 %), `boot.txt` has no `suspending`/`resuming`/`EXC` marker, `crash-report.txt` is
+absent, and the 6.0 MB trace has 61 `VEH` lines, **all `0x40010006`** (OutputDebugString), zero
+assert/crash text. Note the run's lower first readings (wikipedia 3.61 % vs 81.68 % restored, habr
+`body=0` vs 3.91 % restored): the phone's DNS and radio were unreliable that evening — the same
+degradation that made `.43`'s nokia fail with `curlcode=28`. Those are load-timing artifacts, not
+paint failures; the restored column shows each page arriving.
+
+The conclusion the evidence supports: the list is repeatable on the device, and the `.42` termination
+is an intermittent, unmarked process end that has not recurred in two full runs (total: three full
+runs, two clean). It stays an open question with a standing instrument, not a known crash.
+
+One first in `.44`, worth recording because it contradicts nothing but sharpens requirement 5's
+device row: nokia's Back came back **`rc=0`** — served by the engine's own list, with the host index
+jumping `12/13 → 14/14` — where every other row's Back is the host fallback (`rc=-99`). After a
+client-side `?node=A0001` history push on that SPA, the engine session evidently held an entry. Both
+paths restore the page; which one answers depends on whether the current session has history, and
+the diag after Back+Forward confirms the restore either way.
+
+
+
 

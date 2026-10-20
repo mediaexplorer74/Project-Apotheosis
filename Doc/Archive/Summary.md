@@ -2829,10 +2829,18 @@ process disappeared during the last site, 39 s after the navigation, with the en
 RunLoop still ticking in the trace, the memory sampler writing to the end, and no fault of any kind —
 no `VEH` with a real code (all 51 are `OutputDebugString`), no assert, no crash report, 61 % of the
 device limit. Nothing in the evidence calls that a crash. `.43` added `suspending`/`resuming`/`EXC`
-markers to `boot.txt` and re-ran a short list without reproducing it (nokia itself failed on
-`curlcode=28`, a DNS timeout, so the page was not exercised). The next long run decides between an
-external lifecycle termination and an in-process fatal error; until then the honest statement is
-"the process ended, and why is not known".
+markers to `boot.txt`, re-ran a short list without reproducing it (nokia itself failed on
+`curlcode=28`, a DNS timeout, so the page was not exercised) and then idled for fifteen minutes after
+its batch without being terminated — so there is no fixed-time reaper on an idle app.
+
+**`.44` closed the loop by repeating the list under the `.42` conditions: 13/13, shell check, one
+process.** nokia 99.53 %, the error page 12.28 %, dzen's SSO blank then 24.89 % restored, swipes
+622–887 ms; the app was alive 16 minutes later, `boot.txt` had no lifecycle or exception marker, and
+the 6.0 MB trace held 61 `VEH` lines, all `0x40010006`. Three full device runs, two clean, and the
+intermittent `.42` termination has not recurred: it stays an open question with a standing instrument,
+not a known crash. That evening's DNS was unreliable (a deploy timed out, `.43`'s nokia failed to
+resolve), which explains `.44`'s low first readings on a few sites — their restored values show the
+pages arriving.
 
 ---
 
