@@ -346,6 +346,16 @@ line (as `WebCorePortTrace` does) or have the rotation fall back to copying the 
 truncating in place. **Until then, treat a pull's `port-trace.txt` as unbounded and pull it whole** —
 the `.1`/`.2` names in the default list are harmless to ask for but will always 404.
 
+**Correction 2026-10-20 (measured at the `.45` pull): it does fire — at the start of the next launch.**
+The sharing violation only binds a *live* handle, and on the first write of a new process there is none:
+`port-trace.1.txt` held the whole `.44` session (**6,032,266 bytes**, 119,947 lines) while
+`port-trace.txt` held only `.45`'s own 128,963 bytes. `port-trace.2.txt` was absent, so the loader writer
+never reached its own ceiling. So the ceiling does not bound *the current* session — `.44`'s trace sat at
+6.0 MB, and `.40`'s reached 10 MB — but it does bound the damage across launches, and a pull made after
+the next launch still recovers the previous session as `.1`, provided no third launch has since run
+(whose `remove(previous)` would delete it). A pull should still happen before the next launch whenever
+the session in question is the one under investigation.
+
 
 ## Status measured 2026-10-03 (night, later) — the `.24` pull answers "gesture or close", and the engine death has a port-side fix
 
@@ -1553,6 +1563,43 @@ the real dropdown, `enter` calls the same `CommitUrlBox()` the key handler calls
 The dropdown heights (62 px for one row, 111 px for two) are well under a third of the 1080-px window,
 which is the layout rule requirement 7 states. With that, **all ten requirements now have a device
 measurement**; the only open item on this line is the intermittent `.42` termination above.
+
+**`0.2.3.46` was suspended mid-list, and this time the instrument named it.** The same thirteen-site
+list (173 commands, `source=0.2.3.46 4744`) started at 20:14:01 and reached `goto
+https://en.m.wikipedia.org` at 20:16:42; the `wait 40000` that follows released the engine, and
+**11 s later `boot.txt` wrote `20:16:53.366 suspending`** — the app was gone by the next pull, with no
+fault marker of any kind and the autocmd log ending cleanly at the wait. That is suspend-then-reap, not
+a crash: the phone had received no touch input since the previous stop, and the most consistent
+explanation is the display timing out under an unattended app — UWP suspension is where a scripted run
+ends when nobody is watching. (The alternative, a terminate from outside, would have come from the
+bench, and no such call was made.) It also
+reframes the open `.42` question — that run predates the lifecycle marker, and its silent end is
+consistent with the same mechanism, though it cannot be proven retroactively.
+
+Because an acceptance run that needs a hand on the phone is not an acceptance run, `0.2.3.47` makes the
+batch itself hold a `Windows.System.Display.DisplayRequest` from the moment the packaged list starts to
+the moment it finishes (`MainPage.AutoCmd.cs`, `HoldBatchDisplay`/`ReleaseBatchDisplay`; two end points,
+the normal return and the final `wait`). It is created only for a packaged batch, so a product launch
+never holds the display, and both the request and its release write a `display:` line to
+`autocmd-log.txt` — so the next run can show whether the request was granted and when it was dropped.
+
+**`0.2.3.47` ran the full list with the display held: 13/13, no suspension.** The batch header and
+`display: held awake for the batch` land in the same millisecond (20:27:26.724), the last row's `diag`
+and `hash` are at 20:38:32 — **11 min 05 s unattended** — and `boot.txt` never moves past
+`mainpage-xaml-ok`. The analyzer reads all thirteen rows: dzen's SSO blank (0 %) then **28.94 %** on the
+restored visit, nokia 80.96 % with the engine's own Back (`rc=0`), the error page 12.28 %. Two first
+readings were slow rather than broken — rbc.ru came back as its own error page (11.6 %) and restored at
+5.09 %, habr's first diag was `body=0` and another visit painted 4.05 % — the same load-timing shape as
+`.44`, not a new defect.
+
+**One defect in the fix itself, found by its own marker.** The batch ends on the engine thread, and the
+`DisplayRequest` was created on the UI thread, so `RequestRelease()` threw
+`InvalidCastException … Arg_NoMarshalCreatedObjectUsedOutOfTreadContext` — logged as
+`display: release failed` — and the display stayed held until the process was stopped. `0.2.3.48`
+marshals the release through `Dispatcher.RunAsync`, and the short `probe-address.txt` batch verified it:
+`display: held awake` at 20:44:14.803, `display: released` at 20:45:32.044 after the final `hash`. The
+same run is also the control for the mechanism: once the request was gone, `boot.txt` wrote `suspending`
+73 s later with nothing else happening — an idle, unattended app lets the display time out.
 
 
 

@@ -2853,6 +2853,22 @@ the engine loads exactly that URL (97.26 % painted, 21 scripts). The panel does 
 shell's own URL write, the heights are a fraction of the window, and the shell still answers after
 both commits. All ten requirements now have a device measurement.
 
+**`.46`–`.48` found why an unattended run ends, and fixed it.** `.46` started the list at 20:14:01,
+reached the wikipedia navigation at 20:16:42 and was suspended 11 s later, mid-`wait 40000` — `boot.txt`
+wrote `suspending` and the process was gone by the next pull, with no fault of any kind. That is
+suspend-then-reap, not a crash: the display timed out under an app making no touch input, and UWP
+suspension is how such a run ends when nobody is watching. It also gave the open `.42` termination a
+plausible mechanism (that run predates the lifecycle marker). `.47` makes the packaged batch itself hold
+a `DisplayRequest` for its duration and **ran 13/13 unattended in 11 min 05 s with no suspension** —
+dzen's SSO blank then 28.94 % restored, nokia 80.96 % with the engine's own Back, the error page
+12.28 %. The fix had one defect the instrument caught: the request was created on the UI thread but
+released on the engine thread, so `RequestRelease()` threw `InvalidCastException` and the display stayed
+held; `.48` marshals the release through `Dispatcher.RunAsync`, and its 23-command probe batch measured
+`display: held awake` (20:44:14.803) → `display: released` (20:45:32.044). The same probe is the
+control: 73 s after the request was released, with nothing else happening, `boot.txt` wrote
+`suspending` — an unattended app lets the display time out, which is exactly what the batch request
+prevents.
+
 ---
 
 *"Reviving the Windows Phone web for the people who never let it die."*

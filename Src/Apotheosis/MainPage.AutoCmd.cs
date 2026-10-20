@@ -51,6 +51,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using Windows.ApplicationModel;
 using Windows.Storage;
+using Windows.System.Display;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 
@@ -64,6 +65,52 @@ namespace Apotheosis
         DateTime _autoCmdStamp;
         bool _autoCmdRunning;
         int _autoCmdBatch;
+
+        // Apotheosis 2026-10-20: a packaged batch holds a DisplayRequest for its whole run.
+        //
+        // Measured on `.46`: the thirteen-site list started at 20:14:01, reached the wikipedia
+        // navigation at 20:16:42, and was suspended 11 s later, mid-`wait 40000` -- `boot.txt` wrote
+        // `suspending` and the process was gone by the next pull. No touch input had reached the phone
+        // since the previous stop, and the most consistent cause is the display timing out under an
+        // app that makes no touch input -- suspension is how a UWP app ends a scripted run that no
+        // one is watching. That is not a crash, and it
+        // contaminates any acceptance run made unattended -- including the `.42` end, which had no
+        // lifecycle marker to say so. RequestActive() keeps the display on while the batch runs and
+        // is released the moment the batch finishes (or fails), so a product launch is unaffected.
+        DisplayRequest _autoCmdDisplay;
+
+        void HoldBatchDisplay()
+        {
+            try
+            {
+                if (_autoCmdDisplay != null) return;
+                _autoCmdDisplay = new DisplayRequest();
+                _autoCmdDisplay.RequestActive();
+                AutoLog("display: held awake for the batch");
+            }
+            catch (Exception ex) { AutoLog("display: request failed " + ex.GetType().Name + ": " + ex.Message); }
+        }
+
+        void ReleaseBatchDisplay()
+        {
+            if (_autoCmdDisplay == null) return;
+            // The request is created on the UI thread, so it must be released there too: measured
+            // on `.47`, calling RequestRelease() from the engine thread threw InvalidCastException
+            // (Arg_NoMarshalCreatedObjectUsedOutOfTreadContext) and the display stayed held. The
+            // batch ends on the engine thread, hence the marshal.
+            CoreDispatcher disp = Dispatcher;
+            disp.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                try
+                {
+                    if (_autoCmdDisplay == null) return;
+                    _autoCmdDisplay.RequestRelease();
+                    _autoCmdDisplay = null;
+                    AutoLog("display: released");
+                }
+                catch (Exception ex) { AutoLog("display: release failed " + ex.GetType().Name + ": " + ex.Message); }
+            });
+        }
 
         void StartAutoCmd()
         {
@@ -124,6 +171,7 @@ namespace Apotheosis
                 File.WriteAllText(done, stamp);
                 _autoCmdBatch++;
                 AutoLog("---- packaged batch " + _autoCmdBatch + " (" + batch.Count + " cmds), source=" + stamp + " ----");
+                HoldBatchDisplay();
                 RunAutoBatch(batch);
             }
             catch (Exception ex) { AutoLog("packaged batch FAILED " + ex.GetType().Name + ": " + ex.Message); }
@@ -210,7 +258,7 @@ namespace Apotheosis
                 bool reposted = false;
                 try { reposted = RunAutoBatchOnEngine(batch, start); }
                 catch (Exception ex) { AutoLog("FATAL " + ex.GetType().Name + ": " + ex.Message); }
-                finally { if (!reposted) _autoCmdRunning = false; }
+                finally { if (!reposted) { _autoCmdRunning = false; ReleaseBatchDisplay(); } }
             });
         }
 
@@ -374,7 +422,7 @@ namespace Apotheosis
                         {
                             AutoLog("wait " + ms + "ms elapsed");
                             if (rest < batch.Count) PostBatchChunk(batch, rest);
-                            else _autoCmdRunning = false;
+                            else { _autoCmdRunning = false; ReleaseBatchDisplay(); }
                         });
                         return true;
                     }
