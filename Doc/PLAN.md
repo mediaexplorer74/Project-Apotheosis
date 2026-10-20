@@ -280,6 +280,29 @@ lines (ARM `Compiled 15/15`, `duplicate=142`, `Exports: 40`, `SHA256 14E73E2A…
 the expectation is now *no death at all* on dzen.ru, and if something else kills it the repaired reader
 should name it.
 
+**The ARM line then ran its own acceptance list to completion (`0.2.3.30`–`.45`, 2026-10-09 → 10-20).**
+The `.29` expectation held: dzen.ru stopped killing the process, and the next named abort — a
+`RELEASE_ASSERT` on a zero-size `FontPlatformData` key during text shaping — was the ARM font stub in
+the frozen archive, fixed and measured on the device in `.31` (the guard fired 26 times on `size=0.00`,
+no abort triple). The phase exit criterion is now measured on the phone itself, not inferred: the
+thirteen-site list travels inside the package (`Assets\device-run.txt`, run once per version by
+`MainPage.TryStartPackagedBatch()`) and the analyzer turns `autocmd-log.txt` into the bench's row table.
+`0.2.3.40` ran 161 commands and 13/13 sites in one process; `.44` repeated it in full (alive 16 minutes
+later, no fault code in a 6 MB trace); `.45` closed the two controls `goto` bypasses — the real UrlBox
+(`suggest`/`enter`) navigates, and the dropdown opens and closes with it. **All ten MVP requirements now
+have a device measurement.** One item stays open: `.42` reached 12/13 and the process ended with no
+fault marker of any kind; `.43`/`.44`/`.45` did not reproduce it, and `boot.txt` now carries
+`suspending`/`resuming`/`EXC` markers for the next long run. Full evidence and the instrument's own
+defects are in [BUILD-ARM32.md](BUILD-ARM32.md), "Running the acceptance list on the device".
+
+#### Readiness, re-assessed 2026-10-20 (the ARM phase exit criterion is met)
+
+| Line | Ready | Basis |
+|---|---|---|
+| The MVP contract (the ten requirements in [MVP.md](MVP.md)) | **met on both lines** | 10 of 10 on x64 and 10 of 10 on the Lumia, each with a measurement dated in the MVP table. The exit criterion itself — the same thirteen-site list on x64 then the device — closed in `0.2.3.40` and repeated in `.44`; `.45` added the address box, the last control the list bypassed |
+| The product, for a real user on a Lumia | **materially further than 2026-10-03, not finished** | the process no longer dies on dzen.ru; it runs the list unattended and is usable afterwards. What remains is the intermittent `.42` termination (open question, standing instrument), GPU presentation (paused by the maintainer), subframes, video/MSE, and memory with no stable price across navigations — all outside the ten-requirement contract |
+
+
 #### Readiness, assessed 2026-10-03
 
 | Line | Ready | Basis |
