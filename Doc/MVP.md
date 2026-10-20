@@ -37,8 +37,10 @@ features unrelated to opening and reading pages. Software presentation is the MV
   redirect to dzen's own SSO page, not a site defect. Rows carry `final_url` for exactly this reason.
 - Software presentation is the MVP-safe path. GPU direct-present is not required for v1 and is off by
   default in the bench settings; the GPU investigation is tracked in [GPU-LIVENESS.md](GPU-LIVENESS.md).
-- Device validation is still required before calling v1 complete: nothing in this document has been
-  demonstrated on ARM32.
+- Device validation was completed on 2026-10-20: every requirement in the table below has a measurement
+  on the Lumia, and the ARM line runs the packaged thirteen-site list unattended — `0.2.3.47`, **13/13
+  in 11 min 05 s** with the batch holding a `DisplayRequest`. The acceptance table is the evidence; see
+  also [BUILD-ARM32.md](BUILD-ARM32.md), "Running the acceptance list on the device".
 
 ## Record a result
 
@@ -46,6 +48,16 @@ For each site record: URL, load result, painted pixels/content, scroll result, b
 hang marker. A test that only checks `rc=0` is incomplete.
 
 ---
+
+## Status, reviewed 2026-10-20
+
+**All ten requirements are met on both build lines.** The x64 column was closed in the runs of
+`0.2.1.4`–`0.2.3.37`; the Lumia column was closed on 2026-10-20 with the packaged acceptance list
+(`0.2.3.40`, `.44`, `.47` — three full 13/13 runs, the last one unattended) plus the address-box probe
+(`0.2.3.45`) for requirements 2 and 7, and the lifecycle instrument for requirement 1/10. The contract
+above is unchanged; what changed is that every cell now names a measurement. Out-of-scope items remain
+out of scope: GPU presentation is still paused, and subframes, video/MSE and memory behaviour are
+post-v1 work.
 
 ## Status, reviewed 2026-10-03
 
@@ -62,7 +74,7 @@ engine's own view of the page, `diag:`. `13/13 PASS`, `alive=True` on every row.
 |---|---|---|---|---|
 | 1 | starts and reaches the UI | **met** | **met** | appx installs and launches; `boot.txt` shows `app-ctor → onlaunched → mainpage-ctor → mainpage-xaml-ok`; on the Lumia `0.2.3.23` launches and paints dzen.ru — a blank screen on one attempt, real content on the next |
 | 2 | address bar, navigate on Enter | **met** | **met** | navigation via `testurl.txt`, the `goto` verb and a real tap. On the Lumia `0.2.3.45` measures the box itself, not `goto`: `suggest example.com` → real UrlBox + real dropdown (`rows=1 vis=1`), `enter` → `CommitUrlBox` → `ui enter 'https://example.com' vis=0` and the engine loads `https://example.com/` (`title=Example Domain`, body=1); a second commit (`suggest dzen` → `enter`) loads the selected row's URL (`https://cn.bing.com/search?q=dzen`), so the box navigates wherever the list says, not to a fixed target |
-| 3 | ten sites in sequence | **met** (13) | **met** (13) | `smoke.csv`: 13 sites, one process, no restart, no death. On the Lumia `0.2.3.40`: the packaged list ran **161 commands and 13/13 sites in one process**, no `VEH:` fault, no `RELEASE_ASSERT`, no crash report; `autocmd-log.txt` (pulled whole) is the record. `0.2.3.44` repeated it in full — **three full device runs, two clean** (see row 9) |
+| 3 | ten sites in sequence | **met** (13) | **met** (13) | `smoke.csv`: 13 sites, one process, no restart, no death. On the Lumia `0.2.3.40`: the packaged list ran **161 commands and 13/13 sites in one process**, no `VEH:` fault, no `RELEASE_ASSERT`, no crash report; `autocmd-log.txt` (pulled whole) is the record. `0.2.3.44` and `0.2.3.47` repeated it in full — **four full device runs, three clean** (see row 9) |
 | 4 | paints visible content | **met** | **met** | engine `diag: nonwhite` per site (99.99 % nokia-archive, 1.42 % info.cern.ch) plus a screenshot each, and since 2026-10-14 the *document* that was measured (`final_url`) — because a row whose requested URL was redirected is describing the redirect target, which is what `11-dzen-ru`'s `0.00 %` turned out to be. On the Lumia `0.2.3.40`, every row names its document and paints: example.com 100 %, ycombinator 99.99 %, wikipedia 81.68 %, nokia 80.96 %, reddit 43.85 % (its challenge page), lenta 39.67 %; dzen's 0 % is `sso.dzen.ru/install`, a blank page by construction, and the same process paints **29.01 %** after Back+Forward or a later visit. `0.2.3.44` repeats it (nokia **99.53 %**, dzen **24.89 %** restored); its low *first* readings that evening (wikipedia 3.61 %, habr `body=0`) are slow-DNS load timing — the restored column shows each page arriving |
 | 5 | back returns to previous page | **met** | **met** | measured per site by the standing thirteen-site list (`smoke.csv`, columns `back_path`, `back_case`, `back_ok`, `back_restored`), on `0.2.3.37` in **three runs across both modes**: **back 13/13 and forward returned 13/13 every time**, every row landing on the row above and returning to its own site. The engine's own list was demonstrated separately on `0.2.3.36` — because the port builds a new session per top-level navigation, the list's Backs in this sequence are served by the host-stack fallback (`rc=-99`), which is correct behaviour, not a gap. Before the fix the same probe reported `engine back=0 fwd=0` — the list was empty (see the note below). On the Lumia `0.2.3.40` the same shape holds: every row `back rc=-99` with the host index advancing (`0/1 → 12/13`), and the post-Forward diag returns the row's own document — including dzen, whose restored visit paints 29.01 % where the first visit painted nothing |
 | 6 | scrolling moves a tall page | **met** | **met** | a real touch-path swipe per site, 667–872 ms, logged as `swipe end totalMs=`. Since 2026-10-20 the frame hash is taken **after** the swipe as well as before it, so "the gesture ran" and "the page moved" are separate readings. On the Lumia `0.2.3.41`: a 720×1549 ycombinator page that had been settled for 25 s (`pending=0`) went `hash 0x9bc468b7 → 0xa2a82d90` **inside** the 807 ms swipe window and read the same `0xa2a82d90` 1.2 s later; `0.2.3.42` repeats it on the list (swipes 674–1041 ms, `moved=yes` on every tall page), and `0.2.3.44` again (622–887 ms). Short or blank pages legitimately do not move (example.com, info.cern.ch, the dzen SSO blank) |
