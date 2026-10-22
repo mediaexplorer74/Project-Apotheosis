@@ -331,6 +331,11 @@ namespace Apotheosis
         // page, and the page is what the user came for, so it needs an off switch. Read in
         // ShowSuggestions(), the one function that can put the panel on screen.
         bool _suggestOn = true;
+        // Headless mode (ROADMAP.md, "Beyond 1.0"): 0 = off, 1 = summary, 2 = speak. A
+        // register-only placeholder — shown in Settings/Advanced, saved to settings.ini as
+        // headless=, and read by nothing. The later work (fetch → analyse → present without
+        // paint) attaches here.
+        int _headlessMode;
         string _searchPrefix = kSearchPrefixes[0];
         string _homeUrl = "about:home";
         int _uiLang;
@@ -677,11 +682,13 @@ namespace Apotheosis
                         case "touchfab": _showFab = (int.Parse(v) != 0); break;
                         case "fitwindow": _fitWindow = (int.Parse(v) != 0); break;
                         case "suggest": _suggestOn = (int.Parse(v) != 0); break;
+                        case "headless": _headlessMode = int.Parse(v); break;
                     }
                 }
             }
             catch { }
             if (_setSearch < 0 || _setSearch > 3) _setSearch = 0;
+            if (_headlessMode < 0 || _headlessMode > 2) _headlessMode = 0;
             if (_uiLang < 0 || _uiLang > 2) _uiLang = 0;
             Str.SetLang(_uiLang);
             ApplySettings();
@@ -705,6 +712,7 @@ namespace Apotheosis
                 sb.AppendLine($"touchfab={(_showFab ? 1 : 0)}");
                 sb.AppendLine($"fitwindow={(_fitWindow ? 1 : 0)}");
                 sb.AppendLine($"suggest={(_suggestOn ? 1 : 0)}");
+                sb.AppendLine($"headless={_headlessMode}");
                 File.WriteAllText(Path.Combine(d, "settings.ini"), sb.ToString(), Encoding.UTF8);
             }
             catch { }
@@ -2560,6 +2568,7 @@ namespace Apotheosis
             if (SetFabSwitch != null) SetFabSwitch.IsOn = _showFab;
             if (SetFitSwitch != null) SetFitSwitch.IsOn = _fitWindow;
             if (SetSuggestSwitch != null) SetSuggestSwitch.IsOn = _suggestOn;
+            if (SetHeadlessCombo != null) SetHeadlessCombo.SelectedIndex = _headlessMode;
             // Captions, pivot headers and the version line all come from one pass -- see
             // RetranslateUi(). It used to be three hand-written Str.Get calls here, which is
             // how the rest of the page ended up with captions nobody had ever set.
@@ -2586,6 +2595,7 @@ namespace Apotheosis
             if (SetLogSwitch != null) _traceOn = SetLogSwitch.IsOn;
             if (SetFabSwitch != null) _showFab = SetFabSwitch.IsOn;
             if (SetSuggestSwitch != null) _suggestOn = SetSuggestSwitch.IsOn;
+            if (SetHeadlessCombo != null && SetHeadlessCombo.SelectedIndex >= 0) _headlessMode = SetHeadlessCombo.SelectedIndex;
             bool wantFit = (SetFitSwitch != null) && SetFitSwitch.IsOn;
             ApplySettings();
             SaveSettings();
@@ -2740,6 +2750,14 @@ namespace Apotheosis
 
             // Settings, Advanced.
             LocSwitch(SetTabModeSwitch, "ConcurrentTabs");
+            Loc(SettingsHeadlessSection, "HeadlessSection");
+            Loc(SetHeadlessHint, "HeadlessHint");
+            if (SetHeadlessCombo != null && SetHeadlessCombo.Items.Count >= 3)
+            {
+                (SetHeadlessCombo.Items[0] as ComboBoxItem).Content = Str.Get("Off");
+                (SetHeadlessCombo.Items[1] as ComboBoxItem).Content = Str.Get("HeadlessSummary");
+                (SetHeadlessCombo.Items[2] as ComboBoxItem).Content = Str.Get("HeadlessSpeak");
+            }
             Loc(SettingsGpuSection, "GPU");
             LocSwitch(SetGpuSwitch, "EnableGPU");
             Loc(SetGpuNowBtn, "EnableGPUNow");

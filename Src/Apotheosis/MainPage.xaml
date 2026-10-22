@@ -453,6 +453,18 @@
                 <StackPanel Margin="18,12">
                     <ToggleSwitch x:Name="SetTabModeSwitch" IsEnabled="False" Foreground="{StaticResource TxtHi}" Margin="0,4,0,0"/>
 
+                    <!-- Headless mode — register-only placeholder for the ROADMAP "Beyond 1.0"
+                         idea (fetch → analyse → summary or TTS instead of pixels). The choice is
+                         saved as headless= in settings.ini; nothing reads it yet. -->
+                    <TextBlock x:Name="SettingsHeadlessSection" Foreground="{StaticResource TxtLo}" FontSize="13" Margin="0,18,0,4"/>
+                    <ComboBox x:Name="SetHeadlessCombo" HorizontalAlignment="Stretch">
+                        <ComboBoxItem Content="Off"/>
+                        <ComboBoxItem Content="Summary"/>
+                        <ComboBoxItem Content="Speak"/>
+                    </ComboBox>
+                    <TextBlock x:Name="SetHeadlessHint" Foreground="{StaticResource TxtLo}" FontSize="12"
+                               TextWrapping="Wrap" Margin="0,4,0,6"/>
+
                     <TextBlock x:Name="SettingsGpuSection" Foreground="{StaticResource TxtLo}" FontSize="13" Margin="0,18,0,4"/>
                     <ToggleSwitch x:Name="SetGpuSwitch" Foreground="{StaticResource TxtHi}" Margin="0,0,0,6"/>
                     <Button x:Name="SetGpuNowBtn" Tag="gpu" Click="OnSettingsBtn" Style="{StaticResource SetRow}"/>

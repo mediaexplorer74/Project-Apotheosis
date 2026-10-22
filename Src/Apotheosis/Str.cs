@@ -52,6 +52,12 @@ namespace Apotheosis
             ShowScrollButtons,
             FitPageToWindow,
             AddressBarSuggestions,
+            // Appended 2026-10-22 with the register-only Headless placeholder (ROADMAP.md,
+            // "Beyond 1.0"). Append rule holds: enum last, all three columns same order.
+            HeadlessSection,
+            HeadlessHint,
+            HeadlessSummary,
+            HeadlessSpeak,
             COUNT
         }
 
@@ -81,6 +87,10 @@ namespace Apotheosis
                 "On-screen scroll buttons",
                 "Fit the page to the window",
                 "Show suggestions from history and sites",
+                "Headless mode (experimental)",
+                "Placeholder: the choice is saved, but nothing is applied yet — see ROADMAP.md, Beyond 1.0.",
+                "Summary",
+                "Speak",
             },
             // Russian
             new string[] {
@@ -105,6 +115,10 @@ namespace Apotheosis
                 "Экранные кнопки прокрутки",
                 "Вписывать страницу в окно",
                 "Подсказки из истории и сайтов",
+                "Режим Headless (экспериментальный)",
+                "Заглушка: выбор сохраняется, но пока ничего не применяется — см. ROADMAP.md, Beyond 1.0.",
+                "Резюме",
+                "Озвучка",
             },
             // Chinese
             new string[] {
@@ -129,6 +143,10 @@ namespace Apotheosis
                 "屏幕滚动按钮",
                 "页面适配窗口",
                 "显示来自历史和网站的联想",
+                "无头模式(实验性)",
+                "占位符:选择会被保存,但暂不生效——见 ROADMAP.md,Beyond 1.0。",
+                "摘要",
+                "朗读",
             },
         };
 
