@@ -3,8 +3,8 @@
 > Written 2026-09-27. This document supersedes the two earlier `Architect*.md` files, which described
 > the July 2026 C++/CX RnD line rather than the current C# one; they have been retired rather than
 > kept alongside, so that what remains under `Doc/` is a description of the system as it is now.
-> Companion documents: [INDEX.md](INDEX.md) (front door), [MVP.md](MVP.md) (acceptance contract),
-> [PLAN.md](PLAN.md) (live state), [LESSONS.md](LESSONS.md) (operating rules).
+> Companion documents: [INDEX.md](INDEX.md) (front door), [Archive/MVP.md](Archive/MVP.md) (acceptance contract),
+> [ROADMAP.md](ROADMAP.md) (live plan), [LESSONS.md](LESSONS.md) (operating rules).
 
 ## The thesis in one paragraph
 
@@ -453,7 +453,7 @@ Stated so the next reader does not have to guess which parts are measured:
 | Risk | Assessment |
 |---|---|
 | The `WK_WINUWP` patch set is not reproducible from this repo | **Still the largest risk.** WebKit is gitignored; the patch series is not in git. Mitigation: `PATCH-INVENTORY.md` in Phase 1 of the old tracker. Everything else is secondary |
-| GPU present stays broken | Acceptable for v1. [MVP.md](MVP.md) explicitly scopes software presentation as the MVP-safe path and GPU repair as out of scope |
+| GPU present stays broken | Acceptable for v1. [Archive/MVP.md](Archive/MVP.md) explicitly scopes software presentation as the MVP-safe path and GPU repair as out of scope |
 | Device validation of the C# line | Mandatory before calling v1 done. Not started |
 | Unrelated deleted harness files | Ownership unresolved; unrelated to this work and left untouched |
 | Cyrillic glyph fallback artifacts | Cosmetic, present in screenshots, not yet triaged |

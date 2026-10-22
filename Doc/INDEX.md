@@ -2,7 +2,7 @@
 
 > **Written 2026-09-26.** This file is the front door for the current phase. Everything under
 > [Archive/](Archive/) and every file that predates this date describes the *C++/CX harness* line and
-> is kept as historical record; where the two disagree, this file and [PLAN.md](PLAN.md) win.
+> is kept as historical record; where the two disagree, this file and [ROADMAP.md](ROADMAP.md) win.
 
 ## What changed
 
@@ -94,7 +94,9 @@ this project a separate bug.
 
 ## Document map
 
-- [PLAN.md](PLAN.md) — live state, the v1.0 definition, and open work. Start here for "where are we".
+- [ROADMAP.md](ROADMAP.md) — the LIVE plan: phased defect inventory to 1.0.0.0 (S/M/L). Start here for "where are we".
+- [Archive/Plan_MVP.md](Archive/Plan_MVP.md) — the archived MVP plan (was `PLAN.md`, moved 2026-10-21); complete, kept as the record.
+- [Archive/MVP.md](Archive/MVP.md) — the archived MVP acceptance contract (was `MVP.md`, moved 2026-10-22); 10/10 met on both lines, kept as the record. The 1.0.0.0 exit contract lives in ROADMAP.md, Phase 0.
 - [ARCHITECTURE.md](ARCHITECTURE.md) — how the C# line is put together: layer and threading diagrams, the C ABI, the present path, the SEH contract, and what is measured versus assumed.
 - [MANAGED-HOST.md](MANAGED-HOST.md) — what the C# side can see: the SEH contract, the new exports, the font probe, how to read a run.
 - [LESSONS.md](LESSONS.md) — operating rules distilled from past failures.

@@ -16,7 +16,7 @@ read the number.
 
 `11-dzen-ru.png` is worth a second look: it is the site that, in an earlier run before the fixed-sleep
 race was fixed, returned `rc=0` and painted nothing at all. Here it paints a full feed. The earlier
-reading is not a description of this run — see [Doc/PLAN.md §0a](../../Doc/PLAN.md).
+reading is not a description of this run — see [Doc/Archive/Plan_MVP.md §0a](../../Doc/Archive/Plan_MVP.md).
 
 **Resolved 2026-10-14 — with one part still open, and this artifact is evidence for both.** The current
 acceptance list starts the app fresh for each run, and its `11-dzen-ru` row blanks: `rc=0` with

@@ -1,12 +1,22 @@
-# Project Apotheosis — Development Plan
+# Project Apotheosis — Development Plan (ARCHIVED — the MVP plan, complete)
 
-> **This is the current-state view.** It holds the live status, the v1.0 definition, and the open
+> **ARCHIVED 2026-10-21.** MVP acceptance is met on both lines (commit d334be8); this file is kept
+> as the record of that plan and of the investigations that closed it. The LIVE plan is
+> [ROADMAP.md](../ROADMAP.md) (phases S/M/L). It was `Doc/PLAN.md` until this date; cross-
+> references of the form `PLAN.md §...` resolve through the index below, and files that still say
+> `PLAN.md` mean this archive.
+>
+> It used to be the current-state view, holding the live status, the v1.0 definition, and the open
 > work. Every closed item, dated snapshot, investigation narrative and July-Aug phase log was moved
-> verbatim to [Archive/PLAN-HISTORY.md](Archive/PLAN-HISTORY.md) — nothing was deleted. Old cross-references of the
-> form `PLAN.md §...` resolve through the index below; each names where the section now lives.
-> Last reorganised 2026-09-26 (phase RnD: C#/UWP host, x64 + ARM build lines).
+> verbatim to [PLAN-HISTORY.md](PLAN-HISTORY.md) — nothing was deleted. Last reorganised 2026-09-26
+> (phase RnD: C#/UWP host, x64 + ARM build lines).
 
 ---
+
+> **2026-10-21 — the roadmap to 1.0.0.0 lives in [ROADMAP.md](ROADMAP.md).** MVP acceptance is met
+> on both lines; the phased defect inventory from the architectural review of 2026-10-21 (S: short
+> term, M: medium, L: long term — 16 items) is there, and this file keeps the current-state view
+> below it.
 
 ## 0. 2026-10-03 (second pass) — the post-MVP docket
 

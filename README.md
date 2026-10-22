@@ -5,7 +5,7 @@
 
 ** Start here** [Doc/INDEX.md](Doc/INDEX.md)  
 
-**Live work and acceptance:** [Doc/PLAN.md](Doc/PLAN.md) · [Doc/MVP.md](Doc/MVP.md)  
+**Live work and acceptance:** [Doc/ROADMAP.md](Doc/ROADMAP.md) · [Doc/Archive/MVP.md](Doc/Archive/MVP.md)  
 
 Detailed dated investigations are retained locally in `Doc/Archive/`; they are history, not the current spec.
 

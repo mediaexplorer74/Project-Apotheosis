@@ -1,4 +1,9 @@
-# MVP v1 — acceptance contract
+# MVP v1 — acceptance contract (ARCHIVED — complete)
+
+> **ARCHIVED 2026-10-22.** All ten requirements are met on both lines (commit d334be8, 2026-10-20;
+> device validation closed the same day). This file was `Doc/MVP.md` until this date and is kept as
+> the record of the contract and its measurements. The LIVE plan is [ROADMAP.md](../ROADMAP.md);
+> the 1.0.0.0 exit contract is ROADMAP.md, Phase 0.
 
 ## Goal
 

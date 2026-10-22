@@ -1,0 +1,251 @@
+# Project Apotheosis — Roadmap to 1.0.0.0
+
+> Born from the 2026-10-21 architectural review ("how far is 1.0.0.0?"). MVP acceptance is MET on
+> both lines (Archive/Plan_MVP.md, commit d334be8, 2026-10-20) and the Nokia desktop graph is verified on the
+> Lumia as of 0.2.3.56 ([Archive/Summary.md](Archive/Summary.md)). This document is the PHASED plan
+> over the defect inventory that review produced: 10 primary items plus 7 secondary ones. Each item
+> names its evidence; the evidence files (memory notes) are the investigation trail, not folklore.
+> Maintainer rule for this plan: small steps first — every Phase S item is deliverable in one or
+> two sessions.
+>
+> **Revised 2026-10-22:** added Phase 0 (the 1.0.0.0 exit contract — the roadmap previously said
+> "how far" without saying "what counts as arrived"), split M5 into measure/levers/budgets, added
+> M7 (device performance as its own axis), moved L3 (tabs) OUT of 1.0 by the maintainer's decision,
+> and added the "Beyond 1.0" ideas section. `MVP.md` moved to `Archive/MVP.md` the same day.
+
+## Phase 0 — what 1.0.0.0 means (the exit contract)
+
+The MVP had an acceptance table ([Archive/MVP.md](Archive/MVP.md)); 1.0.0.0 had nothing. A roadmap
+toward a number needs the number defined, so 1.0.0.0 is reached when ALL of the following hold:
+
+1. **Device matrix green on BOTH phones.** The thirteen-site smoke list passes three consecutive
+   runs with no process death on the Lumia 950 (3 GB, Snapdragon 810) **and** on the Lumia 640
+   (1 GB, Snapdragon 400). The 640 has never been in the validation set at all — it is the machine
+   that will feel every memory and speed defect first, so every Phase M/L verification below runs
+   on it, not only on the 950.
+2. **A memory number exists.** Peak RSS on the 640 stays under the budget M5.3 sets, measured by
+   the smoke list on the heavy rows. No budget, or a budget nobody measured, fails this criterion.
+3. **Memories survive a restart.** Cookies and localStorage persist (M1 + M2); a login made before
+   closing the app is still made after opening it.
+4. **The input matrix is green** (M4): every orientation, mode and gesture either works or fails
+   with a named, honest reason — no silent refusals.
+5. **`<iframe>` paints and issues a request** (L1). A "Chrome in miniature" that renders embedded
+   content as an empty box is not one.
+6. **Speed is a stated quantity, not a guess** (M7): startup-to-first-paint and scroll cadence are
+   measured on both devices and recorded in this file.
+
+Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
+
+## Phase S — short term (days each, ship one at a time)
+
+- **S1. Rotation adopt on the fixed-viewport line** — DONE in 0.2.3.57, **verified on the device
+  2026-10-21** (markers `rotate:` → `drain:` → `pinch:` → `dtapfit:` at `1080x720`, plus the
+  maintainer's finger reaching the CMP close-X in landscape). The fixed 720x1080 viewport used to
+  ignore rotation entirely: the page kept its portrait shape, gestures right of it were outside the
+  page. `OnContentAreaSizeChanged` now swaps the viewport pair through `PostZoomAndRepaint`,
+  deferred via `_vpDirty` when the engine is busy. Landscape input dead is CLOSED: the rotation
+  no-op (fixed here) plus the 0.50 zoom floor (by design).
+- **S2. A hung subresource must not swallow the next navigation** — DONE in 0.2.3.58,
+  **verified on the device 2026-10-21** (0.2.3.59 batch, probe-s2-queue.txt v2). The shell-busy
+  gate used to drop a `goto` SILENTLY while one pending resource hangs (measured: Usercentrics
+  `loader.js`, curlcode=28, >60 s on the Lumia, 0.2.3.56 probe). Fixed as a QUEUE: `NavigateTo`
+  holds the ask in `_pendingNav` and `SetLoading(false)` delivers it one dispatcher turn later —
+  every load end passes through there, including the 40 s watchdog, so a wedged load cannot hold
+  the queue forever; a newer ask supersedes an older one. Device markers, in order:
+  `nav QUEUED, shell busy: https://example.com/` (+16 ms after the first goto) →
+  `nav QUEUED delivered:` (+12.6 s, when the first load settled) → final
+  `diag url=https://example.com ... rs=C` (the delivered page IS the final page — without the
+  fix this diag still says Nokia), with the superseded reload of the first load cleanly discarded
+  (`frame superseded seq 3 -> 4`). Note for probe authors: a `wait` between the two gotos defeats
+  the probe — the wait verb re-posts the batch to the engine thread (busy for the whole load);
+  issue the gotos back-to-back.
+- **S3. The address bar follows the engine** — DONE in 0.2.3.66, **verified on the bench
+  2026-10-22**. Two halves were open; both are closed now.
+  *The mechanism (0.2.3.63):* `OnLiveTick` reads `WebCoreGetUrl` on the engine thread every
+  tick and, when the engine's document url differs from `_currentUrl`, writes the box (guarded
+  by `_urlFocused`/`_urlSyncing` so a mid-keystroke overwrite cannot happen). The engine hop
+  itself is exercised by the `clicklink` verb (0.2.3.64): `WebCoreClickAt` called directly on
+  the engine thread, nothing written to the shell — the shape of an SPA route change.
+  *The instrument was broken (0.2.3.65):* `clicklink`'s coordinates came from `WebCoreGetLink`
+  as CSS px while `WebCoreClickAt` takes engine-surface px; at the bench's fitwindow zoom 0.80
+  the click landed 25 % down-right of the anchor and hit `<html>` instead (measured: `[HIT]
+  846,742 -> <a>` from the probe's own elementFromPoint versus the events landing on `html` at
+  the same numbers, because elementFromPoint takes CSS px and the event handler converts from
+  surface). Fixed in the port: `extractLinks` stores rects as CSS × `g_pageZoom` (surface px —
+  the space `WebCoreClickAt` and the shell's `_pageLinks` hit-test both speak), and
+  `WebCoreClickAtImpl`'s three elementFromPoint probes divide back to CSS.
+  *The watch was dying (0.2.3.66):* even with a landed click, the tick had already stopped —
+  `_liveStaticTicks >= 40` (8 s of static frame) called `StopLiveMode()` before `clicklink`
+  ran, so nothing noticed the hop (measured on .65: clicklink navigated at 15:23:54, the tick
+  had stopped at ~15:23:44, no `url follows engine` line, and the diag at 15:24:02 — repeated
+  at 16:49:41 — still read `url=http://example.com/ | url=https://www.iana.org/...` with the
+  engine two documents ahead of the shell). Fixed: a static frame now SLOWS the tick to 1 s
+  (`live tick: static, slowed to 1s (watch stays on)`) instead of stopping it — the tick is
+  the only thing that runs while a page sits still, so it must outlive the stillness. Also
+  `AutoLog` moved BEFORE the box write in the update path: the observation that proves S3
+  must not sit after `UpdateLockIcon`/`UpdateUrlActionGlyph` inside a `catch{}` that eats
+  whatever they throw. Verified on .66: `clicklink` at 16:55:05.132 → `url follows engine:
+  https://www.iana.org/help/example-domains` at 16:55:05.174 (42 ms), and the trailing diag
+  reads `url=... | url=...` with both sides equal.
+- **S4. The `?` bytes in the address box** — DONE in 0.2.3.62, **verified on the bench
+  2026-10-22**. The `?`-bytes half did NOT reproduce: a full static audit of the C# line found no
+  path that can put a literal 0x3F in `UrlBox` (every native string crosses as a UTF-8 `byte[]` —
+  the 2026-10-03 marshalling fix; file reads are UTF-8; the string tables, XAML and the home/error
+  page builders carry no destroy literals; device logs across many sessions show zero `?`-runs in
+  url fields), and the probe measured it: two "engine URL unknown" scenarios on the .61/.62 bench
+  (`error page: url= | url=https://nonexistent.invalid/`, `tap: url= | url=https://example.com/`)
+  show no `?` bytes anywhere in the box (docs/Archive/Summary.md, 0.2.3.62 section; the audit trail
+  is DESTROYED-STRINGS.md, "repaired 2026-09-18, nothing open"). The *remedy* the item named —
+  "render the previous URL instead" — did name a real defect, one gate over: the probe caught the
+  `.58/.59` "empty `url=` after a tap" anomaly in the act. `ApplyEngineFrame` tested `navUrl != null`
+  and the tap path passes `""` when the engine URL is unchanged/unreadable, so a tap on a non-link
+  CLEARED `_currentUrl` and blanked the box while the page stayed put (measured .61: box empty on
+  example.com; engine diag still `url=https://example.com/`). Fixed by treating an empty navUrl as
+  "the engine could not name the document" — keep the previous URL; only `NavigateTo` clears the
+  box, and only because it has a real target. Verified on .62: same probe, box holds
+  `https://example.com/` after the tap. Remaining in the S3 family: engine-initiated hops the shell
+  never asked for (redirects, SPA).
+- **S5. Tooling default fix** — DONE in code 2026-10-21, marked done in this file 2026-10-22.
+  `pull-device-logs.ps1`'s `-PackagePattern` default is now `ME.Apotheosis_*` (the shipped app);
+  the old default named the C++ harness package, which no line has deployed since the app became
+  the product, so every recent device pull passed the pattern by hand.
+- **S6. Log trimming, not rotation** — DONE in 0.2.3.61, **verified on the bench 2026-10-21**.
+  `rename()` fails in the AppContainer (`apoTraceAppend` holds `port-trace.txt` open for the whole
+  process, MSVC `fopen` omits FILE_SHARE_DELETE, and the rotation handler is a bare `return`), so
+  the 4 MB rotation never fired once in an install's life. The fix is managed, not WebKit: `App()`
+  trims the OLDEST HALF of `port-trace.txt` / `gpu-steps.txt` / `autocmd-log.txt` whenever one
+  exceeds 4 MB, at the only moment the files are provably unowned — before MainPage, before the
+  first P/Invoke, before WebCoreDriver.dll is loaded. Measured on the bench (.61): three seeded
+  files of ~5.1 MB each → all three halves dropped at 23:23:07.3xx (before `onlaunched` .688);
+  each trim leaves an ASCII seam `trim: oldest half dropped on open (was N bytes)` at the head and
+  a `trim <file> <was> -> <now>` line in boot.txt. Two file-specific facts: `gpu-steps.txt` is
+  truncated by the driver itself at startup (`WebCoreSetGpuInitLogFile`, once per process), so the
+  trim of it is belt-and-braces — the seam is overwritten by the first run, and the file is bounded
+  anyway; `autocmd-log.txt` appends ACROSS installs and is the only file here the trim actually
+  reclaims for the long haul. A WebKit-side fix (FILE_SHARE_DELETE) would cost a full rebuild on
+  both lines for no user-visible gain.
+- **S7. Scale the fixed frame to the window — the phone currently shows a QUARTER of the page** —
+  measured on the Lumia by the .57 batch's own tap row: `area=360x494`, i.e. ContentArea is
+  360x494 DIP (window 360x640) while the engine frame is a fixed 720x1080 drawn Stretch=None at
+  1:1 DIP with no Viewbox: a WriteableBitmap(720,1080) at 96 DPI is 720x1080 DIP, twice the window
+  each way. The user sees the top-left quarter; the rest of the window is white; each engine pixel
+  covers ~4x4 physical pixels (the reported "softness"). The frame must NOT shrink to the window:
+  360 / kZoomMin(0.50) = 720 CSS < 870, the desktop gate would never open. Fix: scale the blit to
+  fit the window and divide tap/manipulation coordinates by the same display scale. Feeds on S1's
+  rotation path. Evidence: [Archive/Summary.md](Archive/Summary.md) 0.2.3.57 section.
+- **S8. Input must not be gated by a hung load** — DONE in 0.2.3.60, **verified on the device
+  2026-10-21** (batch probe-s8-input.txt + the maintainer's finger; Summary 0.2.3.60 section).
+  `HandleTapAt` refused every tap while `_loading` was true, SILENTLY: a Nokia load held by one
+  hung Usercentrics subresource made the CMP's "Accept All" dead however often it was pressed —
+  the same disease S2 cured for navigation, one gate over (`EngineScroll` had the same gate).
+  Fixed by dropping `_loading` from both (`_interacting`/`_sessionActive` stay); the maintainer
+  then closed BOTH the CMP overlay and the site's 7-step wizard with a finger during a hung load.
+  The scroll half of the scare ("the page does not scroll") was diagnosed, not fixed, by S8's
+  markers: every drag reached the engine (`scroll dx= dy= at X,Y rc=0`), and the `[SCT]` lines in
+  gpu-steps.txt show the engine honestly finding nothing to scroll — `out=0|||` plus frame
+  `range=0,0..0,0` — on the half-loaded CMP page, while yesterday's clean load moved
+  `DIV.mobile-view` by 384 CSS px through the same walk. `rc=0` means "completed and painted",
+  never "moved". The dead scroll on Nokia is M3's CMP hang (the archive is a 100vh app: pinch
+  cannot create document range at any zoom); seeing the whole frame is S7.
+
+## Phase M — medium term (weeks each)
+
+- **M1. File-backed cookie jar** — the jar is `:memory:` by design; every launch starts with
+  `cookies=0` and logins die with the process. Persist to LocalState. (The 2026-09-18 experiment
+  that JOINED two disjoint jars did not fix dzen.ru — that family is closed; persistence itself is
+  a separate, still-open axis.)
+- **M2. Storage durability audit** — `PortStorage.cpp` made `localStorage` work in-process; whether
+  it survives a restart needs one honest measurement before M1's pattern is copied onto it.
+- **M3. Consent/CMP experience** — the Usercentrics overlay dims pages and returns on every launch
+  (a consequence of M1 plus their "unsupported browser" check). Options: persist the consent
+  cookies once M1 lands; ship a document-start rule that closes a known CMP overlay. Site-side
+  behaviour, not a rendering defect.
+- **M4. Input matrix per orientation and mode** — the 0.50 zoom floor reads as "pinch is broken";
+  the fitwindow=0 pinch branch and the landscape/inner-scroller cases need one test matrix (verb
+  batches + the finger path) instead of spot fixes.
+- **M5. The memory ceiling — intelligent consumption control.** Heavy pages still cost hundreds of
+  MB with every release lever withdrawn. "Ceiling" alone was too vague to schedule, so the item is
+  split; the three stages run in order (measurement before levers, levers before budgets — the
+  plan's own rule):
+  * **M5.1 — close the blind spots (measure first).** Three readings currently cannot inform any
+    decision: there is no readable engine-allocator total (`fastMallocStatistics()` is a peak
+    working set, `memoryFootprint()` returns 0 in the App Container), decoded bitmaps report
+    `decodedB=0` always on the cairo path, and `evictResources()` can drop a live client
+    (default-off behind `cacherelease.txt`). Deliverable: one honest per-site memory profile of
+    the thirteen-site list on both devices, with each of the three gaps either closed or named
+    unfixable-with-why.
+  * **M5.2 — levers (influence the consumption, not only watch it).** Wire the UWP pressure signals
+    — `MemoryManager.AppMemoryUsage`, `AppMemoryUsageLevel`, `AppMemoryUsageIncreased` /
+    `InviteMemoryChange` — to a real "shrink now" path: at `High` the browser compresses itself
+    (cache capacity down, decoded surfaces released, history trimmed) instead of waiting for the OS
+    to kill it. On the 1 GB 640 that path is the difference between a slow browser and a dead one.
+    Plus `MemoryCache::setCapacity()` driven by device class rather than a value chosen for the
+    950.
+  * **M5.3 — budgets (write the number down).** An agreed peak-RSS budget per device class,
+    enforced as a row of the smoke list, and fed by Phase 0 criterion 2. Until a number exists and
+    is checked, M5 is not done.
+- **M6. Watchdog killability** — the JSC watchdog fires but termination does not stick on a page
+  dispatch cycle; a runaway JS loop is detectable (heartbeat tickstep=1) but not curable in-app.
+- **M7. Performance baseline on the device (speed is its own axis, not a side effect of memory).**
+  MVP explicitly scoped performance tuning out; 1.0 does not (Phase 0 criterion 6). Measure on
+  BOTH devices with the instruments that already exist (`engineact`, `finished`, `[SCT]` in
+  gpu-steps.txt, the heartbeat): startup → first paint, a typical page load end-to-end, scroll
+  cadence on a tall page. Record the numbers here, then take the three most expensive findings
+  into the queue as follow-ups. Decision to make from those measurements, not by default: the GPU
+  present question ([GPU-LIVENESS.md](GPU-LIVENESS.md) is still on pause) — software present on a
+  Snapdragon 400 may cost proportionally far more than on the bench, and "software is the MVP-safe
+  path" was an MVP verdict, not a performance one.
+
+## Phase L — long term (months each)
+
+- **L1. Frames and popups** — `createFrame()` returns nullptr from the empty client, so `<iframe>`
+  paints an empty box and issues no request; `window.open`/`target=_blank` live in the same hole.
+  The fix is a real FrameLoaderClient with nested Page(s) behind the existing C ABI — the single
+  largest structural item on this list, and the one the maintainer has chosen to attack with AI
+  assistance. Entry point: the four `Page::create` sites the NotificationController supplement
+  already touched.
+- **L2. ARM JavaScriptCore currency** — the ARM JSC predates the RedBlackTree insert crash cure, and
+  a header-only cure cannot travel through a relink: the fix is a real JSC rebuild in a build dir
+  that CANNOT be reconfigured without breaking (one cmake edit costs a full ~10 h rebuild). Plan a
+  dedicated build window; back the dir up first.
+- **L3. Tabs / multi-session — OUT OF 1.0 (maintainer's decision, 2026-10-22).** Kept here as a
+  post-1.0 item, not a v1 one: the maintainer has taken multi-tab out of the v1 frame, and M5
+  depends on it anyway (one Page per tab, chrome state, a story for background tabs — throttling,
+  memory). M5's motivation restated accordingly: comfort and survivability on a 1 GB device, not
+  a feature gate. Reopen after 1.0.0.0 with M5.3's budget in hand.
+- **L4. Reproducible build pipeline** — from-scratch configure was never tested; the two lines
+  carry two SDK header versions; every release is a manual relink → appx → audit → deploy dance.
+  Target: one script from clean checkout to deployed bundle on either line.
+- **L5. Runaway-JS recovery** — beyond M6's killability: a heartbeat-driven page-level recovery
+  (reload the offending document, keep the session) so one bad page cannot wedge the browser.
+
+## Beyond 1.0 — ideas, deliberately unscheduled
+
+- **Headless / spoken-summary mode.** The page body is never rasterised for the user at all: the
+  document is fetched and *analysed*, then delivered as a short textual summary and/or spoken by a
+  TTS engine ("what is on this page", read-aloud for the archive — a natural fit for a museum
+  browser on a device whose screen is its weakest part). Architecturally this is a second pipeline
+  beside render: fetch → extract/summarise → present (text or speech), reusing the loader, history
+  and error-reporting paths while bypassing layout/paint entirely — which also makes it a cheap
+  mode on weak hardware. The summariser backend (local heuristic vs. an AI service) is a decision
+  for whenever this is taken up, not now. **First foothold, landed 2026-10-22:** an experimental
+  register-only selector under Settings → Advanced (`SetHeadlessCombo`: Off / Summary / Speak,
+  saved as `headless=` in `settings.ini`, localized in all three languages) — it marks the intent
+  in the UI, costs nothing, and gives the later work a place to attach to. Nothing reads the value
+  yet, by design. Do not schedule the mode itself before 1.0.0.0; the stub must stay harmless (a
+  stored enum nothing reads).
+
+## How to run this plan
+
+1. One Phase S item per session, smallest first; every ship goes through
+   `build-app-accept.ps1` + `Test-AppxPayload.ps1` + `Wdp-Deploy.ps1`, and a device-visible change
+   ships with its probe batch in the same appx.
+2. Phase M items start only with a written measurement of the current state (the evidence links
+   above ARE that state as of 2026-10-21).
+3. L1 and L2 are the two big bets; they should not start on the same day — both consume the ARM
+   build directory, and it cannot serve two masters.
+4. **Validation runs on both devices.** From the 2026-10-22 revision, a Phase M/L item is not
+   "verified" on the strength of the Lumia 950 alone: the same probe runs on the Lumia 640, and
+   Phase 0 is judged on the 640's numbers where the two disagree.
+
+*"Reviving the Windows Phone web for the people who never let it die."*

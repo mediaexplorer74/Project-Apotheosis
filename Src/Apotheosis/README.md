@@ -74,7 +74,7 @@ before a managed runtime probe is meaningful.
    **The open defect is that no text renders.** Shapes, colours and layout are correct; every glyph
    is missing, so a white page with black text looks blank. The linked image contains FreeType in
    full and HarfBuzz barely, but **no fontconfig at all** — and for x64 there is nothing to add,
-   because fontconfig will not cross-compile to UWP. See [Doc/PLAN.md](../../Doc/PLAN.md) §0b.
+   because fontconfig will not cross-compile to UWP. See [Doc/Archive/Plan_MVP.md](../../Doc/Archive/Plan_MVP.md) §0b.
 1. ~~Finish the current x64 SDK 19041 WebKit build.~~ Done: `build-x64-gpu`, 1547/1548 objects.
 2. ~~Build an empty C# UWP ARM32 package.~~ Superseded: the ARM32 driver DLL now builds
    (`unresolved=0`, 30 exports) and `native\ARM` is staged with 21 audited files. The appx for ARM has

@@ -622,7 +622,7 @@ native code.
 ### 10.5 Status: not fixed, deliberately
 
 MVP v1 lists GPU presentation repair as explicitly out of scope and software presentation as the
-MVP-safe path (`Doc/MVP.md`). What the 2026-10-03 re-check was asked for — "re-check GPU mode and fix
+MVP-safe path (`Doc/Archive/MVP.md`). What the 2026-10-03 re-check was asked for — "re-check GPU mode and fix
 possible crashes" — is answered: **the C# line fails cleanly and does not crash**, and the failure is now
 named to a call, a return code and a file, rather than being an unexplained absent GPU.
 
