@@ -1,0 +1,61 @@
+# Apotheosis 2026-10-20 -- the inner-scroller path (WebCoreScrollByAt) and the 870 px layout gate,
+# measured. ~4 minutes, one process, no restart.
+#
+# Report: on the Lumia the Nokia Design Archive could not be scrolled, and the site stayed in its
+# mobile variant with "Start in Desktop mode" on. Measured from the site's own files, one cause
+# each:
+#
+#   * the mobile UI scrolls an inner `height:100vh; overflow-y:auto` element (.mobile-view); the
+#     old WebCoreScrollBy moves only the frame's LocalFrameView, and this frame's contents equal
+#     the viewport, so it had no range. WebCoreScrollByAt is the finger's real path: elementFrom-
+#     Point, the nearest scrollable ancestor, the frame only as the fallback.
+#   * the layout is width-keyed: `@media (max-width:870px)` hides #desktop-container, and the
+#     bundle pauses the graph below `mobileBreakpoint: 870`. The UA switch cannot reach it; the
+#     page-zoom setting can, because layout width = viewport / zoom (720 / 0.80 = 900 CSS px).
+#
+# The first run of this probe (0.2.3.50) was contaminated: the phone recorded real pinches
+# (zoom 56 -> 107 -> 55 -> 50) while the batch ran, so both swipes happened on layouts that had
+# been re-zoomed under a page initialized at another width -- the "mixed Design+Mobile" the
+# maintainer saw by hand. This version starts from an explicit zoom so the measurement does not
+# depend on the persisted one.
+#
+# What each row proves:
+#   [SCT] markers in gpu-steps.txt   which element took the delta (tag/class), its scroll delta,
+#                                    and the page's own innerWidth/Height
+#   hash before/after swipe          the painted frame changed
+#   B: no "Simulation paused on mobile" after a load AT zoom 80 says the JS gate saw >870 px
+#      (a pinch after load does not re-run the site's width check; a load does)
+
+# settle, then put the zoom back to 100 so A measures the reported state (the phone may be left at
+# any zoom from a previous pinch; the slider path persists and applies at the next load)
+wait 15000
+zoom 100
+
+# A -- the mobile layout at zoom 100, as reported: the inner scroller must move
+goto https://nokiadesignarchive.aalto.fi/
+wait 60000
+diag
+hash
+swipe 1200 25 16
+wait 3000
+hash
+diag
+
+# B -- the width lever at load time: zoom 80 (900 CSS px), then a reload
+zoom 80
+goto https://nokiadesignarchive.aalto.fi/
+wait 60000
+diag
+hash
+swipe 1200 25 16
+wait 3000
+hash
+diag
+
+# the shell still responds; also the analyzer's "batch finished" anchor
+ui settings
+wait 1500
+ui settings-close
+wait 1000
+diag
+hash

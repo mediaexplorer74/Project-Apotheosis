@@ -1,0 +1,80 @@
+# Apotheosis 2026-10-21 -- the Nokia gate probe on the ARM line (build 0.2.3.56 or later).
+#
+# What is being verified. As of .55 the zoom a load lays out at is armed BEFORE the session is
+# built: MainPage calls WebCoreSetNextSessionZoom unconditionally on the engine thread just before
+# every WebCoreSessionLoad (zoomPctForLoad, i.e. the Settings value), and buildSession applies it
+# before the document exists. The first layout is therefore already viewport / zoom, so a page that
+# reads window.innerWidth/screen.width once, at load, sees the zoomed geometry. Before .55 the zoom
+# could only land after the document had parsed (WebCoreSetPageZoom needs a live session) and a
+# load-time JS gate ran at the default geometry.
+#
+# The site's gate (its own JS):
+#   Mu() = Math.min(window.innerWidth || 0, documentElement.clientWidth || 0, screen.width || 0)
+#   Mu() <= 870 -> mobile card file ("Simulation paused on mobile"), Mu() > 870 -> Network graph.
+# Desktop mode adds a document-start UserScript that redefines Screen.prototype.width/availWidth/
+# height/availHeight as window.innerWidth/innerHeight, so the third operand is the LAYOUT width.
+# Without the override zoom moves only the CSS half of the gate.
+#
+# ARM line geometry: fitwindow=0. The engine viewport is the fixed 720x1080 DIP frame in BOTH
+# orientations, so zoom 80 lays the page out at 720/0.8 = 899 CSS px on the phone in portrait and
+# the same in landscape -- turning the phone does not change a fixed viewport. 899 > 870, so the
+# gate is expected to open on the Lumia exactly as it does on the x64 bench.
+#
+# Markers to read in LocalState\gpu-steps.txt afterwards (append-only across runs; this run's slice
+# starts at the first "next session zoom armed" after the launch that shows device-run.done):
+#   [GPU] next session zoom armed 1.00 / 0.80   one per row that starts a load (A arms 1.00,
+#                                               B/C arm 0.80 after `zoom 80`)
+#   [GPU] session built at zoom 0.80 (frame was ...): layout width 899 css in 720x1080 dip
+#                                               buildSession -- the FIRST layout of that document
+#   [DG] doc screen 900x1350 inner 900x1350     the userscript ran on that document and the
+#                                               override took (W == innerWidth). Desktop mode only:
+#                                               absent in row A by design.
+#   "Simulation paused on mobile"               the site's own verdict. The LAST such line must
+#                                               predate C's "session built at zoom 0.80".
+# diag url= names the DOCUMENT; diag contents= does NOT report the CSS layout width -- only the
+# markers above do.
+#
+# Rows:
+#   A  baseline: mobile UA, zoom 100. Built at zoom 1.00 / layout 720 css, no [DG] line, the
+#      paused verdict present.
+#   B  Desktop UA + zoom 80 on the LIVE page. The zoom re-lays it out at 899 CSS, but this
+#      document started under mobile UA and has no screen override: on the phone screen.width is
+#      still 720 DIP, so Mu() stays <= 870 and the gate may legitimately remain closed. Informative
+#      row -- a closed gate here is NOT a regression; C is the verdict.
+#   C  the verdict: a fresh load with ua=desktop and the zoom armed before buildSession. Expect
+#      armed 0.80, built at zoom 0.80 / layout width 899 css in 720x1080 dip, [DG] doc screen
+#      900x1350, a hash that differs from A's, and no paused line after this point.
+
+# let the home page and the engine session settle before the first navigation
+wait 15000
+
+# A -- baseline: mobile UA, zoom 100
+ua mobile
+zoom 100
+goto https://nokiadesignarchive.aalto.fi/
+wait 60000
+diag
+hash
+
+# B -- Desktop UA, zoom 80 applied to the live page (relayout; see the header on why the gate
+#     may stay closed here)
+ua desktop
+zoom 80
+wait 10000
+diag
+hash
+
+# C -- the fresh load that must open the gate (zoom armed before buildSession, override at
+#     document start)
+goto https://nokiadesignarchive.aalto.fi/?r=3
+wait 60000
+diag
+hash
+
+# the shell still responds; also the analyzer's "batch finished" anchor
+ui settings
+wait 1500
+ui settings-close
+wait 1000
+diag
+hash

@@ -1,0 +1,59 @@
+# Apotheosis 2026-10-21 -- the landscape input probe on the ARM line (build 0.2.3.57+).
+#
+# What it verifies. On the fixed-viewport line (fitwindow=0) rotation used to be a no-op: the
+# engine viewport stayed the portrait 720x1080 frame inside a landscape window, the page kept its
+# portrait shape (RenderImage is Stretch=None at Top/Left), and a gesture started to the right of
+# that frame was outside the page -- reported from the Lumia as "in landscape scroll and pinch do
+# not work" while the log showed `pinch: ... rc=0` (the engine itself was alive). Since .57
+# OnContentAreaSizeChanged ADOPTS rotation on the fixed line: it swaps the viewport pair
+# (720x1080 portrait <-> 1080x720 landscape) through the same posted body the pinch and the fitted
+# line use, deferred through _vpDirty if a load owns the engine.
+#
+# THE MAINTAINER PART: turn the phone 90 degrees into landscape during the `wait 20000` marked
+# ROTATE below. The batch holds a DisplayRequest, so the screen stays up.
+#
+# Expected evidence, in order:
+#   autocmd-log:  rotate: 1080x720 zoom=0.80      the adopt itself (the Crumb in PostZoomAndRepaint)
+#   diag:         contents=1080x720               the engine viewport followed the rotation
+#   [DG] / no "Simulation paused on mobile"       the gate stays open: 1080/0.8 = 1350 CSS > 870
+#   hash pair across swipe/scroll                 a CHANGE proves the engine scrolled; no change
+#                                                 may also mean the desktop graph has nothing to
+#                                                 overflow -- the tap row below is unambiguous
+#   tap 900 300                                   x=900 was OUTSIDE the portrait 720 frame and
+#                                                 inside HandleTapAt's drop test; after the fix it
+#                                                 must reach the engine (WebCoreClickAt)
+#
+# Desktop mode + zoom 80 are armed BEFORE the load, so the first layout is already the wide
+# desktop one and stays wide after the rotation.
+
+wait 15000
+ua desktop
+zoom 80
+goto https://nokiadesignarchive.aalto.fi/
+wait 60000
+diag
+hash
+
+# ROTATE the phone 90 degrees into landscape during this wait
+wait 20000
+diag
+hash
+
+swipe 1200 25 16
+wait 2000
+hash
+scroll 0 400
+wait 2000
+hash
+tap 900 300
+wait 3000
+diag
+hash
+
+# the shell still responds; also the analyzer's "batch finished" anchor
+ui settings
+wait 1500
+ui settings-close
+wait 1000
+diag
+hash

@@ -95,7 +95,11 @@ public delegate bool EnumProc(IntPtr h, IntPtr p);
         if ([Apo.WinPlace]::IsWindowVisible($h)) {
             $t = New-Object System.Text.StringBuilder 512
             [void][Apo.WinPlace]::GetWindowText($h, $t, 512)
-            if ($t.ToString() -eq 'Apotheosis') {
+            # Set-AppVersion stamps the display name with the version ("Apotheosis 0.2.3.66"),
+            # so an exact 'Apotheosis' match stopped finding the window at .65 and every -FitWindow
+            # probe silently fell back to a full-screen capture. Prefix match against the class
+            # check below, which is the part that actually identifies the frame.
+            if ($t.ToString() -like 'Apotheosis*') {
                 $c = New-Object System.Text.StringBuilder 512
                 [void][Apo.WinPlace]::GetClassName($h, $c, 512)
                 if ($c.ToString() -eq 'ApplicationFrameWindow') { $script:apoHwnd = $h }

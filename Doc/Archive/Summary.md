@@ -213,8 +213,8 @@ The answer was nothing, and one premise in the process turned out to be wrong.
 
 ## Status update — Oct 3, 2026 — the C# line's MVP: Nokia Archive opens, the language repaints, thirteen sites pass
 
-> Written against `ME.Apotheosis_0.2.1.4_x64`. The live plan is [PLAN.md](../PLAN.md) §0a and the
-> acceptance table is [MVP.md](../MVP.md). This section is the summary of what the session found;
+> Written against `ME.Apotheosis_0.2.1.4_x64`. The live plan at the time was [Plan_MVP.md](Plan_MVP.md) §0a and the
+> acceptance table is [MVP.md](MVP.md). This section is the summary of what the session found;
 > the same material is in more detail in those two files and in [LESSONS.md](../LESSONS.md).
 
 ### What the maintainer asked for, and what was demonstrated
@@ -285,7 +285,7 @@ Neither could be caught by reading the code, because both produced plausible num
 `13/13 PASS`, one process, no restart, `alive=True` on every row, with a screenshot and a `diag:` line
 per site. Per-site record in `%USERPROFILE%\Documents\apotheosis-smoke\smoke.csv`. The list now
 includes **Nokia Design Archive as site 13**, so the acceptance run covers the page the maintainer
-actually asked about. Requirements 3, 4, 6, 8 and 10 close on x64 in [MVP.md](../MVP.md); 5 (Back) and
+actually asked about. Requirements 3, 4, 6, 8 and 10 close on x64 in [MVP.md](MVP.md); 5 (Back) and
 7 (history/suggestions) are still unverified because the list does not drive them.
 
 ### Open, recorded rather than fixed
@@ -2868,6 +2868,310 @@ held; `.48` marshals the release through `Dispatcher.RunAsync`, and its 23-comma
 control: 73 s after the request was released, with nothing else happening, `boot.txt` wrote
 `suspending` — an unattended app lets the display time out, which is exactly what the batch request
 prevents.
+
+**`.49`–`.51`: the scroll report is closed, and the "desktop mode" report is explained, not fixed
+(2026-10-20).** The maintainer could not scroll `nokiadesignarchive.aalto.fi` on the Lumia and the
+site stayed mobile even with "Start in Desktop mode" on. The page's own files answered both: it
+scrolls inside `.mobile-view{height:100vh; overflow-y:auto}` while the frame's range is exactly
+`0,0..0,0`, and its breakpoint (`nn(e)` at 870 px) is the same one for the CSS and the d3 graph.
+`WebCoreScrollByAt` (`.51`) walks `elementFromPoint` upward for a scrollable overflow ancestor and
+falls back to the frame, with both the point and the delta divided by `g_pageZoom` because
+`scrollTop`/`ScrollPosition` are CSS px. Measured on the device in one process, no fingers on the
+glass (`probe-scroll.txt`, 25 commands): at zoom 100 `[SCT] x=360 y=540 z=1.00 d=0,48 rc=0
+out=1|DIV|mobile-view|720x1080` and the frame range `0,0..0,0` — the element, not the frame, is the
+scroller, which is why the frame-only path could never move this page. At zoom 80 the layout width
+is 900 CSS px (`out=0|||900x1350`), yet the page *loaded* at that width still logs
+`Simulation paused on mobile`, and no scrollable element was found under the centre. The bundle's
+width is `Mu() = Math.min(window.innerWidth, document.documentElement.clientWidth,
+window.screen.width)`; `screen.width` is the phone's physical CSS width and page zoom cannot change
+it. Hence the maintainer's "mixed Design+Mobile": the CSS half follows the layout width, the JS half
+is clamped by the screen. The UA switch was never the lever; a port-level desktop geometry would be
+(`LocalFrame::setOverrideScreenSize` exists and is in the ARM archive), and is left as a design
+decision.
+
+**Desktop mode now carries a screen override, and the x64 bench measured it (2026-10-20).** The
+direct remedy, `LocalFrame::setOverrideScreenSize`, is not WEBCORE_EXPORTed, and the x64 line links
+`WebCore.dll`'s import library, so the port reaches the same state from the page side: in Desktop
+mode (`g_apoUaMobile == false`) a document-start user script redefines
+`Screen.prototype.width/availWidth` to `window.innerWidth` and `height/availHeight` to
+`window.innerHeight`. The virtual screen is therefore the LAYOUT width, not a fixed 980: at zoom
+100 that is still 720 (mobile, unchanged) and at zoom 80 it is 900, so `mu()` and the CSS media
+queries agree at every zoom instead of re-splitting at another one. All the symbols used
+(`UserContentController`, `UserScript`, `mainThreadNormalWorldSingleton`,
+`setUserContentProviderForWebKitLegacy`) are exported on x64 and present in the ARM archive; the
+switch flips the provider on the live session, so the override applies to the NEXT load like the UA
+header itself. The bundle's own code confirms the mechanism: `Mu()` min-clamps
+`innerWidth`/`clientWidth`/`screen.width`, `Ss` re-runs it on every `window resize` and on `load`,
+and `de()` logs `Simulation paused on mobile` exactly when `width <= mobileBreakpoint`. Measured on
+the x64 bench: a mobile load injects nothing; a desktop load at the fitted 1355x751 geometry logs
+`[JS] console/log user-script:2:1:433 [DG] screen 1355x751 inner 1355x751` and — for the first
+time — no `Simulation paused on mobile`, with `d3.v7.min.js` loaded and the site's simulation
+started (`[object Object]`, `Start tour`, `contents=1355x751`, nonwhite 1017599/1017605). A load
+that starts before the window has been fitted still reads 720 at document start; the override
+follows `innerWidth` live, so the site's `resize` handler is what closes the gate in that case.
+The device probe `probe-screensize.txt` measures the same three states on the Lumia.
+
+The same bench session surfaced a staging-side defect unrelated to this change: with
+`fitwindow=1`, a home page loaded when `kW/kH` still held the 720x1080 default re-enters
+`AdoptViewport -> NavigateTo("about:home")` roughly ten times a second (setup-trace:
+`adopt: no session 1355x751 z=0,80 same=False url=about:home`), because each one-shot home render
+leaves `_sessionActive == false`. It is visible in traces from the morning of 2026-10-20, i.e.
+before this change; the ARM line (`fitwindow=0`) returns from `AdoptViewport` at once and does not
+take the branch.
+
+## 0.2.3.56 on the Lumia: the Nokia gate opens, and the graph is on the phone (2026-10-21)
+
+The .55 pairing shipped to the ARM line as 0.2.3.56 (driver relink first — the 00:12 payload predated
+the .def line and had no `WebCoreSetNextSessionZoom`; `llvm-readobj` caught it, the relink restored
+46/46 exports, `Test-AppxPayload.ps1` re-verified them inside the bundle). The probe
+`probe-screensize.txt` travelled in the appx (`build-app-accept.ps1 -Arch arm -Batch ...`, one batch
+per version) and its rows A/B ran to script: A laid out `layout width 720 css in 720x1080 dip` and
+the site returned its own verdict `Simulation paused on mobile`.
+
+Row C's `goto` was then dropped by the shell-busy gate — page A was still holding `pending=1` on a
+single hung subresource (`web.cmp.usercentrics.eu/ui/loader.js`, `curlcode=28` Timeout after the
+60 s wait) — and the graph the maintainer saw on the phone came from his own Desktop-mode reload at
+the zoom the batch had already armed (`reload: resize rc=0 zoom rc=0 ... z=0,80`). That path is the
+same pairing, one step later, and the markers are unambiguous:
+
+```
+[GPU] next session zoom armed 0.80
+[GPU] session built at zoom 0.80 (frame was 1.00): layout width 899 css in 720x1080 dip
+[JS] console/log user-script:4:1:448 [DG] doc screen 900x1350 inner 900x1350 client 900x1350
+```
+
+and no `Simulation paused on mobile` line after that point. The pinches that followed stayed honest
+under the override — `[DG] resize screen 1384x2076` at z=0.52, `1440x2160` at z=0.50 — i.e. the
+virtual screen kept tracking the layout width across the maintainer's two-finger zooms on the
+device, which is the semantics the .51 section above argued for.
+
+Two findings left behind, both real and neither blocking the result:
+
+* **A hung third-party resource blocks the next navigation for as long as it hangs.** The shell-busy
+  gate drops a `goto` outright (`nav DROPPED, shell busy` in autocmd-log) while a load with one
+  pending subresource is still in flight; here that was >60 s of Usercentrics loader timeout. The
+  drop is silent from the user's side.
+* **Landscape input looks dead on the phone** (maintainer report, corroborated by the log): at
+  18:32 a `pinch:` line applies `rc=0` but z does not move (`z=0,50 -> z=0,50`), and scroll does not
+  take either. Portrait pinches worked minutes earlier, so this is the rotation-sensitive input
+  path, not the zoom lever itself — the known `fitwindow=0` pinch branch is the first suspect.
+
+---
+
+### 0.2.3.57 on the Lumia: rotation adopt verified, and the fixed frame overflows the real window (2026-10-21)
+
+The landscape investigation the maintainer asked to close today is closed, in three parts.
+
+**1. Rotation adopt works on the device — landscape input dead is CLOSED.** The first .57 probe
+run (19:36–19:38) saw no rotation at all: the phone screen was locked and the batch's ROTATE window
+passed over a suspended app (the maintainer confirmed they had stepped away). Relaunched by hand
+over WDP at 19:54 with the screen unlocked, the maintainer rotated, and autocmd-log shows the full
+chain:
+
+```
+19:54:52  rotate: resize rc=0 zoom rc=0 1080x720 z=1,00
+19:54:53  drain:  resize rc=0 zoom rc=0 1080x720 z=0,80
+19:55:02  pinch:  resize rc=0 zoom rc=0 1080x720 z=0,50
+19:55:18  pinch:  resize rc=0 zoom rc=0 1080x720 z=0,50
+19:55:28  dtapfit: resize rc=0 zoom rc=0 1080x720 z=1,00
+```
+
+The UserScript saw `[DG] resize screen 1350x900 … 1080x720` across the same window, i.e. the
+desktop gate (1350 CSS > 870) stays open through the rotation. The maintainer then pinched to the
+Usercentrics close-X **in landscape** and dismissed the overlay by finger — end-to-end proof that
+landscape scroll and pinch are alive. What the old "dead" signature actually was: the rotation
+no-op (fixed in .57) plus the `kZoomMin=0.50` floor reading as "zoom only partially works" (by
+design).
+
+**2. The address box still lies after an in-page link tap** — maintainer: tapped the Nokia link on
+the start page, navigation happened, the box kept the old text. That is S3 confirmed by a finger,
+not just by reading `m_currentUrl`'s writers.
+
+**3. NEW FINDING — the fixed frame is bigger than the phone's real window.** The .57 batch's tap
+row measures it directly: `tap dip=900,300 area=360x494 session=1` — ContentArea is **360x494
+DIP** (window 360x640), i.e. the phone renders the app at a 360-DIP width, NOT the 576 the code
+comment assumes for the 950. The engine frame is fixed 720x1080 and RenderImage is Stretch=None,
+Top/Left, with no Viewbox anywhere in the chain: WriteableBitmap(720,1080) at 96 DPI displays as
+720x1080 DIP — **twice the window each way**. The phone therefore shows the TOP-LEFT QUARTER of
+the engine frame; the right and bottom of the window are white. Consequences, several of them
+previously unexplained:
+
+* the CMP overlay looked "barely visible" even zoomed out — its centre sits outside the visible
+  quarter at zoom 1.0;
+* the maintainer's "мыльность" report: 720 engine pixels laid over a 1440-px-wide panel is ~4
+  physical px per engine pixel (or a panel upscale, if the display-resolution setting is not
+  native) — the softness is real, not imagination;
+* the frame must NOT be shrunk to the window: 360 / kZoomMin(0.50) = 720 CSS < 870 — the desktop
+  gate could never open. The large virtual frame is load-bearing; the cure is to SCALE THE BLIT
+  to the window and divide input coordinates by the same factor (ROADMAP S7).
+
+The cause of the 360-DIP window is one of: display scale 4.0 (1440/360) or a lowered display
+resolution at scale 2.0 (720/360); the question is with the maintainer (Settings → System →
+Display) and the fix does not depend on the answer.
+
+---
+
+### 0.2.3.59 on the Lumia: the navigation queue is verified end-to-end (2026-10-21)
+
+S2 (a hung subresource must not swallow the next navigation) is DONE and device-verified. The
+code landed in 0.2.3.58; the verification needed a second build because the first probe's own
+design hid the gate, and the reason is worth recording on its own (below).
+
+**1. The marker chain, 0.2.3.59 batch, back-to-back gotos.** `probe-s2-queue.txt` v2 issues
+`goto nokia` and `goto example.com` 16 ms apart — no `wait` between them (see part 2) — and
+autocmd-log shows every stage of the queue:
+
+```
+21:28:14.668  goto https://nokiadesignarchive.aalto.fi/
+21:28:14.684  goto https://example.com/
+21:28:14.715  ui goto nokia done
+21:28:14.730  nav QUEUED, shell busy: https://example.com/    ← held, not dropped
+21:28:27.294  nav QUEUED delivered: https://example.com/      ← +12.6 s, first load settled
+21:28:27.372  reload: frame superseded seq 3 -> 4 rc=0        ← first load's own reload discarded
+21:29:14.727  diag ... url=https://example.com/ title=Example Domain ... rs=C pending=0
+```
+
+The delivered page IS the final page. Without the queue this exact sequence produced
+`nav DROPPED` on 0.2.3.56 and the diag still said Nokia. The supersede is clean: OnNavDone of
+the first load delivered the queued ask (`_opSeq` 3 → 4), and that load's own zoom-reload found
+itself superseded and bowed out. Batch completed 13/13 (`display: released`).
+
+**2. Why the 0.2.3.58 probe missed the gate — an autocmd `wait` releases the ENGINE thread.** The
+v1 probe put `wait 5000` between the two gotos. Log: the wait elapsed at +5 s, but the second
+goto did not run until **+12 s**, after the first load's nav-done had already cleared
+`_loading` — the gate was open and the queue never engaged. The mechanism: the wait verb arms
+`Task.Delay` on the pool and then re-posts the rest of the batch **to the engine thread**
+(`MainPage.AutoCmd.cs`, the wait verb), and the engine thread is busy for the whole session load.
+Any verb that must land DURING a load has to be issued back-to-back. The code was never at fault;
+the probe was. Recorded in ROADMAP S2 and in the memory notes.
+
+**3. Display-scale slider moved: window 360x494 → 480x707 DIP.** The maintainer slid the
+"size of text, apps and elements" slider to minimum (the OS rebooted to apply it). The .58/.59
+tap rows measure `area=480x707`, i.e. display scale is now exactly 3.0 (1440/480) — which pins
+the ambiguity from the .57 section: the previous 360-DIP width was scale 4.0, not a 720p
+downscale. Consequences: S7 still applies (480 < 720 and 707 < 1080 — the phone still sees only
+the top-left corner of the fixed frame), and the softness improves from ~4x4 to ~3x3 physical px
+per engine pixel. The slider is a partial, manual mitigation of S7; the scaled blit remains the
+cure.
+
+**4. Side observations.** (a) After a finger tap on a non-link area, the first `url=` field of
+diag goes EMPTY while the engine URL stays live (`url= | url=https://example.com/`) — reproduced
+on both .58 and .59; this is the S3 family (the address box's `_currentUrl` is not the engine's)
+with a new member: the tap path can *clear* it. (b) The maintainer's post-batch hand test:
+two-finger pinch changes zoom (`pinch: z=0,56` → `z=1,12`), but one-finger hold+drag "does not
+scroll" — on the batch's final page (example.com) this is expected: `contents=720x1080` equals
+the viewport, the page has nothing to scroll. A check on a page with real overflow (Nokia
+archive) is pending; if the finger path is dead there too, it belongs to M4's input matrix.
+
+---
+
+### 0.2.3.60 on the Lumia: S8 taps are live, and `rc=0` was never "the page moved" (2026-10-21)
+
+**1. S8 taps, verified by the maintainer's finger — twice.** While a Nokia load was still held by
+the hung Usercentrics chain, the maintainer closed the CMP overlay's "Accept All" AND the site's
+own 7-step help wizard. Both taps reached the engine (`tap during load: dip=360,540` in the
+batch; the finger's own session afterwards). Before S8 both would have died silently at
+`HandleTapAt`'s `_loading` gate. S8's tap half is CLOSED; the watchdog kill question from the
+probe header did not materialise (no `swipe ignored: no session` in any run).
+
+**2. The scroll verdict: the shell delivered every drag; the engine measured "nothing to
+scroll".** The .60 batch and the maintainer's manual session produced dozens of
+`scroll dx= dy= at X,Y rc=0` lines at real finger coordinates — the input path
+(OnImageManipDelta → FreeScrollBy → PumpScroll → WebCoreScrollByAt) worked end to end. The
+missing piece was the meaning of `rc=0`: `WebCoreScrollByAtImpl` returns kOK after it *painted*,
+whether or not anything moved (Src/port/WebCoreDriver.cpp:5989). The measurement lives in
+`gpu-steps.txt` as `[SCT]` lines, and every one from today's Nokia sessions reads
+`out=0|||` (the JS walk found no overflow element under the point) plus
+`[SCT] frame ... cur=0,0 -> 0,0 range=0,0..0,0` (the document itself has zero scroll range).
+Contrast yesterday's scroll51 session on the same site, fully loaded:
+`out=1|DIV|mobile-view|720x1080` — the site's own inner scroller took 48+336 CSS px of delta
+before exhausting its ~384 px range. Same shell, same walk, opposite page state.
+
+**3. Root: the half-loaded CMP state, not an input defect.** Every diag of the .60 Nokia
+sessions keeps Usercentrics modules pending (`uct?v=...&sid=phRLsmsuzQm7xo(s1)`,
+`UcGdprCmpView...(s1)`, `phRLsmsuzQm7xo(s1)`); the batch page rendered 81 % white vs 96 % on the
+clean .59 load — the archive's content area never received a scrollable range while the CMP
+chain hung. Two corollaries worth keeping: (a) the archive is a 100vh-style app — its layout
+fills the CSS viewport exactly at every zoom, so pinch can NEVER manufacture document-level
+scroll range there (zoom-out just enlarges the viewport the site re-fills); the scroll lives, if
+at all, inside `DIV.mobile-view`, and only when the content has loaded; (b) `rc=0` from the
+scroll ABI is "completed and painted", never "moved" — the probe's reading guide that blamed
+the blit-supersede path was wrong and has been corrected in probe-s8-input.txt. S8 is DONE; the
+remaining "Nokia does not scroll" is M3's CMP hang (and, for seeing the whole frame, S7).
+
+---
+
+### 0.2.3.61 on the bench: S6 lands — the traces are halved on open, because the rotation was dead (2026-10-21)
+
+**1. Why the 4 MB rotation never fired once in an install's life.** `portTraceRotateIfNeeded`
+(Src/port/WebCoreDriver.cpp:346, mirrored in PortPlatformStrategies.cpp for the loader's twin) does
+`remove(previous) + rename(path, previous)` past a 4 MB ceiling — and it never got that far: it
+`return`s at the first error. `apoTraceAppend` (WTF/RunLoopGeneric.cpp:57) holds `port-trace.txt`
+open with a cached `FILE*` for the WHOLE process, MSVC's `fopen` omits `FILE_SHARE_DELETE`, and
+the `rename()` over the open handle fails with a sharing violation. Measured on the Lumia
+2026-10-09: port-trace.txt reached 6,223,695 B with no `.1`/`.2` chunk anywhere, still carrying
+sessions from four builds back. The WebKit-side cure (open with `_SH_DENYNO`, or re-open per
+line) means editing WebKit sources — a full ~10 h rebuild on BOTH lines — for a diagnostic-file
+bound.
+
+**2. The fix is managed and provably race-free.** `App()` (Src/Apotheosis/App.xaml.cs) now calls
+`TrimTraceOldestHalf()`: past 4 MB, `port-trace.txt` / `gpu-steps.txt` / `autocmd-log.txt` get
+their OLDEST HALF dropped and an ASCII seam `trim: oldest half dropped on open (was N bytes)`
+written at the head; each trim also lands `trim <file> <was> -> <now>` in boot.txt. The call site
+is the only moment those files are provably unowned: `App()` runs before MainPage, before the first
+P/Invoke, i.e. before WebCoreDriver.dll is even loaded — the trim cannot collide with any native
+handle. The tail is copied verbatim from just past the first `\n` at/after the midpoint (a file
+whose only "newline" is inside one giant line falls back to the raw midpoint, so it cannot trim
+itself to nothing). One halving per launch bounds the life-of-install growth; a single session
+still writes what it writes.
+
+**3. Measured on the bench, .61.** Three files seeded to ~5.1 MB each with the app closed; app
+launched, 12 s, stopped. boot.txt: `trim port-trace.txt 5100045 -> 2550055` /
+`trim gpu-steps.txt 5100044 -> 2550055` / `trim autocmd-log.txt 5100046 -> 2550055`, all stamped
+23:23:07.3xx — before `onlaunched` (.688) and `mainpage-ctor` (.704). port-trace.txt and
+autocmd-log.txt keep the seam at their heads. The gpu-steps.txt seam is overwritten by the first
+run — expected: `WebCoreSetGpuInitLogFile` (WebCoreDriver.cpp:2811) truncates that file once per
+process by design, so the managed trim of it is belt-and-braces; autocmd-log.txt is the file whose
+long-haul reclaim the trim actually buys (it appends ACROSS installs). S6 is DONE; the ROADMAP
+carries the per-file verdicts.
+
+---
+
+### 0.2.3.62 on the bench: S4's `?` bytes do not exist, but its hint named a real defect (2026-10-22)
+
+**1. The audit: nothing in the C# line can write a literal 0x3F into the box.** Every native
+string crosses the P/Invoke boundary as a UTF-8 `byte[]` (the 2026-10-03 marshalling fix; no
+`CharSet.Ansi` remains), `Encoding.UTF8.GetString` on invalid bytes yields U+FFFD and never 0x3F,
+history/bookmark files are read as UTF-8, and the string tables (`Str.cs`), the XAML and the
+home/error page builders (`BuildHomeHtml`, `MakeErrorHtml`) contain no destroy literals. The
+family the S4 evidence pointed at — `DESTROYED-STRINGS.md` — is the HARNESS's source comments
+plus nine repaired literals, status "nothing is open". No device log from any session contains a
+`?`-run in a url field.
+
+**2. The measurement: two "engine URL unknown" scenarios, no destroy bytes.** `.61` probe
+(Src/tools/_probe-s4.ps1): (a) `testurl.txt` first-load to a dead host → the error page renders
+and the engine diag reads `url= | url=https://nonexistent.invalid/` (the port renders via
+`writer.begin(URL())`, document.url() empty) while the box shows `https://nonexistent.invalid/`;
+(b) `goto example.com`, then a tap on a non-link spot → `url= | url=https://example.com/`. Neither
+screenshot holds a `?` byte, let alone a run. S4's premise does not reproduce in the product.
+
+**3. But the probe caught the `.58/.59` anomaly in the act — and it was a clearing bug.**
+`ApplyEngineFrame` tested `navUrl != null`, and the tap path passes `""` when the engine URL is
+unchanged or unreadable (`WebCoreGetUrl` answers `""` until `writeDiag` has run once). An empty
+string is not null, so the tap branch took `""` as a URL: it set `_currentUrl = ""` and
+`SetUrlBoxText("")`, blanking the address box while the page stayed put. Measured on .61: the
+second screenshot shows example.com rendered and the box EMPTY — the same disappearance the .58/.59
+device runs logged as `url= | url=https://example.com/`. Fixed in `.62`: an empty navUrl now means
+"the engine could not name the document", and the previous URL is kept — only `NavigateTo` clears
+the box, and only because it has a real target. Same probe on `.62`: box holds
+`https://example.com/` after the tap (s4-2-tap-nonlink.png, 0.2.3.62 title bar visible).
+
+**4. Housekeeping from the run.** The first probe version drove both navigations with `goto` from
+about:home and measured nothing: on this bench the home page re-renders ~10x/s, so both gotos were
+`nav QUEUED` then `nav QUEUED superseded` inside 86–147 ms (the known `fitwindow-home-adopt-loop`).
+The fix was the documented one — the first load comes from `testurl.txt`, not from a verb posted
+against a busy shell. The probe now lives as Src/tools/_probe-s4.ps1 so the S3 residue can reuse
+its shape.
 
 ---
 

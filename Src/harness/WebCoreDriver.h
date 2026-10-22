@@ -110,6 +110,14 @@ int WebCoreClickAt(int x, int y, uint8_t* outBuf);     // (x,y) = bitmap/viewpor
 // frame-hash heuristic navigated such a tap against the page's explicit wish. See Doc/TAP-DISPATCH.md.
 int WebCoreLastClickDefaultPrevented();
 int WebCoreScrollBy(int dx, int dy, uint8_t* outBuf);  // dx>0 right, dy>0 down; triggers lazy image load
+// Apotheosis 2026-10-20: a finger's scroll WITH its point. The innermost scrollable element under
+// (x,y) owns the delta and the main frame is the fallback, which is what a browser does with a
+// wheel event. (x,y) are engine-surface px -- the same space WebCoreClickAt takes. WebCoreScrollBy
+// moves only the frame's LocalFrameView, so a page whose scrolling lives in an inner overflow
+// container does not move at all; measured on the Lumia against nokiadesignarchive.aalto.fi, whose
+// mobile UI is a `height:100vh; overflow-y:auto` element inside a frame whose contents equal the
+// viewport. Paints into outBuf exactly like WebCoreScrollBy.
+int WebCoreScrollByAt(int x, int y, int dx, int dy, uint8_t* outBuf);
 int WebCoreSyncLinks();                                // refresh link hit-table after scroll settles (layout+extract, no paint)
 int WebCoreEditDebug(char* out, int cap);              // diag: last type-text canEdit/focus/insert state
 int WebCoreSetPageScale(float scale, int focalX, int focalY, uint8_t* outBuf); // M4 pinch zoom (clamped [0.5,6.0])
@@ -119,6 +127,12 @@ int WebCoreGetPageScale();                             // M4: current pageScaleF
 // and needs zoom = CompositionScale to keep the layout at DIP width. Does NOT repaint; the caller
 // must (the harness sets it immediately before a resize). See the definition for the measurements.
 int WebCoreSetPageZoom(float zoom);
+// Apotheosis 2026-10-21: the page zoom the NEXT session is BUILT at, applied in buildSession before
+// the document is created, so the first layout is already at viewport/zoom. WebCoreSetPageZoom needs
+// a live session and therefore lands after the document has parsed -- too late for a page that reads
+// window.innerWidth once, at load. Call on the engine thread just before WebCoreSessionLoad. Does not
+// touch the live session and does not repaint. 1.0 (the default) means "CSS default".
+int WebCoreSetNextSessionZoom(float zoom);
 int WebCoreSessionPaint(uint8_t* outBuf);             // no interaction, redraw only
 // Resize the live session's viewport to w x h and repaint at the new size (relayout + link
 // hit-table refresh included). outBuf must be at least w*h*4 bytes; every later paint call

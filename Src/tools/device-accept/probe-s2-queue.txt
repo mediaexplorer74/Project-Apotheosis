@@ -1,0 +1,40 @@
+# Apotheosis 2026-10-21 -- the S2 probe (build 0.2.3.59+): a navigation issued while a load is
+# in flight must be QUEUED and delivered, not swallowed.
+#
+# What it verifies. Until S2, `NavigateTo` DROPPED a navigation outright while `_loading` was
+# true ("nav DROPPED, shell busy"), and the measured case was a `goto` swallowed for the whole
+# life of one hung Usercentrics subresource (loader.js, curlcode=28, >60 s on this Lumia,
+# 0.2.3.56 probe). S2 holds the ask in _pendingNav and delivers it from SetLoading(false) --
+# every load end passes through there, including the 40 s watchdog, so a wedged load cannot hold
+# the queue forever. Last ask wins.
+#
+# The two gotos are DELIBERATELY back-to-back. A `wait` between them defeats the probe: the wait
+# verb releases the engine thread and re-posts the rest of the batch to IT (MainPage.AutoCmd.cs,
+# the wait verb), and the engine thread stays busy for the whole session load -- measured in the
+# 0.2.3.58 run, `wait 5000` elapsed at +5 s but the next goto did not run until +12 s, by which
+# time the first load's nav-done had already cleared `_loading` and the gate was open. Two
+# back-to-back gotos instead: the first posts the load and returns in ~50 ms, and the second
+# NavigateTo lands on the UI thread within milliseconds, while `_loading` is still true -- the
+# exact case that used to drop.
+#
+# Expected evidence, in order, in autocmd-log:
+#   nav QUEUED, shell busy: https://example.com/     the ask was held, not dropped
+#   nav QUEUED delivered: https://example.com/       SetLoading(false) delivered it
+#   diag: url=https://example.com                    the delivered page is the FINAL page --
+#                                                    without the fix this diag still says Nokia
+# The tap row is a free S7 data point: area=WxH is the real ContentArea on this device (measured
+# 480x707 on 0.2.3.58 after the maintainer moved the display-scale slider; 360x494 before).
+
+wait 15000
+goto https://nokiadesignarchive.aalto.fi/
+goto https://example.com/
+wait 60000
+diag
+hash
+tap 100 100
+wait 2000
+diag
+ui settings
+wait 1500
+ui settings-close
+wait 1000

@@ -132,6 +132,12 @@ namespace Apotheosis
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
         public static extern int WebCoreScrollBy(int dx, int dy, IntPtr outBuf);
 
+        // The finger's path: the innermost scrollable element under (x,y) takes the delta, the
+        // frame is the fallback. WebCoreScrollBy above moves only the frame's view, so an inner
+        // overflow container (a mobile SPA's scroll element, a side panel) never moves.
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int WebCoreScrollByAt(int x, int y, int dx, int dy, IntPtr outBuf);
+
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
         public static extern int WebCoreSyncLinks();
 
@@ -178,12 +184,23 @@ namespace Apotheosis
         //                         layout width becomes viewport / zoom -- which is how a phone-width
         //                         layout is produced in a wide window without blurring anything.
         //
-        // The zoom is remembered engine-side (`g_pageZoom` + apoReassertPageZoom on the present
-        // paths), because a navigation resets the frame's factor behind the port's back. So it is
-        // set once per resize, not re-armed after every load.
+        // While a session lives, the zoom is remembered engine-side (`g_pageZoom` +
+        // apoReassertPageZoom on the present paths), because a document commit can put the frame's
+        // factor back. That memory does not survive a navigation: every load builds a fresh Page, so
+        // the factor a new document is laid out at is armed separately -- see
+        // WebCoreSetNextSessionZoom below.
 
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
         public static extern int WebCoreSetPageZoom(float zoom);
+
+        // The zoom the NEXT session is BUILT at. WebCoreSetPageZoom needs a live session, so every
+        // request it takes lands after the document has been parsed -- on the fixed-viewport line
+        // that is OnNavDone, i.e. after the page was laid out at the CSS default. Call this on the
+        // engine thread immediately before WebCoreSessionLoad: buildSession applies it before the
+        // document is created, so the first layout is already at viewport/zoom and a page that reads
+        // window.innerWidth once, at load, sees the zoomed width.
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int WebCoreSetNextSessionZoom(float zoom);
 
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
         public static extern int WebCoreSessionResize(int width, int height, IntPtr outBuf);

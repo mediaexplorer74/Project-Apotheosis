@@ -770,7 +770,7 @@ not the browser's.** Recorded here because each produced a confident, specific, 
 
 The acceptance list has carried `11-dzen-ru` as `rc=0` with `nonwhite=0.00` since 2026-10-03, and the
 row read as a site that does not render. The redirect behind it was not unknown — the `.29` device
-trace in [MVP.md](MVP.md) already shows the first session loading `sso.dzen.ru/install` and painting
+trace in [MVP.md](Archive/MVP.md) already shows the first session loading `sso.dzen.ru/install` and painting
 `nonWhite=0`, and a 2026-09-18 analysis had the `https://dzen.ru` → 302 → `sso.passport.yandex.ru/push`
 chain. What was missing is that **the row could not name its own document**, so the list kept reporting
 a site defect for what is a page. The measurement below closes that, and adds the part that was not
@@ -935,4 +935,135 @@ on the UI thread, so it must also be **released** there: `.47`'s release ran on 
 threw `InvalidCastException … Arg_NoMarshalCreatedObjectUsedOutOfTreadContext`, leaving the display held
 until the process was stopped. `.48` marshals the release through `Dispatcher.RunAsync`.
 
+
+## "Scrolling is broken" can mean the page scrolls an element, not the frame (2026-10-20)
+
+Two reports arrived together from the Lumia: *the Nokia Design Archive content cannot be scrolled*,
+and *the site is still the mobile layout even with "Start in Desktop mode" on*. One piece of the
+site's own code explains both, and neither cause was the user agent.
+
+The site chooses its layout from the CSS width alone. Its stylesheet carries
+`@media only screen and (max-width:870px){#desktop-container{display:none}}`, and the bundle carries
+`function nn(e){return e.width<=e.mobileBreakpoint}` with `mobileBreakpoint: 870`. The ARM line lays
+the page out at 720 CSS px (`fitwindow=0`, zoom 100), so the site is mobile: its console says
+`Simulation paused on mobile` -- the Network graph is stopped by the site itself -- and its content
+scrolls inside `.mobile-view{height:100vh; overflow-y:auto}`, an element, not the document. The diag
+line said so before any of this was read: `contents=720x1080` equals the viewport, i.e. the frame had
+nothing to scroll.
+
+The port could only scroll the frame. `WebCoreScrollByImpl` sets `LocalFrameView::scrollPosition` and
+nothing else, so a finger over an inner scroller moved nothing at all. `WebCoreScrollByAt(x, y, dx,
+dy, buf)` now does what a browser does with a wheel event: `elementFromPoint` at the finger, the
+nearest ancestor with a scrollable overflow takes the delta, chaining upward when it is already at
+its end, and the frame is the fallback. The point rides with the coalesced pump, captured from
+`ManipulationDeltaRoutedEventArgs.Position` on the same path the tap uses.
+
+Worth keeping:
+
+* a layout switch may be width-only; check the site's CSS/JS before blaming the UA switch. The width
+  lever in this port is the page zoom (layout width = viewport / zoom), so 80 % is 900 CSS px here
+  and crosses the CSS breakpoint; "desktop mode" is the UA and nothing else by design. Confirm that
+  the *JS* agrees before promising a desktop layout -- this site's clamp is `screen.width`;
+* `contents` equal to the viewport while a user reports "cannot scroll" is the tell for an inner
+  scroller, and it is readable from `stage.txt` without touching the device;
+* a scroll path that only sets the frame is a real gap for every mobile SPA, not a quirk of one site.
+
+**Measured, and then explained by the maintainer's own hands (0.2.3.50).** The fix reached the phone
+and the maintainer reported the scroll alive by finger. The first packaged probe of it, however, was
+contaminated in an instructive way: the log carries real pinches (`pinch: resize … z=0,56`, `1,07`,
+`0,55`, `0,50`) during the run -- the maintainer was pinching while the batch navigated. Both swipes
+therefore ran on pages *loaded* at zoom 100 and *re-zoomed* by the fingers, and both changes of the
+frame hash were zero. The maintainer described the result better than the hash: the site was in a
+"mixed Design+Mobile mode", with desktop elements appearing after a pinch. That is the two width
+readers disagreeing. The CSS media query re-evaluates the moment the layout width changes, but the
+bundle's `nn(e)` check runs where the graph is initialised -- at load -- so a pinch after load splits
+the page in two.
+
+**Correction after the clean 0.2.3.51 run (2026-10-20): a load at 80 % does NOT open the JS gate
+either.** The .51 probe measured both halves of the page in one process with no fingers on the glass.
+At zoom 100 the inner scroller was found and moved -- `[SCT] x=360 y=540 z=1.00 d=0,48 rc=0
+out=1|DIV|mobile-view|720x1080`, the frame's own range `0,0..0,0` -- which is the scroll report
+answered in the page's own terms. At zoom 80 the same page *loaded* at 900 CSS px still logged
+`Simulation paused on mobile` three times, and `[SCT] … z=0.80 out=0|||900x1350` found no scrollable
+element under the centre at all. So the mixed mode is not a pinch artifact. The bundle's width is
+`Mu() = Math.min(window.innerWidth, document.documentElement.clientWidth, window.screen.width)`:
+the third term is the phone's physical CSS width (720), and page zoom cannot change `screen.width`.
+The CSS half follows the layout width, the JS half is clamped by the screen, and no zoom setting or
+UA switch in this port can lift the clamp. The only honest route to the site's desktop JS is a
+port-level desktop geometry, and it is now implemented: see "Desktop mode carries a screen override"
+below.
+
+Two consequences for the code:
+
+* the scroll delta needed the same division as the point: `scrollTop` and `ScrollPosition` are CSS px,
+  so a finger's N surface px is N/zoom CSS px; `.51` divides both. Without it a scroll at zoom 0.5
+  moved half as far as the finger;
+* a run that only measures `hash` cannot tell "no scroll range" from "the walk found nothing". `.51`
+  writes `[SCT] … out=m|tag|class|innerWidthxinnerHeight` for every pump and `[SCT] frame cur=… →
+  range=…` for the fallback, so the next device run names the element that took the delta or proves
+  that there was none.
+
+## Desktop mode carries a screen override (`0.2.3.51` x64 bench, 2026-10-20)
+
+The direct way to give the engine a desktop geometry is `LocalFrame::setOverrideScreenSize`. It
+exists in WebKit, it is in the ARM static archive, and it is **not** WEBCORE_EXPORTed -- and the x64
+line links `WebCore.dll`'s import library, so on that line the symbol is not reachable at all. Do
+not spend a build on it; the export list is the answer. The page-side equivalent needs no export:
+
+* `UserContentController::create()`, `addUserScript(mainThreadNormalWorldSingleton(),
+  makeUnique<UserScript>(...))` and `Page::setUserContentProviderForWebKitLegacy()` are exported on
+  both lines. A `UserScript` defaults to `DocumentStart`, i.e. before the site's bundle runs
+  (`HTMLConstructionSite.cpp` injects there), and `Screen`'s WebIDL accessors live on
+  `Screen.prototype` with `configurable: true`, so a getter can replace them.
+* The semantics that keep both halves honest are `screen.width := innerWidth` (and
+  `availWidth := innerWidth`, `height/availHeight := innerHeight`), not a fixed 980: the virtual
+  screen must equal the LAYOUT width at every zoom, or the CSS breakpoint and the JS clamp disagree
+  again at the next zoom. At zoom 100 that is still 720 and nothing changes; at zoom 80 it is 900.
+* The switch is the existing UA/desktop toggle, and the provider is swapped on the live session, so
+  the override belongs to the NEXT document -- same as the UA header. Never swap it from inside the
+  pump: replacing injected style sheets mid-load is not re-entrant in this port.
+* A site is free to re-measure whenever it likes. This one's bundle re-runs
+  `Se.setState({width: Mu(), height: innerHeight})` from a `window.addEventListener("resize", Ss)`
+  and from `load` (`+100 ms`), and pauses the simulation when `width <= mobileBreakpoint`. A repaint
+  of the live page therefore moves only the CSS half of `Mu()`: on a document that started under the
+  mobile UA there is no override on `Screen.prototype`, `screen.width` stays the frame width, and the
+  gate stays closed no matter how wide the zoom re-lays the page out. The gate opens for a document
+  that STARTS in desktop mode with the zoom already armed -- see the next section. Read the site's
+  own handler AND which half of the gate a given lever moves before designing a probe around "the
+  JS only checks at load".
+
+Measured on the x64 bench with the override armed (desktop), `example.com` and then
+`nokiadesignarchive.aalto.fi`: the mobile load injects nothing; the desktop load at 1355x751 logs
+`[DG] screen 1355x751 inner 1355x751`, no `Simulation paused on mobile`, d3 loaded and the
+simulation started. A home page loaded while `kW/kH` still held 720 writes
+`[DG] screen 720x1080 inner 720x1080` and stays gated until the resize, which is the expected
+order, not a failure of the override.
+
+## The next load's zoom is armed before the session is built (`0.2.3.55`, 2026-10-21)
+
+`WebCoreSetPageZoom` needs a live session, so it can only land after the document has parsed --
+on the fixed-viewport ARM line that is after the first layout already ran at the CSS default. A
+page that reads `window.innerWidth`/`screen.width` once, at load, therefore saw the unzoomed
+geometry no matter what the Settings slider said, and on the Lumia the Nokia gate read 720 DIP
+even with Desktop mode on.
+
+* `WebCoreSetNextSessionZoom(float)` (exported; listed in `WebCoreDriver.exports.def`) writes
+  `g_nextSessionZoom`; `buildSession` reads it and calls `setPageZoomFactor` AFTER
+  `localMainFrame->init()` but BEFORE the DocumentWriter is fed, so the first layout is already
+  `viewport / zoom` -- 720 DIP at 80 % is 899 CSS px, and the port says so in
+  `[GPU] session built at zoom 0.80 ...: layout width 899 css in 720x1080 dip`.
+* MainPage now arms it UNCONDITIONALLY on the engine thread immediately before every
+  `WebCoreSessionLoad` (`zoomPctForLoad`, the Settings value, including 1.00). The call is cheap,
+  it makes the slider value part of the load's identity, and it removes the whole class of bugs
+  where one code path forgot to arm. `teardownSession` resets `g_pageZoom` but not
+  `g_nextSessionZoom`: the next arm always follows.
+* The pairing that opens the Nokia gate on the phone is `ua desktop` (arms the document-start
+  screen override) + `zoom 80` (arms the pre-build zoom) + a FRESH load. Measured on the x64
+  bench: `[DG] doc screen 900x1350` and no `Simulation paused on mobile` after that point. On the
+  ARM line the same pair must work in BOTH orientations at fitwindow=0: the engine viewport is the
+  fixed 720x1080 DIP frame, so turning the phone does not change the CSS width.
+* Probe hygiene from the same session: `diag contents=` does NOT report the CSS layout width -- the
+  `[GPU]`/`[DG]` markers above do; and System.Drawing's `GetPixel` lies on the bench screenshots
+  (RGBA-PNG read as dark values on a white page), so measure pixels through the image reader, not
+  GDI+.
 

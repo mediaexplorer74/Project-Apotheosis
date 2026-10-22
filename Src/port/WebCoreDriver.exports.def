@@ -43,6 +43,7 @@ EXPORTS
     ; Interaction
     WebCoreClickAt
     WebCoreScrollBy
+    WebCoreScrollByAt
     WebCoreSyncLinks
     WebCoreTypeText
     WebCoreKeyAction
@@ -67,6 +68,9 @@ EXPORTS
     ; side called them anyway -- every call failed at the P/Invoke boundary.
     WebCoreSessionResize
     WebCoreSetPageZoom
+    ; The zoom the NEXT session is built at, read in buildSession before the document exists.
+    ; WebCoreSetPageZoom needs a live session and so always lands after the document has parsed.
+    WebCoreSetNextSessionZoom
 
     ; Metadata / diagnostics
     WebCoreGetTitle

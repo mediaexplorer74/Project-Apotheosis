@@ -33,7 +33,10 @@ param(
     # Apotheosis app was deployed -- the app being the thing the ARM line now ships. WDP needs the
     # package FULL name (name_version_arch__publisher), which is also what makes it unambiguous when
     # several versions are registered side by side; the pattern picks which one.
-    [string]$PackagePattern = 'EdgeHTMLReborn.Harness_*',
+    # S5 (2026-10-21): the default follows the shipped app. The old default named the C++ harness
+    # package, which no line has deployed since the app became the product; every recent pull passed
+    # -PackagePattern 'ME.Apotheosis_*' by hand (probe authors kept forgetting it -- see ROADMAP S5).
+    [string]$PackagePattern = 'ME.Apotheosis_*',
     [int]$TimeoutSec = 90,
     [string[]]$Files = @(
         'port-trace.txt',       # driver: loader scheduling and the settle loop, appended and flushed per line

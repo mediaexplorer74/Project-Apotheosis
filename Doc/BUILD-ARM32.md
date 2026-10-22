@@ -252,7 +252,7 @@ returns `nullptr`; `ThreadableWebSocketChannel::create()` forwards straight to i
 WebSocket (Yandex Metrika — `mc.yandex.ru/metrika/tag_phono.js` is the last `loader: CALL` before the
 abort), so `connect()` hit the assert and `abort()` killed the browser. This is the same empty-client
 trap as `.25`'s missing `NotificationController` supplement
-([PLAN.md](PLAN.md) §0a), one supplement over.
+([Archive/Plan_MVP.md](Archive/Plan_MVP.md) §0a), one supplement over.
 
 The fix is `Src/port/PortWebSocket.cpp`: a port-side `SocketProvider` whose channel answers
 `ConnectStatus::KO` from `connect()`. `WebSocket::connect()` turns a KO into `failAsynchronously()`
@@ -1416,6 +1416,20 @@ Src/tools/device-accept/device-run.txt      the 13-site list -- the ARM twin of 
                                             same sites, same order, same per-site verbs
 Src/tools/device-accept/probe-error.txt     a short three-row probe for one specific gap
 Src/tools/device-accept/probe-nokia.txt     the .42 death probe (nokia first, then the error page)
+Src/tools/device-accept/probe-scroll.txt    the 2026-10-20 scroll report: the inner scroller at zoom
+                                            100, then the same page loaded at zoom 80 (900 CSS px).
+                                            Measured in 0.2.3.51: the first half scrolls DIV.mobile-view
+                                            (frame range 0,0..0,0); the second turns the CSS desktop
+                                            but still logs "Simulation paused on mobile" because the
+                                            site's JS min-clamps with window.screen.width, which page
+                                            zoom cannot change
+Src/tools/device-accept/probe-screensize.txt the 2026-10-20 desktop screen override: baseline
+                                            (mobile, zoom 100), then ua desktop + zoom 80 on the
+                                            live page, then a fresh load at that geometry. Expects
+                                            [DG] screen WxH inner WxH with W == innerWidth in
+                                            gpu-steps.txt and no "Simulation paused on mobile"
+                                            after the zoom's resize (the site re-measures in its own
+                                            window `resize` handler) and after the load in C
 Src/tools/device-accept/probe-address.txt   requirements 2 and 7: suggest + enter on the real UrlBox
 Src/tools/build-app-accept.ps1 -Batch <f>   stages <f> into Assets\device-run.txt, validates the verbs,
                                             bumps the version, builds, and removes the staged copy

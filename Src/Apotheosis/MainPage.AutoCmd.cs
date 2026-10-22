@@ -40,6 +40,10 @@
 //   wait <ms>                sleep on the engine thread
 //   hash                     log the frame hash (equal consecutive hashes = a settled frame)
 //   diag                     log the driver's page diagnostics
+//   clicklink <n>            click the centre of engine link <n> DIRECTLY (no shell
+//                            bookkeeping): the S3 probe's instrument for an
+//                            engine-initiated navigation, so the live tick's url
+//                            follow can be measured without HandleTapAt's own write
 //
 // Every timed command reports elapsed ms, so scroll cost is measured rather than guessed.
 
@@ -351,7 +355,61 @@ namespace Apotheosis
                         // The link table in the log. Choosing a tap target by reading the page's own
                         // hit list is a measurement; choosing one by hardcoding a coordinate is a
                         // measurement of the page's current layout.
-                        AutoUi("links");
+                        //
+                        // S3 probe fix (0.2.3.65): this verb used to print the SHELL's _pageLinks
+                        // snapshot (via AutoUi), which only refreshes on ApplyEngineFrame/scroll --
+                        // after a fitwindow zoom it was measurably stale (printed 409,834 while the
+                        // engine's live table said 806,731). Sync + read the ENGINE table here, on
+                        // the engine thread, so `links` and `clicklink` speak about the same rects.
+                        WebCoreDriver.WebCoreSyncLinks();
+                        int nl = WebCoreDriver.WebCoreGetLinkCount();
+                        AutoLog("links n=" + nl);
+                        for (int li = 0; li < nl && li < 40; li++)
+                        {
+                            int bx = 0, by = 0, bw = 0, bh = 0;
+                            byte[] bu = new byte[1200];
+                            if (WebCoreDriver.WebCoreGetLink(li, ref bx, ref by, ref bw, ref bh, bu, bu.Length) != 0)
+                                AutoLog("  [" + li + "] " + bx + "," + by + " " + bw + "x" + bh + " "
+                                        + System.Text.Encoding.UTF8.GetString(bu).TrimEnd('\0'));
+                        }
+                    }
+                    else if (verb == "clicklink")
+                    {
+                        // S3 probe only (2026-10-22): click the centre of the engine's link <n>
+                        // WITHOUT the shell's bookkeeping. `taplink` goes through HandleTapAt, which
+                        // reads the engine URL right after the click and writes it into the box
+                        // itself -- so it cannot tell whether the LIVE TICK follows the engine. This
+                        // verb calls WebCoreClickAt directly on the engine thread and writes nothing:
+                        // the shape of an engine-initiated hop (an SPA route change, a
+                        // history.replaceState). The box may only follow if the tick works, and the
+                        // log names both urls so "did not follow" cannot hide behind a paint.
+                        // Coordinates come from WebCoreGetLink, so no page layout is hardcoded.
+                        // Sync first (0.2.3.65): the engine table rebuilds on every layout/paint,
+                        // but a clicklink issued after a zoom or a wait could still read the last
+                        // paint's rects; WebCoreSyncLinks forces layout + extract, no paint.
+                        int cidx = parts.Length > 1 ? int.Parse(parts[1]) : 0;
+                        WebCoreDriver.WebCoreSyncLinks();
+                        int lx = 0, ly = 0, lw = 0, lh = 0;
+                        byte[] lu = new byte[1200];
+                        if (WebCoreDriver.WebCoreGetLink(cidx, ref lx, ref ly, ref lw, ref lh, lu, lu.Length) == 0)
+                        {
+                            AutoLog("clicklink " + cidx + " missing (links="
+                                    + WebCoreDriver.WebCoreGetLinkCount() + ")");
+                        }
+                        else
+                        {
+                            byte[] crgba = NewFrameBuffer();
+                            GCHandle ch = GCHandle.Alloc(crgba, GCHandleType.Pinned);
+                            int crc = -999;
+                            try { crc = WebCoreDriver.WebCoreClickAt(lx + lw / 2, ly + lh / 2, ch.AddrOfPinnedObject()); }
+                            finally { ch.Free(); }
+                            byte[] cu = new byte[1024];
+                            WebCoreDriver.WebCoreGetUrl(cu, cu.Length);
+                            AutoLog("clicklink " + cidx + " rect=" + lx + "," + ly + " " + lw + "x" + lh
+                                    + " rc=" + crc
+                                    + " engineurl=" + System.Text.Encoding.UTF8.GetString(cu).TrimEnd('\0')
+                                    + " shellurl=" + _currentUrl);
+                        }
                     }
                     else if (verb == "ui")
                     {
@@ -762,7 +820,10 @@ namespace Apotheosis
                         for (int i = 0; i < steps; i++)
                         {
                             long t = sw.ElapsedMilliseconds;
-                            FreeScrollBy(0, per);
+                            // The page's center, because the scripted swipe stands in for a finger
+                            // at the middle of the content: the pump needs a point to find the
+                            // innermost scrollable element (see WebCoreScrollByAt).
+                            FreeScrollBy(0, per, kW / 2, kH / 2);
                             AutoLog("swipe[" + i + "] stepMs=" + (t - last) + " at=" + t);
                             last = t;
                             if (gapMs > 0) await System.Threading.Tasks.Task.Delay(gapMs);

@@ -303,6 +303,12 @@ namespace Apotheosis
         DrawerTab _tab = DrawerTab.Favorites;
 
         string _currentUrl = "";
+        // S2 (2026-10-21): a navigation that arrived while a load owned the shell is HELD here
+        // instead of being dropped (the old `nav DROPPED, shell busy` line). Last one wins -- a
+        // user who asks twice while the page hangs means the second ask. Delivered from
+        // SetLoading(false), the single point every load ends at.
+        string _pendingNav;
+        bool _pendingNavPush;
         string _currentTitle = "";
         List<PageLink> _pageLinks = new List<PageLink>();
         bool _sessionActive;
@@ -403,6 +409,14 @@ namespace Apotheosis
         int _scrollAccum;
         int _scrollAccumX;
         bool _scrollBusy;
+        // The point the current accumulation is about, in engine-surface px DIP. A page can scroll
+        // an inner overflow container, and which one is decided by where the finger is -- so the
+        // pump needs the point, not only the deltas. Captured with the accumulation like the
+        // deltas themselves, so a coalesced pump uses the latest finger position. The initial
+        // value is the surface's center, which is what a caller without a point (the scroll
+        // buttons) means.
+        int _scrollPointX = kW / 2;
+        int _scrollPointY = kH / 2;
 
         // Pinch and other zooms.
         //
@@ -937,6 +951,30 @@ namespace Apotheosis
             // fixed 720x1080 line only has a pending zoom to re-commit, and AdoptViewport returns at
             // once when _fitWindow is off. See DrainPendingZoom().
             if (!loading && _vpDirty) DrainPendingZoom();
+            // S2 (2026-10-21): deliver a navigation that arrived while this load owned the shell.
+            // Deferred one dispatcher turn at Low priority on purpose: the ending load's own
+            // epilogue (OnNavDone's zoom re-apply, the tap path's synchronous linkHit NavigateTo)
+            // must finish against the OLD page before the queued navigation replaces it -- running
+            // NavigateTo from inside SetLoading would re-enter it under OnNavDone's feet and the
+            // zoom re-apply would land on the new, still-building document. Discard when a newer
+            // navigation already took the shell: "last one wins", and the newer ask IS the last
+            // one (measured order: tap path calls SetLoading(false) then NavigateTo(linkHit)
+            // synchronously, so the queued URL must not outlive it).
+            if (!loading && _pendingNav != null)
+            {
+                string qUrl = _pendingNav; bool qPush = _pendingNavPush;
+                _pendingNav = null;
+                try
+                {
+                    Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                    {
+                        if (_loading) { AutoLog("nav QUEUED superseded: " + qUrl); return; }
+                        AutoLog("nav QUEUED delivered: " + qUrl);
+                        NavigateTo(qUrl, qPush);
+                    });
+                }
+                catch { }
+            }
         }
 
         void NavigateTo(string url, bool pushHistory)
@@ -946,7 +984,9 @@ namespace Apotheosis
             // "done", stage.txt kept the previous line, the engine diag kept the previous page.
             // Measured: a `goto` issued while the shell was still finishing the previous render
             // was dropped in silence and looked exactly like a navigation that had not been
-            // delivered yet. Say which it was.
+            // delivered yet. Say which it was. (2026-10-21, S2: the drop below became a QUEUE --
+            // "nav QUEUED" -- delivered from SetLoading(false); the log-line habit is what made
+            // the drop measurable in the first place.)
             // A navigation attempt closes the dropdown, delivered or not. This used to sit below the
             // "shell busy" early-return, so a navigation issued while a load was in flight was
             // dropped in silence AND left the suggestion list hanging over the page -- measured on
@@ -957,7 +997,15 @@ namespace Apotheosis
             HideSuggestions();
             if (_loading)
             {
-                AutoLog("nav DROPPED, shell busy: " + url);
+                // S2 (2026-10-21): HOLD, don't drop. The old behaviour was a silent drop -- the
+                // measured case was a `goto` swallowed for the whole life of one hung Usercentrics
+                // subresource (curlcode=28, >60 s on the Lumia; "nav DROPPED, shell busy" in
+                // autocmd-log). A queued navigation is delivered by SetLoading(false), which every
+                // load end passes through -- including the 40 s watchdog, so a wedged load cannot
+                // hold the queue forever. Last one wins: a second ask replaces the first.
+                _pendingNav = url;
+                _pendingNavPush = pushHistory;
+                AutoLog("nav QUEUED, shell busy: " + url);
                 return;
             }
             string wurl = string.IsNullOrEmpty(url) ? "about:home" : url;
@@ -1001,6 +1049,9 @@ namespace Apotheosis
             long mySeq = ++_opSeq;
             string homeHtml = isHome ? BuildHomeHtml(_bookmarks, _historyList) : "";
             if (isHome) _homeHtmlLang = Str.Lang;
+            // Read on the UI thread and carried into the posted body: the engine thread must not read
+            // the shell's settings fields, and this one decides the zoom the new document is built at.
+            int zoomPctForLoad = _defaultZoom;
 
             WebEngine.Instance.Post(() =>
             {
@@ -1026,6 +1077,21 @@ namespace Apotheosis
                     else
                     {
                         WriteStage("before-load " + surl);
+                        // Arm the zoom for the document that is about to be built, BEFORE the session
+                        // exists. The post-load re-apply in OnNavDone is too late for a page that
+                        // reads its width once, at load: the document is laid out at the viewport's
+                        // CSS default first, and a site whose JS gate breaks at 870 then decides
+                        // "mobile" before any zoom exists (the Nokia archive is exactly this -- its
+                        // Desktop-mode screen override reports innerWidth, which is 720 at that
+                        // moment). This call records the value only; buildSession applies it before
+                        // the document is created. Unconditional: on the fixed-viewport line the
+                        // viewport is 720 for the document's whole life, and on the fit-window line
+                        // the boot load still sees the default 720x1080 because the fitwindow resize
+                        // arrives AFTER the load -- measured, both lines started the first document
+                        // at 720 and left the Nokia gate closed (document at layout width = viewport
+                        // / zoom is the shared contract of the two lines, so the arm is too).
+                        try { WebCoreDriver.WebCoreSetNextSessionZoom(zoomPctForLoad / 100f); }
+                        catch { }
                         GCHandle h = GCHandle.Alloc(rgba, GCHandleType.Pinned);
                         int netRc;
                         try { netRc = WebCoreDriver.WebCoreSessionLoad(surl, kW, kH, h.AddrOfPinnedObject()); }
@@ -1274,7 +1340,17 @@ namespace Apotheosis
         void HandleTapAt(double dipX, double dipY)
         {
             HideSuggestions();
-            if (_loading || _interacting) return;
+            if (_interacting) return;
+            // S8 (2026-10-21): `_loading` used to refuse the tap SILENTLY here. Measured on the
+            // Lumia (.59): a Nokia load held by one hung Usercentrics subresource made every tap
+            // dead -- the maintainer's "Accept All" on the CMP overlay did nothing, however often
+            // it was pressed. Same disease S2 cured for navigation: a hung third-party resource
+            // must not dead-end INPUT. The engine takes clicks during a load by design;
+            // WebCoreClickAt queues behind the in-flight work on the engine thread, and this
+            // tap's own completion clears _loading (its SetLoading(true) re-arms the watchdog, so
+            // the 40 s ceiling still applies). `_interacting` stays: it is the engine-ownership
+            // guard, not a load-state gate.
+            if (_loading) AutoLog($"tap during load: dip={dipX:0},{dipY:0}");
             MapTapToEngine(dipX, dipY, out int px, out int py);
             if (px < 0 || py < 0 || px >= kW || py >= kH) return;
 
@@ -1483,7 +1559,18 @@ namespace Apotheosis
                 _currentTitle = title;
                 if (TitleText != null) TitleText.Text = title;
             }
-            if (navUrl != null)
+            // S4/S3 (2026-10-22): an EMPTY navUrl means "the engine could not name the
+            // document", not "the document is called ''". The tap path passes "" when the
+            // engine URL is unchanged or unreadable (WebCoreGetUrl answers "" until
+            // writeDiag has run once), and the old `!= null` test then took the empty
+            // string as a URL: it cleared _currentUrl AND the address box. Measured on the
+            // 0.2.3.61 bench: tap a non-link spot on example.com and the box goes blank
+            // while the page stays put and the engine diag still says url=https://example.com/
+            // -- the same disappearance the .58/.59 device runs saw as `url= | url=...`.
+            // Unknown must keep what the user last saw; only NavigateTo clears the box,
+            // and it does so because it has a real target. Callers that mean "no change"
+            // already pass null (the back/forward path at the `navW` construction).
+            if (!string.IsNullOrEmpty(navUrl))
             {
                 _currentUrl = navUrl;
                 SetUrlBoxText(navUrl);
@@ -1526,7 +1613,10 @@ namespace Apotheosis
         // ===== Scroll =====
         void EngineScroll(int dy)
         {
-            if (!_sessionActive || _loading || _interacting) return;
+            // S8 (2026-10-21): `_loading` dropped from the gate, same rationale as HandleTapAt --
+            // the FAB buttons died for the whole life of a hung subresource. `_sessionActive`
+            // stays: it is the watchdog's own verdict on the page.
+            if (!_sessionActive || _interacting) return;
             _interacting = true;
             SetLoading(true);
             if (_loadWatchdog != null) _loadWatchdog.Start();
@@ -1565,7 +1655,17 @@ namespace Apotheosis
 
         void FreeScrollBy(int dx, int dy)
         {
+            FreeScrollBy(dx, dy, _scrollPointX, _scrollPointY);
+        }
+
+        // The point matters as much as the delta: a page can scroll an inner overflow container,
+        // and the container is chosen by what is under the finger. See FreeScrollBy's two-argument
+        // wrapper for the callers that have no point of their own.
+        void FreeScrollBy(int dx, int dy, int x, int y)
+        {
             if (!_sessionActive || (dx == 0 && dy == 0)) return;
+            _scrollPointX = x;
+            _scrollPointY = y;
             _scrollAccumX += dx;
             _scrollAccum += dy;
             if (!_scrollBusy) PumpScroll();
@@ -1576,6 +1676,8 @@ namespace Apotheosis
             if ((_scrollAccum == 0 && _scrollAccumX == 0) || !_sessionActive) { _scrollBusy = false; return; }
             int dy = _scrollAccum; _scrollAccum = 0;
             int dx = _scrollAccumX; _scrollAccumX = 0;
+            int px = _scrollPointX;
+            int py = _scrollPointY;
             _scrollBusy = true;
             CoreDispatcher disp = Dispatcher;
             long mySeq = _opSeq;
@@ -1586,13 +1688,24 @@ namespace Apotheosis
                 byte[] rgba = NewFrameBuffer();
                 int rc = -999;
                 GCHandle h = GCHandle.Alloc(rgba, GCHandleType.Pinned);
-                try { rc = WebCoreDriver.WebCoreScrollBy(dx, dy, h.AddrOfPinnedObject()); }
+                // WebCoreScrollByAt, not WebCoreScrollBy: the point lets the port scroll the
+                // innermost scrollable element under the finger and fall back to the frame. The
+                // frame-only call silently did nothing on pages whose content scrolls inside an
+                // overflow container (`nokiadesignarchive.aalto.fi`'s mobile view was the measured
+                // case: contents 720x1080 == viewport, finger moved, nothing happened).
+                try { rc = WebCoreDriver.WebCoreScrollByAt(px, py, dx, dy, h.AddrOfPinnedObject()); }
                 finally { h.Free(); }
                 int rcCopy = rc;
                 try
                 {
                     disp.RunAsync(CoreDispatcherPriority.Normal, () =>
                     {
+                        // S8 (2026-10-21): one line per merged pump. The maintainer's "the page
+                        // does not scroll" had no device-side evidence at all before this: a drag
+                        // that reaches nothing, a scroll the engine refuses and a scroll whose
+                        // blit was superseded all look identical from outside. rc, the point and
+                        // the delta are what tell them apart.
+                        AutoLog($"scroll dx={dx} dy={dy} at {px},{py} rc={rcCopy}");
                         if (_opSeq != mySeq) { _scrollBusy = false; _scrollAccum = 0; return; }
                         if (rcCopy == 0)
                         {
@@ -1660,7 +1773,16 @@ namespace Apotheosis
             double dy = -e.Delta.Translation.Y;
             int idx = (int)(dx < 0 ? dx - 0.5 : dx + 0.5);
             int idy = (int)(dy < 0 ? dy - 0.5 : dy + 0.5);
-            if (idx != 0 || idy != 0) FreeScrollBy(idx, idy);
+            if (idx != 0 || idy != 0)
+            {
+                // The finger's own position decides which inner scroller takes the delta, so it
+                // rides along with the accumulation (see FreeScrollBy). MapTapToEngine is the
+                // same DIP -> engine-px mapping the tap path uses, which matters on the GPU path.
+                var pos = e.Position;
+                MapTapToEngine(pos.X, pos.Y, out int px, out int py);
+                if (px < 0 || py < 0 || px >= kW || py >= kH) { px = _scrollPointX; py = _scrollPointY; }
+                FreeScrollBy(idx, idy, px, py);
+            }
         }
 
         void ApplyLiveZoom()
@@ -1803,7 +1925,32 @@ namespace Apotheosis
                     }
                 }
                 finally { h.Free(); }
+                // S3 (2026-10-22): the engine can change its document without the shell
+                // asking -- a redirect chain's next hop, an SPA route change,
+                // history.replaceState, a location.hash. Nothing in the shell writes
+                // _currentUrl on those, so the box kept the REQUESTED url indefinitely
+                // (measured on the harness 2026-09-19: box said dzen.ru while the document
+                // was sso.dzen.ru/install). The live tick is the right place for the same
+                // reason the harness learned it: it is the only thing that runs while a
+                // page sits still. Read here, on the engine thread, in the same posted
+                // body as the tick -- the work is a snprintf out of a static buffer, but
+                // keeping every WebCore* call on this thread is the rule the rest of the
+                // file follows. The UI side only compares and writes.
+                //
+                // Deliberately NOT pushed onto _navStack: whether an engine-initiated
+                // navigation replaces the current history entry or appends one is a
+                // question the harness left open (m-currenturl-never-follows-the-engine),
+                // and answering it wrongly corrupts Back/Forward. The box and _currentUrl
+                // are display state; the stack stays shell-authored.
+                string engineUrl = "";
+                if (rc == 0)
+                {
+                    byte[] uBuf = new byte[1024];
+                    WebCoreDriver.WebCoreGetUrl(uBuf, uBuf.Length);
+                    engineUrl = Encoding.UTF8.GetString(uBuf).TrimEnd('\0');
+                }
                 int rcCopy = rc; uint hashCopy = hash; int pendingCopy = pending;
+                string engineUrlCopy = engineUrl;
                 try
                 {
                     disp.RunAsync(CoreDispatcherPriority.Low, () =>
@@ -1821,6 +1968,31 @@ namespace Apotheosis
                             }
                             return;
                         }
+                        // S3: the engine's document url wins, but never while the user is
+                        // typing in the box -- an overwrite mid-keystroke moves the caret
+                        // and, worse, rewrites what CommitUrlBox will parse. `_urlSyncing`
+                        // is set by SetUrlBoxText itself; `_urlFocused` is the user's grab.
+                        // This sits BEFORE the hash branch on purpose: an SPA route change
+                        // often leaves the frame hash identical (same layout, new url), so
+                        // a URL update that only ran with a changed frame would miss
+                        // exactly the case this exists for.
+                        //
+                        // S3 (0.2.3.65): AutoLog FIRST, the box second. Measured on the .65
+                        // bench: after clicklink hopped the engine to iana.org the box showed
+                        // the new url while autocmd-log held NO `url follows engine` line --
+                        // the update path between SetUrlBoxText and AutoLog (the two glyph
+                        // refreshers) can throw, the enclosing catch{} eats it, and the one
+                        // line that proves S3 works disappears with it. The observation must
+                        // not depend on the cosmetics that follow it.
+                        if (!string.IsNullOrEmpty(engineUrlCopy) && engineUrlCopy != _currentUrl
+                            && !_urlFocused && !_urlSyncing)
+                        {
+                            AutoLog("url follows engine: " + engineUrlCopy);
+                            _currentUrl = engineUrlCopy;
+                            SetUrlBoxText(engineUrlCopy);
+                            UpdateLockIcon();
+                            UpdateUrlActionGlyph();
+                        }
                         if (hashCopy == _lastFrameHash)
                         {
                             if (pendingCopy > 0)
@@ -1831,12 +2003,32 @@ namespace Apotheosis
                                 if (ticks >= 300) StopLiveMode();
                                 return;
                             }
-                            if (++_liveStaticTicks >= 40) StopLiveMode();
+                            // S3 (0.2.3.65): was StopLiveMode() at 40 static ticks -- and that
+                            // made the whole S3 mechanism vacuous: measured on the .65 bench, a
+                            // page idle for 8 s had already stopped the tick before clicklink
+                            // hopped the engine to iana.org (15:23:54 vs stop at ~15:23:44), so
+                            // nothing noticed the hop: no `url follows engine`, no frame blit.
+                            // The tick is the only thing that runs while a page sits still --
+                            // it must not die, it must only slow down. One poll per second on a
+                            // static page costs a RunLoop cycle and an update pass, and it is
+                            // what keeps the box honest about engine-initiated hops (the S3
+                            // contract). The fast cadence comes back the moment the frame moves.
+                            if (++_liveStaticTicks >= 40)
+                            {
+                                if (_liveTimer != null && _liveTimer.Interval < TimeSpan.FromSeconds(1))
+                                {
+                                    _liveTimer.Interval = TimeSpan.FromSeconds(1);
+                                    AutoLog("live tick: static, slowed to 1s (watch stays on)");
+                                }
+                                return;
+                            }
                             return;
                         }
                         _liveStaticTicks = 0;
                         _lastFrameHash = hashCopy;
                         if (!present) BlitToBitmap(rgba);
+                        if (_liveTimer != null && _liveTimer.Interval > TimeSpan.FromMilliseconds(200))
+                            _liveTimer.Interval = TimeSpan.FromMilliseconds(200);   // frame moved: full cadence back
                         if (++_liveTotalTicks == 150 && _liveTimer != null)
                             _liveTimer.Interval = TimeSpan.FromSeconds(1);
                     });
@@ -2018,7 +2210,7 @@ namespace Apotheosis
             // rc=` is written inside the posted body below, and these early returns never reach it.
             // A Back that leaves no record is indistinguishable from a Back that never arrived,
             // which is the same failure mode the scripted-channel work was built to remove from
-            // the navigation path (see the note on NavigateTo's "nav DROPPED" line). The reason
+            // the navigation path (see the note on NavigateTo's "nav QUEUED" line). The reason
             // is named rather than implied, because "no session", "still loading" and "a gesture
             // owns the engine" are three different states that need three different answers.
             const string skip = "history ";
@@ -3565,10 +3757,34 @@ namespace Apotheosis
         // live rather than doing half of each rule.
         void OnContentAreaSizeChanged(object s, SizeChangedEventArgs e)
         {
-            if (!_fitWindow) return;
             int w = (int)(ContentArea.ActualWidth + 0.5);
             int h = (int)(ContentArea.ActualHeight + 0.5);
             if (w < 16 || h < 16) return;                  // no layout pass yet
+            if (!_fitWindow)
+            {
+                // The fixed-viewport line ignores size changes by design -- except one: ROTATION.
+                // The viewport is a portrait 720x1080 frame and RenderImage is Stretch=None at
+                // Top/Left, so in a landscape window the page keeps its portrait shape in the left
+                // part of the panel and every gesture started to the right of it is outside the
+                // page. Reported from the Lumia as "in landscape scroll and pinch do not work"
+                // (2026-10-21) while the log showed `pinch: ... rc=0`: the engine was alive, the
+                // page never turned with the window. The adopt is the SWAP of the same fixed pair
+                // (720x1080 portrait, 1080x720 landscape) through the posted body the pinch and the
+                // fitted line already use, so the zoom-then-resize order and the frame buffer
+                // cannot drift from the other callers. The wanted geometry goes into _vpW/_vpH
+                // BEFORE the busy test, so a rotation that lands mid-load is adopted by
+                // DrainPendingZoom instead of being lost.
+                bool wantLandscape = w > h;
+                if (wantLandscape != (kW > kH))
+                {
+                    _vpW = wantLandscape ? kH : kW;
+                    _vpH = wantLandscape ? kW : kH;
+                    if (_gpuPresent) return;               // the GPU line presents on its own surface
+                    if (_loading || _interacting) { _vpDirty = true; return; }
+                    PostZoomAndRepaint(_vpW, _vpH, _pageZoom, "rotate");
+                }
+                return;
+            }
             if (w > kViewportCeiling || h > kViewportCeiling) return;
             if (w == _vpW && h == _vpH) return;
             _vpW = w; _vpH = h;
@@ -3653,6 +3869,17 @@ namespace Apotheosis
             // and with it clear its already-at short-circuit can tell a real late commit from a
             // re-post of one that has already reached the engine.
             _vpDirty = false;
+            // A rotation that arrived while the engine was busy wrote its wanted geometry into
+            // _vpW/_vpH and left _vpDirty set; the zoom-only commit below would repaint at the OLD
+            // size and the turn would be lost. The >= 16 test keeps a never-written _vpW/_vpH
+            // (a cold start that never called SetFitWindow) out of this branch. See
+            // OnContentAreaSizeChanged's fixed-line rotation adopt.
+            if (_vpW >= 16 && _vpH >= 16 && (kW != _vpW || kH != _vpH))
+            {
+                Crumb($"drain: deferred rotate {kW}x{kH} -> {_vpW}x{_vpH}");
+                PostZoomAndRepaint(_vpW, _vpH, _vpZoom, "rotate");
+                return;
+            }
             Crumb($"drain: applying deferred zoom {_vpZoom:0.00} (fit off)");
             CommitPageZoom(_vpZoom, "drain");
         }

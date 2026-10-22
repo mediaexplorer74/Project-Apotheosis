@@ -150,6 +150,14 @@ extern "C" __declspec(dllimport) void __stdcall OutputDebugStringA(const char*);
 #include "PortBackForward.h"             // WebCorePort::createPortBackForwardClient -- see PortBackForward.cpp
 #include <WebCore/Page.h>                // WebCore::Page
 #include <WebCore/NotificationClient.h>  // WebCore::NotificationClient / provideNotification -- see installPortNotificationClient
+// Apotheosis 2026-10-20: the desktop-mode screen override (see installDesktopScreenOverride).
+// UserContentController is reachable through Page::setUserContentProviderForWebKitLegacy, which is
+// WEBCORE_EXPORTed -- the direct remedy, LocalFrame::setOverrideScreenSize, is not, and the x64
+// line links WebCore.dll's import library.
+#include <WebCore/UserContentController.h>
+#include <WebCore/UserContentProvider.h>
+#include <WebCore/UserScript.h>
+#include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/Settings.h>            // Page::settings()
 #include <WebCore/LocalFrame.h>          // WebCore::LocalFrame
 #include <WebCore/LocalFrameInlines.h>   // inline LocalFrame::document()/protectedDocument()
@@ -1345,6 +1353,22 @@ static bool g_gpuScrollFast = false;
 // re-asserting it at present time closes that window without the harness having to know when a
 // commit happened, and it costs one float compare per frame.
 static float g_pageZoom = 1.0f;
+// Apotheosis 2026-10-21: the zoom a session is BUILT at, as opposed to the one a live frame is SET to.
+//
+// WebCoreSetPageZoom needs a live session, so on the fixed-viewport line (fitwindow off) every
+// request lands after the document has been parsed -- the harness's re-apply runs from OnNavDone,
+// i.e. after the whole page was laid out at the CSS default. That is invisible to a page which only
+// reacts to `resize`, and fatal to one that reads its width once, at load: the Nokia archive's JS
+// gate (window.innerWidth vs 870) decides "mobile" before any zoom exists, and the Desktop-mode
+// screen override cannot help there, because it reports innerWidth -- 720 at that moment.
+//
+// The value is recorded before the load (WebCoreSetNextSessionZoom, called on the engine thread while
+// the previous session is still alive; it touches nothing in that session) and applied in
+// buildSession before the document is fed, so the FIRST layout is already at viewport / zoom.
+//
+// Deliberately NOT reset in teardownSession: the shell re-arms it before every load, so a stale value
+// is impossible, and a value lost at teardown is exactly the defect this exists to fix.
+static float g_nextSessionZoom = 1.0f;
 #if USE(TEXTURE_MAPPER)
 static WebCore::GLContext* g_glContext = nullptr;
 static WebCore::TextureMapper* g_textureMapper = nullptr;
@@ -1426,6 +1450,10 @@ static inline void apoEngineTick() { g_engineActivity.fetch_add(1, std::memory_o
 // ---- extracted link table (rebuilt on every layout/paint) ----
 // Every <a href> with its viewport-relative boundingClientRect (so scrolling moves it)
 // plus its resolved URL. The harness hit-tests taps against this table.
+// Apotheosis 2026-10-22 (0.2.3.65): the rect is stored in ENGINE SURFACE px (CSS x
+// g_pageZoom), NOT raw CSS -- see the conversion in extractLinks. Surface px is the
+// space WebCoreClickAt takes and the shell/harness hit-tests in; at zoom 1.0 the two
+// coincide, which is how the unconverted table survived for months.
 struct LinkRect { int x, y, w, h; std::string url; };
 static std::vector<LinkRect> g_links;
 static std::string g_imeDiag;   // the last WebCoreTypeText diagnostic (read back by WebCoreEditDebug)
@@ -1471,13 +1499,25 @@ static void extractLinks(WebCore::Document* document, int renderH)
         WebCore::FloatRect r = el->boundingClientRect();
         if (r.width() <= 0 || r.height() <= 0)
             continue;
-        if (r.maxY() < 0 || r.y() > static_cast<float>(renderH))
+        // Apotheosis 2026-10-22 (0.2.3.65): boundingClientRect is CSS px, but every consumer
+        // of this table speaks ENGINE SURFACE px -- WebCoreClickAt's (x,y), the shell's
+        // _pageLinks hit-test, taplink's MapEngineToDip input. Surface = CSS x g_pageZoom
+        // (the same factor WebCoreScrollByAtImpl divides by). At zoom 1.0 the conversion is
+        // the identity, which is why the unconverted table worked on the fixed-viewport
+        // line; at the bench's fitwindow zoom 0.80 it made every scripted tap land 25 %
+        // down-right of the anchor -- measured 2026-10-22: elementFromPoint (CSS) found the
+        // <a> at 846,742 while the dispatched events (surface -> CSS via the zoom) hit
+        // <html> at the same numbers. The filter below runs AFTER the conversion so that
+        // renderH (surface, from g_session->h) compares like with like.
+        const double z = g_pageZoom > 0.0f ? static_cast<double>(g_pageZoom) : 1.0;
+        const double sx = r.x() * z, sy = r.y() * z;
+        if (sy + r.height() * z < 0 || sy > static_cast<double>(renderH))
             continue;   // skip anchors scrolled out of the rendered area
         LinkRect lr;
-        lr.x = static_cast<int>(r.x());
-        lr.y = static_cast<int>(r.y());
-        lr.w = static_cast<int>(r.width());
-        lr.h = static_cast<int>(r.height());
+        lr.x = static_cast<int>(sx + (sx >= 0 ? 0.5 : -0.5));
+        lr.y = static_cast<int>(sy + (sy >= 0 ? 0.5 : -0.5));
+        lr.w = static_cast<int>(r.width() * z + 0.5);
+        lr.h = static_cast<int>(r.height() * z + 0.5);
         // Apotheosis: CString::data() is null for a null String; assigning that to
         // std::string is UB. Keep the temporary alive and null-check it.
         WTF::CString hrefUtf8 = href.string().utf8();
@@ -3577,6 +3617,70 @@ static void apoRecordSessionNavigation(WebCore::LocalFrame& frame, const URL& ur
 #pragma strict_gs_check(push, off)
 __declspec(safebuffers)
 
+// Apotheosis 2026-10-20: "Start in Desktop mode" has always been the user agent and nothing else.
+// On the Lumia that was not enough for nokiadesignarchive.aalto.fi, whose bundle decides its layout
+// with `Mu() = Math.min(innerWidth, documentElement.clientWidth, screen.width)` against an 870 px
+// breakpoint. The media queries follow the layout width (so the page zoom can cross them), but
+// screen.width is the panel's physical CSS width -- 720 -- and no zoom setting changes it. The site
+// therefore rendered desktop CSS beside mobile JS: desktop elements after a zoom, yet
+// "Simulation paused on mobile" and no Network graph, at every zoom. Measured 2026-10-20 on
+// 0.2.3.51: a page loaded at 900 CSS px still logged the mobile message three times.
+//
+// WebCore's own answer is LocalFrame::setOverrideScreenSize, but it is not WEBCORE_EXPORTed, so the
+// x64 line (which links WebCore.dll's import library) cannot call it. Screen's WebIDL accessors are
+// configurable, though, so a user script injected at document start -- before the site's bundle
+// reads the screen -- can do the same from the page's side. The override reports the LAYOUT width,
+// not a made-up desktop number: at zoom 100 that is still 720 and a phone-sized page keeps a
+// phone-sized screen, while at 80 % it is 900 and the JS width check agrees with the CSS one. That
+// agreement is the point; a fixed 980 would put the two halves back out of step whenever the page
+// was not zoomed.
+//
+// A document is not re-parsed when the switch flips, so this takes effect on the NEXT load; the
+// scripted and manual paths both navigate after changing the UA for the same reason (the UA header
+// belongs to the next request too).
+static const char* const kDesktopScreenScript =
+    "(function(){"
+    "try{"
+    "var s=window.screen,p=Object.getPrototypeOf(s);"
+    /* WebIDL accessors live on Screen.prototype; keep the original enumerable flag so a site's own
+       property walk does not notice. Each getter reads live values, so a resize needs no re-inject. */
+    "function v(n,f){var d=Object.getOwnPropertyDescriptor(p,n);"
+    "Object.defineProperty(p,n,{configurable:true,enumerable:d?d.enumerable:true,get:f});}"
+    "v('width',function(){return window.innerWidth;});"
+    "v('availWidth',function(){return window.innerWidth;});"
+    "v('height',function(){return window.innerHeight;});"
+    "v('availHeight',function(){return window.innerHeight;});"
+    /* One line per document and one per resize, so a device pull can answer "did the script run
+       on THIS page" and "did the layout width change after the zoom" without a debugger. Both go
+       through the page's own console, which the port already mirrors as `[JS] console` markers.
+       clientWidth is printed next to innerWidth because the site's Mu() min-clamps with it too. */
+    "function dg(t){try{console.log('[DG] '+t+' screen '+s.width+'x'+s.height"
+    "+' inner '+window.innerWidth+'x'+window.innerHeight"
+    "+' client '+document.documentElement.clientWidth+'x'+document.documentElement.clientHeight);}catch(e){}}"
+    "dg('doc');"
+    "try{window.addEventListener('resize',function(){dg('resize');});}catch(e){}"
+    "}catch(e){}"
+    "})();";
+
+// Desktop mode is the UA switch (g_apoUaMobile == false). The provider is installed on every session
+// build, so a page loaded after the switch is parsed with the override already in place; an empty
+// controller is installed otherwise, which puts the page back on EmptyUserContentProvider's
+// behaviour.
+static void installDesktopScreenOverride(WebCore::Page& page, bool enabled)
+{
+    using namespace WebCore;
+    Ref<UserContentController> controller = UserContentController::create();
+    if (enabled) {
+        controller->addUserScript(mainThreadNormalWorldSingleton(),
+            makeUnique<UserScript>(String::fromUTF8(kDesktopScreenScript)));
+        gpuLogMarkerF("[DG] desktop screen override armed (screen.width := innerWidth)");
+    } else {
+        gpuLogMarkerF("[DG] desktop screen override off");
+    }
+    Ref<UserContentProvider> provider = WTF::move(controller);
+    page.setUserContentProviderForWebKitLegacy(WTF::move(provider));
+}
+
 static int buildSession(const char* url, int w, int h, uint8_t* outRGBA)
 {
     DBG_STAGE("enter url=%s w=%d h=%d", url ? url : "null", w, h);
@@ -3692,6 +3796,9 @@ static int buildSession(const char* url, int w, int h, uint8_t* outRGBA)
     OutputDebugStringA("[BUILD] Page::create ok\n");
     g_session->page = page.ptr();
     DBG_STAGE("Page::create ok");
+    // Apotheosis 2026-10-20: must precede the first document, because a user script is injected
+    // when parsing starts. See installDesktopScreenOverride.
+    installDesktopScreenOverride(*page.ptr(), !g_apoUaMobile);
     WebCorePort::installPortNotificationClient(*page.ptr());   // 0.2.3.25: without it Document::notificationClient() faults on a null supplement
 #if defined(WK_WINUWP)
     apoArmJsWatchdog();
@@ -3816,6 +3923,26 @@ static int buildSession(const char* url, int w, int h, uint8_t* outRGBA)
     // faults on a null document/view at null+0x858 (0.1.0.9, RVA 0x1E9309 -- measured).
     page->focusController().setActive(true);
     page->focusController().setFocused(true);
+
+    // Apotheosis 2026-10-21: arm the session's page zoom BEFORE the document exists, so the first
+    // layout is already at viewport / zoom. See g_nextSessionZoom for why this cannot be left to
+    // WebCoreSetPageZoom. Two facts make the placement work:
+    //   * `setPageZoomFactor` refuses while the frame has no document, and `localMainFrame->init()`
+    //     above has already installed the empty one;
+    //   * the factor lives on the LocalFrame (m_pageZoomFactor), and layout asks the frame
+    //     (RenderView::pageZoomFactor() -> frameView().frame().pageZoomFactor()), so the document
+    //     DocumentWriter::begin() creates inherits it -- nothing has to be re-applied per document.
+    // `g_pageZoom` follows, or apoReassertPageZoom would see the frame differ from the request and
+    // put the CSS default back on the first present.
+    {
+        const float before = localMainFrame->pageZoomFactor();
+        if (g_nextSessionZoom != 1.0f)
+            localMainFrame->setPageZoomFactor(g_nextSessionZoom);
+        g_pageZoom = g_nextSessionZoom;
+        gpuLogMarkerF("[GPU] session built at zoom %.2f (frame was %.2f): layout width %d css in %dx%d dip",
+            (double)g_nextSessionZoom, (double)before,
+            (int)(g_nextSessionZoom > 0.0f ? (double)w / (double)g_nextSessionZoom : (double)w), w, h);
+    }
 
     // ---- Network load via curl (bypasses StubLoaderStrategy no-op) ----
     // Download HTML synchronously, then feed through DocumentWriter.
@@ -5519,6 +5646,18 @@ static int WebCoreClickAtImpl(int x, int y, uint8_t* outRGBA)
         return kErrNoDocument;
     doc->updateLayoutIgnorePendingStylesheets();   // flush layout first: elementFromPoint needs real geometry
 
+    // Apotheosis 2026-10-22 (0.2.3.65): (x,y) is ENGINE SURFACE px (the contract every caller
+    // -- finger path, taplink, clicklink -- obeys; the event dispatch below converts to CSS
+    // internally through the page zoom). The elementFromPoint PROBES below want CSS px, and
+    // until now they were fed the raw surface numbers: at zoom != 1 they then named a
+    // DIFFERENT element than the one the dispatched events hit. Measured on the fitwindow
+    // bench (zoom 0.80): probe at 846,742 reported <a href=iana...> (CSS space), events at
+    // the same 846,742 landed on <html> (surface -> CSS 1057,927) -- so [HIT] blamed the
+    // anchor for a tap that never touched it. Same conversion WebCoreScrollByAtImpl applies.
+    const double zClick = g_pageZoom > 0.0f ? static_cast<double>(g_pageZoom) : 1.0;
+    const double cssX = x / zClick;
+    const double cssY = y / zClick;
+
     // Apotheosis 2026-09-18: what the DOM itself received from this tap.
     //
     // Every explanation of a dead control in this project has ended at the same wall: between "we
@@ -5577,7 +5716,7 @@ static int WebCoreClickAtImpl(int x, int y, uint8_t* outRGBA)
     // file as the GPU steps. The reference is kept alive past the dispatch: whether this exact
     // element is still in the document once the handlers have run is the single fact that separates
     // "the page ignored the tap" from "the page reacted and the new frame never reached the screen".
-    RefPtr<Element> probe = doc->elementFromPoint(static_cast<double>(x), static_cast<double>(y));
+    RefPtr<Element> probe = doc->elementFromPoint(cssX, cssY);
     if (probe) {
         const CString tag = probe->localName().string().utf8();
         const CString id = probe->getIdAttribute().string().utf8();
@@ -5650,7 +5789,7 @@ static int WebCoreClickAtImpl(int x, int y, uint8_t* outRGBA)
     // input, textarea or contenteditable has to focus it here -- otherwise
     // WebCoreFocusedEditable stays 0 and the IME path has nothing to type into.
     if (RefPtr<Document> hdoc = lf->document()) {
-        if (RefPtr<Element> hit = hdoc->elementFromPoint(static_cast<double>(x), static_cast<double>(y))) {
+        if (RefPtr<Element> hit = hdoc->elementFromPoint(cssX, cssY)) {
             RefPtr<Element> target;
             for (RefPtr<Element> e = hit; e; e = e->parentElement()) {
                 if ((is<HTMLInputElement>(*e) && downcast<HTMLInputElement>(*e).isTextField())
@@ -5710,7 +5849,7 @@ static int WebCoreClickAtImpl(int x, int y, uint8_t* outRGBA)
     {
         char probeScript[900];
         std::snprintf(probeScript, sizeof probeScript,
-            "(function(){try{var e=document.elementFromPoint(%d,%d);var f='none',d=0;"
+            "(function(){try{var e=document.elementFromPoint(%.1f,%.1f);var f='none',d=0;"
             "while(e&&d<8){var k=Object.keys(e);for(var i=0;i<k.length;i++){"
             "if(k[i].charAt(0)=='_'){f=k[i].substr(0,24)+'@'+d;d=9;break;}}"
             "if(d==9)break;e=e.parentElement;d++;}"
@@ -5720,7 +5859,7 @@ static int WebCoreClickAtImpl(int x, int y, uint8_t* outRGBA)
             "var b=document.body,last=b&&b.lastElementChild?b.lastElementChild.tagName:'-';"
             "return 'rs='+document.readyState+' fw='+f+' src='+s+'/'+sc.length"
             "+' bodyLast='+last+' tail='+t.join(',');}"
-            "catch(err){return 'throw:'+err;}})()", x, y);
+            "catch(err){return 'throw:'+err;}})()", cssX, cssY);
         char probeOut[400] = "";
         int prc2 = evalJS(*lf, probeScript, probeOut, sizeof probeOut);
         gpuLogMarkerF("[HIT] js rc=%d %s", prc2, probeOut);
@@ -5855,6 +5994,108 @@ static int WebCoreScrollByImpl(int dx, int dy, uint8_t* outRGBA)
     // viewport-relative and change with every scroll, so the harness calls WebCoreSyncLinks.
     int nonWhite = 0;
     g_gpuScrollFast = true;   // fast scroll: skip forceDirtyTree (the content moved, so it is dirty already)
+    int prc = paintToRGBA(*view, g_session->w, g_session->h, outRGBA, nonWhite);
+    if (prc != kOK)
+        return prc;
+    return kOK;
+}
+
+// A finger's scroll with its point. The innermost scrollable element under (x,y) owns the delta,
+// and the frame is the fallback -- what a browser does with a wheel event. The frame-only path
+// above is nothing when the page scrolls an inner overflow container: measured on the Lumia
+// against nokiadesignarchive.aalto.fi, whose mobile UI is a `height:100vh; overflow-y:auto`
+// element inside a frame whose contents equal the viewport, so the finger moved nothing.
+//
+// The search runs in the page because the DOM/ScrollableArea calls that would do it natively are
+// not in the port's export set, and this file has to build for the ARM line too, where only the
+// symbols already inside WebCoreFull-arm32.lib are reachable. elementFromPoint, getComputedStyle
+// and scrollTop are the page's own API, so one body serves both lines.
+//
+// Chaining is deliberate: an ancestor that cannot move further does not swallow the delta; the
+// walk continues upward, as a browser chains an overscroll to the next scroller. The script
+// answers 1 only when something actually moved, and only then is the frame skipped.
+static int WebCoreScrollByAtImpl(int x, int y, int dx, int dy, uint8_t* outRGBA)
+{
+    using namespace WebCore;
+    if (!outRGBA)
+        return kErrBadArgs;
+    if (!g_session || !g_session->mainFrame)
+        return kErrNoSession;
+    if (g_inPump)
+        return kErrBusy;
+    g_inPump = true;
+    PumpGuard guard;
+
+    RefPtr<LocalFrame> lf = g_session->mainFrame;
+    RefPtr<LocalFrameView> view = lf->view();
+    if (!view)
+        return kErrNoView;
+    RefPtr<Document> doc = lf->document();
+    if (!doc)
+        return kErrNoDocument;
+    doc->updateLayoutIgnorePendingStylesheets();
+
+    // elementFromPoint takes CSS px; the caller's point is in engine surface px, and g_pageZoom
+    // is device px per CSS px (see WebCoreSetPageZoom). At zoom 1.0 the two spaces are the same.
+    // The DELTA is scaled the same way: both scrollTop and ScrollPosition are CSS px, and a
+    // finger's 48 surface px is 48/zoom CSS px -- without the division a scroll at zoom 0.5 would
+    // move half as far as the finger did.
+    const double z = g_pageZoom > 0.0f ? static_cast<double>(g_pageZoom) : 1.0;
+    const int cdx = static_cast<int>(dx / z + (dx >= 0 ? 0.5 : -0.5));
+    const int cdy = static_cast<int>(dy / z + (dy >= 0 ? 0.5 : -0.5));
+
+    bool moved = false;
+    if (dx || dy) {
+        const double cssX = x / z;
+        const double cssY = y / z;
+        char script[1024];
+        // The return value is the measurement, not just a flag: the tag/class of the element that
+        // took the delta and the page's own innerWidth/Height. Before this the only evidence a
+        // device run could offer was "the hash did not change", which cannot tell a page with no
+        // scroll range from a scroller the walk never found.
+        std::snprintf(script, sizeof script,
+            "(function(){var e=document.elementFromPoint(%.2f,%.2f),m='0',t='',c='';"
+            "while(e&&e.nodeType===1){var s=getComputedStyle(e),"
+            "oy=(s.overflowY==='auto'||s.overflowY==='scroll'||s.overflowY==='overlay'),"
+            "ox=(s.overflowX==='auto'||s.overflowX==='scroll'||s.overflowX==='overlay'),"
+            "a=e.scrollTop,l=e.scrollLeft;"
+            "if((oy&&e.scrollHeight>e.clientHeight+1)||(ox&&e.scrollWidth>e.clientWidth+1)){"
+            "e.scrollTop+=%d;e.scrollLeft+=%d;"
+            "if(e.scrollTop!==a||e.scrollLeft!==l){m='1';t=e.tagName;c=String(e.className).slice(0,40);break}}"
+            "e=e.parentElement}"
+            "return m+'|'+t+'|'+c+'|'+window.innerWidth+'x'+window.innerHeight})()",
+            cssX, cssY, cdy, cdx);
+        char out[160] = "";
+        const int erc = evalJS(*lf, script, out, sizeof out);
+        if (erc == kOK && out[0] == '1')
+            moved = true;
+        gpuLogMarkerF("[SCT] x=%d y=%d z=%.2f d=%d,%d rc=%d out=%.120s",
+            x, y, z, dx, dy, erc, out);
+    }
+
+    if (!moved) {
+        // Nothing scrollable under the finger: the frame, as WebCoreScrollBy does it.
+        ScrollPosition cur = view->scrollPosition();
+        ScrollPosition minP = view->minimumScrollPosition();
+        ScrollPosition maxP = view->maximumScrollPosition();
+        int tx = cur.x() + cdx;
+        int ty = cur.y() + cdy;
+        if (tx < minP.x()) tx = minP.x();
+        if (tx > maxP.x()) tx = maxP.x();
+        if (ty < minP.y()) ty = minP.y();
+        if (ty > maxP.y()) ty = maxP.y();
+        view->setScrollPosition(ScrollPosition(tx, ty));
+        // The fallback is a measurement too: cur -> tx,ty against the view's own range says
+        // whether a frame-only scroll could have done anything at all.
+        gpuLogMarkerF("[SCT] frame d=%d,%d cur=%d,%d -> %d,%d range=%d,%d..%d,%d",
+            cdx, cdy, cur.x(), cur.y(), tx, ty,
+            minP.x(), minP.y(), maxP.x(), maxP.y());
+    }
+
+    // Same tail as WebCoreScrollByImpl: lazy loading and IntersectionObserver fire, then one paint.
+    g_session->page->isolatedUpdateRendering();
+    int nonWhite = 0;
+    g_gpuScrollFast = true;
     int prc = paintToRGBA(*view, g_session->w, g_session->h, outRGBA, nonWhite);
     if (prc != kOK)
         return prc;
@@ -6167,11 +6408,40 @@ int WebCoreSetPageZoom(float zoom)
     return kOK;
 }
 
+// Arm the page zoom for the NEXT session built by WebCoreSessionLoad. See g_nextSessionZoom.
+//
+// Deliberately separate from WebCoreSetPageZoom rather than an overload of it: that one acts on a
+// LIVE frame, must not repaint by itself and is therefore paired with the caller's resize; this one
+// only records a number, touches no session, and is read exactly once, inside buildSession, before
+// the document is created. Called on the engine thread just before the load while the previous
+// session is still alive -- which is also why it must not be mistaken for a zoom of that session.
+//
+// 1.0 is the ordinary value ("lay the next document out at the CSS default"), and a caller that
+// never calls this gets it by initialisation. The value survives teardown on purpose; the shell
+// re-arms it before every load, so it can never describe a page other than the one about to load.
+int WebCoreSetNextSessionZoom(float zoom)
+{
+    if (!(zoom > 0.0f))
+        return kErrBadArgs;
+    if (zoom < 0.1f) zoom = 0.1f;
+    if (zoom > 8.0f) zoom = 8.0f;
+    g_nextSessionZoom = zoom;
+    gpuLogMarkerF("[GPU] next session zoom armed %.2f", (double)zoom);
+    return kOK;
+}
+
 // The mobile-vs-desktop UA switch exposed to the host UI
 // UA: mobile=1 -> iPhone UA, 0 -> the Windows desktop UA. Set from the harness, not here.
 void WebCoreSetUserAgentMobile(int mobile)
 {
     g_apoUaMobile = (mobile != 0);
+    // Apotheosis 2026-10-20: desktop mode also carries the screen override (see
+    // installDesktopScreenOverride). The provider is swapped on the live session so the NEXT load
+    // in this session gets it -- the page already parsed keeps the Screen object it started with,
+    // and its own width check ran at load anyway. Never from inside the pump: the swap invalidates
+    // injected style sheets across the frames, and this port does not re-enter the engine.
+    if (g_session && g_session->page && !g_inPump)
+        installDesktopScreenOverride(*g_session->page, !g_apoUaMobile);
 }
 
 // Custom UA override for userAgent(); empty means fall back to the built-in mobile/desktop UA
@@ -6980,6 +7250,14 @@ int WebCoreScrollBy(int dx, int dy, uint8_t* outRGBA)
 {
     ApoGestureMark(kGestScroll, 500.0);
     APO_SEH_RETURN_INT(WebCoreScrollByImpl(dx, dy, outRGBA));
+}
+
+int WebCoreScrollByAt(int x, int y, int dx, int dy, uint8_t* outRGBA)
+{
+    // The finger's real path, so it is the same gesture the bracketing counts -- a scroll burst,
+    // whether the delta lands in an inner scroller or in the frame.
+    ApoGestureMark(kGestScroll, 500.0);
+    APO_SEH_RETURN_INT(WebCoreScrollByAtImpl(x, y, dx, dy, outRGBA));
 }
 
 int WebCoreSyncLinks()

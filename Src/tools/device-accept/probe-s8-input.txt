@@ -1,0 +1,47 @@
+# Apotheosis 2026-10-21 -- the S8 probe (build 0.2.3.60+): input must not be gated by a hung load.
+#
+# What it verifies. On .59 the maintainer measured both halves of the disease: TAPS dead while
+# `_loading` held the shell (HandleTapAt's silent gate -- "Accept All" on the CMP overlay did
+# nothing, however often it was pressed), and a DRAG that did nothing (that half had no
+# device-side marker at all, so it could not be diagnosed from a log). S8 drops `_loading` from
+# the tap and FAB-scroll gates and puts markers on the paths that remain. `_interacting` and
+# `_sessionActive` stay: they are the engine-ownership guard and the watchdog's verdict.
+#
+# The probe: goto the Nokia archive (a load that routinely holds this shell for many seconds on
+# this device), TAP at the frame centre WHILE the load is in flight -- before S8 this tap was
+# swallowed without a trace -- then wait out the load (or the 40 s watchdog) and swipe through
+# the REAL finger path: the `swipe` verb drives FreeScrollBy with its own merge logic, not a
+# shortcut, so what it measures is what a drag measures.
+#
+# Expected evidence, in order, in autocmd-log:
+#   tap during load: dip=360,540        the tap was accepted while the load owned the shell
+#   scroll dx=0 dy=... rc=0             the drag reached the engine and the engine answered
+#                                      (one line per merged pump; several per swipe is normal)
+#   swipe start / swipe end             the verb ran, its steps and hash bookkeeping closed
+# Reading the failure modes:
+#   NO `tap during load` line           the tap arrived after the load had already settled --
+#                                      timing, not a defect; check the goto->tap gap
+#   `scroll ... rc=` nonzero            the ENGINE refused the scroll (inner scroller missing,
+#                                      no session, wedge) -- rc names the refusal
+#   NO `scroll` line for a swipe        the verb or the accumulation ate it (swipe's own
+#   `swipe ignored: no session`         markers say which; "no session" = the watchdog fired)
+#   rc=0 everywhere but the page idle   NOT a blit problem: rc=0 means "completed and painted",
+#                                      never "moved". The measurement is the [SCT] pair in
+#                                      gpu-steps.txt: out=1|TAG|class = an inner scroller took
+#                                      the delta; out=0||| + frame range=0,0..0,0 = the engine
+#                                      found nothing to scroll (half-loaded page, 100vh app,
+#                                      or scroll-lock). Measured 2026-10-21 on .60: dozens of
+#                                      rc=0 drags, every [SCT] out=0, maintainer saw no motion.
+# The tap row and the diags are free S7 data (area=WxH, contents=WxH).
+
+wait 15000
+goto https://nokiadesignarchive.aalto.fi/
+tap 360 540
+wait 60000
+diag
+swipe 400 5 100
+wait 3000
+diag
+swipe -400 5 100
+wait 3000
+diag
