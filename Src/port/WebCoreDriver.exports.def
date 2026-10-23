@@ -25,6 +25,8 @@ EXPORTS
 
     ; Apotheosis: managed-host support (native FONTCONFIG_FILE, opt-in SEH guard, probes)
     WebCoreSetFontConfigFile
+    ; M1: file-backed cookie jar. Reached from C# through this list alone, like the line above.
+    WebCoreSetCookieJarPath
     WebCoreSetSehGuard
     WebCoreGetSehInfo
     WebCoreGetFontInfo

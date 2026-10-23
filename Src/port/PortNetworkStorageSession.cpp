@@ -13,9 +13,13 @@
 #include <WebCore/StorageSessionProvider.h>
 #include <WebCore/FrameNetworkingContext.h>
 #include <WebCore/LocalFrame.h>
+// M1: the concrete jar, so the process-default session can stop being ephemeral.
+#include <WebCore/CookieJarDB.h>
 #include <pal/SessionID.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/MainThread.h>
+#include <wtf/UniqueRef.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(WIN)
 #include <WebCore/ResourceError.h>
@@ -26,21 +30,56 @@ namespace WebCorePort {
 
 using namespace WebCore;
 
+namespace {
+
+// M1: where the jar lives. Empty keeps the old ephemeral behaviour, and is the safe value until the
+// managed host has a writable directory to offer: NetworkStorageSessionCurl's defaultCookieJarPath()
+// lands in localUserSpecificStorageDirectory(), which the App Container refuses to write, and
+// opening it was the 0.1.6.0 crash on any webpage.
+WTF::String& portCookieJarPath()
+{
+    static NeverDestroyed<WTF::String> path;
+    return path.get();
+}
+
+std::unique_ptr<WebCore::NetworkStorageSession>& portSessionSlot()
+{
+    static NeverDestroyed<std::unique_ptr<WebCore::NetworkStorageSession>> session;
+    return session.get();
+}
+
+} // namespace
+
+void setPortCookieJarPath(const char* utf8Path)
+{
+    portCookieJarPath() = utf8Path ? WTF::String::fromUTF8(utf8Path) : WTF::String();
+
+    // The contract is "call before the first network use", and in the app that is exactly what
+    // happens: SetupRuntimeEnv runs as the engine Loop's first job, before any page (and therefore
+    // any session) exists. If a session does exist anyway, swap its database instead of accepting
+    // the call and ignoring it -- silently keeping ":memory:" would make this export a lie that
+    // only a restart could expose.
+    if (auto& session = portSessionSlot())
+        session->setCookieDatabase(makeUniqueRef<WebCore::CookieJarDB>(
+            portCookieJarPath().isEmpty() ? ":memory:"_s : portCookieJarPath()));
+}
+
 // Single process-default curl session. Main thread (the WebKit main thread, pinned by the driver in
 // ensureWebCoreInitialized).
 WebCore::NetworkStorageSession& defaultPortStorageSession()
 {
     ASSERT(isMainThread());
-    static NeverDestroyed<std::unique_ptr<WebCore::NetworkStorageSession>> session;
-    if (!session.get())
-        // Ephemeral session -> NetworkStorageSessionCurl.cpp:93 uses a ":memory:" CookieJarDB (pure
-        // in-memory, never touches disk), avoiding App Container's defaultCookieJarPath()
-        // (localUserSpecificStorageDirectory is unwritable) -> open() crashed (the root cause of 0.1.6.0
-        // crashing on any webpage). Cost: cookies do not persist across restarts (logins hold while the
-        // app stays open). Follow-up persistence: once confirmed crash-free, add WebCoreSetCookieJarPath
-        // to point CURL_COOKIE_JAR_PATH at LocalState.
-        session.get() = makeUnique<WebCore::NetworkStorageSession>(PAL::SessionID::generateEphemeralSessionID());
-    return *session.get();
+    auto& session = portSessionSlot();
+    if (!session) {
+        // Ephemeral session ID -> NetworkStorageSessionCurl.cpp builds a ":memory:" CookieJarDB by
+        // default. That was deliberate while the port's own jar path was unwritable in the App
+        // Container; it is replaced below the moment the host names a writable path, which is what
+        // makes cookies survive a restart. Without a path the old, crash-free behaviour is kept.
+        session = makeUnique<WebCore::NetworkStorageSession>(PAL::SessionID::generateEphemeralSessionID());
+        if (!portCookieJarPath().isEmpty())
+            session->setCookieDatabase(makeUniqueRef<WebCore::CookieJarDB>(portCookieJarPath()));
+    }
+    return *session;
 }
 
 // Apotheosis 2026-09-18: DEAD CODE, and this is worth a line because a plan was written on the

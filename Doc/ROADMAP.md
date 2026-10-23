@@ -161,10 +161,14 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
 
 ## Phase M — medium term (weeks each)
 
-- **M1. File-backed cookie jar** — the jar is `:memory:` by design; every launch starts with
-  `cookies=0` and logins die with the process. Persist to LocalState. (The 2026-09-18 experiment
-  that JOINED two disjoint jars did not fix dzen.ru — that family is closed; persistence itself is
-  a separate, still-open axis.)
+- **M1. File-backed cookie jar** - **DONE in 0.2.3.73, verified on x64 2026-10-23.** The jar is
+  `LocalState\cookie.jar.db`, opened by `WebCoreSetCookieJarPath`; `CookieJarDB` is the source of
+  truth and every curl submit seeds from the whole jar and writes `Set-Cookie` back. Measured:
+  clean DB `rows=0`; `apo=m1` cookie set at `httpbin.org`; cookie hashes `0x58496e67` ->
+  `0x6e41bac1` -> `0x9f9ccae4`; full app restart `rows=1`, `seed=1`, hash unchanged; the DB row is
+  `('apo','m1','httpbin.org','/',1792838096056,0,0,0)` with `user_version=1`. The earlier 2026-09-18
+  experiment that JOINED two disjoint jars is unrelated and remains closed. M3 now has the persisted
+  consent-cookie option it was waiting for.
 - **M2. Storage durability audit** — `PortStorage.cpp` made `localStorage` work in-process; whether
   it survives a restart needs one honest measurement before M1's pattern is copied onto it.
 - **M3. Consent/CMP experience** — the Usercentrics overlay dims pages and returns on every launch

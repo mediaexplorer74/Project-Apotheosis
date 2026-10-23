@@ -53,7 +53,7 @@ Windows at all.
 |   LoadingFrameLoaderClient subresource load|   stubs-network   sockets     |
 +==============================================================================+   stubs-pasteboard  clipboard
                                                                             stubs-screen      displays
-+==============================================================================+   stubs-sqlite     history DB
++==============================================================================+   sqlite3 (real)    cookie DB
 |  ENGINE -- external, gitignored          |   stubs-loader / other        |
 |   WebKit  webkitgtk-2.52.4 @ 7acdf5e    +=================================+
 |   WK_WINUWP patch set, ARM32/thumbv7

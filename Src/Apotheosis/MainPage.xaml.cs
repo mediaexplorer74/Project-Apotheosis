@@ -237,6 +237,16 @@ namespace Apotheosis
                 catch { }
                 WriteStage("env-fonts-ok " + Encoding.UTF8.GetString(fInfo).TrimEnd('\0'));
 
+                // M1: the cookie jar the session will open. LocalState is writable from the App
+                // Container, unlike the curl port's own default under localUserSpecificStorageDirectory,
+                // and the session is created on the first navigation -- well after this job.
+                try
+                {
+                    WebCoreDriver.WebCoreSetCookieJarPath(Path.Combine(localDir, "cookie.jar.db"));
+                    WriteStage("env-cookiejar-ok");
+                }
+                catch (Exception ex) { WriteStage("env-cookiejar: " + ex.GetType().Name); }
+
                 string caPath = Path.Combine(installDir, "Assets", "cacert.pem");
                 if (File.Exists(caPath))
                 {

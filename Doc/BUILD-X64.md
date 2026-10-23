@@ -37,20 +37,25 @@ reboot, and `WebCoreDriver.cpp` alone takes over 15 minutes without a PCH.
 
 `WebCoreDriver.dll` contains WebCore **statically** and does not import `WebCore.dll`. A sibling
 `WebCore.dll` sitting in the package is unused ballast. The archive that makes this possible is every
-WebCore object in one lib (currently 939 objects, 3.2 GB):
+WebCore object in one lib (currently 938 objects, 3.2 GB):
 
 ```powershell
-pwsh -NoProfile -ExecutionPolicy Bypass -File build-x64-gpu\run-webcorefull-archive.ps1
+pwsh -NoProfile -ExecutionPolicy Bypass -File Src\port\archive-webcorefull.ps1 -Arch x64
 # WEBCOREFULL_EXIT=0
+pwsh -NoProfile -ExecutionPolicy Bypass -File Src\port\archive-pal.ps1 -Arch x64
 ```
 
-It is driven by a response file, `build-x64-gpu\WebCoreFull-x64-19041.rsp`, fed to `lib.exe /OUT:...`
-(`PAL-x64-19041.rsp`, 24 entries, is the companion). Rebuilding takes ~90 s, so "the static library is
-stale" is cheap to disprove.
+The scripts regenerate `build-x64-gpu\WebCoreFull-x64-19041.rsp` and
+`build-x64-gpu\PAL-x64.rsp` from the current object tree and feed them to `lib.exe /OUT:...`.
+`PAL-x64-19041.lib` is the 24-object companion the driver links; ARM uses `PAL.lib` from the same
+script. `archive-webcorefull.ps1 -CheckOnly` verifies the 938-member list without writing the archive.
+Rebuilding takes ~90 s, so "the static library is stale" is cheap to disprove.
 
 > **Warning: the response files store absolute member paths.** Renaming the build tree therefore does
-> **not** finish until every `*.rsp` is rewritten. See [LESSONS.md](LESSONS.md). Verify a rename by
-> enumerating the rsp members with `Test-Path` *and* running the script, not by compiling something.
+> **not** finish until every `*.rsp` is rewritten. The tracked archive scripts do that; do not reuse an
+> old generated `run-webcorefull-archive.ps1` from a build tree. See [LESSONS.md](LESSONS.md). Verify a
+> rename by enumerating the rsp members with `Test-Path` *and* running the script, not by compiling
+> something.
 
 Keep `WebCore.lib` (the import library) alongside it: the port layer declares WebCore functions
 `__declspec(dllimport)` and needs the `__imp_*` thunks.
@@ -60,19 +65,24 @@ and friends compile into
 `Source/WebCore/CMakeFiles/WebCore.dir/C_/.../Src/port/stubs-*.cpp.obj`. So a stale engine tree means
 stale port stubs, and stage 1 rebuilds the port layer too.
 
-## 2. The other two link gaps
+## 2. The other link gaps
 
 `WebCoreFull.lib` alone does not close the link. Two more inputs are required:
 
-**Cairo — `cairo-complete-x64-uwp.lib` plus a CRT override.** Use
-`build-x64-gpu\libs\cairo-complete-x64-uwp.lib` (Cairo 1.18.4, `/MT`) rather than vcpkg's incomplete
-`cairo.lib` (48 objects, ~30 internals missing), and add `/NODEFAULTLIB:libcmt.lib` so its `/MT` CRT
-does not fight `/MD`. `/FORCE:MULTIPLE` is still required because the Cairo public API exists both as
-`WebCore.dll` exports and as static code in that lib. Cairo is therefore static on x64: neither
-`cairo-2.dll` nor `fontconfig-1.dll` is deployed. This lib was rebuilt with **relative members** so the
-link no longer depends on a particular build-tree name.
+**Cairo - `cairo-complete-x64-uwp.lib` plus a CRT override.** Use the archive produced by
+`Src/port/build-cairo-x64.ps1` (Cairo 1.18.4, image + Win32 + FreeType subset, `/MD`) rather than
+vcpkg's incomplete `cairo.lib` (48 objects, ~30 internals missing). The public API exists both as
+WebCore exports and as static code in that lib; the link tolerates that overlap. Cairo is therefore
+static on x64: neither `cairo-2.dll` nor `fontconfig-1.dll` is deployed. The old doc's `/MT` + `/NODEFAULTLIB:libcmt.lib` recipe is obsolete; the current archive and
+the driver both use the desktop `/MD` CRT. The lib is rebuilt from the official source by the tracked
+script, so its members are relative and do not depend on a build-tree name.
 
-**`Src/harness/wtf-string-stubs.cpp` — four WTF data globals** referenced by inline functions in WTF
+**`build-x64-gpu\libs\psl\psl.lib` - four libpsl symbols.** The UWP curl build has no libpsl, but one
+WebCore object references `psl_builtin`, `psl_free`, `psl_is_public_suffix2` and
+`psl_registrable_domain`. Build the tracked stub with
+`pwsh -File Src\port\build-psl-stub.ps1 -Arch x64`; do not copy a stale archive from another machine.
+
+**`Src/harness/wtf-string-stubs.cpp` - four WTF data globals** referenced by inline functions in WTF
 headers and not exported by `WTF.dll`:
 
 | Symbol | Mangled name |

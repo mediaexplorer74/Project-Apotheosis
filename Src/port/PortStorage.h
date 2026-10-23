@@ -23,9 +23,9 @@
 //
 // The areas below are in-memory and process-scoped: values survive navigation
 // within a session, not an app restart. That is a deliberate, documented limit.
-// This port's sqlite3 is a stub (Src/port/stubs-sqlite.cpp -- every open returns
-// SQLITE_CANTOPEN) because libsqlite3 is not available under
-// WINAPI_FAMILY_APP, so there is no database to persist into. A storage API that
+// SQLite itself is real now (M1 moved CookieJarDB and the rest of WebCore onto
+// the WinRT amalgamation, Src/port/build-sqlite-x64.ps1), so persistence is
+// possible; PortStorage just has not been moved onto it yet. A storage API that
 // answers honestly about what it holds is worth more than one that reports
 // success and forgets, and a page cannot tell the difference until the app
 // restarts.

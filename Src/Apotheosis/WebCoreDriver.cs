@@ -60,6 +60,15 @@ namespace Apotheosis
 
         public static void WebCoreSetFontConfigFile(string path) => WebCoreSetFontConfigFileRaw(Utf8z(path));
 
+        // Apotheosis M1: where the session's cookie jar lives. Without this call the jar is
+        // ":memory:" -- the curl port's default path is unwritable in the App Container -- and
+        // every login is lost on restart. Must run before the first network use; SetupRuntimeEnv
+        // (the engine Loop's first job) is early enough.
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebCoreSetCookieJarPath")]
+        private static extern void WebCoreSetCookieJarPathRaw(byte[] path);
+
+        public static void WebCoreSetCookieJarPath(string path) => WebCoreSetCookieJarPathRaw(Utf8z(path));
+
         // The port's own step-marker channel: name the file it appends one flushed line to per
         // engine step (LocalState\gpu-steps.txt). It is the only reader of numbers the engine
         // computes for itself -- for one example that mattered: WebCoreSetPageZoom logs

@@ -1338,7 +1338,9 @@ recompiled only that TU and relinked: `unresolved=0 duplicate=142` (the `/FORCE:
 instead of the archive member; and `systemFallbackForCharacterCluster` at the new `+0x1FB20` opens with the
 trace call followed by `vcmp.f32 s16, #0` / `vmrs` / `ble` — the guard. Note `stubs-screen-uwp` and
 `stubs-sqlite` are frozen the same way and are still unlisted; they were left alone because nothing
-today points at them.
+today points at them. (2026-10-23, M1: `stubs-sqlite.cpp` is deleted. WebCore now links the real
+WinRT SQLite amalgamation, so the ARM `WebCoreFull-arm32.lib` was re-archived without that object
+and the driver resolves `sqlite3_*` from `C:\vcpkg\installed\arm-uwp\lib\sqlite3.lib`.)
 
 **Device result, 2026-10-09 late / 10-10 — the `.30` death is closed.** `0.2.3.31` was built
 (`AppxBundle=Always`, Release|ARM), audited (`AUDIT PASSED`, 30 binaries all arm, `WebCoreDriver.dll`

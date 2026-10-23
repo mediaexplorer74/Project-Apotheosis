@@ -51,6 +51,11 @@ void WebCoreSetCACertBlob(const uint8_t* data, int len);
 // the first paint faults inside cairo_scaled_font_create.
 void WebCoreSetFontConfigFile(const char* path);
 
+// Apotheosis M1: point the process-default cookie jar at a file (UTF-8 path). Without it the
+// session keeps the crash-free but ephemeral ":memory:" jar, and every login dies with the
+// process. Call before the first network use (SetupRuntimeEnv does).
+void WebCoreSetCookieJarPath(const char* path);
+
 // Apotheosis: opt in to the SEH guard around the engine entry points. With it on, a native
 // fault becomes -17 (kErrSeh) plus a WebCoreGetSehInfo line instead of .NET Native's
 // FailFast(7), which kills a managed host with no catchable exception. Off by default so

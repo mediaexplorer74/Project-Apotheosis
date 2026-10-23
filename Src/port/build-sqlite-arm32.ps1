@@ -6,7 +6,13 @@
 # WindowsApp.lib at link time. The vcpkg sqlite3 port does NOT work on arm-uwp: modern
 # amalgamations have no SQLITE_OS_WINRT code path and fail to compile under
 # WINAPI_FAMILY_APP (undeclared CreateFileA/LoadLibraryA/...).
-# Usage: pwsh -File build-sqlite-arm32.ps1 [-Amalgamation <dir-with-sqlite3.c>]
+# Usage:
+#   pwsh -File build-sqlite-arm32.ps1 -Amalgamation C:\src\sqlite-amalgamation-3490100
+# Download sqlite-amalgamation-*.zip from https://www.sqlite.org/download.html first.
+param(
+    [string]$Amalgamation = $env:APOTHEOSIS_SQLITE_AMALGAMATION,
+    [string]$VcpkgRoot = $(if ($env:VCPKG_ROOT) { $env:VCPKG_ROOT } else { 'C:\vcpkg' })
+)
 $ErrorActionPreference = 'Stop'
 $Root = if ($env:APOTHEOSIS_ROOT) { $env:APOTHEOSIS_ROOT } else { Split-Path -Parent (Split-Path -Parent $PSScriptRoot) }
 $P = if ($env:APOTHEOSIS_PORT) { $env:APOTHEOSIS_PORT } else { Join-Path $Root 'Src\port' }
@@ -15,8 +21,8 @@ $P = if ($env:APOTHEOSIS_PORT) { $env:APOTHEOSIS_PORT } else { Join-Path $Root '
 
 $amal = $Amalgamation
 if (-not $amal) {
-    # sqlite-amalgamation-3490100.zip from https://www.sqlite.org/2025/, extracted
-    $amal = "C:\Users\media\AppData\Local\Temp\opencode\sqlite-3.49.1\sqlite-amalgamation-3490100"
+    throw "Pass -Amalgamation <dir containing sqlite3.c>, or set APOTHEOSIS_SQLITE_AMALGAMATION. " +
+          "Download sqlite-amalgamation-*.zip from https://www.sqlite.org/download.html first."
 }
 $src = "$amal\sqlite3.c"
 if (-not (Test-Path $src)) { throw "sqlite3.c not found in $amal" }
@@ -30,9 +36,10 @@ if ($LASTEXITCODE -ne 0) { throw "cl failed" }
 lib /NOLOGO /MACHINE:ARM "/OUT:$lib" $obj
 if ($LASTEXITCODE -ne 0) { throw "lib failed" }
 
-$dstLib = "C:\vcpkg\installed\arm-uwp\lib\sqlite3.lib"
-$dstHdr = "C:\vcpkg\installed\arm-uwp\include"
+$dstLib = Join-Path $VcpkgRoot 'installed\arm-uwp\lib\sqlite3.lib'
+$dstHdr = Join-Path $VcpkgRoot 'installed\arm-uwp\include'
+New-Item -ItemType Directory -Force -Path (Split-Path -Parent $dstLib), $dstHdr | Out-Null
 Copy-Item $lib $dstLib -Force
 Copy-Item "$amal\sqlite3.h" "$dstHdr\sqlite3.h" -Force
 Copy-Item "$amal\sqlite3ext.h" "$dstHdr\sqlite3ext.h" -Force
-Write-Host "==> installed sqlite3.lib + sqlite3.h to C:\vcpkg\installed\arm-uwp" -ForegroundColor Green
+Write-Host "==> installed sqlite3.lib + sqlite3.h to $VcpkgRoot\installed\arm-uwp" -ForegroundColor Green

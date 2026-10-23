@@ -3203,6 +3203,29 @@ with the next authorized ARM acceptance appx. S7 is DONE on the bench and queued
 
 ---
 
+### 0.2.3.73 on the bench: M1 - the cookie jar survives a restart (2026-10-23)
+
+**1. The storage path.** `WebCoreSetCookieJarPath` now points the session at
+`LocalState\cookie.jar.db`; `CookieJarDB` is the source of truth, not a per-request `:memory:` jar.
+Each curl submit seeds from the whole jar and writes the response's `Set-Cookie` values back before
+the next request.
+
+**2. The measurement.** On a clean install the DB opened with `rows=0`. A request to
+`httpbin.org/cookies/set?apo=m1` produced `Set-Cookie`; the cookie hash moved
+`0x58496e67` -> `0x6e41bac1` -> `0x9f9ccae4`. After a full app restart the DB still had `rows=1`,
+`seed=1`, and the same hash. The row was
+`('apo','m1','httpbin.org','/',1792838096056,0,0,0)` with `user_version=1`. M1 is done on x64;
+the ARM package was compiled and audited only, as required.
+
+**3. Publication.** The source tree is now the release artifact: the WebKit port is the 110-path,
+287,687-byte `WebKitPatches/apotheosis-webkit-2.52.4.patch` against `webkitgtk-2.52.4`
+(`7acdf5e1`), and `WebKit/` is ignored. The archive scripts, SQLite/psl/cairo dependency scripts,
+source-release audit, and clean-machine guide were added so a clone can be rebuilt without the
+patched engine tree. The native JSC in the verified `.73` package remains the old
+`3483A0C3...` binary; a fresh x64 build stages its own JSC from `build-x64-gpu\bin`.
+
+---
+
 *"Reviving the Windows Phone web for the people who never let it die."*
 
 ---

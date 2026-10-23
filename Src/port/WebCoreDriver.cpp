@@ -139,6 +139,8 @@ extern "C" __declspec(dllimport) void __stdcall OutputDebugStringA(const char*);
 // forward-declares SameSiteInfo and IncludeSecureCookies; the latter's enumerators come from
 // CookieJar.h, which is already included below.
 #include <WebCore/NetworkStorageSession.h>
+// M1: the Cookie struct apoCookieNetscapeLine() serializes for the fetch channel.
+#include <WebCore/Cookie.h>
 #include <WebCore/SameSiteInfo.h>
 #include "PortChromeClient.h"            // WebCorePort::PortChromeClient -- the compositing ChromeClient
 // Apotheosis 2026-09-18: the complete StorageNamespaceProvider type, not the forward
@@ -3109,6 +3111,45 @@ static void apoFetchStallReport(const char* why, const ApoFetchWatch* w, curl_of
         why, (long long)dlnow, w->hops ? w->hops->size() : 0, total, conn, tls, ttfb, hdrBytes, connects);
 }
 
+// Apotheosis 2026-10-23 (M1): one WebCore cookie as a Netscape cookie-file line. CURLOPT_COOKIELIST
+// accepts this form as well as `Set-Cookie:` (curl's setopt.c: anything without the header prefix goes
+// to parse_netscape), and it is the form that can say "host-only": the fields are
+//   domain \t tailmatch \t path \t secure \t expires \t name \t value
+// CookieUtil stores a `Domain=` cookie as ".example.com" and a host-only one as the bare host, so the
+// leading dot maps straight onto tailmatch. The header form cannot express this -- libcurl marks EVERY
+// explicit domain attribute as tailmatching ("we always do that if the domain name was given",
+// cookie.c), which would quietly send a host-only cookie to subdomains.
+static std::string apoCookieNetscapeLine(const WebCore::Cookie& cookie)
+{
+    if (cookie.name.isEmpty() || cookie.domain.isEmpty())
+        return {};
+
+    bool tailMatch = cookie.domain.startsWith('.');
+    WTF::String domain = cookie.domain;
+    if (domain.startsWith("*."_s)) {
+        // Not CookieUtil's storage shape (it prepends a plain dot), but do not misread one if it
+        // ever appears: the glob-style prefix means the same thing as the dot.
+        tailMatch = true;
+        domain = makeString('.', domain.substring(2));
+    }
+
+    int64_t expires = 0;  // 0 is what curl itself writes for a session cookie
+    if (!cookie.session) {
+        if (!cookie.expires)
+            return {};  // non-session row without an expiry: sending it forever would be a guess
+        expires = static_cast<int64_t>(*cookie.expires / 1000.0);
+    }
+
+    return makeString(
+        cookie.httpOnly ? "#HttpOnly_"_s : ""_s,
+        domain, '\t',
+        tailMatch ? "TRUE"_s : "FALSE"_s, '\t',
+        cookie.path.isEmpty() ? "/"_s : cookie.path, '\t',
+        cookie.secure ? "TRUE"_s : "FALSE"_s, '\t',
+        String::number(expires), '\t',
+        cookie.name, '\t', cookie.value).utf8().toStdString();
+}
+
 struct ApoFetchChannel {
     std::thread thr;
     std::mutex mtx;
@@ -3138,6 +3179,12 @@ struct ApoFetchChannel {
     // decision it feeds (which charset the decoder starts with) is made on the engine thread, long
     // after the worker's handle is gone.
     std::string effContentType;
+
+    // Apotheosis 2026-10-23 (M1): the cookie snapshot this job starts from -- the whole jar, in
+    // Netscape lines. Filled on the engine thread (the only thread allowed to touch the jar) and
+    // moved to the worker at job start. Every cookie, not just the ones matching `url`: the transfer
+    // follows redirects across hosts, and curl filters each hop by domain/path on its own.
+    std::vector<std::string> seedCookies;
 
     // Apotheosis 2026-09-18: bytes downloaded so far, published by the worker's XFERINFO callback and
     // read by the engine thread while it waits. This is what turns a fixed 2500 ms deadline into a
@@ -3189,6 +3236,8 @@ struct ApoFetchChannel {
             if (shutdown)
                 return;
             std::string jobUrl = std::move(url);
+            std::vector<std::string> jobCookies = std::move(seedCookies);
+            seedCookies.clear();
             hasWork = false;
             done = false;
             lk.unlock();
@@ -3221,6 +3270,22 @@ struct ApoFetchChannel {
                 // clear cookies, so they survive both the hops inside one transfer and the
                 // navigations after it, while nothing is written to disk in the App Container.
                 curl_easy_setopt(h, CURLOPT_COOKIEFILE, "");
+                // Apotheosis 2026-10-23 (M1): seed the handle from the process jar. The jar is the
+                // source of truth, so drop whatever the last transfer left in this handle's own
+                // store first -- a cookie deleted through document.cookie must stop going out, and
+                // a stale entry left in curl's memory would otherwise outlive it. Cookies received
+                // during THIS transfer still land in curl's store for its own redirect hops, and the
+                // engine thread files them into the jar once the body is home.
+                curl_easy_setopt(h, CURLOPT_COOKIELIST, "ALL");
+                int seeded = 0;
+                int seedFailed = 0;
+                for (const auto& line : jobCookies) {
+                    if (curl_easy_setopt(h, CURLOPT_COOKIELIST, line.c_str()) == CURLE_OK)
+                        ++seeded;
+                    else
+                        ++seedFailed;
+                }
+                gpuLogMarkerF("SL: cookie seed=%d failed=%d", seeded, seedFailed);
                 // Apotheosis 2026-09-18: ApoFetchWatch is declared at file scope now -- the XFERINFO
                 // callback is a captureless function pointer and hands it to apoFetchStallReport, which
                 // cannot name a type declared inside this frame. The shape, and the reason it watches
@@ -3993,6 +4058,15 @@ static int buildSession(const char* url, int w, int h, uint8_t* outRGBA)
             ft.hops.clear();
             ft.effUrl.clear();
             ft.effContentType.clear();
+            // Apotheosis 2026-10-23 (M1): snapshot the jar here, on the engine thread and before the
+            // worker is woken. defaultPortStorageSession() asserts exactly this thread; the worker is
+            // idle (the busy check above returned), so the SQLite read contends with nothing. The
+            // lines are handed over under mtx and moved out in run() before it unlocks.
+            ft.seedCookies.clear();
+            for (const auto& cookie : WebCorePort::defaultPortStorageSession().getAllCookies()) {
+                if (auto line = apoCookieNetscapeLine(cookie); !line.empty())
+                    ft.seedCookies.push_back(std::move(line));
+            }
             ft.done = false;
             ft.gaveUp = false;
             ft.progressDl.store(0, std::memory_order_relaxed);
@@ -4526,6 +4600,25 @@ extern "C" void WebCoreSetFontConfigFile(const char* path)
     ApoPortInstallDeathNet();
     ApotheosisAdoptFontsDirFromConf(path);
     ApoDumpFontConfigOnce("env");
+}
+
+// Apotheosis 2026-10-23 (M1): point the process's cookie jar at a file, so logins survive a
+// restart. The default session is ephemeral because the curl port's own jar path lives under
+// localUserSpecificStorageDirectory(), which the App Container refuses to write; LocalState does
+// not have that problem. Must be called before the first network use -- in the app that means
+// SetupRuntimeEnv, the engine Loop's first job -- or the session is built around ":memory:".
+extern "C" void WebCoreSetCookieJarPath(const char* path)
+{
+    if (!path || !*path)
+        return;
+    WebCorePort::setPortCookieJarPath(path);
+    WebCorePortTrace("SetCookieJarPath: %s", path);
+    // M1: open the jar now and say how many rows it holds. A path alone proves nothing -- if
+    // SQLite cannot create the file, every later read returns nothing and the first symptom is
+    // "cookie seed=0" on a page that just received a Set-Cookie. One line at startup makes that
+    // distinguishable from a genuinely empty jar.
+    auto& session = WebCorePort::defaultPortStorageSession();
+    gpuLogMarkerF("SL: cookiejar path=%s rows=%zu", path, session.getAllCookies().size());
 }
 
 // Apotheosis: opt in to the SEH guard around the engine entry points. Must be called before

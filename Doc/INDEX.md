@@ -61,29 +61,40 @@ WebCoreDriver.WebCoreSetSehGuard(1);                // before the first engine c
 
 ## Build lines
 
-Two independent lines, sharing the source tree and the SDK but nothing else — not objects, not
-generated bindings, not `build.ninja`, not the CMake cache.
+Two independent lines, sharing the source tree and the SDK but nothing else - not objects, not
+generated bindings, not `build.ninja`, not the CMake cache. The **from-a-clean-machine** steps are in
+[DEVELOPER-SETUP.md](DEVELOPER-SETUP.md); the short version is below.
 
 ### x64 (dev machine)
 
 ```powershell
 . .\Src\setenv.ps1
 . .\Src\port\x64-uwp-env.ps1
-# engine (only when WebKit itself changes — hours on this box)
-cmake -S . -B build-x64-gpu -G Ninja -DCMAKE_TOOLCHAIN_FILE=$env:APOTHEOSIS_PORT/Toolchain-x64-UWP-clang.cmake
-ninja -C build-x64-gpu -j1
+# one-time dependencies: vcpkg, ANGLE, WebKit tag+patch, SQLite, cairo, psl
+pwsh -File Src\tools\fetch-webkit-source.ps1
+pwsh -File Src\port\build-sqlite-x64.ps1 -Amalgamation C:\src\sqlite-amalgamation-3490100
+pwsh -File Src\port\build-cairo-x64.ps1
+pwsh -File Src\port\build-psl-stub.ps1 -Arch x64
+# engine (only when WebKit itself changes - hours on this box)
+pwsh -File Src\port\configure-gpu-x64.ps1 -Config Release
+ninja -C build-x64-gpu WebCore JavaScriptCore -j1
+pwsh -File Src\port\archive-webcorefull.ps1 -Arch x64
+pwsh -File Src\port\archive-pal.ps1 -Arch x64
 # port objects + driver DLL (minutes)
-pwsh -File Src/port/build-driver-dll-arm32.ps1 -Arch x64
-# C# appx (minutes)
-MSBuild /restore /p:Configuration=Debug /p:Platform=x64 Src/Apotheosis/Apotheosis.csproj
+pwsh -File Src\port\build-driver-dll-arm32.ps1 -Arch x64
+pwsh -File Src\tools\Stage-NativeDeps.ps1 -Arch x64
+# C# appx (minutes, unsigned local layout)
+MSBuild.exe /restore /p:Configuration=Release /p:Platform=x64 /p:AppxPackageSigningEnabled=false Src/Apotheosis/Apotheosis.csproj
 ```
 
 ### ARM32 (Lumia 950, W10M)
 
-Same two-line shape, with `build-arm32-gpu` and `-Arch arm`. The engine trees
-(`WebCore.lib`, `JavaScriptCore.lib`, `WTF.lib`, `PAL.lib`) are **already built** in
-`build-arm32-gpu/lib`, so a driver rebuild does *not* require the multi-hour WebKit build — see
-[BUILD-ARM32.md](BUILD-ARM32.md) for what the ARM driver line still needs.
+Same two-line shape, with `build-arm32-gpu` and `-Arch arm`. ARM is **compile/audit only** in this
+repository: build the package and inspect its PE headers, never execute it. The engine trees
+(`WebCore.lib`, `JavaScriptCore.lib`, `WTF.lib`, `PAL.lib`) are built from the same source; a driver
+rebuild does *not* require a full WebKit rebuild once those archives exist. See
+[DEVELOPER-SETUP.md](DEVELOPER-SETUP.md) section 9 and [BUILD-ARM32.md](BUILD-ARM32.md) for the
+maintainer-only Cairo/HarfBuzz source prerequisites.
 
 ## Phase exit criteria
 
@@ -94,7 +105,8 @@ this project a separate bug.
 
 ## Document map
 
-- [ROADMAP.md](ROADMAP.md) — the LIVE plan: phased defect inventory to 1.0.0.0 (S/M/L). Start here for "where are we".
+- [DEVELOPER-SETUP.md](DEVELOPER-SETUP.md) - **start here for a clean machine**: toolchain, vcpkg, ANGLE, exact WebKit tag + patch, x64 build, ARM compile-only audit, troubleshooting.
+- [ROADMAP.md](ROADMAP.md) - the LIVE plan: phased defect inventory to 1.0.0.0 (S/M/L). Start here for "where are we".
 - [Archive/Plan_MVP.md](Archive/Plan_MVP.md) — the archived MVP plan (was `PLAN.md`, moved 2026-10-21); complete, kept as the record.
 - [Archive/MVP.md](Archive/MVP.md) — the archived MVP acceptance contract (was `MVP.md`, moved 2026-10-22); 10/10 met on both lines, kept as the record. The 1.0.0.0 exit contract lives in ROADMAP.md, Phase 0.
 - [ARCHITECTURE.md](ARCHITECTURE.md) — how the C# line is put together: layer and threading diagrams, the C ABI, the present path, the SEH contract, and what is measured versus assumed.

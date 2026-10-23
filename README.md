@@ -1,18 +1,33 @@
-# Project Apotheosis 0.2.0.xx — EdgeHTML Reborn
+# Project Apotheosis 0.2.3.73 - EdgeHTML Reborn
 ![Logo](Images/logo.png)
 
 ## Documentation
 
-** Start here** [Doc/INDEX.md](Doc/INDEX.md)  
+**Start here** [Doc/DEVELOPER-SETUP.md](Doc/DEVELOPER-SETUP.md) - clean-machine toolchain, exact
+WebKit tag + patch, x64 build, ARM compile-only audit.
+
+**Documentation map:** [Doc/INDEX.md](Doc/INDEX.md)
 
 **Live work and acceptance:** [Doc/ROADMAP.md](Doc/ROADMAP.md) · [Doc/Archive/MVP.md](Doc/Archive/MVP.md)  
 
 Detailed dated investigations are retained locally in `Doc/Archive/`; they are history, not the current spec.
 
+## Current source status (0.2.3.73)
+
+- **x64:** build, install and bench runs are allowed and were verified. M1 (file-backed cookie jar) is
+  **DONE** on x64: `LocalState\cookie.jar.db` starts empty, receives the `apo=m1` cookie, and still
+  contains it after a full app restart.
+- **ARM32:** package compile and PE/export audit are complete (30 ARM binaries, 47/47 driver exports);
+  execution is deliberately forbidden in this project, so no ARM runtime claim is made.
+- **WebKit:** not vendored. The complete port is
+  [`WebKitPatches/apotheosis-webkit-2.52.4.patch`](WebKitPatches/README.md), 110 paths against
+  `webkitgtk-2.52.4` / `7acdf5e1`. `WebKit/` and all build/native outputs are git-ignored.
+
 ## Abstract
 
 Porting modern **WebKit/WebCore** to **Windows 10 Mobile (ARM32, UWP)** for a deliberately small Lumia 950
-browser: address bar, Back, painted pages, scrolling, and useful navigation.
+browser: address bar, Back, painted pages, scrolling, and useful navigation. The shipping host is the
+C# UWP app in `Src/Apotheosis`; the C++/CX harness in `Src/harness` is the native diagnostic tool.
 
 ![RnD](Images/RnD.png)
 
@@ -123,31 +138,49 @@ first.
 
 ## Quick Build (x64-gpu, after code change)
 
+For a clean machine, follow [Doc/DEVELOPER-SETUP.md](Doc/DEVELOPER-SETUP.md). For an already-built
+tree, the short loop is:
+
 ```powershell
 . .\Src\setenv.ps1
-msbuild Src/harness/Harness.vcxproj /p:Configuration=Release /p:Platform=x64 /p:AppxPackage=true /t:Build /v:minimal
+# native driver (minutes) after port changes
+pwsh -File Src\port\build-driver-dll-arm32.ps1 -Arch x64
+pwsh -File Src\tools\Stage-NativeDeps.ps1 -Arch x64
+# C# app layout (minutes)
+& 'C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.exe' `
+  Src\Apotheosis\Apotheosis.csproj /restore `
+  /p:Configuration=Release /p:Platform=x64 /p:AppxPackageSigningEnabled=false /v:minimal
+Add-AppxPackage -Register Src\Apotheosis\bin\x64\Release\AppxManifest.xml
 ```
 
 If engine DLLs need rebuild (WebKit source change):
 
 ```powershell
 . .\Src\setenv.ps1
-ninja -C build-x64-gpu WebCore -j1
-# Then rebuild harness (above)
+. .\Src\port\x64-uwp-env.ps1
+ninja -C build-x64-gpu WebCore JavaScriptCore -j1
+pwsh -File Src\port\archive-webcorefull.ps1 -Arch x64
+pwsh -File Src\port\archive-pal.ps1 -Arch x64
+# then relink the driver and rebuild the app as above
 ```
 
 ### Deploy & run
 
 ```powershell
-# Install AppX
-PowerShell -ExecutionPolicy Bypass -File "Src\harness\AppPackages\Harness\Harness_0.1.8.51_x64_Test\Add-AppDevPackage.ps1"
-# Launch
-cmd /c start shell:AppsFolder\EdgeHTMLReborn.Harness_edmb40rfkwsbg!App
-# Check log
-Get-Content "$env:LOCALAPPDATA\Packages\EdgeHTMLReborn.Harness_edmb40rfkwsbg\LocalState\log.txt"
+# Install the local x64 layout (Developer Mode must be on)
+Add-AppxPackage -Register Src\Apotheosis\bin\x64\Release\AppxManifest.xml
+# Launch the C# app
+Start-Process 'explorer.exe' 'shell:AppsFolder\ME.Apotheosis_cj4nrm0qt9s1y!App'
+# Check the launch/log directory
+explorer "$env:LOCALAPPDATA\Packages\ME.Apotheosis_cj4nrm0qt9s1y\LocalState"
 ```
 
-> **NOTE:** 4 GB RAM — reboot before large builds. Use `ninja -j1` only. Port file `WebCoreDriver.cpp` may hit `fatal error C1060` if memory is low.
+The C++/CX harness in `Src/harness` is a separate diagnostic tool; its old appx path is historical.
+For the native smoke test and the M1 cookie check, see
+[Doc/DEVELOPER-SETUP.md](Doc/DEVELOPER-SETUP.md) section 8.
+
+> **NOTE:** on a 4 GB machine, reboot before large builds and use `ninja -j1` only. Port file
+> `WebCoreDriver.cpp` may hit `fatal error C1060` if memory is low.
 
 ---
 
