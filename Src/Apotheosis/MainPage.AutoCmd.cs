@@ -737,8 +737,15 @@ namespace Apotheosis
                                     int tx, ty;
                                     if (p.Length >= 2 && int.TryParse(p[0], out tx) && int.TryParse(p[1], out ty))
                                     {
+                                        // fit= is the S7 display scale (frame px per DIP inverse):
+                                        // a tap probe that ignores it maps its coordinates into
+                                        // the wrong frame. Refreshed first so the logged value is
+                                        // the one HandleTapAt is about to divide by. This branch
+                                        // runs inside the `ui` dispatcher lambda, i.e. UI thread.
+                                        ApplyDisplayScale();
                                         AutoLog("tap dip=" + tx + "," + ty + " area=" + (int)ContentArea.ActualWidth
-                                                + "x" + (int)ContentArea.ActualHeight + " session=" + (_sessionActive ? 1 : 0));
+                                                + "x" + (int)ContentArea.ActualHeight + " fit=" + _fitScale.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture)
+                                                + " session=" + (_sessionActive ? 1 : 0));
                                         HandleTapAt(tx, ty);
                                     }
                                     else AutoLog("ui tap: bad point '" + what.Substring(4).Trim() + "'");

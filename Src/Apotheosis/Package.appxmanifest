@@ -8,13 +8,13 @@
 
   <Identity Name="ME.Apotheosis"
             Publisher="CN=media"
-            Version="0.2.3.66"
+            Version="0.2.3.67"
             ProcessorArchitecture="arm" />
 
   <mp:PhoneIdentity PhoneProductId="b3a9e5c2-1d4f-4a7b-9c8e-0f1a2b3c4d5e" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>Apotheosis 0.2.3.66</DisplayName>
+    <DisplayName>Apotheosis 0.2.3.67</DisplayName>
     <PublisherDisplayName>Admin</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -48,7 +48,7 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="Apotheosis.App">
       <uap:VisualElements
-        DisplayName="Apotheosis 0.2.3.66"
+        DisplayName="Apotheosis 0.2.3.67"
         Description="Modern WebKit browser on Windows 10 Mobile (ARM32)"
         BackgroundColor="#1E1E1E"
         Square150x150Logo="Assets\Square150x150Logo.png"

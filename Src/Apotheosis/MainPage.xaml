@@ -89,7 +89,17 @@
                       IsDoubleTapEnabled="True" DoubleTapped="OnPageDoubleTapped"
                       ManipulationDelta="OnImageManipDelta"
                       ManipulationCompleted="OnImageManipCompleted">
-                    <Image x:Name="RenderImage" Stretch="None" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                    <!-- S7 (2026-10-22): FrameFit carries the display scale of the fixed frame:
+                         the whole 720x1080 bitmap drawn as large as fits the window, top-left
+                         anchored. RenderImage itself keeps a free RenderTransform for the live
+                         pinch preview (ApplyLiveZoom), which is why the base scale is on the
+                         wrapper and not on the Image: the two must compose, not overwrite. -->
+                    <Grid x:Name="FrameFit" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Grid.RenderTransform>
+                            <ScaleTransform x:Name="FrameFitScale" ScaleX="1" ScaleY="1"/>
+                        </Grid.RenderTransform>
+                        <Image x:Name="RenderImage" Stretch="None" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                    </Grid>
                 </Grid>
             </Border>
 

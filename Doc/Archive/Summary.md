@@ -3175,6 +3175,34 @@ its shape.
 
 ---
 
+### 0.2.3.67 on the bench: S7 — the fixed frame fits the window, and input follows the scale (2026-10-23)
+
+**1. The presentation half, measured.** The fixed-viewport line (`fitwindow=0`) on the bench
+window 1355x751 DIP now logs `frame fit scale=0.695 frame=720x1080 area=1355x751`: the whole
+720x1080 frame is drawn 0.695x smaller, top-left anchored, so the page's full width and height
+are visible instead of the top-left quarter (s7-1-fixed.png). The fitted line is untouched —
+`frame fit scale=1.000 frame=1355x751 area=1355x751` (s7-2-fitwindow1.png) — and S1's rotation
+adopt moves the frame to 1080x720 at scale 1.000. The scale is never above 1.0 by design, so a
+window that already fits the frame keeps the pre-S7 1:1 presentation.
+
+**2. The input half, measured end-to-end.** The window was resized to a 987x814 DIP content
+area, where the landscape frame needs 1080 px of width: `frame fit scale=0.914`. The engine's
+own link table then read `[0] 500,666 80x23 https://iana.org/help/example-domains`, i.e. centre
+(540,677) in frame pixels. A scripted finger-space tap at `dip=494,619` (the centre divided by
+0.914, rounded) logged `tap dip=494,619 area=987x814 fit=0.914 session=1` and navigated to
+`https://www.iana.org/help/example-domains`; the trailing diag names that document on both sides
+of the `|`. The tap path is `OnPageTapped`/`tap` -> `HandleTapAt` -> `MapTapToEngine`, the same
+function the finger uses, so the division is proved on the shipping path and not on a probe-only
+shortcut. `MapEngineToDip` (taplink's inverse) was kept symmetric in the same change.
+
+**3. Scope.** The code is C#-only (`MainPage.xaml`, `MainPage.xaml.cs`, `MainPage.AutoCmd.cs`),
+so the ARM line needs a recompile of the same version, not a WebKit rebuild. The phone-side
+probe is `Src/tools/device-accept/probe-s7.txt` (fixed viewport, expected
+`frame fit scale=0.654 frame=720x1080 area=480x707`, then `taplink 0` to iana.org); it ships
+with the next authorized ARM acceptance appx. S7 is DONE on the bench and queued for the device.
+
+---
+
 *"Reviving the Windows Phone web for the people who never let it die."*
 
 ---

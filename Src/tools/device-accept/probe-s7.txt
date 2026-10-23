@@ -1,0 +1,33 @@
+# Apotheosis 2026-10-23 -- the S7 probe (build 0.2.3.67+): the fixed frame is scaled to the window
+# and input is divided by the same display scale.
+#
+# Precondition: settings.ini carries fitwindow=0 (the fixed-viewport line). On the phone the
+# window is 480x707 DIP (measured .58/.59) and the frame is 720x1080, so the expected scale is
+# min(480/720, 707/1080) = 0.654: the whole page fits the window instead of its top-left quarter.
+#
+# Expected evidence, in order:
+#   setup-trace.txt  `frame fit scale=0.654 frame=720x1080 area=480x707`  -- the S7 marker
+#   autocmd-log      `taplink[0] rect=... dip=... url=https://iana.org/help/example-domains`
+#                    -- dip must equal the rect centre times 0.654 (integer rounding allowed)
+#   diag after       `url=https://www.iana.org/help/example-domains` on BOTH sides of the `|`
+#                    -- the tap landed on the link the user sees under the finger
+#
+# Reading the failure modes:
+#   NO `frame fit scale` line    ApplyDisplayScale never saw a laid-out area (area=0), or trace off
+#   scale=1.000                  the content area is already >= 720x1080 DIP -- S7 is a no-op on
+#                                that window, not a defect; check the OS display-scale slider
+#   tap lands nowhere            the dip was not divided by the fit scale; the unchanged url in the
+#                                trailing diag is the proof (taplink's own line carries the dip)
+#   `taplink: bad index`         the load had not published links yet -- extend the wait, not a bug
+#
+# The frame marker lives in setup-trace.txt because Crumb() writes there; autocmd-log carries the
+# tap trail. Both files are pulled by pull-device-logs.ps1.
+
+wait 15000
+goto https://example.com/
+wait 10000
+links
+diag
+taplink 0
+wait 10000
+diag

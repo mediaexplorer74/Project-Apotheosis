@@ -52,6 +52,12 @@ namespace Apotheosis
         // them and the port behaves exactly as it did. The measurement that made this safe to try is
         // in Doc/PLAN.md §0 item 4.
         static int kW = 720, kH = 1080;
+        // S7 (2026-10-22): ContentArea DIP per frame pixel -- the display scale of the fixed
+        // frame (FrameFitScale). 1.0 whenever the frame is drawn 1:1: the fitted viewport
+        // (fitwindow=1, area == frame) always computes 1.0, which is why the bench probes do
+        // not see a difference. Maintained by ApplyDisplayScale(); the input paths read it
+        // only through that function so the number they divide by is the number on screen.
+        double _fitScale = 1.0;
 
         // The window-fitted viewport. See ApplyViewport().
         //
@@ -1291,6 +1297,7 @@ namespace Apotheosis
         void MapTapToEngine(double dipX, double dipY, out int outPx, out int outPy)
         {
             if (dipX < 0 || dipY < 0) { outPx = -1; outPy = -1; return; }
+            ApplyDisplayScale();   // S7: divide by the scale the screen is showing, not a stale one
             double aw = ContentArea.ActualWidth, ah = ContentArea.ActualHeight;
             if (_gpuPresent && aw > 1 && ah > 1)
             {
@@ -1299,8 +1306,11 @@ namespace Apotheosis
             }
             else
             {
-                outPx = (int)(dipX + 0.5);
-                outPy = (int)(dipY + 0.5);
+                // S7: the finger (and the scripted `tap`) speaks ContentArea DIP; the frame is
+                // drawn at _fitScale, so the frame pixel under the finger is dip / _fitScale.
+                // At 1.0 this is the pre-S7 1:1 line unchanged.
+                outPx = (int)(dipX / _fitScale + 0.5);
+                outPy = (int)(dipY / _fitScale + 0.5);
             }
         }
 
@@ -1313,6 +1323,7 @@ namespace Apotheosis
         // lands somewhere else.
         void MapEngineToDip(int px, int py, out double outDipX, out double outDipY)
         {
+            ApplyDisplayScale();   // S7: keep the pair symmetric with MapTapToEngine
             double aw = ContentArea.ActualWidth, ah = ContentArea.ActualHeight;
             if (_gpuPresent && aw > 1 && ah > 1)
             {
@@ -1321,9 +1332,43 @@ namespace Apotheosis
             }
             else
             {
-                outDipX = px;
-                outDipY = py;
+                outDipX = px * _fitScale;
+                outDipY = py * _fitScale;
             }
+        }
+
+        // S7 (2026-10-22): recompute and apply the fixed frame's display scale.
+        //
+        // The complaint this answers, measured by the .57 batch's own tap row on the Lumia:
+        // ContentArea is 360x494 DIP while the engine frame is a fixed 720x1080 bitmap drawn
+        // Stretch=None at 1:1 -- the user saw the top-left QUARTER of the page, the rest of the
+        // window was white, and each engine pixel covered ~4x4 physical pixels (the reported
+        // "softness"). The frame itself must NOT shrink to the window: 360 / kZoomMin(0.50) =
+        // 720 CSS < 870 and the desktop gate would never open. So the geometry stays and only
+        // the PRESENTATION scales: FrameFit draws the bitmap as large as fits, never above 1:1
+        // (a window the frame already fits keeps today's exact 1:1), top-left anchored.
+        //
+        // Both inputs feed it -- area (SizeChanged) and frame (kW/kH, rotation, fit toggles,
+        // every repaint) -- so it is RECOMPUTED at each call site rather than carried by
+        // events: on entry to the two coordinate-mapping functions (so a finger can never
+        // divide by a stale number), at every blit (the frame geometry is settled by then),
+        // and on every size change. The fitted viewport computes 1.0 here (area == frame by
+        // construction), which is why fitwindow=1 probes are untouched.
+        //
+        // GPU present is deliberately not a case here: its surface is the panel's own physical
+        // pixels, MapTapToEngine's GPU branch maps against aw/ah directly, and BlitToBitmap
+        // returns before this function is ever reached on that path.
+        void ApplyDisplayScale()
+        {
+            double aw = ContentArea.ActualWidth, ah = ContentArea.ActualHeight;
+            if (aw < 1 || ah < 1 || kW < 1 || kH < 1) return;
+            double d = Math.Min(1.0, Math.Min(aw / kW, ah / kH));
+            if (Math.Abs(d - _fitScale) < 0.0005) return;
+            _fitScale = d;
+            if (FrameFitScale != null) { FrameFitScale.ScaleX = d; FrameFitScale.ScaleY = d; }
+            // One line per CHANGE, not per call: the tap probes and the rotation markers get
+            // their scale without a per-frame write. `frame fit scale=` is the S7 marker.
+            Crumb($"frame fit scale={d:0.000} frame={kW}x{kH} area={(int)aw}x{(int)ah}");
         }
 
         // The tap the user's finger produces and the tap a script produces enter HERE, and that is
@@ -1753,6 +1798,7 @@ namespace Apotheosis
         void OnImageManipDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             if (!_sessionActive) return;
+            ApplyDisplayScale();   // S7: before the focal point AND the scroll delta read it
             float ds = e.Delta.Scale;
             if (_pinching || (ds > 0 && (ds > 1.002f || ds < 0.998f)))
             {
@@ -1765,12 +1811,17 @@ namespace Apotheosis
                 if (total < kZoomMin) _liveScale = kZoomMin / _vpZoom;
                 if (total > kZoomMax) _liveScale = kZoomMax / _vpZoom;
                 var fp = e.Position;
-                _focalX = fp.X; _focalY = fp.Y;
+                _focalX = fp.X; _focalY = fp.Y;   // ContentArea DIP; ApplyLiveZoom divides
                 ApplyLiveZoom();
                 return;
             }
-            double dx = -e.Delta.Translation.X;
-            double dy = -e.Delta.Translation.Y;
+            // S7: the finger moves DIP, FreeScrollBy and the engine speak frame pixels -- at
+            // _fitScale the on-screen document moves exactly as far as the finger did. The GPU
+            // path keeps the raw delta: its surface is the panel's physical px and that mapping
+            // was already its own (unmeasured) rule.
+            double sc = _gpuPresent ? 1.0 : _fitScale;
+            double dx = -e.Delta.Translation.X / sc;
+            double dy = -e.Delta.Translation.Y / sc;
             int idx = (int)(dx < 0 ? dx - 0.5 : dx + 0.5);
             int idy = (int)(dy < 0 ? dy - 0.5 : dy + 0.5);
             if (idx != 0 || idy != 0)
@@ -1787,9 +1838,21 @@ namespace Apotheosis
 
         void ApplyLiveZoom()
         {
-            var t = new ScaleTransform { ScaleX = _liveScale, ScaleY = _liveScale, CenterX = _focalX, CenterY = _focalY };
-            if (_gpuPresent) GpuPanel.RenderTransform = t;
-            else RenderImage.RenderTransform = t;
+            if (_gpuPresent)
+            {
+                GpuPanel.RenderTransform = new ScaleTransform
+                { ScaleX = _liveScale, ScaleY = _liveScale, CenterX = _focalX, CenterY = _focalY };
+                return;
+            }
+            // S7: the base display scale is the PARENT transform (FrameFit), the preview is the
+            // child's (RenderImage) -- they compose, so the net is screen = d * (c + (i - c) * l)
+            // and holding the picture under the finger at ContentArea position f needs the
+            // child's focal point in IMAGE coordinates: c = f / _fitScale. Verified algebra:
+            // image point i = f/d sits at f on screen at l = 1, and stays at f for any l.
+            // With fitwindow=1 _fitScale is 1.0 and this is the pre-S7 math unchanged.
+            double fs = _fitScale > 0.01 ? _fitScale : 0.01;
+            RenderImage.RenderTransform = new ScaleTransform
+            { ScaleX = _liveScale, ScaleY = _liveScale, CenterX = _focalX / fs, CenterY = _focalY / fs };
         }
 
         void OnImageManipCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
@@ -3723,6 +3786,7 @@ namespace Apotheosis
                 using (var stream = wb.PixelBuffer.AsStream())
                     stream.Write(dst, 0, need);
                 wb.Invalidate();
+                ApplyDisplayScale();   // S7: frame half of the scale; UI thread (all callers RunAsync)
                 RenderImage.Source = wb;
             }
             catch (Exception ex)
@@ -3760,6 +3824,8 @@ namespace Apotheosis
             int w = (int)(ContentArea.ActualWidth + 0.5);
             int h = (int)(ContentArea.ActualHeight + 0.5);
             if (w < 16 || h < 16) return;                  // no layout pass yet
+            ApplyDisplayScale();   // S7: the area half of the scale; the frame half arrives at
+                                   // the next blit (rotation defers the engine-side resize)
             if (!_fitWindow)
             {
                 // The fixed-viewport line ignores size changes by design -- except one: ROTATION.
