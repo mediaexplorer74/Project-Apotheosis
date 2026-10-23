@@ -3509,6 +3509,14 @@ namespace Apotheosis
         }
 
         // ===== Update checker =====
+        // Apotheosis 2026-10-23: the checker watches THIS fork's releases, not the upstream the
+        // original author publishes to. Upstream's "latest release" is a different product line;
+        // comparing our build number against it produced a "new version available" prompt for a
+        // package this tree cannot install, which is noise at best. The fork has no releases yet,
+        // so check_latest answers 404 -- treated below as "no releases", not as a failure.
+        const string UpdateApiUrl = "https://api.github.com/repos/mediaexplorer74/Project-Apotheosis/releases/latest";
+        const string UpdatePageUrl = "https://github.com/mediaexplorer74/Project-Apotheosis/releases/latest";
+
         static bool ParseDottedVersion(string s, int[] outArr)
         {
             outArr[0] = outArr[1] = outArr[2] = outArr[3] = 0;
@@ -3538,7 +3546,7 @@ namespace Apotheosis
             {
                 int rc = -1;
                 string body = "";
-                try { rc = WebCoreDriver.WebCoreDownload("https://api.github.com/repos/Jimmyxiao2009/Project-Apotheosis/releases/latest", jsonPath); } catch { }
+                try { rc = WebCoreDriver.WebCoreDownload(UpdateApiUrl, jsonPath); } catch { }
                 if (rc == 200 && File.Exists(jsonPath)) body = File.ReadAllText(jsonPath);
 
                 string pick(string key)
@@ -3553,6 +3561,7 @@ namespace Apotheosis
                 string tag = pick("tag_name");
                 string page = pick("html_url");
                 bool ok = (rc == 200 && !string.IsNullOrEmpty(tag));
+                bool noReleases = (rc == 404);   // the fork exists but has published no release yet
                 bool newer = false;
                 string verStr = tag;
                 if (!string.IsNullOrEmpty(verStr) && (verStr[0] == 'v' || verStr[0] == 'V')) verStr = verStr.Substring(1);
@@ -3563,17 +3572,16 @@ namespace Apotheosis
                     for (int i = 0; i < 4; i++) { if (rel[i] != cur[i]) { newer = rel[i] > cur[i]; break; } }
                 }
                 string tagW = tag, pageW = page;
+                bool noReleasesW = noReleases;
                 try
                 {
                     disp.RunAsync(CoreDispatcherPriority.Normal, async () =>
                     {
                         _updateChecking = false;
-                        if (!ok) { if (manual && TitleText != null) TitleText.Text = "Update Check Failed"; return; }
+                        if (!ok) { if (manual && TitleText != null) TitleText.Text = noReleasesW ? "No Releases Yet" : "Update Check Failed"; return; }
                         if (!newer) { if (manual && TitleText != null) TitleText.Text = "Already Up to Date " + tagW; return; }
                         if (TitleText != null) TitleText.Text = "New Version " + tagW;
-                        string target = string.IsNullOrEmpty(pageW)
-                            ? "https://github.com/Jimmyxiao2009/Project-Apotheosis/releases/latest"
-                            : pageW;
+                        string target = string.IsNullOrEmpty(pageW) ? UpdatePageUrl : pageW;
                         var dlg = new MessageDialog($"New version {tagW}\nGo to download?", "Update Available");
                         dlg.Commands.Add(new UICommand("Go to Download"));
                         dlg.Commands.Add(new UICommand("Later"));

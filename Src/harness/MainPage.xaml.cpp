@@ -5715,8 +5715,10 @@ void MainPage::CheckForUpdate(bool manual)
             int rc = -1;
             std::string body;
             if (!jsonPath.empty()) {
+                // Apotheosis 2026-10-23: watch this fork's releases, not the upstream line the
+                // original author publishes (same change as the C# MainPage.CheckForUpdate).
                 try { rc = WebCoreDownload(
-                    "https://api.github.com/repos/Jimmyxiao2009/Project-Apotheosis/releases/latest",
+                    "https://api.github.com/repos/mediaexplorer74/Project-Apotheosis/releases/latest",
                     jsonPath.c_str()); } catch (...) {}
                 if (rc == 200) {
                     std::ifstream f(jsonPath, std::ios::binary);
@@ -5751,7 +5753,7 @@ void MainPage::CheckForUpdate(bool manual)
                         if (!newer) { if (manual) s->TitleText->Text = ref new String((GetStr(s->m_uiLang, S_UPDATE_LATEST) + tagW).c_str()); return; }
                         s->TitleText->Text = ref new String((GetStr(s->m_uiLang, S_UPDATE_FOUND) + tagW).c_str());
                         std::wstring target = pageW.empty()
-                            ? std::wstring(L"https://github.com/Jimmyxiao2009/Project-Apotheosis/releases/latest")
+                            ? std::wstring(L"https://github.com/mediaexplorer74/Project-Apotheosis/releases/latest")
                             : pageW;
                         try {
                             auto dlg = ref new Windows::UI::Popups::MessageDialog(
