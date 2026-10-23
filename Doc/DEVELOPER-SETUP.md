@@ -540,7 +540,7 @@ pwsh -File Src\tools\audit-source-release.ps1
 
 The audit must pass: no tracked WebKit/build/DLL/LIB/EXE/PFX paths, no binary
 patch hunks, no common token patterns. It prints the largest tracked files and the
-full-history bundle size (about 10 MiB on the 2026-10-23 tree). To create a
+full-history bundle size (about 38.5 MB on the 2026-10-23 tree). To create a
 source-only ZIP using `HEAD`:
 
 ```powershell

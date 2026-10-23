@@ -2,7 +2,7 @@
 
 This repository is published as **source + a small WebKit patch set**, never as a
 WebKit checkout and never with build/native outputs. The normal first push is about
-10 MiB on the 2026-10-23 tree, which is practical on a weak connection.
+38.5 MiB on the 2026-10-23 tree. That is still practical, but on a weak connection allow the first push to run and retry if it drops.
 
 The target fork used by the updater is:
 
@@ -30,7 +30,7 @@ It must print `AUDIT PASSED`. It checks that:
 
 It also prints the largest tracked files and the full-history bundle size. The
 largest files are currently the two `simhei.ttf` copies (~9.3 MB each) and a few
-screenshots; the object pack is ~10.19 MiB.
+screenshots; the object pack is ~38.5 MiB once the history is packed.
 
 ### The font decision
 
@@ -185,7 +185,7 @@ history unless you have explicitly decided to replace it.
 ## Free-account notes
 
 - Public repositories are unlimited; private repositories on the free plan have
-  generous limits that this ~10 MiB pack will not approach.
+  generous limits that this ~38.5 MiB pack will not approach.
 - GitHub does not accept files over 100 MB in a normal push. This tree has no such
   file; the 3.2 GB WebCore archive and 31 MB `icudt78.dll` are build outputs and are
   ignored.
