@@ -124,15 +124,26 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   anyway; `autocmd-log.txt` appends ACROSS installs and is the only file here the trim actually
   reclaims for the long haul. A WebKit-side fix (FILE_SHARE_DELETE) would cost a full rebuild on
   both lines for no user-visible gain.
-- **S7. Scale the fixed frame to the window — the phone currently shows a QUARTER of the page** —
-  measured on the Lumia by the .57 batch's own tap row: `area=360x494`, i.e. ContentArea is
-  360x494 DIP (window 360x640) while the engine frame is a fixed 720x1080 drawn Stretch=None at
-  1:1 DIP with no Viewbox: a WriteableBitmap(720,1080) at 96 DPI is 720x1080 DIP, twice the window
-  each way. The user sees the top-left quarter; the rest of the window is white; each engine pixel
-  covers ~4x4 physical pixels (the reported "softness"). The frame must NOT shrink to the window:
-  360 / kZoomMin(0.50) = 720 CSS < 870, the desktop gate would never open. Fix: scale the blit to
-  fit the window and divide tap/manipulation coordinates by the same display scale. Feeds on S1's
-  rotation path. Evidence: [Archive/Summary.md](Archive/Summary.md) 0.2.3.57 section.
+- **S7. Scale the fixed frame to the window** — DONE in 0.2.3.67, **verified on the x64 bench
+  2026-10-23**; the device run is queued (probe ships as `device-accept/probe-s7.txt`, expected
+  scale 0.654 at area=480x707). The defect: measured on the Lumia by the .57 batch's own tap row,
+  `area=360x494` — ContentArea was 360x494 DIP (window 360x640) while the engine frame is a fixed
+  720x1080 drawn Stretch=None at 1:1 DIP with no Viewbox, so the user saw the top-left quarter,
+  the rest of the window was white, and each engine pixel covered ~4x4 physical pixels (the
+  reported "softness"). The frame itself must NOT shrink to the window: 360 / kZoomMin(0.50) =
+  720 CSS < 870, the desktop gate would never open. Fix: scale only the PRESENTATION —
+  `FrameFitScale` (a ScaleTransform on the `FrameFit` wrapper) draws the bitmap as large as fits,
+  never above 1:1, top-left anchored; `_fitScale` is recomputed by `ApplyDisplayScale()` at every
+  coordinate mapping, every blit and every size change, and the tap/manipulation paths divide by
+  it (the live pinch preview is a child transform whose focal point is converted to image space).
+  Bench evidence (.67): fixed viewport `frame fit scale=0.695 frame=720x1080 area=1355x751` — the
+  whole page visible (s7-1-fixed.png); fitwindow=1 unchanged at `frame fit scale=1.000
+  frame=1355x751 area=1355x751` (s7-2-fitwindow1.png); rotation adopts landscape 1080x720 at 1.0;
+  and a resized 987x814 window gives 0.914, where `tap dip=494,619 area=987x814 fit=0.914
+  session=1` on engine link `[0] 500,666 80x23` landed exactly on its target
+  `https://www.iana.org/help/example-domains` (both diag url fields equal). Evidence:
+  [Archive/Summary.md](Archive/Summary.md) 0.2.3.57 section (defect measurement) and 0.2.3.67
+  section (bench verification).
 - **S8. Input must not be gated by a hung load** — DONE in 0.2.3.60, **verified on the device
   2026-10-21** (batch probe-s8-input.txt + the maintainer's finger; Summary 0.2.3.60 section).
   `HandleTapAt` refused every tap while `_loading` was true, SILENTLY: a Nokia load held by one
