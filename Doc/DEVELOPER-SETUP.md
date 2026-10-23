@@ -1,6 +1,7 @@
 # Developer setup - x64 first, ARM compile-only
 
-This is the from-a-clean-machine guide for **Apotheosis 0.2.3.73**. It is written for
+This is the from-a-clean-machine guide for **Apotheosis 0.2.3.73**, plus the post-release M2
+storage work in section 8. It is written for
 someone who has never built WebKit and has a normal, possibly slow, internet
 connection. Read the whole page once before starting: the x64 path is long but
 linear, and the ARM path is deliberately not a runtime path.
@@ -374,14 +375,16 @@ $msbuild = 'C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Curr
   /v:minimal
 ```
 
-The output layout is `Src\Apotheosis\bin\x64\Release\` and contains
-`AppxManifest.xml`, `Apotheosis.exe`, the managed assemblies and the native
-payload. That is enough for a local **register** install; no certificate is
-needed:
+The complete package layout is `Src\Apotheosis\bin\x64\Release\ilc\`; it holds
+`AppxManifest.xml`, `Apotheosis.exe`, the managed assemblies, the native payload,
+`Assets\cacert.pem` and `resources.pri`. Register the `ilc` manifest, not the
+`bin\x64\Release` root: the root is the build output directory and lacks the CA
+bundle, so HTTPS fails with `curlcode=60` (measured 2026-10-23). That layout is
+enough for a local **register** install; no certificate is needed:
 
 ```powershell
 # Settings -> Update & Security -> For developers -> Developer Mode must be on.
-Add-AppxPackage -Register Src\Apotheosis\bin\x64\Release\AppxManifest.xml
+Add-AppxPackage -Register Src\Apotheosis\bin\x64\Release\ilc\AppxManifest.xml
 ```
 
 Launch it:
@@ -404,8 +407,8 @@ clean test:
 Get-AppxPackage ME.Apotheosis | Remove-AppxPackage
 ```
 
-That removes the app's LocalState, including the M1 cookie DB. Back up
-`LocalState` first if you need the evidence.
+That removes the app's LocalState, including the M1 cookie DB and the M2
+`localstorage.db`. Back up `LocalState` first if you need the evidence.
 
 ### Optional: a signed appx
 
@@ -426,7 +429,7 @@ Build with `/p:PackageCertificateThumbprint=<thumbprint>
 /p:PackageCertificatePassword=apotheosis` and install the generated `.appx` with
 `Add-AppxPackage`. The PFX and CER are ignored by git; never commit them.
 
-## 8. First smoke test and the M1 cookie check
+## 8. First smoke test, M1 cookies and M2 localStorage
 
 After launch:
 
@@ -434,7 +437,9 @@ After launch:
 2. Open `https://example.com`; the page should paint, not just report a load.
 3. Open
    `%LOCALAPPDATA%\Packages\ME.Apotheosis_cj4nrm0qt9s1y\LocalState\` and confirm
-   `stage.txt`, `cookie.jar.db` and the trace files appear.
+   `stage.txt`, `cookie.jar.db`, `localstorage.db` and the trace files appear.
+
+### M1: cookie jar restart
 
 The M1 acceptance is specifically about restart persistence:
 
@@ -452,6 +457,49 @@ must still contain the row after the restart.
 For a scripted check, write `goto http://<lan-ip>:8099/check` to
 `LocalState\autocmd.txt` and read `autocmd-log.txt`; the command channel is
 documented in `Src/Apotheosis/MainPage.AutoCmd.cs`.
+
+### M2: localStorage restart
+
+The AppContainer cannot reach a loopback test server, so M2 uses a public HTTPS
+origin. `https://httpbin.org/base64/<value>` returns base64-decoded bytes as
+`text/html`. Use **URL-safe base64** (replace `+` with `-` and `/` with `_` before
+escaping): httpbin treats a raw `/` as a path separator and returns 404
+(measured 2026-10-23). Generate a set page and a check page:
+
+```powershell
+$set = '<!doctype html><meta charset="utf-8"><title>M2 SET</title><script>localStorage.setItem("m2-durable","durable-test");document.title="M2 SET "+localStorage.getItem("m2-durable");</script>'
+$check = '<!doctype html><meta charset="utf-8"><title>M2 CHECK</title><script>var v=localStorage.getItem("m2-durable");document.title="M2 CHECK "+(v===null?"ABSENT":v);</script>'
+function UrlFor([string]$html) {
+  $b64 = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($html)).Replace('+','-').Replace('/','_')
+  'https://httpbin.org/base64/' + [uri]::EscapeDataString($b64)
+}
+UrlFor $set
+UrlFor $check
+```
+
+Navigate the app to the set URL (paste it into the address bar, or use a `goto`
+batch in `LocalState\autocmd.txt`), wait for the title to read
+`M2 SET durable-test`, then force-stop the app (`Stop-Process -Name Apotheosis -Force`
+or Task Manager). Launch it again, navigate to the check URL, and the title must
+still read `M2 CHECK durable-test`. `LocalState\localstorage.db` must contain the
+`('https://httpbin.org','m2-durable',...)` row. Inspect it read-only with Python's
+`sqlite3` if no CLI is installed:
+
+```powershell
+python -c "import sqlite3,sys; c=sqlite3.connect('file:'+sys.argv[1]+'?mode=ro', uri=True); print(c.execute('select origin,key,value,ordinal from ItemTable').fetchall())" "$env:LOCALAPPDATA\Packages\<family>\LocalState\localstorage.db"
+```
+
+Writing an `autocmd.txt` batch after launch is important: a file that exists at
+startup is used as the baseline timestamp and is not replayed. The command channel
+is documented in `Src/Apotheosis/MainPage.AutoCmd.cs`.
+
+To keep an installed `.73` app and its LocalState intact, build a temporary
+side-by-side identity (`ME.Apotheosis.M2Test`, version `0.2.3.74`) and register
+its `ilc` manifest; that is what the 2026-10-23 measurement did. The final
+remove/clear drill is:
+`localStorage.setItem("r","x");localStorage.removeItem("r");localStorage.setItem("a","1");localStorage.clear();`
+then confirm `localStorage.length===0` before setting the durable key again.
+Measured result: `M2 OPS rm=true cl=true re=true len=1`.
 
 ## 9. ARM32: build and audit, never execute
 
@@ -497,18 +545,17 @@ Build the ARM appx without launching it:
 Audit the package before it leaves the machine:
 
 ```powershell
-$out = 'Src\Apotheosis\bin\ARM\Release'
-Get-ChildItem $out -Filter '*.dll' | ForEach-Object {
-    $machine = (llvm-readobj --file-headers $_.FullName |
-        Select-String 'Machine:').Line.Trim()
-    '{0}  {1}' -f $machine, $_.Name
-}
+pwsh -File Src\tools\Test-AppxPayload.ps1 `
+  -Path Src\Apotheosis\AppPackages\Apotheosis_0.2.3.73_Test\Apotheosis_0.2.3.73_arm.appxbundle `
+  -ExpectedArch arm
 ```
 
 Every native DLL must say `IMAGE_FILE_MACHINE_ARMNT`; `WebCore.dll` must be absent;
-the driver must export the expected 47 functions. The known `.73` audit found 30
-ARM binaries, `WebCoreDriver.dll` at 31.4 MB, and 47/47 exports. Do not execute
-them on an ARM device as part of this repository's workflow.
+the driver must export the expected 48 functions. The M2 audit found 30/30 ARM
+binaries, `WebCoreDriver.dll` at 31.4 MB at the package root, `resources.pri`
+present, and 48/48 exports. (The pre-M2 `.73` audit reported 47/47; M2 adds
+`WebCoreSetLocalStoragePath`.) Do not execute them on an ARM device as part of this
+repository's workflow.
 
 If the ARM scripts complain about missing `C:\vcpkg\buildtrees\...`, stop and
 treat the ARM line as incomplete rather than substituting a different Cairo or
@@ -525,7 +572,7 @@ HarfBuzz build. The x64 line remains the reproducible path.
 | `sqlite3.lib` not found | Run `build-sqlite-x64.ps1` with the amalgamation directory; it must contain both `sqlite3.c` and `sqlite3.h`. |
 | `cairo-complete` missing | Run `build-cairo-x64.ps1`. vcpkg's `cairo.lib` is not a substitute; it is incomplete. |
 | Driver imports `MSVCP140_APP.dll` | The store CRT leaked into the x64 link. Re-run `build-driver-dll-arm32.ps1 -Arch x64`; it reorders `LIB` for the link. |
-| `Add-AppxPackage` refuses the layout | Turn on Developer Mode, or sign with the test certificate in section 7. Check `bin\x64\Release\AppxManifest.xml` exists. |
+| `Add-AppxPackage` refuses the layout | Turn on Developer Mode, or sign with the test certificate in section 7. Check `bin\x64\Release\ilc\AppxManifest.xml` exists. |
 | App starts but no page paints | Check `LocalState\stage.txt` and `diag.txt`; confirm `native\x64` has 31 files and no `WebCore.dll`. Do not "fix" it by adding WebCore.dll. |
 | Build runs out of memory | Use `ninja -C build-x64-gpu -j1`, close Visual Studio, or reboot. WebKit unified TUs are large. |
 
@@ -554,7 +601,7 @@ complete the normal push.
 ## 12. Where to go next
 
 - [INDEX.md](INDEX.md) - the documentation map.
-- [ROADMAP.md](ROADMAP.md) - the live plan; M1 is the cookie jar.
+- [ROADMAP.md](ROADMAP.md) - the live plan; M1 is the cookie jar and M2 is durable localStorage.
 - [BUILD-X64.md](BUILD-X64.md) - the x64 archive/link details and the CRT trap.
 - [BUILD-ARM32.md](BUILD-ARM32.md) - the ARM line and its maintainer-only traps.
 - [GITHUB.md](GITHUB.md) - the publication checklist.

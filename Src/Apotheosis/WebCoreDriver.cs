@@ -69,6 +69,15 @@ namespace Apotheosis
 
         public static void WebCoreSetCookieJarPath(string path) => WebCoreSetCookieJarPathRaw(Utf8z(path));
 
+        // Apotheosis M2: where localStorage lives. Like the cookie jar above, the
+        // path must be set before the first Page is built; SetupRuntimeEnv runs
+        // before any navigation. Without it the local namespace stays in memory
+        // and every value disappears on restart.
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebCoreSetLocalStoragePath")]
+        private static extern void WebCoreSetLocalStoragePathRaw(byte[] path);
+
+        public static void WebCoreSetLocalStoragePath(string path) => WebCoreSetLocalStoragePathRaw(Utf8z(path));
+
         // The port's own step-marker channel: name the file it appends one flushed line to per
         // engine step (LocalState\gpu-steps.txt). It is the only reader of numbers the engine
         // computes for itself -- for one example that mattered: WebCoreSetPageZoom logs

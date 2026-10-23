@@ -21,14 +21,13 @@
 // failing to terminate: there is no released browser in which this loop fails to
 // converge.
 //
-// The areas below are in-memory and process-scoped: values survive navigation
-// within a session, not an app restart. That is a deliberate, documented limit.
-// SQLite itself is real now (M1 moved CookieJarDB and the rest of WebCore onto
-// the WinRT amalgamation, Src/port/build-sqlite-x64.ps1), so persistence is
-// possible; PortStorage just has not been moved onto it yet. A storage API that
-// answers honestly about what it holds is worth more than one that reports
-// success and forgets, and a page cannot tell the difference until the app
-// restarts.
+// M2 (post-0.2.3.73) moved the local namespace onto SQLite under
+// LocalState\localstorage.db. The interface and quota accounting are unchanged;
+// PortStorageArea now loads an origin's rows when it is created and commits each
+// set/remove/clear before dispatching the storage event. Session and transient
+// local storage stay in memory, because their lifetime is the session or the
+// top-level page, not the installation. If the database cannot be opened, the
+// local areas fall back to the old process-scoped map and say so in the trace.
 // ============================================================================
 
 #pragma once
@@ -43,5 +42,13 @@ namespace WebCorePort {
 
 // Install into PageConfiguration::storageNamespaceProvider before Page::create.
 WTF::Ref<WebCore::StorageNamespaceProvider> createPortStorageNamespaceProvider();
+
+// M2: open (or create) the SQLite database that backs localStorage. Call before
+// the first Page is built, with a UTF-8 path in a writable directory such as
+// LocalState. Returns false and leaves the in-memory backend in place on error.
+bool setPortStorageDatabasePath(const char* utf8Path);
+
+// Rows in ItemTable across every origin; startup evidence, not a page API.
+long long portStorageDatabaseRowCount();
 
 } // namespace WebCorePort

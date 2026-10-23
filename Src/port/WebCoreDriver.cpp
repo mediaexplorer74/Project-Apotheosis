@@ -3776,8 +3776,9 @@ static int buildSession(const char* url, int w, int h, uint8_t* outRGBA)
     // silent no-op. dzen.ru's settings-sync module is a read-after-write loop whose
     // convergence condition is exactly "the write is visible to the next read", so it
     // re-enters itself synchronously forever: the freeze in Doc/DZEN-SCROLL-DEATH.md
-    // section 10f. The backend is in-memory (Src/port/PortStorage.h explains why it
-    // cannot be durable here); it is process-scoped, not absent.
+    // section 10f. The local namespace is SQLite-backed when WebCoreSetLocalStoragePath
+    // has run (M2); session and transient-local remain in memory by design. See
+    // Src/port/PortStorage.h.
     pageConfiguration.storageNamespaceProvider = WebCorePort::createPortStorageNamespaceProvider();
 
     // Apotheosis 0.2.3.29: and the same trap for sockets. EmptySocketProvider::createWebSocketChannel()
@@ -4619,6 +4620,21 @@ extern "C" void WebCoreSetCookieJarPath(const char* path)
     // distinguishable from a genuinely empty jar.
     auto& session = WebCorePort::defaultPortStorageSession();
     gpuLogMarkerF("SL: cookiejar path=%s rows=%zu", path, session.getAllCookies().size());
+}
+
+// Apotheosis 2026-10-23 (M2): point localStorage at a SQLite database. This has
+// to happen before the first Page is built, because the local namespace is made
+// on the first document that asks for it; SetupRuntimeEnv is early enough.
+// The row count is the startup evidence the M1 jar uses: a path alone cannot
+// distinguish "opened and empty" from "failed to open and silently in-memory".
+extern "C" void WebCoreSetLocalStoragePath(const char* path)
+{
+    if (!path || !*path)
+        return;
+    bool opened = WebCorePort::setPortStorageDatabasePath(path);
+    WebCorePortTrace("SetLocalStoragePath: %s (%s)", path, opened ? "sqlite" : "memory");
+    gpuLogMarkerF("SL: localstorage path=%s rows=%lld open=%d", path,
+        static_cast<long long>(WebCorePort::portStorageDatabaseRowCount()), opened ? 1 : 0);
 }
 
 // Apotheosis: opt in to the SEH guard around the engine entry points. Must be called before

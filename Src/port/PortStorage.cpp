@@ -1,9 +1,10 @@
 // ============================================================================
-// PortStorage.cpp -- the in-memory Web Storage backend. See PortStorage.h for
-// why it exists and what it deliberately does not do.
+// PortStorage.cpp -- the Web Storage backend. See PortStorage.h for why it
+// exists and what it deliberately does not do.
 //
-// Three classes, mirroring upstream's shape but with no database underneath:
+// The classes below mirror upstream's shape with one SQLite table underneath:
 //
+//   PortStorageDatabase       the durable map for the local namespace
 //   PortStorageArea           one origin's key/value map (+ quota accounting)
 //   PortStorageAreaMap        origin -> area, shared by the namespaces that must
 //                             share storage (a page and the pages it opens)
@@ -31,7 +32,9 @@
 #include <WebCore/StorageNamespaceProvider.h>
 #include <WebCore/StorageType.h>
 #include <pal/SessionID.h>
+#include <sqlite3.h>
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -41,6 +44,7 @@
 #include <cstdarg>
 #include <cstdio>
 #include <limits>
+#include <span>
 
 using namespace WebCore;
 
@@ -73,6 +77,237 @@ static void portStorageLog(const char* fmt, ...)
 }
 
 // ---------------------------------------------------------------------------
+// PortStorageDatabase -- the durable half of the backend.
+//
+// M1 proved that SQLite is real in this port: CookieJarDB opens
+// LocalState\cookie.jar.db through the WinRT VFS. M2 uses the same engine and the
+// same injection pattern, but keeps one table for every origin instead of one
+// file per origin. The single connection is only touched from the engine thread,
+// which is where WebCore calls StorageArea.
+//
+// A committed statement here is a durable one: journal_mode is the default
+// rollback journal and synchronous=FULL, so setItem followed by a force-stop
+// leaves the row on disk. That is deliberately slower than the in-memory map;
+// localStorage is small and correctness is the whole point of M2.
+//
+// The table is created lazily, and a failure to open is not fatal. If the path
+// is absent or SQLite refuses the file, the areas stay in-memory and say so in
+// the trace -- the browser keeps working, it just forgets across a restart.
+// ---------------------------------------------------------------------------
+class PortStorageDatabase {
+public:
+    PortStorageDatabase() = default;
+
+    static PortStorageDatabase& singleton()
+    {
+        static NeverDestroyed<PortStorageDatabase> database;
+        return database;
+    }
+
+    bool configure(const char* utf8Path)
+    {
+        if (!utf8Path || !*utf8Path)
+            return false;
+
+        if (m_db) {
+            sqlite3_close(m_db);
+            m_db = nullptr;
+        }
+
+        int rc = sqlite3_open_v2(utf8Path, &m_db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
+        if (rc != SQLITE_OK) {
+            portStorageLog("storage: db open FAILED path=%s rc=%d", utf8Path, rc);
+            if (m_db) {
+                sqlite3_close(m_db);
+                m_db = nullptr;
+            }
+            return false;
+        }
+
+        sqlite3_busy_timeout(m_db, 3000);
+        // Rollback journal, not WAL: one file is easier to audit in LocalState,
+        // and a force-stop must not need a separate -wal/-shm pair to recover.
+        if (!exec("PRAGMA journal_mode=DELETE;") || !exec("PRAGMA synchronous=FULL;")) {
+            sqlite3_close(m_db);
+            m_db = nullptr;
+            return false;
+        }
+
+        static constexpr const char* schema =
+            "CREATE TABLE IF NOT EXISTS ItemTable ("
+            " origin TEXT NOT NULL,"
+            " key TEXT NOT NULL,"
+            " value TEXT NOT NULL,"
+            " ordinal INTEGER NOT NULL,"
+            " PRIMARY KEY (origin, key)"
+            ");"
+            "CREATE INDEX IF NOT EXISTS ItemTableOriginOrdinal ON ItemTable(origin, ordinal);"
+            "PRAGMA user_version = 1;";
+        if (!exec(schema)) {
+            sqlite3_close(m_db);
+            m_db = nullptr;
+            return false;
+        }
+
+        portStorageLog("storage: db path=%s rows=%lld", utf8Path, static_cast<long long>(rowCount()));
+        return true;
+    }
+
+    bool isOpen() const { return m_db; }
+
+    long long rowCount() const
+    {
+        if (!m_db)
+            return 0;
+        sqlite3_stmt* stmt = nullptr;
+        if (sqlite3_prepare_v2(m_db, "SELECT COUNT(*) FROM ItemTable;", -1, &stmt, nullptr) != SQLITE_OK)
+            return 0;
+        long long count = 0;
+        if (sqlite3_step(stmt) == SQLITE_ROW)
+            count = sqlite3_column_int64(stmt, 0);
+        sqlite3_finalize(stmt);
+        return count;
+    }
+
+    bool loadArea(const String& origin, HashMap<String, String>& values, Vector<String>& keys,
+        unsigned& bytes, long long& nextOrdinal)
+    {
+        if (!m_db)
+            return false;
+
+        sqlite3_stmt* stmt = prepare(
+            "SELECT key, value, ordinal FROM ItemTable WHERE origin = ?1 ORDER BY ordinal, rowid;");
+        if (!stmt)
+            return false;
+
+        bindText(stmt, 1, origin);
+        int rc = SQLITE_OK;
+        while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
+            String key = columnString(stmt, 0);
+            String value = columnString(stmt, 1);
+            long long ordinal = sqlite3_column_int64(stmt, 2);
+            values.add(key, value);
+            keys.append(key);
+            bytes += 2u * static_cast<unsigned>(key.length() + value.length());
+            if (ordinal >= nextOrdinal)
+                nextOrdinal = ordinal + 1;
+        }
+        sqlite3_finalize(stmt);
+        if (rc != SQLITE_DONE) {
+            portStorageLog("storage: db load FAILED origin=%s %.100s", origin.utf8().data(), sqlite3_errmsg(m_db));
+            values.clear();
+            keys.clear();
+            bytes = 0;
+            nextOrdinal = 1;
+            return false;
+        }
+        return true;
+    }
+
+    // The UPSERT keeps the existing ordinal on an update (only value is assigned),
+    // so key(index) keeps the insertion order the page saw last run.
+    bool setItem(const String& origin, const String& key, const String& value, long long ordinal)
+    {
+        if (!m_db)
+            return false;
+        sqlite3_stmt* stmt = prepare(
+            "INSERT INTO ItemTable (origin, key, value, ordinal) VALUES (?1, ?2, ?3, ?4)"
+            " ON CONFLICT(origin, key) DO UPDATE SET value = excluded.value;");
+        if (!stmt)
+            return false;
+        bindText(stmt, 1, origin);
+        bindText(stmt, 2, key);
+        bindText(stmt, 3, value);
+        sqlite3_bind_int64(stmt, 4, ordinal);
+        int rc = sqlite3_step(stmt);
+        sqlite3_finalize(stmt);
+        if (rc != SQLITE_DONE) {
+            portStorageLog("storage: db set FAILED origin=%s key=%.40s %.100s",
+                origin.utf8().data(), key.utf8().data(), sqlite3_errmsg(m_db));
+            return false;
+        }
+        return true;
+    }
+
+    bool removeItem(const String& origin, const String& key)
+    {
+        if (!m_db)
+            return false;
+        sqlite3_stmt* stmt = prepare("DELETE FROM ItemTable WHERE origin = ?1 AND key = ?2;");
+        if (!stmt)
+            return false;
+        bindText(stmt, 1, origin);
+        bindText(stmt, 2, key);
+        int rc = sqlite3_step(stmt);
+        sqlite3_finalize(stmt);
+        if (rc != SQLITE_DONE) {
+            portStorageLog("storage: db remove FAILED origin=%s key=%.40s %.100s",
+                origin.utf8().data(), key.utf8().data(), sqlite3_errmsg(m_db));
+            return false;
+        }
+        return true;
+    }
+
+    bool clear(const String& origin)
+    {
+        if (!m_db)
+            return false;
+        sqlite3_stmt* stmt = prepare("DELETE FROM ItemTable WHERE origin = ?1;");
+        if (!stmt)
+            return false;
+        bindText(stmt, 1, origin);
+        int rc = sqlite3_step(stmt);
+        sqlite3_finalize(stmt);
+        if (rc != SQLITE_DONE) {
+            portStorageLog("storage: db clear FAILED origin=%s %.100s", origin.utf8().data(), sqlite3_errmsg(m_db));
+            return false;
+        }
+        return true;
+    }
+
+private:
+    bool exec(const char* sql)
+    {
+        char* message = nullptr;
+        int rc = sqlite3_exec(m_db, sql, nullptr, nullptr, &message);
+        if (rc != SQLITE_OK) {
+            portStorageLog("storage: db statement FAILED rc=%d %.120s sql=%.80s",
+                rc, message ? message : "", sql);
+            sqlite3_free(message);
+            return false;
+        }
+        return true;
+    }
+
+    sqlite3_stmt* prepare(const char* sql)
+    {
+        sqlite3_stmt* stmt = nullptr;
+        if (sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+            portStorageLog("storage: db prepare FAILED %.120s sql=%.80s", sqlite3_errmsg(m_db), sql);
+            return nullptr;
+        }
+        return stmt;
+    }
+
+    static void bindText(sqlite3_stmt* stmt, int index, const String& string)
+    {
+        CString utf8 = string.utf8();
+        sqlite3_bind_text(stmt, index, utf8.data(), static_cast<int>(utf8.length()), SQLITE_TRANSIENT);
+    }
+
+    static String columnString(sqlite3_stmt* stmt, int index)
+    {
+        auto* text = reinterpret_cast<const char*>(sqlite3_column_text(stmt, index));
+        int size = sqlite3_column_bytes(stmt, index);
+        if (!text)
+            return String();
+        return String::fromUTF8(std::span<const char>(text, static_cast<size_t>(size)));
+    }
+
+    sqlite3* m_db { nullptr };
+};
+
+// ---------------------------------------------------------------------------
 // PortStorageArea -- one origin's key/value map.
 //
 // The StorageArea contract WebCore's LocalDOMWindow expects: writes are visible
@@ -82,12 +317,20 @@ static void portStorageLog(const char* fmt, ...)
 // ---------------------------------------------------------------------------
 class PortStorageArea final : public StorageArea {
 public:
-    PortStorageArea(StorageType type, unsigned quota, const SecurityOrigin& origin)
+    PortStorageArea(StorageType type, unsigned quota, const SecurityOrigin& origin,
+        PortStorageDatabase* database)
         : m_type(type)
         , m_quota(quota)
         , m_origin(origin.isolatedCopy())
-        , m_originLabel(origin.data().toString().utf8())
+        , m_originString(origin.data().toString())
+        , m_originLabel(m_originString.utf8())
+        , m_database(type == StorageType::Local ? database : nullptr)
     {
+        if (m_database) {
+            if (m_database->loadArea(m_originString, m_values, m_keys, m_bytes, m_nextOrdinal))
+                portStorageLog("storage: restored origin=%s keys=%zu bytes=%u",
+                    m_originLabel.data(), m_keys.size(), m_bytes);
+        }
     }
 
     unsigned length() final { return m_keys.size(); }
@@ -126,13 +369,24 @@ public:
             return;
         }
 
-        String oldValue = it == m_values.end() ? String() : it->value;
-        if (it == m_values.end()) {
+        bool isNew = it == m_values.end();
+        String oldValue = isNew ? String() : it->value;
+        if (isNew) {
             m_keys.append(key);
             m_values.add(key, value);
         } else
             it->value = value;
         m_bytes = m_bytes - oldBytes + newBytes;
+
+        // The map is the source of truth for the running page; SQLite is the copy
+        // that survives the next launch. A failed write is logged and does not
+        // turn a successful setItem into a QuotaExceededError -- quota and
+        // durability are different failures and the page only has a name for one.
+        if (m_database) {
+            long long ordinal = isNew ? m_nextOrdinal++ : 0;
+            if (!m_database->setItem(m_originString, key, value, ordinal))
+                portStorageLog("storage: set NOT DURABLE origin=%s key=%.40s", m_originLabel.data(), key.utf8().data());
+        }
 
         traceWrite(key, value);
         dispatchStorageEvent(key, oldValue, value, sourceFrame);
@@ -147,6 +401,8 @@ public:
         m_bytes -= entryBytes(key, oldValue);
         m_values.remove(it);
         m_keys.removeFirst(key);
+        if (m_database && !m_database->removeItem(m_originString, key))
+            portStorageLog("storage: remove NOT DURABLE origin=%s key=%.40s", m_originLabel.data(), key.utf8().data());
         traceRemove(key, oldValue);
         dispatchStorageEvent(key, oldValue, String(), sourceFrame);
     }
@@ -158,6 +414,8 @@ public:
         m_keys.clear();
         m_values.clear();
         m_bytes = 0;
+        if (m_database && !m_database->clear(m_originString))
+            portStorageLog("storage: clear NOT DURABLE origin=%s", m_originLabel.data());
         portStorageLog("storage: clear origin=%s writes=%u", m_originLabel.data(), m_writes);
         // Per spec the event for clear() carries a null key and null values.
         dispatchStorageEvent(String(), String(), String(), sourceFrame);
@@ -260,7 +518,10 @@ private:
     unsigned m_writes { 0 };
     unsigned m_removes { 0 };
     Ref<SecurityOrigin> m_origin;
+    String m_originString;   // the key in ItemTable
     CString m_originLabel;
+    PortStorageDatabase* m_database { nullptr };
+    long long m_nextOrdinal { 1 };
     HashMap<String, String> m_values;
     Vector<String> m_keys;   // insertion order, for key(index)
 };
@@ -279,28 +540,30 @@ Page* PortStorageArea::s_walkPage = nullptr;
 // ---------------------------------------------------------------------------
 class PortStorageAreaMap final : public RefCounted<PortStorageAreaMap> {
 public:
-    static Ref<PortStorageAreaMap> create(StorageType type, unsigned quota)
+    static Ref<PortStorageAreaMap> create(StorageType type, unsigned quota, PortStorageDatabase* database = nullptr)
     {
-        return adoptRef(*new PortStorageAreaMap(type, quota));
+        return adoptRef(*new PortStorageAreaMap(type, quota, database));
     }
 
     Ref<StorageArea> areaFor(const SecurityOrigin& origin)
     {
         auto& slot = m_areas.add(origin.data(), nullptr).iterator->value;
         if (!slot)
-            slot = adoptRef(new PortStorageArea(m_type, m_quota, origin));
+            slot = adoptRef(new PortStorageArea(m_type, m_quota, origin, m_database));
         return slot.releaseNonNull();
     }
 
 private:
-    PortStorageAreaMap(StorageType type, unsigned quota)
+    PortStorageAreaMap(StorageType type, unsigned quota, PortStorageDatabase* database)
         : m_type(type)
         , m_quota(quota)
+        , m_database(database)
     {
     }
 
     StorageType m_type;
     unsigned m_quota { 0 };
+    PortStorageDatabase* m_database { nullptr };
     HashMap<SecurityOriginData, RefPtr<PortStorageArea>> m_areas;
 };
 
@@ -316,9 +579,9 @@ public:
     }
 
     static Ref<PortStorageNamespace> create(PAL::SessionID sessionID, StorageType type,
-        unsigned quota, const SecurityOrigin* topLevelOrigin)
+        unsigned quota, const SecurityOrigin* topLevelOrigin, PortStorageDatabase* database = nullptr)
     {
-        return create(sessionID, type, quota, topLevelOrigin, PortStorageAreaMap::create(type, quota));
+        return create(sessionID, type, quota, topLevelOrigin, PortStorageAreaMap::create(type, quota, database));
     }
 
     Ref<StorageArea> storageArea(const SecurityOrigin& origin) final
@@ -367,15 +630,17 @@ class PortStorageNamespaceProvider final : public StorageNamespaceProvider {
 public:
     static Ref<PortStorageNamespaceProvider> create()
     {
-        portStorageLog("storage: provider installed (in-memory, process-scoped)");
+        portStorageLog("storage: provider installed");
         return adoptRef(*new PortStorageNamespaceProvider);
     }
 
     Ref<StorageNamespace> createLocalStorageNamespace(unsigned quota, PAL::SessionID sessionID) final
     {
-        portStorageLog("storage: namespace local quota=%u session=%llu", quota,
-            static_cast<unsigned long long>(sessionID.toUInt64()));
-        return PortStorageNamespace::create(sessionID, StorageType::Local, quota, nullptr);
+        auto& database = PortStorageDatabase::singleton();
+        portStorageLog("storage: namespace local quota=%u session=%llu backend=%s", quota,
+            static_cast<unsigned long long>(sessionID.toUInt64()), database.isOpen() ? "sqlite" : "memory");
+        return PortStorageNamespace::create(sessionID, StorageType::Local, quota, nullptr,
+            database.isOpen() ? &database : nullptr);
     }
 
     Ref<StorageNamespace> createTransientLocalStorageNamespace(SecurityOrigin& origin, unsigned quota, PAL::SessionID sessionID) final
@@ -416,6 +681,20 @@ private:
 Ref<StorageNamespaceProvider> createPortStorageNamespaceProvider()
 {
     return PortStorageNamespaceProvider::create();
+}
+
+// M2: called from WebCoreSetLocalStoragePath before the first Page is built. The
+// path is UTF-8 and lives in LocalState, the one directory the App Container can
+// write. A false return leaves the in-memory backend in place, which is the old
+// behaviour and is logged rather than fatal.
+bool setPortStorageDatabasePath(const char* utf8Path)
+{
+    return PortStorageDatabase::singleton().configure(utf8Path);
+}
+
+long long portStorageDatabaseRowCount()
+{
+    return PortStorageDatabase::singleton().rowCount();
 }
 
 } // namespace WebCorePort

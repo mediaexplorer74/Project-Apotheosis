@@ -169,8 +169,26 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   `('apo','m1','httpbin.org','/',1792838096056,0,0,0)` with `user_version=1`. The earlier 2026-09-18
   experiment that JOINED two disjoint jars is unrelated and remains closed. M3 now has the persisted
   consent-cookie option it was waiting for.
-- **M2. Storage durability audit** — `PortStorage.cpp` made `localStorage` work in-process; whether
-  it survives a restart needs one honest measurement before M1's pattern is copied onto it.
+- **M2. Storage durability** - **DONE on x64, verified 2026-10-23 (post-0.2.3.73; not in the `.73`
+  release ZIPs).** `localStorage` now has a durable backend. `WebCoreSetLocalStoragePath` points the
+  local namespace at `LocalState\localstorage.db`; one `ItemTable` holds every origin, with
+  `journal_mode=DELETE` and `synchronous=FULL` so a committed write survives a force-stop. A
+  `PortStorageArea` loads its origin's rows when it is created and commits set/remove/clear before
+  dispatching the storage event. Session and transient-local storage stay in memory by design; a
+  failed DB open falls back to the old in-memory backend and says so in the trace. Measured on a
+  side-by-side `ME.Apotheosis.M2Test 0.2.3.74` x64 package (the source identity stays
+  `ME.Apotheosis 0.2.3.73`, so the installed `.73` app and its LocalState were untouched): a httpbin
+  page set `m2-durable=durable-0.2.3.74`, title `M2 SET value=durable-0.2.3.74 len=16`, DB row
+  `('https://httpbin.org','m2-durable','durable-0.2.3.74',1)`; a force-stop left the row; the next
+  launch logged `storage: db path=... rows=1`, `storage: namespace local quota=5242880 session=1
+  backend=sqlite`, `storage: restored origin=https://httpbin.org keys=1 bytes=52`, and the check
+  title read `M2 CHECK value=durable-0.2.3.74 len=16 total=1`. A remove/clear/re-set page reported
+  `M2 OPS rm=true cl=true re=true len=1`; the DB held only the durable row (ordinal 5), and a second
+  force-stop/restart check passed. The ARM driver and app compiled and
+  `Test-AppxPayload.ps1 -ExpectedArch arm` passed (30/30 binaries ARM, driver at the package root,
+  48/48 exports); no ARM execution. The Lumia restart measurement is still open. The `.73` ZIPs
+  were built before M2 and remain frozen; bump the manifest before packaging the next release from
+  HEAD.
 - **M3. Consent/CMP experience** — the Usercentrics overlay dims pages and returns on every launch
   (a consequence of M1 plus their "unsupported browser" check). Options: persist the consent
   cookies once M1 lands; ship a document-start rule that closes a known CMP overlay. Site-side

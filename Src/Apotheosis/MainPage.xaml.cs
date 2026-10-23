@@ -247,6 +247,16 @@ namespace Apotheosis
                 }
                 catch (Exception ex) { WriteStage("env-cookiejar: " + ex.GetType().Name); }
 
+                // M2: localStorage gets its own SQLite file in the same writable directory.
+                // The local namespace is created on the first document, so this call has to
+                // land before the first navigation -- SetupRuntimeEnv is that place.
+                try
+                {
+                    WebCoreDriver.WebCoreSetLocalStoragePath(Path.Combine(localDir, "localstorage.db"));
+                    WriteStage("env-localstorage-ok");
+                }
+                catch (Exception ex) { WriteStage("env-localstorage: " + ex.GetType().Name); }
+
                 string caPath = Path.Combine(installDir, "Assets", "cacert.pem");
                 if (File.Exists(caPath))
                 {

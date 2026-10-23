@@ -27,6 +27,8 @@ EXPORTS
     WebCoreSetFontConfigFile
     ; M1: file-backed cookie jar. Reached from C# through this list alone, like the line above.
     WebCoreSetCookieJarPath
+    ; M2: file-backed localStorage. Same rule: absent from this list, absent from the C# host.
+    WebCoreSetLocalStoragePath
     WebCoreSetSehGuard
     WebCoreGetSehInfo
     WebCoreGetFontInfo

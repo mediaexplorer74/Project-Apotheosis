@@ -16,8 +16,10 @@ Detailed dated investigations are retained locally in `Doc/Archive/`; they are h
 
 - **x64:** build, install and bench runs are allowed and were verified. M1 (file-backed cookie jar) is
   **DONE** on x64: `LocalState\cookie.jar.db` starts empty, receives the `apo=m1` cookie, and still
-  contains it after a full app restart.
-- **ARM32:** package compile and PE/export audit are complete (30 ARM binaries, 47/47 driver exports);
+  contains it after a full app restart. M2 (durable localStorage) is **DONE** on x64 as post-`.73`
+  source work: `LocalState\localstorage.db` retains a key across a force-stop and a full app restart.
+  The prepared `.73` release ZIPs predate M2 and are frozen.
+- **ARM32:** package compile and PE/export audit are complete (30 ARM binaries, 48/48 driver exports);
   execution is deliberately forbidden in this project, so no ARM runtime claim is made.
 - **WebKit:** not vendored. The complete port is
   [`WebKitPatches/apotheosis-webkit-2.52.4.patch`](WebKitPatches/README.md), 110 paths against

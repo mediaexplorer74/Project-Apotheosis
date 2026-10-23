@@ -3226,6 +3226,45 @@ patched engine tree. The native JSC in the verified `.73` package remains the ol
 
 ---
 
+### 0.2.3.73 line on the bench: M2 - localStorage survives a restart (2026-10-23, after the .73 release cut)
+
+**1. The backend.** `PortStorage.cpp` now has a `PortStorageDatabase` in front of the old
+`PortStorageArea` map. `WebCoreSetLocalStoragePath`, called from `SetupRuntimeEnv` before the first
+Page, opens `LocalState\localstorage.db` through the same WinRT SQLite VFS as M1's cookie jar. One
+`ItemTable` stores `(origin, key, value, ordinal)` for every origin; `journal_mode=DELETE` and
+`synchronous=FULL` make a committed write survive a force-stop without a `-wal`/`-shm` pair. An area
+loads its origin's rows when created, and set/remove/clear commit before the storage event is
+dispatched. Session and transient-local storage stay in memory by design. If the database cannot be
+opened, the local areas fall back to the old process-scoped map and log `backend=memory` instead of
+pretending to be durable.
+
+**2. The measurement.** The test package was a side-by-side
+`ME.Apotheosis.M2Test_0.2.3.74_x64__cj4nrm0qt9s1y`, registered from the complete
+`bin\x64\Release\ilc\AppxManifest.xml` layout; the source identity stayed
+`ME.Apotheosis 0.2.3.73`, so the installed `.73` app and its LocalState were untouched. The test
+pages were served as URL-safe base64 through `https://httpbin.org/base64/...` (standard base64 with a
+`/` in it is treated as a path separator and returns 404; URL-safe base64 with `-`/`_` works). The
+set page wrote `m2-durable=durable-0.2.3.74` and reported
+`title=M2 SET value=durable-0.2.3.74 len=16`; the DB row was
+`('https://httpbin.org','m2-durable','durable-0.2.3.74',1)`. A force-stop left the row in place. The
+next launch logged `storage: db path=...localstorage.db rows=1`,
+`storage: namespace local quota=5242880 session=1 backend=sqlite`, and
+`storage: restored origin=https://httpbin.org keys=1 bytes=52`; the check page's title read
+`M2 CHECK value=durable-0.2.3.74 len=16 total=1`. A second page exercised
+`setItem`/`removeItem`/`clear`/re-set and reported `M2 OPS rm=true cl=true re=true len=1`; the DB
+then held only the durable row (ordinal 5), and a second force-stop/restart check still read the
+value. `localstorage.db` was 16 KB with one row.
+
+**3. ARM and packaging scope.** The ARM driver compiled and linked with the new
+`WebCoreSetLocalStoragePath` export; the ARM Release app built and
+`Test-AppxPayload.ps1 -ExpectedArch arm` passed: 30/30 binaries ARM, `WebCoreDriver.dll` at the
+package root (31.4 MB), `resources.pri` present, 48/48 driver exports. Nothing was installed or run
+on ARM. The `.73` release ZIPs were built before M2 and remain unchanged; M2 is a post-release
+source change, and the manifest must be bumped before the next package is cut from HEAD. The Lumia
+restart measurement is still open.
+
+---
+
 *"Reviving the Windows Phone web for the people who never let it die."*
 
 ---

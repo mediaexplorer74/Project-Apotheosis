@@ -56,6 +56,11 @@ void WebCoreSetFontConfigFile(const char* path);
 // process. Call before the first network use (SetupRuntimeEnv does).
 void WebCoreSetCookieJarPath(const char* path);
 
+// Apotheosis M2: point localStorage at a SQLite database (UTF-8 path). Call before the
+// first Page is built; SetupRuntimeEnv does. Without it the local namespace remains the
+// old process-scoped map, and a page's values disappear on the next launch.
+void WebCoreSetLocalStoragePath(const char* path);
+
 // Apotheosis: opt in to the SEH guard around the engine entry points. With it on, a native
 // fault becomes -17 (kErrSeh) plus a WebCoreGetSehInfo line instead of .NET Native's
 // FailFast(7), which kills a managed host with no catchable exception. Off by default so
