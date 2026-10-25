@@ -349,7 +349,13 @@ namespace Apotheosis
 
         // Settings
         int _setSearch;
-        bool _setUaDesktop;
+        // The UA default follows the device: a desktop window is a desktop browser,
+        // a Windows.Mobile phone is a mobile one. The old default was the iPhone UA
+        // everywhere; on the x64 bench that made dzen.ru serve desktop HTML to a
+        // "phone" and cover the page with its browser-switch-trap. `ua_migrated`
+        // below replaces that old automatic value once, without touching an
+        // explicit choice the user made later.
+        bool _setUaDesktop = !IsMobileDevice();
         int _defaultZoom = 100;
         int _tabMode;
         string _uaCustom = "";
@@ -373,6 +379,10 @@ namespace Apotheosis
         // by the mobile default. Without it, every launch would re-enable fitwindow and the
         // Settings switch would appear not to work.
         bool _fitWindowMigrated;
+        // `ua_migrated=1` in settings.ini: the old automatic `ua=0` has already been replaced
+        // by the device default. Same marker discipline as fitwindow_migrated: without it,
+        // every launch would rewrite a deliberate `ua=` choice.
+        bool _uaMigrated;
         // The address-bar dropdown (history + site matches). On by default, because that is what the
         // history tiles and the requirement 7 measurement were built around -- but it opens over the
         // page, and the page is what the user came for, so it needs an off switch. Read in
@@ -739,6 +749,7 @@ namespace Apotheosis
                             case "touchfab": _showFab = (int.Parse(v) != 0); break;
                             case "fitwindow": _fitWindow = (int.Parse(v) != 0); break;
                             case "fitwindow_migrated": _fitWindowMigrated = (int.Parse(v) != 0); break;
+                            case "ua_migrated": _uaMigrated = (int.Parse(v) != 0); break;
                             case "suggest": _suggestOn = (int.Parse(v) != 0); break;
                             case "headless": _headlessMode = int.Parse(v); break;
                         }
@@ -761,6 +772,20 @@ namespace Apotheosis
             {
                 if (!_fitWindow) _fitWindow = true;
                 _fitWindowMigrated = true;
+                settingsChanged = true;
+            }
+
+            // 2026-10-25: the user-agent migration. The old build wrote the mobile iPhone
+            // UA on every device; on a desktop window that is exactly the mismatch
+            // dzen.ru's browser-switch-trap reports as an outdated browser. Replace the
+            // old automatic value once on non-mobile devices. On Windows.Mobile the
+            // mobile value is correct, and a desktop value there was an explicit choice,
+            // so leave both alone. The marker makes a later explicit `ua=` stick.
+            if (!_uaMigrated)
+            {
+                if (!IsMobileDevice() && !_setUaDesktop)
+                    _setUaDesktop = true;
+                _uaMigrated = true;
                 settingsChanged = true;
             }
 
@@ -796,6 +821,7 @@ namespace Apotheosis
                 sb.AppendLine($"touchfab={(_showFab ? 1 : 0)}");
                 sb.AppendLine($"fitwindow={(_fitWindow ? 1 : 0)}");
                 sb.AppendLine($"fitwindow_migrated={(_fitWindowMigrated ? 1 : 0)}");
+                sb.AppendLine($"ua_migrated={(_uaMigrated ? 1 : 0)}");
                 sb.AppendLine($"suggest={(_suggestOn ? 1 : 0)}");
                 sb.AppendLine($"headless={_headlessMode}");
                 File.WriteAllText(Path.Combine(d, "settings.ini"), sb.ToString(), Encoding.UTF8);

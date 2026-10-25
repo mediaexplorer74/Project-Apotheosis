@@ -171,8 +171,16 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   `form-action` error; a local two-origin chain ended at `REDIRECT OK`, a `form-action 'none'`
   page still refused its form, and a plain form still submitted. L1 (`createFrame`) is unrelated
   to this defect. The `.73` ZIPs stay frozen; bump the manifest before the next release build.
+  **Follow-up, same day (`.79`):** the form fix exposed a second dzen gate. With the unified UA
+  pair (`Src/port/PortUserAgent.h`) and a desktop Edge default the `browser-switch-trap` is gone,
+  but Yandex Direct still serves a "download Yandex Browser" splashscreen to Edge. A host-specific
+  desktop UA now sends `YaBrowser/24.1.0.0` to `dzen.ru` and the Yandex domains listed in
+  `PortUserAgent.h`, while ordinary sites keep Edge; custom UA still wins and mobile stays iPhone.
+  Measured on x64 `.79`: dzen clean, `ya.ru`/`example.com`/`lenta.ru` load, the mobile probe sends
+  the iPhone string, and the suffix matcher passes 21 URL cases. Microsoft blocks this bench client
+  with Edge too, so that block is not UA-specific. L1 remains next.
 
-## Phase M — medium term (weeks each)
+## Phase M - medium term (weeks each)
 
 - **M1. File-backed cookie jar** - **DONE in 0.2.3.73, verified on x64 2026-10-23.** The jar is
   `LocalState\cookie.jar.db`, opened by `WebCoreSetCookieJarPath`; `CookieJarDB` is the source of

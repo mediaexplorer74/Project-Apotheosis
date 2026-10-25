@@ -25,6 +25,7 @@
 #include <WebCore/NetworkStorageSession.h>
 #include "PortNetworkStorageSession.h"   // cookie persistence: a real storageSession
 #include "PortBackForward.h"             // WebCorePort::apoBackForwardTrace -- diagnostic only
+#include "PortUserAgent.h"               // the one mobile/desktop UA pair (also used by the curl fetches)
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -617,16 +618,22 @@ void LoadingFrameLoaderClient::setTitle(const StringWithDirection&, const URL&)
 extern "C" bool g_apoUaMobile;        // defined in WebCoreDriver.cpp; UI can toggle mobile/desktop, takes effect on reload
 extern "C" char g_apoCustomUA[2048];  // defined in WebCoreDriver.cpp; if non-empty it overrides mobile/desktop (set via WebCoreSetUserAgentString)
 
-String LoadingFrameLoaderClient::userAgent(const URL&) const
+String LoadingFrameLoaderClient::userAgent(const URL& url) const
 {
     // Apotheosis: custom UA wins (entered by the user in settings, to bypass UA-blocking sites such as microsoft).
     if (g_apoCustomUA[0])
         return String::fromUTF8(g_apoCustomUA);
     // Default mobile iPhone Safari UA -> sites serve the mobile layout (narrower/lighter, tuned for a ~390px viewport).
     if (g_apoUaMobile)
-        return "Mozilla/5.0 (iPhone; CPU iPhone OS 16_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Mobile/15E148 Safari/604.1"_s;
+        return String::fromUTF8(WebCorePort::mobileUserAgent);
+    // Desktop: dzen.ru and Yandex services get the Yandex Browser UA. dzen serves a
+    // Yandex Browser splash ad to Edge, and Yandex's own properties expect YaBrowser;
+    // every other host keeps Edge. The Yandex string is a site-specific contract, not
+    // a global browser identity.
+    if (WebCorePort::isYandexHost(url.string().utf8().data()))
+        return String::fromUTF8(WebCorePort::desktopYandexUserAgent);
     // Desktop: a current Edge/Chromium UA (legacy Safari-on-Windows strings get blocked by sites like microsoft).
-    return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0"_s;
+    return String::fromUTF8(WebCorePort::desktopUserAgent);
 }
 
 void LoadingFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame*)

@@ -150,6 +150,7 @@ extern "C" __declspec(dllimport) void __stdcall OutputDebugStringA(const char*);
 #include "PortStorage.h"                 // WebCorePort::createPortStorageNamespaceProvider
 #include "PortWebSocket.h"               // WebCorePort::createPortSocketProvider -- see PortWebSocket.cpp
 #include "PortBackForward.h"             // WebCorePort::createPortBackForwardClient -- see PortBackForward.cpp
+#include "PortUserAgent.h"               // the one mobile/desktop UA pair (also used by the loader client)
 #include <WebCore/Page.h>                // WebCore::Page
 #include <WebCore/NotificationClient.h>  // WebCore::NotificationClient / provideNotification -- see installPortNotificationClient
 // Apotheosis 2026-10-20: the desktop-mode screen override (see installDesktopScreenOverride).
@@ -1329,6 +1330,27 @@ static int g_apoImagesEnabled = -1;
 extern "C" char g_apoCustomUA[2048] = {0};  // custom UA override, set by WebCoreSetUserAgentString
 static char g_spaProbe[512] = "";     // the SPA module probe's last verdict (import started / eval-ok / error)
 static std::vector<uint8_t> g_caBytes;  // the packaged CA bundle, handed to curl by WebCoreDownload
+
+// Apotheosis 2026-10-25: the UA that goes on the wire for a libcurl fetch.
+//
+// The custom string wins, exactly as it does in LoadingFrameLoaderClient::userAgent();
+// otherwise the same mobile/desktop switch drives both halves of the load. On desktop,
+// dzen.ru and the Yandex hosts listed in PortUserAgent.h get the Yandex Browser UA
+// (dzen serves a Yandex Browser splash ad to Edge); everything else keeps Edge. The
+// Yandex string is for Yandex properties, not a global identity.
+// Before this helper the top-level fetch was always Safari-on-Windows while
+// navigator.userAgent was the iPhone string, and dzen.ru's browser-switch-trap read
+// that mismatch as an outdated browser. Keep the two in step through PortUserAgent.h.
+static const char* apoWireUserAgent(const char* url = nullptr)
+{
+    if (g_apoCustomUA[0])
+        return g_apoCustomUA;
+    if (g_apoUaMobile)
+        return WebCorePort::mobileUserAgent;
+    if (WebCorePort::isYandexHost(url))
+        return WebCorePort::desktopYandexUserAgent;
+    return WebCorePort::desktopUserAgent;
+}
 
 // GPU active flag: true once WebCoreGpuInit has both a live GL context and a TextureMapper.
 // This is the only gate on the GPU path (plus PortChromeClient); with it false everything
@@ -3344,8 +3366,7 @@ struct ApoFetchChannel {
                         return 0;
                     });
                 curl_easy_setopt(h, CURLOPT_XFERINFODATA, &watch);
-                curl_easy_setopt(h, CURLOPT_USERAGENT,
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Safari/605.1.15");
+                curl_easy_setopt(h, CURLOPT_USERAGENT, apoWireUserAgent(jobUrl.c_str()));
                 // Apotheosis 2026-09-18: the byte counter is advanced from the WRITE callback, not only
                 // from XFERINFO. The progress meter runs at curl's own cadence (~1 Hz), which is slower
                 // than the harness heartbeat (700 ms), so a counter driven by it alone reads "unchanged"
@@ -4241,8 +4262,7 @@ static int buildSession(const char* url, int w, int h, uint8_t* outRGBA)
         curl_easy_setopt(h, CURLOPT_FOLLOWLOCATION, 1L);
         curl_easy_setopt(h, CURLOPT_MAXREDIRS, 10L);
         curl_easy_setopt(h, CURLOPT_TIMEOUT, 30L);
-        curl_easy_setopt(h, CURLOPT_USERAGENT,
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Safari/605.1.15");
+        curl_easy_setopt(h, CURLOPT_USERAGENT, apoWireUserAgent(url));
         curl_easy_setopt(h, CURLOPT_WRITEFUNCTION, +[](char* data, size_t size, size_t nmemb, void* userp) -> size_t {
             static_cast<std::string*>(userp)->append(data, size * nmemb);
             return size * nmemb;
@@ -4777,8 +4797,7 @@ static int WebCoreDownloadImpl(const char* url, const char* outPath)
     curl_easy_setopt(h, CURLOPT_WRITEFUNCTION, webcoreDownloadWrite);
     curl_easy_setopt(h, CURLOPT_WRITEDATA, fp);
     curl_easy_setopt(h, CURLOPT_TIMEOUT, 120L);
-    curl_easy_setopt(h, CURLOPT_USERAGENT,
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Safari/605.1.15");
+    curl_easy_setopt(h, CURLOPT_USERAGENT, apoWireUserAgent(url));
     if (!g_caBytes.empty()) {
         curl_blob blob;
         blob.data = g_caBytes.data();

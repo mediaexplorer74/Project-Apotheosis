@@ -1120,3 +1120,27 @@ like the fix had disabled CSP. It had not. Any future CSP test must load the tes
 engine (`location.href` or a form from a fed page), or it measures the port's bypass instead of the
 policy.
 
+## A user-agent string is a contract with one site, not a browser identity (2026-10-25)
+
+`dzen.ru` had two independent gates. The first was a mismatch: the document's
+`navigator.userAgent` was the iPhone string while the top-level curl fetch sent
+Safari-on-Windows, and dzen's `browser-switch-trap` read the pair as an unsupported desktop browser.
+Unifying both halves behind `Src/port/PortUserAgent.h` and defaulting a desktop window to Edge
+removed it.
+
+The second gate appeared only after the first was gone: Yandex Direct served a "download Yandex
+Browser" splashscreen to Edge. A Yandex Browser UA suppressed it, but making that global immediately
+changes what every other site is told about the client; it is not a cosmetic string. The port now
+selects the desktop UA by host (`dzen.ru` and the Yandex domains in `PortUserAgent.h` get
+`YaBrowser/24.1.0.0`, everything else keeps Edge), with custom UA still first and mobile still
+iPhone.
+
+Two probe lessons:
+
+* `microsoft.com` returned "Your request has been blocked" with BOTH the Yandex custom UA and the
+  Edge default. Do not use it as a one-bit UA test; its block is IP/TLS/header policy. Measure the
+  UA branch on a host you control, where the request headers are visible.
+* The suffix matcher is deliberately not a substring test. `notdzen.ru`, `dzen.ru.example.com` and
+  `dzen.ru.evil.com` must stay on the ordinary UA; a `strstr` would have put all three on Yandex.
+  The matcher passed 21 URL cases on the bench.
+

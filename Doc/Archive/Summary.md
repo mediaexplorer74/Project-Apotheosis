@@ -3335,6 +3335,43 @@ HEAD. The trap for future probes is recorded in [LESSONS.md](../LESSONS.md): a t
 fed through `DocumentWriter`, so CSP headers on that document are never applied and a CSP test must
 load its page through the engine.
 
+### dzen.ru on the x64 bench: the browser-switch-trap and the Yandex Browser ad are two gates (2026-10-25, post-.73)
+
+**1. The trap was a UA mismatch.** After the form-action fix, the x64 bench still painted dzen's
+`browser-switch-trap` ("your browser is outdated"). The document's `navigator.userAgent` was the
+iPhone string while the top-level fetch sent Safari-on-Windows. dzen reads that pair as a desktop
+browser that is neither Edge nor Yandex and refuses it. The fix was to give both halves of a load
+one source of truth, `Src/port/PortUserAgent.h`: `LoadingFrameLoaderClient::userAgent()` and all
+three `CURLOPT_USERAGENT` sites in `WebCoreDriver.cpp` now use the same effective string. The
+desktop default follows the device: a window that is not `Windows.Mobile` starts on the desktop
+Edge UA, a phone starts on the iPhone UA. `ua_migrated=1` replaces the old automatic `ua=0` once;
+an explicit choice sticks afterwards. With Edge the trap is gone.
+
+**2. The ad was a second, host-specific gate.** Edge then received a Yandex Direct splashscreen
+("Часть сайтов недоступна" / "Скачайте Яндекс Браузер"; `product:"browser"`, `paas:"browser3"`,
+`utm_term=Edge`). A Yandex Browser UA removes it. A global Yandex UA is not acceptable: it is the
+wrong identity for ordinary sites, and `microsoft.com` blocks this bench's client either way
+(measured with Edge too -- the block is IP/TLS/header policy, not a UA branch). The port therefore
+chooses the desktop UA by host: `dzen.ru`, `yandex.ru`, `yandex.com`, `yandex.net`, the regional
+`yandex.by/kz/ua/com.tr`, `ya.ru` and `yastatic.net` get `YaBrowser/24.1.0.0`; everything else keeps
+`Edg/120`. The matcher is suffix-based with a label boundary, so `notdzen.ru`,
+`dzen.ru.example.com` and `dzen.ru.evil.com` stay on Edge. Custom UA still wins; mobile stays
+iPhone.
+
+**3. The measurement.** `.78` verified the unified pair on a local probe: the top-level `GET` and
+`navigator.userAgent` both carried Edge, and with a custom Yandex UA both carried Yandex. `.79`
+added the host list and was measured on x64: dzen painted the normal desktop page with no
+splashscreen (screenshot), `ya.ru` loaded (`body=1`, 66 scripts), `example.com` and `lenta.ru`
+loaded on Edge (`body=1`), and `ua mobile` made the probe send the iPhone string before `ua desktop`
+restored the default. The matcher passed 21 URL cases. Microsoft's "Your request has been blocked"
+appeared with Edge as well as with the earlier Yandex custom UA, so it is not a regression from this
+change and not evidence about the host branch.
+
+**4. Versions and packaging.** The strings stay at Chrome/120, YaBrowser/24.1 and iPhone Safari
+16.4: these are the compatibility baseline for the old WebKit, not the newest releases. Bumping
+them is a separate change with its own site testing. The bench manifest is now `0.2.3.79`; the
+`0.2.3.73` release ZIPs remain frozen and no release is cut from this HEAD.
+
 ---
 
 *"Reviving the Windows Phone web for the people who never let it die."*
