@@ -169,10 +169,10 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   `('apo','m1','httpbin.org','/',1792838096056,0,0,0)` with `user_version=1`. The earlier 2026-09-18
   experiment that JOINED two disjoint jars is unrelated and remains closed. M3 now has the persisted
   consent-cookie option it was waiting for.
-- **M2. Storage durability** - **DONE on x64, verified 2026-10-23 (post-0.2.3.73; not in the `.73`
-  release ZIPs).** `localStorage` now has a durable backend. `WebCoreSetLocalStoragePath` points the
-  local namespace at `LocalState\localstorage.db`; one `ItemTable` holds every origin, with
-  `journal_mode=DELETE` and `synchronous=FULL` so a committed write survives a force-stop. A
+- **M2. Storage durability** - **DONE on x64 and ARM, verified 2026-10-25 (post-0.2.3.73; not in
+  the `.73` release ZIPs).** `localStorage` now has a durable backend. `WebCoreSetLocalStoragePath`
+  points the local namespace at `LocalState\localstorage.db`; one `ItemTable` holds every origin,
+  with `journal_mode=DELETE` and `synchronous=FULL` so a committed write survives a force-stop. A
   `PortStorageArea` loads its origin's rows when it is created and commits set/remove/clear before
   dispatching the storage event. Session and transient-local storage stay in memory by design; a
   failed DB open falls back to the old in-memory backend and says so in the trace. Measured on a
@@ -184,11 +184,32 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   backend=sqlite`, `storage: restored origin=https://httpbin.org keys=1 bytes=52`, and the check
   title read `M2 CHECK value=durable-0.2.3.74 len=16 total=1`. A remove/clear/re-set page reported
   `M2 OPS rm=true cl=true re=true len=1`; the DB held only the durable row (ordinal 5), and a second
-  force-stop/restart check passed. The ARM driver and app compiled and
-  `Test-AppxPayload.ps1 -ExpectedArch arm` passed (30/30 binaries ARM, driver at the package root,
-  48/48 exports); no ARM execution. The Lumia restart measurement is still open. The `.73` ZIPs
-  were built before M2 and remain frozen; bump the manifest before packaging the next release from
-  HEAD.
+  force-stop/restart check passed. The ARM line followed on 2026-10-25: the side-by-side
+  `ME.Apotheosis.M2Test` package was installed on the Lumia 950 (`192.168.1.35`, OS 15254.603) and
+  the Lumia 640 (`192.168.1.39`, OS 15063.1868). `0.2.3.74` ran the SET page and reported
+  `title=M2 SET durable-0.2.3.74 len=16 total=1`; a real force-stop, then `0.2.3.75` ran the CHECK
+  page and reported `title=M2 CHECK durable-0.2.3.74 len=16 total=1` on both phones. Each DB held
+  the row `('https://httpbin.org','m2-durable','durable-0.2.3.74',1)` with `user_version=1`; the
+  restart logged `storage: restored origin=https://httpbin.org keys=1 bytes=60` and `rows=1`.
+  Evidence: `Src/tools/device-logs/20261025-m2-l950-*` and `...-l640-*`; batches:
+  `Src/tools/device-accept/probe-m2-arm.txt` and `probe-m2-check-arm.txt`. The ARM driver and app
+  also passed `Test-AppxPayload.ps1 -ExpectedArch arm` (30/30 binaries ARM, driver at the package
+  root, 48/48 exports).
+
+  The first ARM run exposed a viewport defect that x64 could not show: the fixed 720x1080 frame was
+  shrunk to 0.457-0.458 by the 360x494-DIP content area, so the mobile home page rendered at half
+  size. `0.2.3.76` turns `fitwindow` on by default on `Windows.Mobile` and writes
+  `fitwindow_migrated=1` so a later explicit off is not overwritten; `BuildHomeHtml` now uses
+  `clamp()` sizes and an `auto-fit minmax(260px,1fr)` grid. Measured on both phones:
+  `applysettings: ... fit=1`, `adopt: no session 360x494 z=1,00`,
+  `frame fit scale=1,000 frame=360x494 area=360x494`; `settings.ini` carries `fitwindow=1` and
+  `fitwindow_migrated=1`; the maintainer confirmed the home page is correctly sized on both. The
+  L950 still looks softer than the L640: software present hands the compositor a 360x494-DIP bitmap
+  and the 4x panel upscales it twice as far as the 2x panel. That is a present-resolution issue, not
+  a fit regression; a physical-resolution software present remains open. WDP on these phones has no
+  screenshot endpoint (`/api/control/screenshot` -> 404) and no device screenshot was captured. The
+  `.73` ZIPs were built before M2 and remain frozen; bump the manifest before packaging the next
+  release from HEAD.
 - **M3. Consent/CMP experience** — the Usercentrics overlay dims pages and returns on every launch
   (a consequence of M1 plus their "unsupported browser" check). Options: persist the consent
   cookies once M1 lands; ship a document-start rule that closes a known CMP overlay. Site-side

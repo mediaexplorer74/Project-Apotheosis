@@ -17,6 +17,7 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.Storage.Pickers;
 using Windows.System;
+using Windows.System.Profile;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Popups;
@@ -48,9 +49,11 @@ namespace Apotheosis
         // pair because every existing use site already means "the current viewport", and a parallel
         // pair would be a second truth to keep in step.
         //
-        // With the setting OFF -- the default, and the state the ARM line inherits -- nothing writes
-        // them and the port behaves exactly as it did. The measurement that made this safe to try is
-        // in Doc/PLAN.md §0 item 4.
+        // With the setting OFF nothing writes them and the port behaves exactly as it did. That is
+        // still the desktop default; on Windows.Mobile the setting is ON by default since
+        // 2026-10-25, because a fixed 720-px frame is a Lumia 950-shaped canvas and halves every
+        // glyph on the 360-DIP Lumia 640. See the field comment at `_fitWindow`. The measurement
+        // that made the fitted path safe to try is in Doc/Archive/Plan_MVP.md §0 item 4.
         static int kW = 720, kH = 1080;
         // S7 (2026-10-22): ContentArea DIP per frame pixel -- the display scale of the fixed
         // frame (FrameFitScale). 1.0 whenever the frame is drawn 1:1: the fitted viewport
@@ -355,9 +358,21 @@ namespace Apotheosis
         // device with no working touch path is worse than two buttons on one that has. The switch
         // is the answer, not the default.
         bool _showFab = true;
-        // Fit the engine viewport to the window instead of leaving the 720x1080 one. Off by
-        // default: it changes the present path, and the ARM line has not seen it.
+        // Fit the engine viewport to the window instead of leaving the fixed 720x1080 one.
+        //
+        // 2026-10-25: ON by default on Windows.Mobile, and a one-time migration turns it on for
+        // installs whose settings.ini carries the old automatic `fitwindow=0`. The fixed frame is
+        // a Lumia 950-shaped canvas (720 CSS px wide); on the 360-DIP Lumia 640 the display scale
+        // shrinks every CSS px to 0.46 DIP, so the home page and all text render at half size
+        // (measured: `frame fit scale=0,457 frame=720x1080 area=360x494`). Fitting makes one CSS
+        // px one DIP on every panel, which is the only rule that survives the 360..576 DIP range
+        // of the target phones. The user can still turn it off in Settings; the marker below
+        // makes that choice stick. Desktop keeps the historical default.
         bool _fitWindow;
+        // `fitwindow_migrated=1` in settings.ini: the old automatic 0 has already been replaced
+        // by the mobile default. Without it, every launch would re-enable fitwindow and the
+        // Settings switch would appear not to work.
+        bool _fitWindowMigrated;
         // The address-bar dropdown (history + site matches). On by default, because that is what the
         // history tiles and the requirement 7 measurement were built around -- but it opens over the
         // page, and the page is what the user came for, so it needs an off switch. Read in
@@ -698,31 +713,35 @@ namespace Apotheosis
         // ===== Settings =====
         void LoadSettings()
         {
+            bool settingsChanged = false;
             try
             {
                 string d = LocalStateDir();
                 string path = Path.Combine(d, "settings.ini");
-                if (!File.Exists(path)) { ApplySettings(); return; }
-                foreach (var line in File.ReadAllLines(path, Encoding.UTF8))
+                if (File.Exists(path))
                 {
-                    int eq = line.IndexOf('=');
-                    if (eq < 0) continue;
-                    string k = line.Substring(0, eq), v = line.Substring(eq + 1);
-                    switch (k)
+                    foreach (var line in File.ReadAllLines(path, Encoding.UTF8))
                     {
-                        case "search": _setSearch = int.Parse(v); break;
-                        case "home": _homeUrl = string.IsNullOrEmpty(v) ? "about:home" : v; break;
-                        case "ua": _setUaDesktop = (int.Parse(v) != 0); break;
-                        case "zoom": _defaultZoom = int.Parse(v); break;
-                        case "tabmode": _tabMode = int.Parse(v); break;
-                        case "gpudefault": _gpuDefault = (int.Parse(v) != 0); break;
-                        case "ua_custom": _uaCustom = v; break;
-                        case "lang": _uiLang = int.Parse(v); break;
-                        case "log": _traceOn = (int.Parse(v) != 0); break;
-                        case "touchfab": _showFab = (int.Parse(v) != 0); break;
-                        case "fitwindow": _fitWindow = (int.Parse(v) != 0); break;
-                        case "suggest": _suggestOn = (int.Parse(v) != 0); break;
-                        case "headless": _headlessMode = int.Parse(v); break;
+                        int eq = line.IndexOf('=');
+                        if (eq < 0) continue;
+                        string k = line.Substring(0, eq), v = line.Substring(eq + 1);
+                        switch (k)
+                        {
+                            case "search": _setSearch = int.Parse(v); break;
+                            case "home": _homeUrl = string.IsNullOrEmpty(v) ? "about:home" : v; break;
+                            case "ua": _setUaDesktop = (int.Parse(v) != 0); break;
+                            case "zoom": _defaultZoom = int.Parse(v); break;
+                            case "tabmode": _tabMode = int.Parse(v); break;
+                            case "gpudefault": _gpuDefault = (int.Parse(v) != 0); break;
+                            case "ua_custom": _uaCustom = v; break;
+                            case "lang": _uiLang = int.Parse(v); break;
+                            case "log": _traceOn = (int.Parse(v) != 0); break;
+                            case "touchfab": _showFab = (int.Parse(v) != 0); break;
+                            case "fitwindow": _fitWindow = (int.Parse(v) != 0); break;
+                            case "fitwindow_migrated": _fitWindowMigrated = (int.Parse(v) != 0); break;
+                            case "suggest": _suggestOn = (int.Parse(v) != 0); break;
+                            case "headless": _headlessMode = int.Parse(v); break;
+                        }
                     }
                 }
             }
@@ -731,7 +750,32 @@ namespace Apotheosis
             if (_headlessMode < 0 || _headlessMode > 2) _headlessMode = 0;
             if (_uiLang < 0 || _uiLang > 2) _uiLang = 0;
             Str.SetLang(_uiLang);
+
+            // 2026-10-25: the mobile viewport migration. Every earlier build wrote
+            // `fitwindow=0` into settings.ini on its first save even though the user never made
+            // that choice, so the value itself cannot tell "old default" from "the user turned
+            // it off". The marker splits the two cases: absent means the file predates this
+            // rule (or the app has never saved), and the mobile default is applied once; once
+            // written, a later explicit 0 is the user's and is left alone.
+            if (IsMobileDevice() && !_fitWindowMigrated)
+            {
+                if (!_fitWindow) _fitWindow = true;
+                _fitWindowMigrated = true;
+                settingsChanged = true;
+            }
+
             ApplySettings();
+            if (settingsChanged) SaveSettings();
+        }
+
+        // Windows.Mobile is the target this rule was written for: the phone panels in the
+        // supported set are 360..576 DIP wide, and the fixed 720-px frame shrinks text by
+        // 0.46..0.80 on them. The desktop bench (and every windowed build) keeps the old
+        // default, so its 720x1080 measurements stay comparable.
+        static bool IsMobileDevice()
+        {
+            try { return AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile"; }
+            catch { return false; }
         }
 
         void SaveSettings()
@@ -751,6 +795,7 @@ namespace Apotheosis
                 sb.AppendLine($"log={(_traceOn ? 1 : 0)}");
                 sb.AppendLine($"touchfab={(_showFab ? 1 : 0)}");
                 sb.AppendLine($"fitwindow={(_fitWindow ? 1 : 0)}");
+                sb.AppendLine($"fitwindow_migrated={(_fitWindowMigrated ? 1 : 0)}");
                 sb.AppendLine($"suggest={(_suggestOn ? 1 : 0)}");
                 sb.AppendLine($"headless={_headlessMode}");
                 File.WriteAllText(Path.Combine(d, "settings.ini"), sb.ToString(), Encoding.UTF8);
@@ -3650,10 +3695,15 @@ namespace Apotheosis
             var h = new StringBuilder();
             h.Append("<html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><style>");
             h.Append("*{box-sizing:border-box}body{margin:0;background:#f5f6f8;font-family:sans-serif;color:#202124}");
-            h.Append(".hero{background:linear-gradient(135deg,#00aa77,#0088cc);color:#fff;padding:46px 26px 38px}");
-            h.Append(".hero h1{margin:0;font-size:46px;letter-spacing:-1px}.hero p{margin:10px 0 0;font-size:20px;opacity:.92}");
-            h.Append(".wrap{padding:24px}.sec{font-size:17px;color:#5f6368;margin:0 0 14px}");
-            h.Append(".grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}");
+            // 2026-10-25: the home page is laid out at the window's CSS width now (fitwindow), not
+            // at a fixed 720 px, so its sizes have to be responsive. The old fixed 46/20/17 px
+            // values were tuned for 720 and become giants at 360 CSS px on the Lumia 640; the
+            // clamp() pairs keep the 720-px look at the top end and settle at 30/15/14 on the
+            // narrow panel. The grid follows the same rule: one column at 360, two from 576.
+            h.Append(".hero{background:linear-gradient(135deg,#00aa77,#0088cc);color:#fff;padding:clamp(26px,6.4vw,46px) clamp(18px,3.6vw,26px) clamp(22px,5.3vw,38px)}");
+            h.Append(".hero h1{margin:0;font-size:clamp(30px,6.4vw,46px);letter-spacing:-1px}.hero p{margin:8px 0 0;font-size:clamp(15px,2.8vw,20px);opacity:.92}");
+            h.Append(".wrap{padding:clamp(14px,3.3vw,24px)}.sec{font-size:clamp(14px,2.4vw,17px);color:#5f6368;margin:0 0 14px}");
+            h.Append(".grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}");
             // min-width:0 is load-bearing and is not a style choice. A grid item's automatic
             // minimum size is `auto`, i.e. its MIN-CONTENT width, and the titles below are
             // `white-space:nowrap` -- so one long title made its `1fr` track as wide as the
@@ -3662,8 +3712,8 @@ namespace Apotheosis
             // of 0.2.3.4 showed. `overflow:hidden` alone would also do it (it zeroes the
             // automatic minimum), but min-width:0 says what is meant: this item may shrink.
             h.Append("a.tile{display:block;min-width:0;overflow:hidden;text-decoration:none;background:#fff;border-radius:16px;padding:18px 18px 20px;box-shadow:0 2px 10px rgba(0,0,0,.08);color:#202124}");
-            h.Append(".tile .t{font-size:20px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}");
-            h.Append(".tile .u{font-size:15px;color:#80868b;margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}");
+            h.Append(".tile .t{font-size:clamp(15px,2.8vw,20px);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}");
+            h.Append(".tile .u{font-size:clamp(12px,2.1vw,15px);color:#80868b;margin-top:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}");
             h.Append("</style></head><body>");
             h.Append("<div class='hero'><h1>EdgeHTML Reborn</h1><p>Modern browser engine \u00b7 Windows 10 Mobile \u00b7 ARM32</p></div>");
             h.Append("<div class='wrap'>");

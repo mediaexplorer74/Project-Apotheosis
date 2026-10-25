@@ -15,7 +15,7 @@ harness is a debugging tool for the native side only.
 |---|---|---|
 | Project | `Src/harness/Harness.vcxproj` | `Src/Apotheosis/Apotheosis.csproj` |
 | Links the engine | **statically** (`WebCoreDriver-gpu-*.lib` + `WebCoreFull.lib`) | **dynamically** (`native/<arch>/*.dll` staged into the appx) |
-| Runs on | x64 dev box, ARM32 in theory | x64 dev box now, Lumia 950 as the goal |
+| Runs on | x64 dev box, ARM32 in theory | x64 dev box and the two Lumia acceptance phones (950, 640) |
 | Diagnostics | OutputDebugString, wedge dumps, UEF | files in `LocalState` (`stage.txt`, `port-trace.txt`, `gpuinit.txt`, …) |
 | Crash model | process dies, WER dump | **must not die** — see the SEH contract below |
 
@@ -89,8 +89,9 @@ MSBuild.exe /restore /p:Configuration=Release /p:Platform=x64 /p:AppxPackageSign
 
 ### ARM32 (Lumia 950, W10M)
 
-Same two-line shape, with `build-arm32-gpu` and `-Arch arm`. ARM is **compile/audit only** in this
-repository: build the package and inspect its PE headers, never execute it. The engine trees
+Same two-line shape, with `build-arm32-gpu` and `-Arch arm`. ARM is **build/audit plus
+device-acceptance** in this repository: build the package, inspect its PE headers, then run only an
+explicit acceptance batch on the two maintainer Lumias. The engine trees
 (`WebCore.lib`, `JavaScriptCore.lib`, `WTF.lib`, `PAL.lib`) are built from the same source; a driver
 rebuild does *not* require a full WebKit rebuild once those archives exist. See
 [DEVELOPER-SETUP.md](DEVELOPER-SETUP.md) section 9 and [BUILD-ARM32.md](BUILD-ARM32.md) for the
@@ -105,7 +106,7 @@ this project a separate bug.
 
 ## Document map
 
-- [DEVELOPER-SETUP.md](DEVELOPER-SETUP.md) - **start here for a clean machine**: toolchain, vcpkg, ANGLE, exact WebKit tag + patch, x64 build, ARM compile-only audit, troubleshooting.
+- [DEVELOPER-SETUP.md](DEVELOPER-SETUP.md) - **start here for a clean machine**: toolchain, vcpkg, ANGLE, exact WebKit tag + patch, x64 build, ARM build/audit and device acceptance, troubleshooting.
 - [ROADMAP.md](ROADMAP.md) - the LIVE plan: phased defect inventory to 1.0.0.0 (S/M/L). Start here for "where are we".
 - [Archive/Plan_MVP.md](Archive/Plan_MVP.md) — the archived MVP plan (was `PLAN.md`, moved 2026-10-21); complete, kept as the record.
 - [Archive/MVP.md](Archive/MVP.md) — the archived MVP acceptance contract (was `MVP.md`, moved 2026-10-22); 10/10 met on both lines, kept as the record. The 1.0.0.0 exit contract lives in ROADMAP.md, Phase 0.

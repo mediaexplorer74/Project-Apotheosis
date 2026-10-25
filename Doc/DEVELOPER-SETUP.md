@@ -1,10 +1,10 @@
-# Developer setup - x64 first, ARM compile-only
+# Developer setup - x64 first, ARM device acceptance
 
 This is the from-a-clean-machine guide for **Apotheosis 0.2.3.73**, plus the post-release M2
-storage work in section 8. It is written for
+storage work and ARM acceptance in section 8. It is written for
 someone who has never built WebKit and has a normal, possibly slow, internet
 connection. Read the whole page once before starting: the x64 path is long but
-linear, and the ARM path is deliberately not a runtime path.
+linear, and the ARM path is a device-acceptance path, not a general runtime target.
 
 ## 0. What is in the repository, and what is not
 
@@ -137,7 +137,7 @@ This is the x64 set. It is intentionally explicit rather than manifest-driven so
 the versions are reproducible on a weak connection. Expect roughly 10-20 minutes
 and 1-2 GB of downloads.
 
-For the ARM compile-only line, install the same set with `--triplet arm-uwp`, but
+For the ARM device-acceptance line, install the same set with `--triplet arm-uwp`, but
 **omit `pixman` and `pthreads`**: the ARM pixman/cairo/harfbuzz line uses the
 scripts in `Src/port` and the `arm-uwp` prefix. The ARM dependency scripts also
 expect the Cairo/HarfBuzz source archives under `C:\vcpkg\buildtrees`; if those
@@ -501,10 +501,23 @@ remove/clear drill is:
 then confirm `localStorage.length===0` before setting the durable key again.
 Measured result: `M2 OPS rm=true cl=true re=true len=1`.
 
-## 9. ARM32: build and audit, never execute
+The ARM acceptance repeated this drill on the Lumia 950 (OS 15254.603) and the Lumia 640 (OS
+15063.1868) with `ME.Apotheosis.M2Test 0.2.3.74` and `.75`, with real force-stops between SET and
+CHECK. Both titles read `M2 SET durable-0.2.3.74 len=16 total=1` and
+`M2 CHECK durable-0.2.3.74 len=16 total=1`; both DBs held the single row with `user_version=1`, and
+both restarts logged `storage: restored origin=https://httpbin.org keys=1 bytes=60`. Pulled logs are
+under `Src/tools/device-logs/20261025-m2-l950-*` and `...-l640-*`. The same run found the fixed
+720x1080 frame rendering at `scale=0,457`/`0,458` on the 360x494-DIP content area; `0.2.3.76` makes
+`fitwindow` the mobile default and migrates old settings with `fitwindow_migrated=1`. See the M2
+entry in [ROADMAP.md](ROADMAP.md) for the measured numbers.
 
-This is a compile-only mirror. It uses the same sources and version, but **do not
-run the resulting package** in this project.
+## 9. ARM32: build, audit, and device acceptance
+
+This is the same sources and version. The historical rule was compile-only; on
+2026-10-25 M2 was executed on the maintainer's Lumia 950 and Lumia 640 and both
+phones passed. Treat ARM packages as device-acceptance builds for those two
+phones, not as the general runtime path, and record the batch and the pulled
+logs with every run.
 
 Prerequisites:
 
@@ -533,7 +546,7 @@ pwsh -File Src\port\build-driver-dll-arm32.ps1 -Arch arm
 pwsh -File Src\tools\Stage-NativeDeps.ps1 -Arch arm
 ```
 
-Build the ARM appx without launching it:
+Build the ARM appx:
 
 ```powershell
 & $msbuild Src\Apotheosis\Apotheosis.csproj /restore `
@@ -554,8 +567,11 @@ Every native DLL must say `IMAGE_FILE_MACHINE_ARMNT`; `WebCore.dll` must be abse
 the driver must export the expected 48 functions. The M2 audit found 30/30 ARM
 binaries, `WebCoreDriver.dll` at 31.4 MB at the package root, `resources.pri`
 present, and 48/48 exports. (The pre-M2 `.73` audit reported 47/47; M2 adds
-`WebCoreSetLocalStoragePath`.) Do not execute them on an ARM device as part of this
-repository's workflow.
+`WebCoreSetLocalStoragePath`.) The `.76` viewport package repeated the audit at
+48,847,063 bytes and SHA256
+`B651A49706A7CF5FFF7C5FD9B94EB3B5688EF00D65B52912F194C3B07AC659AD`: 30/30 ARM binaries and
+48/48 exports. Do not install an ARM package without this audit; an explicit acceptance batch
+on the two Lumias named in section 8 is the only runtime use in this repository's workflow.
 
 If the ARM scripts complain about missing `C:\vcpkg\buildtrees\...`, stop and
 treat the ARM line as incomplete rather than substituting a different Cairo or

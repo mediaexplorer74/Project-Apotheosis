@@ -3255,13 +3255,47 @@ next launch logged `storage: db path=...localstorage.db rows=1`,
 then held only the durable row (ordinal 5), and a second force-stop/restart check still read the
 value. `localstorage.db` was 16 KB with one row.
 
-**3. ARM and packaging scope.** The ARM driver compiled and linked with the new
+**3. Packaging scope at the x64 cut.** The ARM driver compiled and linked with the new
 `WebCoreSetLocalStoragePath` export; the ARM Release app built and
 `Test-AppxPayload.ps1 -ExpectedArch arm` passed: 30/30 binaries ARM, `WebCoreDriver.dll` at the
-package root (31.4 MB), `resources.pri` present, 48/48 driver exports. Nothing was installed or run
-on ARM. The `.73` release ZIPs were built before M2 and remain unchanged; M2 is a post-release
-source change, and the manifest must be bumped before the next package is cut from HEAD. The Lumia
-restart measurement is still open.
+package root (31.4 MB), `resources.pri` present, 48/48 driver exports. At that point nothing had
+been installed or run on ARM; the acceptance follows in the next section. The `.73` release ZIPs
+were built before M2 and remain unchanged; M2 is a post-release source change, and the manifest must
+be bumped before the next package is cut from HEAD.
+
+### 0.2.3.76 line on the phones: ARM M2 acceptance and the fitted viewport (2026-10-25, after the .73 release cut)
+
+**1. M2 on ARM.** The side-by-side `ME.Apotheosis.M2Test` identity was installed on the Lumia 950
+(`192.168.1.35`, OS 15254.603) and the Lumia 640 (`192.168.1.39`, OS 15063.1868); the installed
+`.73` app and its LocalState were untouched. On both phones `0.2.3.74` ran the SET page and the
+title read `M2 SET durable-0.2.3.74 len=16 total=1`; a real force-stop followed, then `0.2.3.75`
+ran the CHECK page and the title read `M2 CHECK durable-0.2.3.74 len=16 total=1`. Each
+`localstorage.db` held one row, `('https://httpbin.org','m2-durable','durable-0.2.3.74',1)`, with
+`user_version=1`; the restart logged `rows=1` and
+`storage: restored origin=https://httpbin.org keys=1 bytes=60`. Evidence lives in
+`Src/tools/device-logs/20261025-m2-l950-set`, `...-check`, `...-l640-set` and `...-check`; the
+batches are `Src/tools/device-accept/probe-m2-arm.txt` and `probe-m2-check-arm.txt`.
+
+**2. The fitted viewport.** The first ARM run measured the defect x64 could not show:
+`frame fit scale=0,458 frame=720x1080 area=360x494` on the L950 and `scale=0,457` on the L640 - the
+fixed 720-px frame was being shrunk by the display scale, so the home page and all of its text were
+half size. `0.2.3.76` (48,847,063 bytes, SHA256
+`B651A49706A7CF5FFF7C5FD9B94EB3B5688EF00D65B52912F194C3B07AC659AD`, 30/30 ARM binaries, 48/48
+driver exports) turns `_fitWindow` on by default on `Windows.Mobile`, writes `fitwindow_migrated=1`
+so a later explicit off is not overwritten, and makes `BuildHomeHtml` responsive (`clamp()` sizes,
+`repeat(auto-fit,minmax(260px,1fr))`). Both phones then logged `applysettings: ... fit=1`,
+`adopt: no session 360x494 z=1,00 same=False url=about:home`,
+`frame fit scale=1,000 frame=360x494 area=360x494`; `settings.ini` carried `fitwindow=1` and
+`fitwindow_migrated=1`. The maintainer confirmed the home page is correctly sized on both devices.
+
+**3. The remaining blur.** The L950 still looks softer than the L640. Software present hands the
+compositor a `360x494`-DIP bitmap; the L950 panel is 1440x2560 (4x) and the L640 is 720x1280 (2x),
+so the same DIP frame is upscaled twice as far on the 950. This is a present-resolution limit, not
+a viewport-fit regression. WDP on these phones exposes no screenshot API
+(`GET /api/control/screenshot` returns 404 and the portal workspace list has no capture tool), and
+the app has no frame-dump command, so no L950 screenshot was captured. A physical-resolution software
+present - page zoom equal to CompositionScale, display scale `1/scale` - remains the candidate fix
+and is deliberately deferred.
 
 ---
 

@@ -1,0 +1,36 @@
+# Apotheosis 2026-10-25 -- M2 ARM acceptance, stage 1 (SET).
+#
+# The package is a side-by-side test identity (ME.Apotheosis.M2Test 0.2.3.74), so its LocalState
+# starts empty and the installed release package is untouched.
+#
+# The URL is an httpbin base64 page (URL-safe base64; a raw `/` is a path separator and returns
+# 404). The page is self-describing: on a clean origin it writes
+#   m2-durable-arm = durable-0.2.3.74
+# and shows `M2 SET durable-0.2.3.74 len=16 total=1`. On a later load, when the key is already
+# there, it shows `M2 CHECK durable-0.2.3.74 ...` instead.
+#
+# RUN:
+#   1. Launch the test package and let this batch finish. The page must read `M2 SET ...`.
+#   2. Force-stop the app (Task Manager / Device Portal / long-press Back does NOT count).
+#   3. Launch it again. The app starts on Home; open History and tap the test page entry
+#      (or tap its Home history tile). The same page must read `M2 CHECK ...`.
+#   4. Pull LocalState and keep stage.txt, autocmd-log.txt, port-trace.txt and localstorage.db.
+#
+# EVIDENCE:
+#   autocmd-log.txt  `diag ... title=M2 SET durable-0.2.3.74 len=16 total=1`
+#   stage.txt        after the relaunch, `after-load ... diag: ... title=M2 CHECK ...`
+#   port-trace.txt   `storage: db path=...localstorage.db rows=1`
+#                    `storage: restored origin=https://httpbin.org keys=1 bytes=...`
+#   localstorage.db  (`https://httpbin.org`, `m2-durable-arm`, `durable-0.2.3.74`, 1)
+#
+# If the relaunch shows `M2 SET` again, the write did not survive: stop and pull the logs before
+# changing anything.
+
+# let the home page and the engine session settle before the first navigation
+wait 15000
+
+# The test page: set on first load, check on every later load.
+goto https://httpbin.org/base64/PCFkb2N0eXBlIGh0bWw-PG1ldGEgY2hhcnNldD0idXRmLTgiPjx0aXRsZT5NMiBBUk08L3RpdGxlPjxib2R5IHN0eWxlPSJtYXJnaW46MDtiYWNrZ3JvdW5kOiNmZmY7Y29sb3I6IzAwMDtmb250OjI4cHgvMS4zIHNhbnMtc2VyaWYiPjxkaXYgaWQ9InIiIHN0eWxlPSJwYWRkaW5nOjI0cHgiPndvcmtpbmcuLi48L2Rpdj48c2NyaXB0PnZhciBrPSJtMi1kdXJhYmxlLWFybSIsdj1sb2NhbFN0b3JhZ2UuZ2V0SXRlbShrKSxzZXQ9KHY9PT1udWxsKTtpZihzZXQpe3Y9ImR1cmFibGUtMC4yLjMuNzQiO2xvY2FsU3RvcmFnZS5zZXRJdGVtKGssdik7fXZhciBzPShzZXQ_Ik0yIFNFVCAiOiJNMiBDSEVDSyAiKSt2KyIgbGVuPSIrdi5sZW5ndGgrIiB0b3RhbD0iK2xvY2FsU3RvcmFnZS5sZW5ndGg7ZG9jdW1lbnQudGl0bGU9czt2YXIgcj1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiciIpO3IudGV4dENvbnRlbnQ9cztyLnN0eWxlLmZvbnRTaXplPSI0MHB4Ijs8L3NjcmlwdD4%3D
+wait 30000
+diag
+hash

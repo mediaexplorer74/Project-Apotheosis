@@ -1,0 +1,22 @@
+# Apotheosis 2026-10-25 -- M2 ARM acceptance, stage 2 (CHECK), build 0.2.3.75.
+#
+# This package is an UPDATE of the same side-by-side test identity, so LocalState (and therefore
+# LocalState\localstorage.db) survives. The batch runs once for the new version and opens the same
+# self-describing page; the page now finds m2-durable-arm=durable-0.2.3.74 and must show
+#   M2 CHECK durable-0.2.3.74 len=16 total=1.
+#
+# If it shows M2 SET again, the write did not survive the force-stop: stop and pull the logs
+# before changing anything.
+#
+# EVIDENCE:
+#   autocmd-log.txt  diag ... title=M2 CHECK durable-0.2.3.74 len=16 total=1
+#   port-trace.txt   storage: db path=...localstorage.db rows=1
+#                    storage: restored origin=https://httpbin.org keys=1 bytes=...
+#   localstorage.db  (https://httpbin.org, m2-durable-arm, durable-0.2.3.74, 1)
+
+wait 15000
+
+goto https://httpbin.org/base64/PCFkb2N0eXBlIGh0bWw-PG1ldGEgY2hhcnNldD0idXRmLTgiPjx0aXRsZT5NMiBBUk08L3RpdGxlPjxib2R5IHN0eWxlPSJtYXJnaW46MDtiYWNrZ3JvdW5kOiNmZmY7Y29sb3I6IzAwMDtmb250OjI4cHgvMS4zIHNhbnMtc2VyaWYiPjxkaXYgaWQ9InIiIHN0eWxlPSJwYWRkaW5nOjI0cHgiPndvcmtpbmcuLi48L2Rpdj48c2NyaXB0PnZhciBrPSJtMi1kdXJhYmxlLWFybSIsdj1sb2NhbFN0b3JhZ2UuZ2V0SXRlbShrKSxzZXQ9KHY9PT1udWxsKTtpZihzZXQpe3Y9ImR1cmFibGUtMC4yLjMuNzQiO2xvY2FsU3RvcmFnZS5zZXRJdGVtKGssdik7fXZhciBzPShzZXQ_Ik0yIFNFVCAiOiJNMiBDSEVDSyAiKSt2KyIgbGVuPSIrdi5sZW5ndGgrIiB0b3RhbD0iK2xvY2FsU3RvcmFnZS5sZW5ndGg7ZG9jdW1lbnQudGl0bGU9czt2YXIgcj1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiciIpO3IudGV4dENvbnRlbnQ9cztyLnN0eWxlLmZvbnRTaXplPSI0MHB4Ijs8L3NjcmlwdD4%3D
+wait 30000
+diag
+hash
