@@ -1067,3 +1067,56 @@ even with Desktop mode on.
   (RGBA-PNG read as dark values on a white page), so measure pixels through the image reader, not
   GDI+.
 
+## The form-action guard outlives the form that set it (2026-10-25)
+
+`dzen.ru`'s first visit was reported as a white window, and it was not a failed render: the engine
+committed `https://sso.dzen.ru/install?uuid=...`, painted nothing (`body=0`, `nonwhite=0/777600`,
+empty title), and stopped there. The chain is a form, not a link: `dzen.ru` 302s to
+`sso.passport.yandex.ru/push`, whose empty-body script POSTs to `sso.dzen.ru/install`; that response
+has CSP `form-action 'none'` and an inline script that calls `window.location.replace(retpath)`.
+The redirect to `https://dzen.ru/?is_autologin_ya=true&sso_failed=blocked&uuid=...` was refused:
+
+```
+[JS] security/ERROR -:0:1 Refused to load https://dzen.ru/?... because it does not appear
+in the form-action directive of the Content Security Policy.
+```
+
+`curl` gets a 200 with 2.3 MB of HTML for that same URL, so the server is fine. The refusal is the
+engine applying the install page's CSP to a navigation that is not a form submission at all.
+
+**Mechanism.** `FrameLoader::submitForm` stores the action URL in `m_submittedFormURL`
+(`FrameLoader.cpp:617`). `DocumentLoader::willSendRequest` then runs every later request through
+`checkIfFormActionAllowedByCSP`, which checks it against the *current* document's CSP
+(`DocumentLoader.cpp:654`). Upstream clears the field on a main-resource error
+(`receivedMainResourceError`, `FrameLoader.cpp:3949`) and on user gestures
+(`EventHandler.cpp:2022/4230`) -- but not on a successful commit. After the install response commits,
+the guard still names the install URL, and the install document's `form-action 'none'` is applied to
+the next navigation. A comment that calls this a "multiple form submission" guard describes only
+half of its life.
+
+**Fix.** The port's `dispatchDidCommitLoad` now calls
+`m_portLoader->resetMultipleFormSubmissionProtection()`. The submission is finished when its
+response commits. A genuinely new form is still checked by `submitForm` against its own document's
+CSP (`FrameLoader.cpp:596`), and redirects *during* a submission are still checked because the guard
+survives until that submission commits. The include `<WebCore/FrameLoader.h>` is required: the method
+is not on the client interface.
+
+**Verification.** x64, `0.2.3.73` app line with the rebuilt driver, as a side-by-side
+`ME.Apotheosis.DzenTest 0.2.3.77` package so the installed `.73` app and its LocalState were
+untouched. The real first visit now reaches
+`https://dzen.ru/?sso_failed=blocked&uuid=102e6343-66e4-4d46-bfcc-02fa666e23f0`:
+`body=1`, `nonwhite=228105/777600`, `scripts=49`, non-empty title, and no `form-action` error in
+`gpu-steps.txt`. A local two-origin harness reproduced the exact chain deterministically
+(push form -> 8101 install with `form-action 'none'` and `location.replace` -> 8100 final page):
+the whole chain ends at title `REDIRECT OK`. The negative control -- a form on a page whose CSP is
+`form-action 'none'`, loaded through the engine -- is still refused with the same console message,
+and a plain form still submits (`FORM OK`).
+
+**Probe hygiene, learned the hard way.** A top-level `goto` does not go through `DocumentLoader`:
+the port fetches with curl and feeds `DocumentWriter` directly (see the `SL: fetch` path), so CSP
+headers on a `goto`-loaded main document are not applied to it. My first negative-control page was
+loaded with `goto`, its `form-action 'none'` did nothing, and the form went through -- which looked
+like the fix had disabled CSP. It had not. Any future CSP test must load the test page through the
+engine (`location.href` or a form from a fed page), or it measures the port's bypass instead of the
+policy.
+

@@ -15,6 +15,7 @@
 
 // Mirror the EmptyClients.cpp include set needed by the FrameLoaderClient bodies.
 #include <WebCore/DocumentLoader.h>
+#include <WebCore/FrameLoader.h>                  // resetMultipleFormSubmissionProtection
 #include <WebCore/FrameLoaderClient.h>            // FramePolicyFunction, PolicyAction
 #include <WebCore/FrameLoaderTypes.h>             // PolicyAction enum
 #include <WebCore/FrameNetworkingContext.h>
@@ -443,6 +444,18 @@ void LoadingFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureCo
     //   create -> start -> (nothing)       the load was requested and never came back
     //   no create line at all              the navigation never started
     navTrace("NAV: COMMIT");
+
+    // Apotheosis 2026-10-25: a form submission records its action URL in FrameLoader and the
+    // engine only clears that guard on an error or a user gesture, never on a successful commit.
+    // The next navigation started from the response document is then still checked against the
+    // *form-action* CSP, even when it is not a form submission at all. Measured on dzen.ru's SSO
+    // install page: the push page POSTs to sso.dzen.ru/install (form-action https://sso.dzen.ru),
+    // that page answers 200 with `form-action 'none'` and calls window.location.replace(dzen.ru),
+    // and DocumentLoader::willSendRequest refuses the redirect as a form-action violation. The
+    // page stays blank forever. The submission is finished once its response commits, so clear
+    // the guard here; an actual form submission is still checked by FrameLoader::submitForm
+    // against the current document's CSP, which is the directive that is meant to apply.
+    m_portLoader->resetMultipleFormSubmissionProtection();
 }
 
 void LoadingFrameLoaderClient::dispatchDidFinishDocumentLoad()

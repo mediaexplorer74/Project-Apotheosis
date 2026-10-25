@@ -158,6 +158,19 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   `DIV.mobile-view` by 384 CSS px through the same walk. `rc=0` means "completed and painted",
   never "moved". The dead scroll on Nokia is M3's CMP hang (the archive is a 100vh app: pinch
   cannot create document range at any zoom); seeing the whole frame is S7.
+- **S9. The first-visit `dzen.ru` white window** — DONE on x64 2026-10-25, **post-0.2.3.73**.
+  The first visit is a form chain, not a blank site: `dzen.ru` -> `sso.passport.yandex.ru/push`
+  (script POST) -> `sso.dzen.ru/install` (200, CSP `form-action 'none'`, inline
+  `location.replace`) -> the real page. `FrameLoader::submitForm` records the action URL in
+  `m_submittedFormURL`; upstream clears it on error or user gesture but not on a successful
+  commit, so the install document's `form-action 'none'` was applied to its own redirect and
+  `DocumentLoader::willSendRequest` cancelled it. The port now clears the guard in
+  `dispatchDidCommitLoad`; real form checks and redirects during a submission are unchanged.
+  Measured on x64 with a side-by-side `ME.Apotheosis.DzenTest 0.2.3.77` package: the real visit
+  reached `dzen.ru` with `body=1`, `nonwhite=228105/777600`, 49 scripts and a title, no
+  `form-action` error; a local two-origin chain ended at `REDIRECT OK`, a `form-action 'none'`
+  page still refused its form, and a plain form still submitted. L1 (`createFrame`) is unrelated
+  to this defect. The `.73` ZIPs stay frozen; bump the manifest before the next release build.
 
 ## Phase M — medium term (weeks each)
 

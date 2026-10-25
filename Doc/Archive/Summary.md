@@ -3297,6 +3297,44 @@ the app has no frame-dump command, so no L950 screenshot was captured. A physica
 present - page zoom equal to CompositionScale, display scale `1/scale` - remains the candidate fix
 and is deliberately deferred.
 
+### dzen.ru on the x64 bench: the white first visit was a stale form-action guard (2026-10-25, after the .73 release cut)
+
+**1. The report and the reproduction.** The maintainer's friends saw `dzen.ru` open as a white
+window on first use. On the x64 bench the first visit committed
+`https://sso.dzen.ru/install?uuid=...` with an empty title, `body=0` and `nonwhite=0/777600`, and
+stayed there; the last error was `didFailProvisionalLoad type=Cancellation`. This was not an
+`<iframe>` problem and L1 would not have changed it: the install document had already committed, it
+simply refused to leave. The chain is `dzen.ru` 302 -> `sso.passport.yandex.ru/push` (a script that
+POSTs a form) -> `sso.dzen.ru/install` (200, CSP `form-action 'none'`, inline
+`window.location.replace`) -> the real `dzen.ru` page. The redirect was refused with
+`Refused to load https://dzen.ru/?... because it does not appear in the form-action directive of the
+Content Security Policy`; a plain curl of the same URL returns 200 and 2.3 MB of HTML.
+
+**2. The mechanism and the fix.** `FrameLoader::submitForm` records the action URL in
+`m_submittedFormURL`, and `DocumentLoader::willSendRequest` checks every later request against the
+current document's CSP. Upstream clears the recorded URL on a main-resource error and on a user
+gesture, but not on a successful commit, so the install response left the guard naming its own URL
+and applied its `form-action 'none'` to the next navigation. The port now calls
+`resetMultipleFormSubmissionProtection()` from `dispatchDidCommitLoad` in
+`Src/port/LoadingFrameLoaderClient.cpp`. A new form is still checked by `submitForm` against its own
+document's CSP, and redirects during a submission are still checked because the guard survives until
+that submission commits.
+
+**3. The measurement.** The fix was verified on x64 with the `0.2.3.73` app line and the rebuilt
+driver, installed as a side-by-side `ME.Apotheosis.DzenTest 0.2.3.77` package: the installed `.73`
+app and its LocalState were untouched. The real first visit then reached
+`https://dzen.ru/?sso_failed=blocked&uuid=102e6343-66e4-4d46-bfcc-02fa666e23f0` with `body=1`,
+`nonwhite=228105/777600`, 49 scripts and a non-empty title, and `gpu-steps.txt` held no
+`form-action` error. A local two-origin harness (ports 8100/8101) reproduced the chain
+deterministically and ended at title `REDIRECT OK`; the negative control -- a form on an
+engine-loaded page with `form-action 'none'` -- was still refused with the same CSP message, and a
+plain form still submitted (`FORM OK`). The test package was removed afterwards. The source
+identity remains `ME.Apotheosis 0.2.3.73` and the `.73` release ZIPs remain frozen; this is a
+post-release source change, and the manifest must be bumped before the next package is cut from
+HEAD. The trap for future probes is recorded in [LESSONS.md](../LESSONS.md): a top-level `goto` is
+fed through `DocumentWriter`, so CSP headers on that document are never applied and a CSP test must
+load its page through the engine.
+
 ---
 
 *"Reviving the Windows Phone web for the people who never let it die."*
