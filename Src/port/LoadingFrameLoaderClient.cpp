@@ -14,14 +14,24 @@
 #include "LoadingFrameLoaderClient.h"
 
 // Mirror the EmptyClients.cpp include set needed by the FrameLoaderClient bodies.
+#include <WebCore/Document.h>                      // Document::frame()/referrerPolicy for subframes
 #include <WebCore/DocumentLoader.h>
+#include <WebCore/DocumentPage.h>                 // Frame::page(), defined inline here
+#include <WebCore/DocumentView.h>                 // LocalFrame::view(), defined inline here
+#include <WebCore/NodeDocument.h>                 // Node::document(), defined inline here
+#include <WebCore/FrameDestructionObserverInlines.h> // Document::frame(), defined here, not in Document.h
+#include <WebCore/FrameIdentifier.h>              // generateFrameIdentifier
 #include <WebCore/FrameLoader.h>                  // resetMultipleFormSubmissionProtection
 #include <WebCore/FrameLoaderClient.h>            // FramePolicyFunction, PolicyAction
 #include <WebCore/FrameLoaderTypes.h>             // PolicyAction enum
 #include <WebCore/FrameNetworkingContext.h>
+#include <WebCore/FrameTree.h>                    // setSpecifiedName/specifiedName
 #include <WebCore/HistoryItem.h>
 #include <WebCore/HistoryController.h>            // createItemTree -- the real back/forward item builder
+#include <WebCore/HTMLFrameOwnerElement.h>        // sandboxFlags/referrerPolicy/scrollingMode
 #include <WebCore/LocalFrame.h>
+#include <WebCore/Page.h>                         // Page::localTopDocument
+#include "FrameTreeSyncData.h"                    // generated header (build-*/WebCore/DerivedSources)
 #include <WebCore/NetworkStorageSession.h>
 #include "PortNetworkStorageSession.h"   // cookie persistence: a real storageSession
 #include "PortBackForward.h"             // WebCorePort::apoBackForwardTrace -- diagnostic only
@@ -60,9 +70,9 @@ extern "C" void WebCorePortRecordNetError(const char* phase, const char* type, i
 // starts is covered without an upstream WebCore edit and without a WebCore rebuild -- which matters,
 // because the ARM32 tree takes hours to rebuild and this diagnostic must be portable to it as-is.
 //
-// Volume is safe: the port creates exactly one frame (createFrame() below returns nullptr), so there
-// are no subframe navigations to multiply these lines, and the will-send hook is filtered to
-// main-resource requests, which is what keeps it from echoing every image on the page. Writes go
+// Volume is bounded: the will-send hook is filtered to main-resource requests, which is what keeps it
+// from echoing every image on the page; real subframe navigations (createFrame() below) add one
+// line per commit and one per view creation, which is what L1 iframe triage needs. Writes go
 // through portDiagLog -> gpuinit-steps.txt, one open/write/flush/close per line: the channel that has
 // survived every crash and hang here. Declared the same way PortPlatformStrategies.cpp declares it,
 // rather than by including PortChromeClient.h for the sake of one function.
@@ -265,12 +275,54 @@ bool LoadingFrameLoaderClient::isEmptyFrameLoaderClient() const
 }
 
 // ---------------------------------------------------------------------------
-// Everything below is the verbatim EmptyFrameLoaderClient no-op behavior.
+// L1: real <iframe>/<frame> subframes. Everything else below is the verbatim
+// EmptyFrameLoaderClient no-op behavior.
 // ---------------------------------------------------------------------------
 
-RefPtr<LocalFrame> LoadingFrameLoaderClient::createFrame(const AtomString&, HTMLFrameOwnerElement&)
+// Build a real LocalFrame for an HTMLFrameOwnerElement. This is the port's counterpart of
+// WebKitLegacy's +[WebFrame _createFrameWithPage:frameName:frameView:ownerElement:] and follows
+// its recipe exactly:
+//   * the child's effective sandbox flags are the owner's flags plus the parent's effective flags;
+//   * the child's referrer policy is the owner's, unless it is the default, in which case the
+//     top document's policy applies;
+//   * the frame is created first, then named, then initialized with an empty document.
+//
+// LocalFrame's constructor calls ownerElement.setContentFrame(*this), so SubframeLoader's
+// "did a frame actually appear?" check succeeds without a second call here. If init() runs page
+// script that removes the iframe, frame->page() becomes null and the caller must not use it.
+RefPtr<LocalFrame> LoadingFrameLoaderClient::createFrame(const AtomString& name, HTMLFrameOwnerElement& ownerElement)
 {
-    return nullptr;
+    RefPtr parentFrame = ownerElement.document().frame();
+    if (!parentFrame)
+        return nullptr;
+
+    RefPtr page = parentFrame->page();
+    if (!page)
+        return nullptr;
+
+    SandboxFlags effectiveSandboxFlags = ownerElement.sandboxFlags();
+    effectiveSandboxFlags.add(parentFrame->effectiveSandboxFlags());
+
+    ReferrerPolicy effectiveReferrerPolicy = ownerElement.referrerPolicy();
+    if (effectiveReferrerPolicy == ReferrerPolicy::EmptyString) {
+        if (RefPtr topDocument = page->localTopDocument())
+            effectiveReferrerPolicy = topDocument->referrerPolicy();
+    }
+
+    Ref frame = LocalFrame::createSubframe(*page, [](LocalFrame&, FrameLoader& frameLoader) {
+        return makeUniqueRefWithoutRefCountedCheck<LoadingFrameLoaderClient>(frameLoader);
+    }, generateFrameIdentifier(), effectiveSandboxFlags, effectiveReferrerPolicy, ownerElement, FrameTreeSyncData::create());
+
+    frame->tree().setSpecifiedName(name);
+    frame->init();
+
+    navTrace("FRAME: created name=%.40s view=%d", name.string().utf8().data(), frame->view() ? 1 : 0);
+
+    // The creation of the frame may have run arbitrary JavaScript that removed it from the page.
+    if (!frame->page())
+        return nullptr;
+
+    return frame;
 }
 
 RefPtr<Widget> LoadingFrameLoaderClient::createPlugin(HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool)
@@ -654,6 +706,24 @@ void LoadingFrameLoaderClient::didRestoreFrameHierarchyForCachedFrame()
 
 void LoadingFrameLoaderClient::transitionToCommittedForNewPage(InitializingIframe)
 {
+    RefPtr frameLoader = m_portLoader.ptr();
+    if (!frameLoader)
+        return;
+
+    LocalFrame& frame = frameLoader->frame();
+
+    // The driver owns the main frame's LocalFrameView: it creates the view before init(), sizes it
+    // per render job and paints through it. Recreating it here would throw that wiring away.
+    // Subframes are ours, so give each commit a fresh view the way WebKitLegacy does after
+    // installing the document view -- the new document then starts with clean scroll state.
+    // createView() also attaches the view to the owner renderer when layout has already run
+    // (HTMLFrameElementBase::didAttachRenderers is the other half, for the reverse order).
+    if (frame.isMainFrame())
+        return;
+
+    frame.createView(IntSize(), std::nullopt, IntSize());
+
+    navTrace("FRAME: committed view name=%.40s", frame.tree().specifiedName().string().utf8().data());
 }
 
 void LoadingFrameLoaderClient::didRestoreFromBackForwardCache()

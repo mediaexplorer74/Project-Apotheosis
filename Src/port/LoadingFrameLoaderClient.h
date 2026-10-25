@@ -16,6 +16,10 @@
 //   - canShowMIMEType()   -> true   (so text/html etc. are treated as showable)
 //   - canShowMIMETypeAsHTML() -> true
 //   - createDocumentLoader() -> DocumentLoader::create (same as Empty)
+//   - createFrame() -> a real LocalFrame subframe (<iframe>/<frame>), with the owner's
+//     sandbox/referrer policy merged exactly as WebKitLegacy does it.
+//   - transitionToCommittedForNewPage() -> creates a fresh LocalFrameView for subframes;
+//     the main frame's view stays driver-owned.
 //   - dispatchDidFinishLoad()/dispatchDidFailLoad()/dispatchDidFailProvisionalLoad()
 //     set m_loadFinished / m_loadFailed so the driver can poll for completion.
 //

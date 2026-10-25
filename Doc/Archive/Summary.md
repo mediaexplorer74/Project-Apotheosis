@@ -3374,6 +3374,71 @@ them is a separate change with its own site testing. The bench manifest is now `
 
 ---
 
+### L1 on the x64 bench: an iframe is a real frame, and the popup hole is now visible (2026-10-25, `0.2.3.80`)
+
+**1. The hole.** `LoadingFrameLoaderClient::createFrame` was inherited from
+`EmptyFrameLoaderClient` and returned `nullptr`. `SubframeLoader` then had no frame to load into,
+so `<iframe>` painted the element's border and nothing else, issued no request, and
+`target="name"` had nothing to find. This was not a renderer bug and not a missing widget: it was
+the absence of a `LocalFrame` with its own document, loader, script world and view.
+
+**2. The recipe.** `createFrame` now mirrors WebKitLegacy's `_createFrameWithPage`: the child's
+effective sandbox flags are the owner element's plus the parent frame's, its referrer policy is the
+owner's unless the owner is on the empty-string default (then the top document's policy applies),
+and the frame is built with `LocalFrame::createSubframe`, named with `tree().setSpecifiedName()` and
+initialized with `FrameLoader::init()` -- the initial empty document. `LocalFrame`'s constructor
+already calls `ownerElement.setContentFrame(*this)`, so `SubframeLoader`'s "did a frame appear?"
+check succeeds without a second call. `transitionToCommittedForNewPage` creates a fresh subframe
+`LocalFrameView` per commit; the main frame is skipped because the driver creates and owns that
+view. Attachment works in both orders: `LocalFrame::createView` sets the owner renderer's widget
+when layout has already run, and `HTMLFrameElementBase::didAttachRenderers` covers the renderer
+arriving later.
+
+Three unresolved externals came from the new translation unit, not from the logic:
+`Document::frame()`, `Frame::page()` and `LocalFrame::view()` are defined in
+`FrameDestructionObserverInlines.h`, `DocumentPage.h` and `DocumentView.h` (plus `NodeDocument.h`).
+`FrameTreeSyncData::create()` needs the generated `FrameTreeSyncData.h`. Without those includes the
+file compiles and the driver fails at link time.
+
+**3. The measurement.** A local harness served two origins on one Python server:
+`http://127.0.0.1:8765/` and `http://localhost:8765/`, logging `Host` and `Referer` per request.
+The packaged browser needs the AppContainer loopback exemption
+(`CheckNetIsolation LoopbackExempt -a '-n=ME.Apotheosis_cj4nrm0qt9s1y'`; the quotes around `-n=`
+are required). On `.80`, driven only through `LocalState\autocmd.txt` and measured against the
+server log, the `FRAME:` trace and screenshots:
+
+* **Seven initial frames** -- same-origin, cross-origin, a nested outer+inner pair, a clipped
+  scrolling frame, a sandboxed frame and a `srcdoc` frame -- were created, committed (`FRAME:
+  created` then two `committed view` lines each) and painted. The server saw every URL with the
+  expected `Referer`; the cross-origin one was origin-only under
+  `strict-origin-when-cross-origin`.
+* **Lifecycle**: removing an iframe from the DOM tore it down and repainted the parent without a
+  crash; changing `src` reused the same frame for a second, cross-origin commit; creating an
+  iframe with `document.createElement` loaded it; changing `width`/`height` resized the frame and
+  reflowed its document.
+* **Sandbox**: without `allow-scripts` the child stayed gray and sent no marker request; with
+  `allow-scripts` it turned red and sent exactly one.
+* **`srcdoc`**: committed as `about:srcdoc` with the inline document painted and no request for the
+  document itself.
+* **`<frameset>`**: two `<frame>` columns at 50%, both loaded through the same client.
+* **`target="slot"`**: a link click navigated the existing named iframe; the `FRAME: created`
+  count stayed at 28 across the click and the server saw `/same.html` with the parent as referer.
+* **Origin isolation**: a same-origin child read and wrote `parent.document` (`SAME-ORIGIN PARENT
+  ACCESS OK`) and sent its marker; a cross-origin child's access threw and sent no marker -- 1 vs
+  0 in the server log.
+* **Regression**: `dzen.ru` still paints with its ad iframes (3 new frames, `nonwhite=268131`,
+  process responding), `example.com` and `lenta.ru` load as before, and the process stayed at
+  296-352 MB across the whole pass.
+
+**4. What remains.** Popups are the other half of the original L1 item and are deliberately not in
+this pass: `PortChromeClient::createWindow` still returns `nullptr`, so `window.open` and
+`target=_blank` remain no-ops; giving them a window is a host-side decision (new window or new
+tab) with its own chrome and lifetime rules. Phone acceptance of iframes/frames is deferred until
+a Lumia is back on the bench. The bench manifest is `0.2.3.80`; the `0.2.3.73` release ZIPs remain
+frozen and no release is cut from this HEAD.
+
+---
+
 *"Reviving the Windows Phone web for the people who never let it die."*
 
 ---

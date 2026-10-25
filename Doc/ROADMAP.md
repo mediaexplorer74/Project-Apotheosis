@@ -273,12 +273,25 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
 
 ## Phase L — long term (months each)
 
-- **L1. Frames and popups** — `createFrame()` returns nullptr from the empty client, so `<iframe>`
-  paints an empty box and issues no request; `window.open`/`target=_blank` live in the same hole.
-  The fix is a real FrameLoaderClient with nested Page(s) behind the existing C ABI — the single
-  largest structural item on this list, and the one the maintainer has chosen to attack with AI
-  assistance. Entry point: the four `Page::create` sites the NotificationController supplement
-  already touched.
+- **L1. Frames and popups** — **iframes/frames DONE on x64 in `0.2.3.80` (2026-10-25); phone
+  acceptance pending.** `LoadingFrameLoaderClient::createFrame` now mirrors WebKitLegacy's
+  `_createFrameWithPage`: effective sandbox flags are the owner's plus the parent's, the referrer
+  policy falls back to the top document only when the owner's is the empty string, the frame is
+  built with `LocalFrame::createSubframe`, named with `tree().setSpecifiedName()` and initialized
+  with `FrameLoader::init()`; `transitionToCommittedForNewPage` gives every subframe a fresh
+  `LocalFrameView` (the driver keeps owning the main frame's view). Measured on the x64 bench with
+  a local two-origin harness, the server log as request evidence and `FRAME: created`/`committed`
+  lines as lifecycle evidence: seven initial frames (same-origin, cross-origin, nested, clipped/
+  scrolling, sandbox, `srcdoc`) all requested and painted; removal, `src` change, dynamic creation
+  and resize work; sandbox without `allow-scripts` executes no script while `allow-scripts`
+  executes exactly one; `srcdoc` commits as `about:srcdoc` with no network request; a `<frameset>`
+  renders two 50% columns; `target="slot"` navigates the existing named frame (created-frame count
+  unchanged); a same-origin child reads and writes the parent document while a cross-origin child
+  is blocked (1 vs 0 marker requests). `dzen.ru` still paints with its ad iframes; `example.com`
+  and `lenta.ru` are unchanged. **Still open:** `window.open` and `target=_blank` remain no-ops
+  because `PortChromeClient::createWindow` returns nullptr — popups need a host-side window/tab
+  decision and are a separate item from this iframe pass. Phone acceptance is deferred until a
+  Lumia is back on the bench.
 - **L2. ARM JavaScriptCore currency** — the ARM JSC predates the RedBlackTree insert crash cure, and
   a header-only cure cannot travel through a relink: the fix is a real JSC rebuild in a build dir
   that CANNOT be reconfigured without breaking (one cmake edit costs a full ~10 h rebuild). Plan a

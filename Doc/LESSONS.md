@@ -1144,3 +1144,50 @@ Two probe lessons:
   `dzen.ru.evil.com` must stay on the ordinary UA; a `strstr` would have put all three on Yandex.
   The matcher passed 21 URL cases on the bench.
 
+
+## An iframe is a second Page boundary, not a widget (2026-10-25)
+
+`createFrame()` returning nullptr is not a missing renderer: it is the absence of a `LocalFrame`.
+The fix has to reproduce what WebKitLegacy's `_createFrameWithPage` does, in this order:
+
+* **Merge policy downwards.** Effective sandbox flags are the owner's flags plus the parent frame's
+  effective flags; the child of a sandboxed iframe must not escape it. The referrer policy comes
+  from the owner element unless it is the empty string, in which case the *top* document's policy
+  applies. Using either default for both cases is wrong for at least one real page.
+* **Build the frame, then `init()`.** `LocalFrame::createSubframe` plus
+  `tree().setSpecifiedName(name)` plus `FrameLoader::init()` gives the frame its initial empty
+  document. `setSpecifiedName` is not cosmetic: without it `target="name"` finds nothing and a link
+  click either does nothing or asks for a window that does not exist in this port.
+* **The view belongs to the frame, and its creation belongs to the commit.**
+  `transitionToCommittedForNewPage` creates a fresh subframe `LocalFrameView`; the main frame is the
+  exception because the driver already owns that view. Attachment must work in both orders:
+  `LocalFrame::createView` sets the owner renderer's widget if layout has already run, and
+  `HTMLFrameElementBase::didAttachRenderers` covers the renderer arriving later. Implementing only
+  one of the two leaves a frame that loads but never paints.
+* **Detachment is already complete.** `HTMLFrameOwnerElement::disconnectContentFrame()` ->
+  `LocalFrame::frameDetached()` -> `FrameLoader::frameDetached()` tears down loaders, children and
+  the view; no port override is needed. One would only duplicate the work.
+
+**Compile-time trap.** A FrameLoaderClient implementation that used to live in
+`EmptyClients.cpp` calls `Document::frame()`, `Frame::page()` and `LocalFrame::view()`. Their
+definitions are in `FrameDestructionObserverInlines.h`, `DocumentPage.h`, `DocumentView.h` and
+`NodeDocument.h`, not in the declaring headers; without those includes the new translation unit
+links with unresolved externals. `generated/FrameTreeSyncData.h` is also required by the
+`FrameTreeSyncData::create()` call.
+
+**Testing frames.** Three instruments, each for one question:
+
+* the harness server log (`Host` + `Referer`) proves that a subframe actually issued the request and
+  what policy it carried;
+* the `FRAME: created` / `FRAME: committed view` lines in `gpu-steps.txt` prove the frame object and
+  its view exist and commit twice (empty document, then the real load). The created count staying
+  flat is the proof that `target=name` reused a frame instead of making one;
+* a screenshot proves paint, because `diag` is a snapshot from the last render, not a live read: a
+  post-load `document.title` or DOM change does not appear in it. Use visible text and network
+  markers for anything that happens after the load.
+
+**AppContainer loopback.** A local server is invisible to the packaged browser until the package
+family is exempted. On this bench the syntax that works is
+`CheckNetIsolation LoopbackExempt -a '-n=ME.Apotheosis_cj4nrm0qt9s1y'`; without the quotes
+`-n=...` is parsed as a parameter and the command answers "Invalid Parameters". Remove the
+exemption when the harness is done.
