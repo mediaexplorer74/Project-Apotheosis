@@ -79,6 +79,7 @@ EXPORTS
     ; Metadata / diagnostics
     WebCoreGetTitle
     WebCoreGetUrl
+    WebCoreTakePopupUrl
     WebCoreGetLinkCount
     WebCoreGetLink
     WebCoreGetFrameHash

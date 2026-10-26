@@ -55,8 +55,9 @@ if (-not (Test-Path -LiteralPath $Batch)) {
 # The verb list is the app's own; a typo here would otherwise surface ten minutes into a device run
 # as one "unknown verb" line among hundreds. `hist` and `hash` are read-only and need no session;
 # every other verb is the app's.
-$Known = @('goto', 'scroll', 'swipe', 'scrolln', 'tap', 'taplink', 'links', 'ui', 'lang', 'ua',
-           'zoom', 'dtap', 'suggest', 'enter', 'wait', 'hash', 'diag', 'back', 'forward', 'hist')
+$Known = @('goto', 'scroll', 'swipe', 'scrolln', 'tap', 'taplink', 'links', 'clicklink', 'ui',
+           'lang', 'ua', 'zoom', 'dtap', 'suggest', 'enter', 'wait', 'hash', 'diag', 'back',
+           'forward', 'hist')
 $bad = @()
 $n = 0
 foreach ($raw in Get-Content -LiteralPath $Batch) {

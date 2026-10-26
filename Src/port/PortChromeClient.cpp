@@ -15,6 +15,8 @@
 #include <WebCore/CookieConsentDecisionResult.h>
 #include <WebCore/DataListSuggestionPicker.h>
 #include <WebCore/DateTimeChooser.h>
+// L1: createWindow reads action.url() -- ChromeClient.h only forward-declares NavigationAction.
+#include <WebCore/NavigationAction.h>
 #include <WebCore/Icon.h>
 #include <WebCore/PopupMenu.h>
 #include <WebCore/SearchPopupMenu.h>
@@ -36,6 +38,8 @@ namespace WebCorePort {
 // declaration per translation unit -- see LoadingFrameLoaderClient.cpp's portDiagLog for the same
 // shape.
 void portDumpJsStack(const char* tag);
+// L1 popup half: fills the g_pendingPopupUrl slot + writes the `POPUP:` marker (WebCoreDriver.cpp).
+void portQueuePopupRequest(const char* what, const char* url);
 
 using namespace WebCore;
 
@@ -144,6 +148,22 @@ void PortChromeClient::addMessageToConsole(JSC::MessageSource source, JSC::Messa
         ++s_jstackFires;
         WebCorePort::portDumpJsStack("jstack");
     }
+}
+
+// L1 popup half (2026-10-26): window.open() lands here (LocalDOMWindow::open -> WebCore::createWindow
+// -> Chrome::createWindow), i.e. the funnel that target=_blank LINKS do NOT take -- those go through
+// LoadingFrameLoaderClient's new-window policy instead. The null return stands: without tabs (L3, out
+// of 1.0) there is no second window to hand the page, and WebKitLegacy's WebView would create one.
+// What changed is that the request is parked for the shell (single-window open through the live tick)
+// and named in gpu-steps, instead of evaporating. A script that checks the result sees null -- the
+// honest answer for this browser, now with a trace explaining it.
+RefPtr<Page> PortChromeClient::createWindow(LocalFrame&, const String& frameName, const WindowFeatures&, const NavigationAction& action)
+{
+    char what[160];
+    std::snprintf(what, sizeof what, "window.open target=%s",
+        frameName.isEmpty() ? "_blank" : frameName.utf8().data());
+    portQueuePopupRequest(what, action.url().string().utf8().data());
+    return nullptr;
 }
 
 RefPtr<PopupMenu> PortChromeClient::createPopupMenu(PopupMenuClient&) const

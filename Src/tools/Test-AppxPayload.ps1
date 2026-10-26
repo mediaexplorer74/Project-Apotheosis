@@ -214,6 +214,30 @@ try {
         }
     }
 
+    # --- 5. declared capabilities --------------------------------------------------------------
+    #
+    # Apotheosis 2026-10-25: `internetClient` alone does NOT reach a private address. Measured on
+    # x64: `goto http://192.168.1.34:8765/` produced `curlcode=28 Connection timed out` and the
+    # server's log held no request, exactly as Doc/Archive/TOPLEVEL-FETCH-BUDGET.md recorded for an
+    # earlier probe. Without privateNetworkClientServer a device run against the LAN harness dies on
+    # its first navigation, and the diag that says why is 40 lines deep in a log pulled after the
+    # fact -- so say it here, where the artifact is being read anyway.
+    Write-Host ""
+    Write-Host "Capabilities:"
+    $mfPath = Join-Path $inner 'AppxManifest.xml'
+    if (Test-Path $mfPath) {
+        $caps = [regex]::Matches((Get-Content $mfPath -Raw), '<(?:uap:)?Capability\s+Name="([^"]+)"') |
+            ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique
+        Write-Host ("  {0}" -f ($caps -join ', '))
+        if ($caps -notcontains 'privateNetworkClientServer') {
+            Write-Host "  privateNetworkClientServer ABSENT: private/LAN addresses are unreachable" -ForegroundColor Yellow
+            Write-Host "  (a device run against the 192.168.x.x harness will time out on the first goto)" -ForegroundColor Yellow
+        }
+    }
+    else {
+        Write-Host "  AppxManifest.xml not found in the payload" -ForegroundColor Yellow
+    }
+
     # --- verdict -------------------------------------------------------------------------------
     Write-Host ""
     if ($failures.Count -eq 0) {

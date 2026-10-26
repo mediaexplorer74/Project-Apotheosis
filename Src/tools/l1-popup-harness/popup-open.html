@@ -1,0 +1,17 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>JOPEN pending</title>
+<body>
+<h1>L1 funnel B: window.open() from a click</h1>
+<p id="st">click the link; window.open runs inside the click gesture</p>
+<a id="js" href="/popup-target.html?src=href" onclick="return op()">open via window.open (JS)</a>
+<script>
+function op() {
+    var w = window.open('/popup-target.html?src=open');
+    var r = (w === null) ? 'null' : 'obj';
+    document.getElementById('st').textContent = 'window.open returned: ' + r;
+    new Image().src = '/beacon?fn=window.open&r=' + r;
+    return false;   // the href must NOT navigate; the popup queue does
+}
+</script>
+</body>

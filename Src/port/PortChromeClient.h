@@ -84,7 +84,11 @@ public:
     void focusedElementChanged(WebCore::Element*, WebCore::LocalFrame*, WebCore::FocusOptions, WebCore::BroadcastFocusedElement) final { }
     void focusedFrameChanged(WebCore::Frame*) final { }
 
-    RefPtr<WebCore::Page> createWindow(WebCore::LocalFrame&, const String&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final { return nullptr; }
+    // L1 popup half (2026-10-26): was `return nullptr` inline. Still nullptr -- a
+    // single-window browser cannot present a second Page and has no tabs (L3 is out of 1.0)
+    // -- but the request is no longer dropped in silence: defined out-of-line in the .cpp,
+    // which parks the URL for the shell's live tick and writes the `POPUP:` marker.
+    RefPtr<WebCore::Page> createWindow(WebCore::LocalFrame&, const String&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&) final;
     void show() final { }
 
     bool canRunModal() const final { return false; }

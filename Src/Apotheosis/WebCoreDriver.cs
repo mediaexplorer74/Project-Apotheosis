@@ -236,6 +236,11 @@ namespace Apotheosis
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
         public static extern int WebCoreGetUrl(byte[] buf, int len);
 
+        // L1 popup half: TAKE the queued popup URL (window.open / target=_blank) parked by the
+        // engine funnels; 0 = none, and the slot clears on every take so a popup fires once.
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int WebCoreTakePopupUrl(byte[] buf, int len);
+
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
         public static extern int WebCoreGetLinkCount();
 

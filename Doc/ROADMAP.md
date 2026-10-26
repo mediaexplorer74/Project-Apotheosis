@@ -273,8 +273,10 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
 
 ## Phase L — long term (months each)
 
-- **L1. Frames and popups** — **iframes/frames DONE on x64 in `0.2.3.80` (2026-10-25); phone
-  acceptance pending.** `LoadingFrameLoaderClient::createFrame` now mirrors WebKitLegacy's
+- **L1. Frames and popups** — **iframes/frames DONE on x64 in `0.2.3.80` (2026-10-25); popups
+  DONE on x64 in `0.2.3.86` (2026-10-26, single-window policy); iframe phone acceptance DONE on
+  the Lumia 950 in `0.2.3.85` (2026-10-25, batch `probe-l1-arm-85.txt`); the Lumia 640 pass and
+  an ARM build with the popup fix are still open — L1 is NOT closed.** `LoadingFrameLoaderClient::createFrame` now mirrors WebKitLegacy's
   `_createFrameWithPage`: effective sandbox flags are the owner's plus the parent's, the referrer
   policy falls back to the top document only when the owner's is the empty string, the frame is
   built with `LocalFrame::createSubframe`, named with `tree().setSpecifiedName()` and initialized
@@ -288,10 +290,37 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   renders two 50% columns; `target="slot"` navigates the existing named frame (created-frame count
   unchanged); a same-origin child reads and writes the parent document while a cross-origin child
   is blocked (1 vs 0 marker requests). `dzen.ru` still paints with its ad iframes; `example.com`
-  and `lenta.ru` are unchanged. **Still open:** `window.open` and `target=_blank` remain no-ops
-  because `PortChromeClient::createWindow` returns nullptr — popups need a host-side window/tab
-  decision and are a separate item from this iframe pass. Phone acceptance is deferred until a
-  Lumia is back on the bench.
+  and `lenta.ru` are unchanged.
+  *Phone acceptance, Lumia 950 (`.85`, 2026-10-25):* batch `probe-l1-arm-85.txt` — 60 s home
+  pause, 10 harness pages, dzen.ru (~250 finger scrolls all `rc=0`), final
+  `url=https://example.com/ ... rs=C`, normal suspend ~9 min in, no crash markers. Harness
+  titles/markers match the bench: `L1 iframes=6 same=SAME-ORIGIN PARENT ACCESS OK srcdoc=SRCDOC OK`,
+  three sandboxed frames each logging the real `allow-scripts` JS error, `about:srcdoc` with no
+  request, frameset `name=left/right` both committed, `clicklink` navigating the existing
+  `name=slot` (no new frame), `REMOVED OK iframes=0`, `DYNAMIC OK iframes=1`,
+  `RESIZE OK actual=600x220`. Evidence: `Src/tools/device-logs/20261025-2201-l1-arm-85/`,
+  Summary 2026-10-25 section. **Popups DONE on x64 in `0.2.3.86` (2026-10-26), single-window policy
+  (попапы открываются в текущем окне — вкладок в v1 нет).** The hole had TWO doors: `window.open`
+  enters through `PortChromeClient::createWindow` (the one the roadmap named) and `target=_blank`
+  links/forms through `LoadingFrameLoaderClient::dispatchDecidePolicyForNewWindowAction`, which
+  was a bare `PolicyAction::Ignore` — both were silent. Both now queue the URL in the driver slot
+  + write a `POPUP:` marker in gpu-steps; the shell's live tick takes it once via the new C ABI
+  `WebCoreTakePopupUrl` and opens it through the normal `NavigateTo(pushHistory:true)`.
+  Measured on the bench (`Src/tools/l1-popup-harness/`, batches 1–2): `_blank` click →
+  `POPUP: new-window-policy` → `popup queued` (+1.35 s) → diag
+  `url=...src=blank title=POPUP TARGET OK` + server 200; gesture `window.open` →
+  `POPUP: window.open` → `popup queued: ...src=open` → target page, beacon `r=null` (the null
+  return is by design). Timer-based `window.open` is blocked earlier by WebKit's own
+  `allowPopUp` gesture gate (Chrome-like; left untouched, logs nothing). Regressions (batches
+  3–5): named `target=slot` bypasses the queue and the frame's script still runs; plain `_self`
+  links navigate normally with `url follows engine`; an unknown target is queued — correct
+  single-window interpretation. **Cross-origin popup verified too (batch 6):** a `_blank` from :8765
+  queued `http://127.0.0.1:8766/cross-target.html` and the final diag read `url=...:8766/...
+  title=CROSS TARGET OK` with the 8766 server logging the GET. **Still open:** (1) the Lumia 640
+  run of the iframe batch (`192.168.1.39`) and an ARM build carrying these popups, which Phase 0
+  requires before any "both devices" wording; (2) Back-from-a-popup was not exercised (no autocmd
+  verb reaches the shell's Back); (3) one 10-minute run is one run — no three-consecutive-runs,
+  no memory figure. Evidence: `Doc/Archive/Summary.md` 2026-10-26 popup section.
 - **L2. ARM JavaScriptCore currency** — the ARM JSC predates the RedBlackTree insert crash cure, and
   a header-only cure cannot travel through a relink: the fix is a real JSC rebuild in a build dir
   that CANNOT be reconfigured without breaking (one cmake edit costs a full ~10 h rebuild). Plan a

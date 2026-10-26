@@ -1,0 +1,36 @@
+# Apotheosis 2026-10-25 -- cold-start navigation isolation after the .83 hang.
+#
+# .83 ran the L1 batch and stopped at its first goto: the app stayed on the home page,
+# autocmd-log.txt never printed `wait 30000ms elapsed`, and the UI thread stopped ticking.
+# The harness server saw no request, but the log had been cleared at the same second as the
+# goto, so that absence is not conclusive. This run separates the possibilities:
+#
+#   1. cold start: 15 s was not enough and the first goto raced the home page. The wait below
+#      is 60 s, and the first URL is a plain document with no frames.
+#   2. plain navigation: /same.html has no iframe and no parent DOM access when top-level.
+#      If this hangs too, the defect is not in L1.
+#   3. L1 parent: / is the seven-frame page. If (2) worked and this hangs, the ARM L1 path
+#      is the subject.
+#
+# Query strings are cache-busters. The harness strips them (path = self.path.split('?', 1)[0])
+# and sends Cache-Control: no-store anyway; the query makes it impossible for a stale cached
+# copy of the page from the .82 run to be mistaken for a fresh navigation.
+
+# Let the home page, engine session and live tick fully settle. .83 used 15 s.
+wait 60000
+
+# --- 1. plain same-origin document, no frames -------------------------------
+goto http://192.168.1.34:8765/same.html?run=84a
+wait 15000
+tap 2 2
+wait 2000
+diag
+hash
+
+# --- 2. the seven-frame parent ----------------------------------------------
+goto http://192.168.1.34:8765/?run=84b
+wait 30000
+tap 2 2
+wait 2000
+diag
+hash

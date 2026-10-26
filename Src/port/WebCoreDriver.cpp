@@ -1321,6 +1321,11 @@ static int g_lastNonWhiteH = 0;
 // number is a comfort margin and not the thing the answer depends on.
 static char g_lastTitle[512] = "";   // last document title (for the tab/UI)
 static char g_lastUrl[1024] = "";    // last document URL (requested vs effective -- see the address-bar note)
+// L1 popup slot (2026-10-26): one queued popup URL, written by the two engine funnels that used
+// to drop window.open()/target=_blank in silence and taken (once) by the shell's live tick.
+// Both sides run on the engine thread -- the funnels dispatch inside WebCore, WebCoreTakePopupUrl
+// is called from WebEngine.Instance.Post -- so no lock; a take clears the slot by construction.
+static char g_pendingPopupUrl[1024] = "";
 static uint32_t g_lastFrameHash = 0; // hash of the last painted frame, for blit de-duplication
 static int g_lastPendingResources = 0; // pending/unknown resources as of the last census
 extern "C" bool g_apoUaMobile = true;  // mobile UA switch: true = iPhone-style UA, false = desktop (LoadingFrameLoaderClient::userAgent)
@@ -2688,7 +2693,22 @@ static void gpuLogMarkerF(const char* fmt, ...)
 // handler was never attached because the bundle threw on the way in".
 namespace WebCorePort {
 void portDiagLog(const char* text) { gpuLogMarker(text); }
+
+// L1 popup half: one entry point for both funnels (PortChromeClient::createWindow for
+// window.open, LoadingFrameLoaderClient's new-window policy for target=_blank links and
+// forms). Parks the URL for the shell's live tick and writes the evidence marker -- the
+// whole point of the change is that a dropped popup must leave a trace on one side and
+// become a real navigation on the other. `what` names the funnel so the log says which.
+void portQueuePopupRequest(const char* what, const char* url)
+{
+    if (!url || !url[0])
+        return;
+    std::snprintf(g_pendingPopupUrl, sizeof g_pendingPopupUrl, "%s", url);
+    char line[1200];
+    std::snprintf(line, sizeof line, "POPUP: %s queued url=%.900s", what ? what : "?", url);
+    gpuLogMarker(line);
 }
+} // namespace WebCorePort
 
 #if defined(WK_WINUWP)
 // Apotheosis: walk the JavaScript stack and write it out, one line per frame.
@@ -4737,6 +4757,21 @@ int WebCoreGetUrl(char* buf, int len)
     return n < 0 ? 0 : n;
 }
 
+// L1 popup half: take (and clear) the queued popup URL. Written from the engine funnels,
+// taken from the shell's live tick -- both on the engine thread, hence the plain static.
+// Clears buf as well, so the shell can tell "nothing" from "a URL" without a length dance.
+int WebCoreTakePopupUrl(char* buf, int len)
+{
+    if (!buf || len <= 0)
+        return 0;
+    buf[0] = '\0';
+    if (!g_pendingPopupUrl[0])
+        return 0;
+    int n = std::snprintf(buf, static_cast<size_t>(len), "%s", g_pendingPopupUrl);
+    g_pendingPopupUrl[0] = '\0';
+    return n < 0 ? 0 : n;
+}
+
 // Evaluate JS in the page and copy the string result into out; 0 or an error code
 int WebCoreEvalJS(const char* script, char* out, int len)
 {
@@ -5621,6 +5656,10 @@ static void apoLogLiveDocuments(const char* when)
 static int WebCoreSessionLoadImpl(const char* url, int w, int h, uint8_t* outRGBA)
 {
     DBG_STAGE("WebCoreSessionLoad enter url=%s", url ? url : "null");
+    // L1: a popup still sitting in the slot belongs to the session being replaced -- if the
+    // shell has not taken it by now, firing it after the new page is up would navigate away
+    // from the page the user just asked for. Drop it; the untouched-taken case is empty anyway.
+    g_pendingPopupUrl[0] = '\0';
     if (!url || !outRGBA || w <= 0 || h <= 0) {
         DBG_STAGE("WebCoreSessionLoad exit: bad args");
         return kErrBadArgs;

@@ -1,0 +1,10 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>REG init</title>
+<body>
+<h1>L1 regression on .86: iframe + named frame + plain link</h1>
+<p>The three checks below are the paths the popup change must NOT touch.</p>
+<br><iframe id="slot" name="slot" src="/reg-frame.html" width="340" height="120"></iframe>
+<p><a id="at" href="/reg-inner.html" target="slot">reactivate named frame slot</a></p>
+<p><a id="plain" href="/reg-self.html">plain same-window link</a></p>
+</body>

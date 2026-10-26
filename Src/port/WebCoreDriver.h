@@ -98,6 +98,15 @@ int WebCoreGetTitle(char* buf, int len);
 // to detect URL changes for the address bar and forward/back history stack. Returns bytes written.
 int WebCoreGetUrl(char* buf, int len);
 
+// L1 popup half (2026-10-26): popups are opened IN THE CURRENT WINDOW on this single-window
+// browser. The two engine funnels that used to drop window.open()/target=_blank silently
+// (PortChromeClient::createWindow, LoadingFrameLoaderClient's new-window policy) instead park
+// the requested URL here and log a `POPUP:` marker; the shell polls this from the live tick
+// (same engine thread as the writers) and feeds the URL into its normal NavigateTo/queue path.
+// TAKE semantics: copies the URL once and clears the slot, so a popup cannot fire twice.
+// Returns bytes copied (0 = nothing queued), which also clears buf.
+int WebCoreTakePopupUrl(char* buf, int len);
+
 // Directly download url to outPath (standalone curl, no render, reuses CA blob). Returns HTTP status (e.g. 200)
 // on success, negative on failure. curl global init must have occurred first.
 int WebCoreDownload(const char* url, const char* outPath);

@@ -77,6 +77,8 @@ extern "C" void WebCorePortRecordNetError(const char* phase, const char* type, i
 // survived every crash and hang here. Declared the same way PortPlatformStrategies.cpp declares it,
 // rather than by including PortChromeClient.h for the sake of one function.
 namespace WebCorePort { void portDiagLog(const char* utf8); }
+// L1 popup half: defined in WebCoreDriver.cpp next to the g_pendingPopupUrl slot it fills.
+namespace WebCorePort { void portQueuePopupRequest(const char* what, const char* url); }
 
 namespace {
 
@@ -190,10 +192,20 @@ void LoadingFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRes
     policyFunction(PolicyAction::Use);
 }
 
-// We have no UI to open new windows in a headless render; ignore the request
-// (but still complete the policy check so the loader is not left hanging).
-void LoadingFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String&, std::optional<HitTestResult>&&, FramePolicyFunction&& policyFunction)
+// L1 popup half (2026-10-26). This used to be a bare `Ignore` and a comment claiming headless:
+// a target=_blank link or a popup-targeted form died here with ZERO traces -- no request, no
+// marker, not a line in any log -- which is exactly the hole the original L1 item named. The
+// port keeps the Ignore (aborting the second-Page machinery, which this single-window browser
+// cannot present) but parks the URL first: portQueuePopupRequest writes the `POPUP:` marker
+// into gpu-steps and fills the slot the shell's live tick drains into its normal NavigateTo, so
+// the popup opens in the window the user is already looking at. window.open()'s other funnel is
+// PortChromeClient::createWindow -- same policy, two doors.
+void LoadingFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest& request, FormState*, const String& frameName, std::optional<HitTestResult>&&, FramePolicyFunction&& policyFunction)
 {
+    char what[160];
+    std::snprintf(what, sizeof what, "new-window-policy target=%s",
+        frameName.isEmpty() ? "_blank" : frameName.utf8().data());
+    portQueuePopupRequest(what, request.url().string().utf8().data());
     policyFunction(PolicyAction::Ignore);
 }
 

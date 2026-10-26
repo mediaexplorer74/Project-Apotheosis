@@ -1,0 +1,157 @@
+# Apotheosis 2026-10-25 -- L1 (iframe/frame) ARM acceptance on the Lumia 950.
+#
+# The x64 run (0.2.3.81) proved L1 against a two-origin harness on this PC. This batch is the
+# same harness seen from the phone. It CANNOT use localhost: on the phone that is the phone
+# itself, so every URL names the PC by its LAN address, and cross-origin is a second PORT on
+# the same host (8765 vs 8766) rather than a second name. Origins compare scheme+host+port, so
+# 8766 is a genuinely different origin.
+#
+# Prerequisite that is NOT test scaffolding: Package.appxmanifest declares
+# privateNetworkClientServer. Without it a UWP AppContainer cannot reach a private address at
+# all. The x64 bench cannot prove this one -- there the target is the PC itself, i.e. loopback,
+# which is a separate block -- so the phone is the first real test of it.
+#
+# WHY `tap 2 2` BEFORE EVERY `diag`: the driver's diag string is written by the last engine
+# activity that had pixels, and a page's later `document.title` update does not repaint. Measured
+# on x64 today: after `goto` + `wait 20000` the diag still read `title=L1 parent`, while a tap in
+# the page and a second diag read `title=L1 parent | SAME-ORIGIN PARENT ACCESS OK`. The tap at
+# the very top-left corner is chosen because nothing on these pages is clickable there, and a
+# click path writes a fresh diag. Without it, every measurement the pages publish in their title
+# would be invisible in the log.
+#
+# WHY TITLES CARRY THE MEASUREMENTS: this phone's Device Portal has no screenshot endpoint
+# (`/api/control/screenshot` answers 404 for GET and POST with a valid CSRF token is 404 too), so
+# a visual claim cannot be captured by this bench. Each harness page therefore REPORTS what it
+# measured by setting its own document.title, which the diag prints verbatim.
+#
+# What each page proves:
+#
+#   /              6 iframes + 1 srcdoc frame. DIAG TITLE must read
+#                    L1 iframes=6 same=SAME-ORIGIN PARENT ACCESS OK srcdoc=SRCDOC OK
+#                  which is three facts at once: all frames were created, the same-origin child
+#                  reached into the parent DOM, and the srcdoc document exists and has its inline
+#                  text. HARNESS LOG: one /same-origin-access-ran.png (not the decisive one --
+#                  same.html always requests it), NO /cross-origin-access-ran.png, a request for
+#                  /nested-inner.html (nested frame loaded), NO /sandbox-script-ran.png.
+#   /sandbox-direct.html
+#                  A = sandbox, B = sandbox allow-scripts, C = sandbox allow-same-origin.
+#                  DIAG TITLE: SANDBOX C=SANDBOXED FRAME - gray = script blocked
+#                  C is the positive readout the other two cannot give: its origin is kept (the
+#                  parent can read its DOM) while its scripts must NOT run, so the unchanged text
+#                  is proof the sandbox flag was honoured, not an inference from silence. HARNESS
+#                  LOG: EXACTLY ONE /sandbox-script-ran.png -- B's. A and C must contribute none.
+#   /srcdoc-direct.html
+#                  DIAG TITLE: SRCDOC inline=SRCDOC OKinline document, no network request
+#                  HARNESS LOG: only the parent HTML -- an inline document must not hit the
+#                  network.
+#   /frameset.html  <frameset cols="50%,50%"> with two named <frame>s.
+#                  DIAG TITLE: FRAMESET frames=2 names=left,right w=<n>/<n>  (equal widths)
+#                  HARNESS LOG: /frame-left.html AND /frame-right.html.
+#   /named.html     `links` + `clicklink 0` navigates into target="slot".
+#                  DIAG TITLE: NAMED slot=/same.html text=SAME ORIGIN OK... -- the EXISTING named
+#                  frame took the navigation. port-trace: no new `FRAME: created` for it.
+#   /remove.html    The iframe is removed after 3 s.
+#                  DIAG TITLE: REMOVED OK iframes=0
+#   /reload.html    The frame's src is switched same-origin -> cross-origin after 2 s.
+#                  DIAG TITLE: RELOAD cross-blocked -- the parent's read of the child's location
+#                  now throws, i.e. the frame really is cross-origin. HARNESS LOG: /cross.html on
+#                  port 8766. port-trace: no new frame.
+#   /dynamic.html   A frame is created by script after 2 s.
+#                  DIAG TITLE: DYNAMIC OK iframes=1 text=SAME ORIGIN OK...
+#   /resize.html    The frame grows 300x110 -> 600x220 after 2 s.
+#                  DIAG TITLE: RESIZE OK actual=600x220 -- the child's own innerWidth/innerHeight,
+#                  not the attribute we set. HARNESS LOG: /same.html requested ONCE (a resize is
+#                  not a navigation).
+#   dzen.ru         Regression with real ad iframes -- the case that matters in the wild.
+#   example.com     Regression, cheap, static.
+#
+# Evidence to pull afterwards: autocmd-log.txt (all diag lines), port-trace.txt (`FRAME:` and
+# `NAV:` lines), the harness server log on the PC.
+#
+# If the very first goto ends in `lasterr=[... curlcode=28 ...]` with nothing in the server log,
+# privateNetworkClientServer is not in the installed package -- check Test-AppxPayload output
+# before reading anything into the frame results.
+
+# let the home page and the engine session settle. 60 s, not 15: the .83 run
+# was suspended at 21:28:20, 25 s after its goto, and the .84 isolation run
+# showed the cold home page needs the longer settle before the first
+# navigation. The phone must also be kept awake by hand (volume key).
+wait 60000
+
+# --- the seven-frame parent -------------------------------------------------
+# ?run=85 is a cache-buster; the server strips the query and sends no-store.
+goto http://192.168.1.34:8765/?run=85
+wait 30000
+tap 2 2
+wait 2000
+diag
+hash
+
+# --- sandbox, all three halves side by side ---------------------------------
+goto http://192.168.1.34:8765/sandbox-direct.html
+wait 15000
+tap 2 2
+wait 2000
+diag
+
+# --- srcdoc: an inline document, no network request -------------------------
+goto http://192.168.1.34:8765/srcdoc-direct.html
+wait 12000
+tap 2 2
+wait 2000
+diag
+
+# --- frameset: two real <frame>s, 50/50 -------------------------------------
+goto http://192.168.1.34:8765/frameset.html
+wait 15000
+tap 2 2
+wait 2000
+diag
+
+# --- named target: clicklink must reuse the existing named frame ------------
+goto http://192.168.1.34:8765/named.html
+wait 12000
+links
+clicklink 0
+wait 12000
+tap 2 2
+wait 2000
+diag
+
+# --- removal ----------------------------------------------------------------
+goto http://192.168.1.34:8765/remove.html
+wait 18000
+tap 2 2
+wait 2000
+diag
+
+# --- subframe src change, same -> cross -------------------------------------
+goto http://192.168.1.34:8765/reload.html
+wait 20000
+tap 2 2
+wait 2000
+diag
+
+# --- dynamic creation -------------------------------------------------------
+goto http://192.168.1.34:8765/dynamic.html
+wait 15000
+tap 2 2
+wait 2000
+diag
+
+# --- resize -----------------------------------------------------------------
+goto http://192.168.1.34:8765/resize.html
+wait 15000
+tap 2 2
+wait 2000
+diag
+
+# --- regressions: real sites with real iframes ------------------------------
+# No tap here: a tap at 2,2 on a real site can hit its own chrome or an ad, and these two pages
+# report through loads/pending/lasterr at the end of the load, which needs no repaint.
+goto https://dzen.ru/
+wait 50000
+diag
+goto https://example.com/
+wait 20000
+diag

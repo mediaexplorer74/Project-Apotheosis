@@ -2103,8 +2103,22 @@ namespace Apotheosis
                     WebCoreDriver.WebCoreGetUrl(uBuf, uBuf.Length);
                     engineUrl = Encoding.UTF8.GetString(uBuf).TrimEnd('\0');
                 }
+                // L1 popup half (2026-10-26): window.open()/target=_blank queue their URL in the
+                // driver (single-window policy -- no tabs in v1). The live tick is the engine-thread
+                // poller that already exists for S3, so it also TAKES the popup; take-on-read means a
+                // popup can fire at most once. Read here regardless of engineUrl: a queued popup must
+                // not disappear because this tick cared about something else. The UI side below opens
+                // it through NavigateTo -- history, URL box and the S2 busy-queue come for free.
+                string popupUrl = "";
+                if (rc == 0)
+                {
+                    byte[] pBuf = new byte[1024];
+                    if (WebCoreDriver.WebCoreTakePopupUrl(pBuf, pBuf.Length) > 0)
+                        popupUrl = Encoding.UTF8.GetString(pBuf).TrimEnd('\0');
+                }
                 int rcCopy = rc; uint hashCopy = hash; int pendingCopy = pending;
                 string engineUrlCopy = engineUrl;
+                string popupUrlCopy = popupUrl;
                 try
                 {
                     disp.RunAsync(CoreDispatcherPriority.Low, () =>
@@ -2120,6 +2134,19 @@ namespace Apotheosis
                                 RefreshFab();
                                 StopLiveMode();
                             }
+                            return;
+                        }
+                        // L1 popup half: the engine parked a popup request; open it in THIS window
+                        // (single-window policy) and leave a line in autocmd-log that names what
+                        // happened -- an event the old build dropped without a trace on either side.
+                        // AutoLog FIRST (same lesson as S3's `url follows engine`): the observation
+                        // must not sit behind code that can throw. NavigateTo itself handles a busy
+                        // engine through _pendingNav (S2), appends history (pushHistory=true) and
+                        // runs the normal watchdog/URL-box epilogue.
+                        if (popupUrlCopy.Length > 0)
+                        {
+                            AutoLog("popup queued: " + popupUrlCopy);
+                            NavigateTo(popupUrlCopy, true);
                             return;
                         }
                         // S3: the engine's document url wins, but never while the user is

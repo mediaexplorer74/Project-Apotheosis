@@ -3437,6 +3437,116 @@ tab) with its own chrome and lifetime rules. Phone acceptance of iframes/frames 
 a Lumia is back on the bench. The bench manifest is `0.2.3.80`; the `0.2.3.73` release ZIPs remain
 frozen and no release is cut from this HEAD.
 
+### L1 on the Lumia 950: the phone iframe batch passes, popups are still the open half (2026-10-25, `0.2.3.85`)
+
+**1. What ran.** The ARM line shipped `0.2.3.85` (manifest `source=0.2.3.85 7362`) and executed the
+packaged acceptance batch `device-accept/probe-l1-arm-85.txt` on the Lumia 950 (`192.168.1.35`,
+OS 15254). One session, `21:53:07` (app-ctor) to `22:02:02` (suspending, normal) — about nine
+minutes, display held awake for the whole batch, no crash, no watchdog timeout, no
+`CRASHVERDICT`-style missing marker. Evidence: `Src/tools/device-logs/20261025-2201-l1-arm-85/`
+(`autocmd-log.txt`, `boot.txt`, `gpu-steps.txt`, `stage.txt`) plus `Src/tools/device-accept/probe-l1-arm-85.txt`.
+
+**2. The sequence (the reported timeline checks out).** `wait 60000ms` on the home page (the
+"minute pause"), then `goto .../?run=85` and ten harness pages in order, then `goto
+https://dzen.ru/` (21:57:11, title + `bodyKids=57` + 52 scripts + `nonwhite=64636/177840` after the
+50 s wait; ~250 finger scrolls, all `rc=0`), then `goto https://example.com/` — the final diag
+reads `url=https://example.com/ | url=https://example.com/ title=Example Domain rs=C`, `stage.txt`
+records `after-load url=https://example.com/ rc=0`, and the batch ends with `display: released`.
+Every harness page reported `nav=L0/I0/S1` — an active session for the whole pass.
+
+**3. What the iframe pages proved (harness title → engine markers in gpu-steps.txt).**
+* **Main harness page**: `title=L1 iframes=6 same=SAME-ORIGIN PARENT ACCESS OK srcdoc=SRCDOC OK`,
+  `contents=538x1132`, `body=1` — six iframes painted, a same-origin child read/wrote
+  `parent.document`, and `document_count=8` names every sub-document (same, cross, nested-outer,
+  nested-inner, about:srcdoc, sandboxed, long). Cross-origin isolation held: the `:8766/cross.html`
+  child committed but threw on `parent` access.
+* **Sandbox**: three `sandboxed.html` frames created and committed, and the JS engine logged
+  `Blocked script execution ... allow-scripts is not set` for each — the gray "script blocked"
+  frame is real enforcement, not a stub.
+* **`srcdoc`**: committed as `about:srcdoc` with `substitute=1` and zero network request for the
+  document itself — matches the x64 bench finding.
+* **`<frameset>`**: `FRAME: created name=left` / `name=right`, both got 200s and committed;
+  page title `FRAMESET frames=2 names=left,right w=179/179`.
+* **Named target**: `FRAME: created name=slot`; the probe's `clicklink` navigated the *existing*
+  slot frame to `/same.html` (the post-click line is `FRAME: committed view name=slot` — no new
+  frame), title `NAMED slot=/same.html ... SAME ORIGIN OK`.
+* **Remove / reload / dynamic**: `title=REMOVED OK iframes=0` with the page drawn nearly empty
+  (`nonwhite=2669/177840`); reload re-created and committed the same-origin and cross-origin
+  children; `DYNAMIC OK iframes=1` after a script-created frame.
+* **Resize**: `title=RESIZE OK actual=600x220` — the page's own iframe resize landed.
+
+**4. Verdict.** The claim that the run went routinely is supported by the logs: pause → harness →
+iframe/remove/resize → dzen.ru → example.com, ending clean. Phone acceptance of the *iframe half*
+of L1 on the Lumia 950 is hereby recorded; it does NOT close L1.
+
+**5. What is still open — the "доделка".**
+* **Popups**: `window.open` and `target=_blank` are still no-ops (`PortChromeClient::createWindow`
+  returns `nullptr`). This is the structural half of the original L1 item and needs a host-side
+  window/tab decision implemented on the x64 bench first.
+* **Lumia 640**: this batch ran on the 950 only — the same probe needs one pass on the 640
+  (1 GB, Snapdragon 400) before any "both devices" wording; ROADMAP Phase 0 explicitly requires it.
+* One 10-minute run is one run: no three-consecutive-runs claim, no memory figure from this pass.
+
+### L1 popups on the x64 bench: two funnels, one window (2026-10-26, `0.2.3.86`)
+
+**1. The hole had two doors, not one.** The roadmap blamed only `PortChromeClient::createWindow`
+returning nullptr — but that is just the `window.open()` door. A `target=_blank` link or a
+popup-targeted form never reaches it: it dies earlier, in
+`LoadingFrameLoaderClient::dispatchDecidePolicyForNewWindowAction`, which was a bare
+`policyFunction(PolicyAction::Ignore)` — no request, no marker, not one line in any log. So
+`window.open` goes LocalDOMWindow::open → `WebCore::createWindow` → `Chrome::createWindow` →
+our ChromeClient, while links go FrameLoader → `checkNewWindowPolicy` → our FrameLoaderClient —
+two independent silences, both now fixed.
+
+**2. The v1 host decision: single-window policy.** Tabs are out of 1.0 (L3), so an auxiliary Page
+has nowhere to be presented. Both funnels now park their URL in a driver slot
+(`g_pendingPopupUrl`) and write an engine marker; the shell's live tick — the same engine-thread
+poller S3 already uses — TAKES the URL once (`WebCoreTakePopupUrl`, new export #49 in
+`WebCoreDriver.exports.def`) and feeds it to the normal `NavigateTo(..., pushHistory:true)`, so
+history, the address box, the 40 s watchdog and the S2 busy-queue all apply for free. A queued
+URL is dropped at session teardown so a popup from a replaced page cannot fire late.
+`window.open()` still returns null to the script (there is no second window to return) — that is
+the honest v1 answer, and it now leaves a trace on both sides.
+
+**3. Measured, x64 `0.2.3.86`, harness `Src/tools/l1-popup-harness/` (python server on :8765):**
+* **Funnel A, `target=_blank` click:** `POPUP: new-window-policy target=_blank queued
+  url=.../popup-target.html?src=blank` (gpu-steps) → `popup queued: ...src=blank` in autocmd-log
+  1.35 s after `clicklink 0` → final diag `url=...src=blank title=POPUP TARGET OK`, server logs
+  `GET /popup-target.html?src=blank` 200. Before this fix the same click produced nothing
+  anywhere.
+* **Funnel B, `window.open()` inside a click gesture:** `POPUP: window.open ... queued
+  url=...src=open` → `popup queued: ...src=open` → diag `POPUP TARGET OK` with `src=open` — not
+  `src=href`, so the queue drove the navigation and the href was cancelled by the page's own
+  `onclick return false`. The beacon `GET /beacon?fn=window.open&r=null` proves the return value
+  is null, as designed.
+* **Timer-based `window.open` is blocked — by WebKit, not by us:** `LocalDOMWindow::allowPopUp`
+  requires a user gesture OR `javaScriptCanOpenWindowsAutomatically`; an opener from
+  `setTimeout` returned null with NO queue marker (beacon `r=null` at t+5 s, page unchanged).
+  That matches Chrome's default popup blocking and the port leaves the gate untouched. Note the
+  blocked path still logs nothing engine-side — a known honesty gap, not a regression.
+
+**4. Regressions measured on the same build (batches 3–5):**
+* **Named frame:** `<iframe name="slot">` + `target="slot"` does NOT enter the queue: no
+  `popup queued`, main URL stays `regress.html`, the frame's document ran
+  `parent.document.title='REG SLOT OK ...'`. First attempt used only `id=` on the iframe — a
+  frame's browsing-context name comes from `name=`, so that target correctly resolved to "no
+  such frame" and was treated as a popup: queueing an unknown target IS the right single-window
+  interpretation (spec: create a new browsing context).
+* **Plain same-window link:** engine navigates, `url follows engine:` (S3) fires, no queue
+  capture; engine `POPUP:` marker count stays 3 across batches 4–5 (only deliberate clicks and
+  the misnamed trial).
+* **S2 interplay, unplanned but observed:** a `goto` issued while the popup navigation was in
+  flight logged `nav QUEUED, shell busy` → `nav QUEUED delivered` — the popup path composes with
+  the shell's own queue instead of fighting it.
+
+**5. What `0.2.3.86` does NOT prove yet:** Back-from-a-push (pushHistory is the standard path
+but no autocmd verb reaches the shell's Back), and anything about the ARM line — driver relink
+for ARM and both phones were untouched today per the maintainer's standing x64-only goal.
+Cross-origin WAS covered in a sixth batch: a `_blank` from :8765 queued
+`http://127.0.0.1:8766/cross-target.html`, the final diag read `url=...:8766/...
+title=CROSS TARGET OK`, and the port-8766 server logged the GET — the queue carries an
+absolute URL and origin plays no part in it.
+
 ---
 
 *"Reviving the Windows Phone web for the people who never let it die."*
