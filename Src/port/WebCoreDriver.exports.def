@@ -77,6 +77,11 @@ EXPORTS
     WebCoreSetNextSessionZoom
 
     ; Metadata / diagnostics
+    ; M3/M4 bench instrument (2026-10-27): read the live DOM from autocmd. The symbol
+    ; existed since the SPA probe but was left out of this list ("not needed for
+    ; browsing"); without it a layout defect like the Network graph collapsing into a
+    ; corner is only observable as pixels, never as width/height/transform values.
+    WebCoreEvalJS
     WebCoreGetTitle
     WebCoreGetUrl
     WebCoreTakePopupUrl

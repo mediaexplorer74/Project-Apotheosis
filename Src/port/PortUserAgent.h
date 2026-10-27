@@ -44,9 +44,16 @@ inline constexpr char mobileUserAgent[] =
 // blocked by sites such as microsoft, and dzen.ru's browser-switch-trap treats
 // a non-Edge Chromium UA as unsupported on Windows, so this is deliberately
 // Edge rather than plain Chrome.
+//
+// Apotheosis 2026-10-27: bumped Edg/120 -> Edg/156 (Chromium 120 -> 138) because the real
+// machine runs Edge 156.0.4314.42 and sites gate on the pair: nokiadesignarchive.aalto.fi's
+// GDPR CMP logged "[CMP] Your browser (edge v120) is not supported. The CMP requires edge v124
+// or higher and may not function correctly" -- a broken CMP/onboarding is suspected of leaving
+// the site's rgba(0,0,0,0.8) welcome overlay half-drawn (maintainer's "graph went dark"). The
+// mobile UA above is untouched (Apple-side gates do not read the Edge key).
 inline constexpr char desktopUserAgent[] =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-    "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0";
+    "(KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/156.0.0.0";
 
 // Desktop, Yandex-owned hosts only. dzen.ru serves a Yandex Browser Direct
 // splashscreen to Edge, and Yandex properties are tuned to YaBrowser; the

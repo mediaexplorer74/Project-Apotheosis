@@ -639,6 +639,27 @@ If it is ever taken up, in ascending cost:
 Until then the honest statement is: the C# line presents through software on this bench, and the GPU
 path is one native call away from working there, with the harness as the existence proof.
 
+## 11. M7-2026-10-27: what the new numbers do and do not decide about the present path
+
+M7's roadmap bullet makes the GPU-present decision explicitly a *measurement* decision, so the
+first M7 numbers (x64 bench, `0.2.3.89`, ROADMAP M7) belong here:
+
+* **Scroll cadence, software present:** mean **4.4 ms/step** (n=80, median 4, p90 6, worst 18 —
+  the cold steps right after `goto`). A 60 Hz finger asks once per **16.7 ms**, so on this bench
+  software present answers with a **~4× headroom** per step — the path is not marginal here.
+* **Documents:** harness-light 1254 ms, example.com 1297–2482 ms, lenta.ru 6234 ms (main
+  document + first paint; subresources tail afterwards).
+
+**What this narrows:** on x64, software present has no visible performance cliff in the M7
+metrics — there is no bench-side pressure to move to GPU for speed alone, and the historical
+reasons to stay (§10.5, MVP-safe) remain the default. **What it cannot decide:** the bullet's real
+question was always the *Snapdragon 400* — §10.5's soft-premium may be proportionally far worse
+on a 1 GB/SD400 phone, and x64 says nothing about it. So the decision stands where §10.5 left
+it, now with one leg measured: **software present stays the default; the GPU switch for the
+device line gets decided when M7's device half puts a cadence number under SD400**, and if that
+number approaches or exceeds the 16.7 ms budget, items 1–3 of §10.5's cost ladder are the queue.
+Nothing in today's numbers re-opens the ladder's order.
+
 
 
 

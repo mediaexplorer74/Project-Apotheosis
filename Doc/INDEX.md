@@ -116,6 +116,7 @@ this project a separate bug.
 - [BUILD-ARM32.md](BUILD-ARM32.md) — the ARM32 line: engine archives, the driver-DLL link, deployment, known ARM traps.
 - [BUILD-X64.md](BUILD-X64.md) — the x64 line: the three build stages, the static `WebCoreFull` archive, the C# appx build.
 - [GPU-LIVENESS.md](GPU-LIVENESS.md) — GPU investigation and presentation status.
+- [METROSURF-ANALYSIS.md](METROSURF-ANALYSIS.md) — external sibling-port analysis: what the public MetroSurf tree publishes, its WP81 architecture, the media-engine seam, and which ideas are worth revisiting. Reference only; no license, no code reuse.
 - [XAML.md](XAML.md) — the XAML/C++/CX contract and safe UI rules (legacy host).
 - [GITHUB.md](GITHUB.md) — publishing this tree safely.
 - [Archive/](Archive/) — dated snapshots and closed investigations. Reference only, never a spec.

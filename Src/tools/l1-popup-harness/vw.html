@@ -1,0 +1,37 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>boot</title>
+<style>body{font:14px monospace;background:#fff;color:#000}pre{white-space:pre-wrap}</style>
+<pre id="out">loading</pre>
+<script>
+  // M3 bench probe (2026-10-27): record the viewport the DOCUMENT WAS CREATED AT,
+  // not the one it ends up with. Sites like the Nokia Design Archive branch on
+  // innerWidth once, at module init (mobileBreakpoint 870); a later resize does
+  // not re-run that branch. The title is deliberately write-once so `diag`
+  // still shows the first value after the harness has fitted the window.
+  const vw = [];
+  window.__vws = vw;
+  function snap(tag) {
+    return {
+      tag,
+      iw: window.innerWidth,
+      ih: window.innerHeight,
+      sw: window.screen.width,
+      sh: window.screen.height,
+      dpr: window.devicePixelRatio,
+      cw: document.documentElement ? document.documentElement.clientWidth : 0,
+      t: Math.round(performance.now())
+    };
+  }
+  vw.push(snap('boot'));
+  document.title = 'FIRST ' + JSON.stringify(vw[0]);
+  function draw() { document.getElementById('out').textContent = JSON.stringify(vw, null, 1); }
+  draw();
+  addEventListener('resize', function () { vw.push(snap('resize')); draw(); });
+  document.addEventListener('DOMContentLoaded', function () {
+    vw.push(snap('DOMContentLoaded'));
+    document.title = 'FIRST ' + JSON.stringify(vw[0]);
+    draw();
+  });
+  addEventListener('load', function () { vw.push(snap('load')); draw(); });
+</script>

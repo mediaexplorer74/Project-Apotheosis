@@ -6199,6 +6199,14 @@ static int WebCoreScrollByImpl(int dx, int dy, uint8_t* outRGBA)
     if (ty < minP.y()) ty = minP.y();
     if (ty > maxP.y()) ty = maxP.y();
     view->setScrollPosition(ScrollPosition(tx, ty));
+    // M4a (2026-10-27): the `scroll` verb reaches this frame-only ABI, which had no
+    // measurement of its own -- rc=0 says "painted", never "moved" (S8’s lesson), so a
+    // horizontal scroll on a wide document was unfalsifiable from the log. Same range-arithmetic
+    // record ScrollByAt's fallback writes: clamping on the x axis proves (or denies) that the
+    // frame offers horizontal scroll range at all.
+    gpuLogMarkerF("[SCT] frameby d=%d,%d cur=%d,%d -> %d,%d range=%d,%d..%d,%d",
+        dx, dy, cur.x(), cur.y(), tx, ty,
+        minP.x(), minP.y(), maxP.x(), maxP.y());
 
     // M3 note: a scroll does not pay for pumpLoop's 8 s rendering-update wait. It runs
     // isolatedUpdateRendering (scroll steps, IntersectionObserver), resizes and relayouts,

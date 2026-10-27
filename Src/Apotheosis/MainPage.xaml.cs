@@ -338,6 +338,20 @@ namespace Apotheosis
         // SetLoading(false), the single point every load ends at.
         string _pendingNav;
         bool _pendingNavPush;
+        // M3 (2026-10-27): the boot navigation is held until the XAML tree has been measured.
+        //
+        // The first document used to be created by the ctor at the fixed 720x1080 frame and then
+        // resized by the first ContentArea pass, which arrives AFTER the load. A page that branches
+        // on innerWidth once, at module init, therefore made its desktop/mobile decision at 720 and
+        // never revisited it. Measured on the Nokia Design Archive (2026-10-27): document created at
+        // innerWidth=720, screen=720x1080; DOMContentLoaded and load still 720; the first resize to
+        // 1026x695 arrived at t=1602 ms, and the graph stayed in d3's initial spiral at the canvas
+        // origin while the site auto-selected node A0001 -- both are its mobile path. Loading the
+        // same URL after a fit (1355x751 already current) kept the URL clean and laid the graph out
+        // across the viewport. The fix is at this layer: adopt the fitted geometry BEFORE the first
+        // WebCoreSessionLoad, not after it.
+        string _bootUrl;
+        bool _bootPending;
         string _currentTitle = "";
         List<PageLink> _pageLinks = new List<PageLink>();
         bool _sessionActive;
@@ -639,6 +653,7 @@ namespace Apotheosis
             catch { }
 
             // Test URL hook
+            string bootUrl = _homeUrl;
             try
             {
                 string d = ApplicationData.Current.LocalFolder.Path;
@@ -646,16 +661,16 @@ namespace Apotheosis
                 if (File.Exists(testPath))
                 {
                     string testUrl = File.ReadAllText(testPath).Trim();
-                    if (!string.IsNullOrEmpty(testUrl))
-                    {
-                        NavigateTo(testUrl, true);
-                        return;
-                    }
+                    if (!string.IsNullOrEmpty(testUrl)) bootUrl = testUrl;
                 }
             }
             catch { }
 
-            NavigateTo(_homeUrl, true);
+            // M3 (2026-10-27): not NavigateTo here. The XAML tree has not been measured yet, so
+            // kW/kH are still the fixed 720x1080 frame; starting the load now is exactly the
+            // 720-first bug described on _bootUrl. BootNavigate starts it from the first real
+            // ContentArea pass instead.
+            BootNavigate(bootUrl);
         }
 
         // ===== Data persistence =====
@@ -4021,6 +4036,56 @@ namespace Apotheosis
         // and its zoom has to equal CompositionScale -- and since WebCoreGpuInit returns rc=-20 on
         // x64 it is not the path this bench measures. The setting is refused while a GPU frame is
         // live rather than doing half of each rule.
+        // M3 (2026-10-27): start the boot load from measured geometry, once.
+        //
+        // A page that reads innerWidth at module init decides desktop/mobile exactly once. The
+        // ctor runs before the XAML tree is measured, so the old NavigateTo there always created
+        // the first document at 720x1080; the fitted resize came later and could not undo a branch
+        // the page had already taken. The measurement is on _bootUrl. BootNavigate closes that
+        // window: the first ContentArea pass writes the fitted geometry into kW/kH and only then
+        // calls NavigateTo, so WebCoreSessionLoad builds the document at the size the user will
+        // actually see. Loaded is a backstop for a host where SizeChanged has already settled
+        // before the handler is attached; TryBootNavigate is idempotent.
+        void BootNavigate(string url)
+        {
+            _bootUrl = url;
+            _bootPending = true;
+            int w = (int)(ContentArea.ActualWidth + 0.5);
+            int h = (int)(ContentArea.ActualHeight + 0.5);
+            if (w >= 16 && h >= 16) { TryBootNavigate(w, h); return; }
+            if (ContentArea != null)
+                ContentArea.Loaded += (s, e) => TryBootNavigate(
+                    (int)(ContentArea.ActualWidth + 0.5),
+                    (int)(ContentArea.ActualHeight + 0.5));
+        }
+
+        // Consumes the boot navigation on the first layout pass that has a usable size.
+        // Returns true when this pass started the load (the caller must stop adopting).
+        bool TryBootNavigate(int w, int h)
+        {
+            if (!_bootPending || w < 16 || h < 16) return false;
+            _bootPending = false;
+            string url = string.IsNullOrEmpty(_bootUrl) ? _homeUrl : _bootUrl;
+            _bootUrl = null;
+
+            if (_fitWindow && w <= kViewportCeiling && h <= kViewportCeiling)
+            {
+                // Same rule AdoptViewport applies after a load, only earlier: the fitted viewport
+                // is the content area at the user's page zoom, and kW/kH are the buffer that the
+                // load and its first blit must agree on.
+                _vpW = w; _vpH = h; _vpZoom = ViewportZoom();
+                kW = w; kH = h; _pageZoom = _vpZoom;
+                Crumb($"boot: viewport {w}x{h} z={_pageZoom:0.00} pre-load");
+            }
+            else
+            {
+                Crumb($"boot: fixed viewport {kW}x{kH} (fit={(_fitWindow ? 1 : 0)} area={w}x{h})");
+            }
+
+            NavigateTo(url, true);
+            return true;
+        }
+
         void OnContentAreaSizeChanged(object s, SizeChangedEventArgs e)
         {
             int w = (int)(ContentArea.ActualWidth + 0.5);
@@ -4028,6 +4093,9 @@ namespace Apotheosis
             if (w < 16 || h < 16) return;                  // no layout pass yet
             ApplyDisplayScale();   // S7: the area half of the scale; the frame half arrives at
                                    // the next blit (rotation defers the engine-side resize)
+            // The boot load owns this first pass; starting it here is what makes the document's
+            // initial innerWidth the fitted one. See _bootUrl.
+            if (TryBootNavigate(w, h)) return;
             if (!_fitWindow)
             {
                 // The fixed-viewport line ignores size changes by design -- except one: ROTATION.

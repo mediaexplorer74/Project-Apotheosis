@@ -270,6 +270,15 @@ namespace Apotheosis
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
         public static extern int WebCoreEditDebug(byte[] outBuf, int cap);
 
+        // Live-page JS channel for bench diagnosis (M3/M4). The driver has had the export
+        // since the SPA probe, but the .def deliberately omitted it; `js` in autocmd now
+        // uses it to read DOM geometry and computed styles that a screenshot cannot state.
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebCoreEvalJS")]
+        private static extern int WebCoreEvalJSRaw(byte[] script, byte[] outBuf, int len);
+
+        public static int WebCoreEvalJS(string script, byte[] outBuf)
+            => WebCoreEvalJSRaw(Utf8z(script), outBuf, outBuf.Length);
+
         // ── Find in page ───────────────────────────────────────────────────
 
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebCoreFindString")]

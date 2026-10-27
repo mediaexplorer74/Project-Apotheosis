@@ -235,6 +235,38 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   (a consequence of M1 plus their "unsupported browser" check). Options: persist the consent
   cookies once M1 lands; ship a document-start rule that closes a known CMP overlay. Site-side
   behaviour, not a rendering defect.
+  *Result, 0.2.3.94 (2026-10-27):* the cookie jar plus the `Edg/156` UA close the CMP arm: consent
+  persists in `LocalState/cookie.jar.db` and `localStorage.ucData`, and the banner does not return.
+  The remaining NDA symptom — graph nodes piled in the canvas' top-left corner and entry A0001
+  auto-opened — was NOT the CMP. Root cause measured with the new `js` autocmd verb and a local
+  viewport probe (`Src/tools/l1-popup-harness/vw.html`): the first document was created at the
+  fixed 720x1080 frame because the ctor navigated before the XAML tree was measured; the fitted
+  1026x695 resize arrived 1602 ms AFTER `load` (boot, DOMContentLoaded and load all read
+  720x1080). NDA branches on `innerWidth` once at module init (mobileBreakpoint 870), so 720
+  selected its mobile path: `?node=A0001` auto-selected and the d3 force simulation was paused at
+  its initial phyllotaxis layout — centred on (0,0) of the site's 1860x1600 canvas, exactly the
+  top-left pile. Fix: `_bootUrl` / `BootNavigate` / `TryBootNavigate` in `MainPage.xaml.cs` hold
+  the boot load until the first ContentArea pass and write the fitted geometry into kW/kH BEFORE
+  `WebCoreSessionLoad`. Measured after .94: `vw.html` boots at 1026x695 with no resize events; NDA
+  boots at `https://nokiadesignarchive.aalto.fi/` with no node overlay and the graph laid out
+  across the visible canvas (`Src/tools/shots/nda94-full.png`, `nda94-fresh.png`). The 1860x1600
+  canvas is the SITE's own floor (`Math.max(innerWidth,2200)` by `Math.max(innerHeight,1600)`),
+  not an engine defect; on a 1355x751 window the site shows the top-left of its 2200x1600 design
+  and the force centre is at (949,648). The missing Welcome/CMP modals are persisted state, not a
+  regression: cookie `intro_v1_network=true`, consent in `localStorage.ucData`.
+  A maintainer resize check on the same build confirmed the responsive branch is live rather than
+  frozen at boot: narrowing the window switches NDA to Node Detail, widening restores the graph.
+  The initial-viewport fix therefore seeds the correct first document without pinning the layout to
+  one branch. Landscape-graph / portrait-detail on the Lumia remains the expected behaviour, not a
+  measured result (the device-testing constraint still applies).
+  *ARM synchronization package, 0.2.3.94 (2026-10-27):* the ARM driver was rebuilt from the same
+  port sources and the app bundle was built and audited without deployment. `WebCoreDriver.dll`
+  now carries 52 exports including `WebCoreEvalJS`; `Test-AppxPayload.ps1 -ExpectedArch arm`
+  reports 30/30 binaries ARM, the driver at the package root, 52/52 declared exports and the
+  expected capabilities (`AUDIT PASSED`). The bundle is
+  `Src/Apotheosis/AppPackages/Apotheosis_0.2.3.94_Test/Apotheosis_0.2.3.94_arm.appxbundle`
+  (46.6 MB). It has NOT been deployed or run on either Lumia, so the boot fix and the `js` verb
+  remain x64-measured only.
 - **M4. Input matrix per orientation and mode** — the 0.50 zoom floor reads as "pinch is broken";
   the fitwindow=0 pinch branch and the landscape/inner-scroller cases need one test matrix (verb
   batches + the finger path) instead of spot fixes.
@@ -263,6 +295,12 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   (frame clamps and rc=0 looks like "no scroll") or a context outside this repro; the frame-level
   horizontal case has not been reproduced. Next probe: a page with a document-level horizontal
   overflow (body wider than the viewport) to separate range-0 from a map failure.
+  *M4(b) frame-level probe, 0.2.3.92 (2026-10-27):* `hwide.html` gives the document a real
+  horizontal body (`contents=5000x751`) and the engine reports a real range:
+  `[SCT] frameby d=300,0 cur=0,0 -> 300,0 range=0,0..3645,0`; three `scroll 300 0` commands moved
+  the frame 0 -> 300 -> 600 -> 900. The range-0 hypothesis is therefore NOT reproducible at the
+  engine layer. The actual touch path on the Surface's screen still needs the maintainer's finger
+  (synthetic input cannot reach UWP). Evidence: `Src/tools/shots/m4b-hwide-92.png`.
 - **M5. The memory ceiling — intelligent consumption control.** Heavy pages still cost hundreds of
   MB with every release lever withdrawn. "Ceiling" alone was too vague to schedule, so the item is
   split; the three stages run in order (measurement before levers, levers before budgets — the
@@ -452,6 +490,18 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   in the UI, costs nothing, and gives the later work a place to attach to. Nothing reads the value
   yet, by design. Do not schedule the mode itself before 1.0.0.0; the stub must stay harmless (a
   stored enum nothing reads).
+- **Video through a port-registered media engine.** Not scheduled, and not a 1.0 item. The current
+  build turns video off (`ENABLE_VIDEO=OFF`, `ENABLE_MEDIA_SOURCE=OFF`, pages call
+  `setMediaEnabled(false)`), but WebKit 2.52.4 already exports
+  `MediaPlayerFactorySupport::callRegisterMediaEngine`, so a future port can own decode/present
+  behind `MediaPlayerPrivateInterface` without touching WebCore's media element. MetroSurf's
+  public tree shows the same seam (`g_wp81RegisterMediaEngines`) and confirms the WP8.1 Media
+  Object split, but its actual player lives in the unpublished shell. The useful trigger is a
+  core site that needs video, not "video is missing"; the ladder (progressive MP4 first, MSE last)
+  and the licensing caveat are in `Doc/METROSURF-ANALYSIS.md` section 8.6. WP8.1 itself is out of
+  scope: the fleet is W10M-class, so MetroSurf's 512 MB findings are evidence about the GPU path,
+  not a hardware target. Revisit triggers are listed in section 9.1 of the analysis; until one
+  fires, this stays reference material rather than a backlog item.
 
 ## How to run this plan
 

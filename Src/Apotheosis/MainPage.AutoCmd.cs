@@ -44,6 +44,9 @@
 //                            bookkeeping): the S3 probe's instrument for an
 //                            engine-initiated navigation, so the live tick's url
 //                            follow can be measured without HandleTapAt's own write
+//   js <expression>          evaluate JS in the live page and log the string result;
+//                            the DOM-geometry instrument for layout defects a screenshot
+//                            can only describe (M3 Network graph, 2026-10-27)
 //
 // Every timed command reports elapsed ms, so scroll cost is measured rather than guessed.
 
@@ -550,6 +553,24 @@ namespace Apotheosis
                                 + " cached=" + _engineBack + "/" + _engineFwd
                                 + " host idx=" + _navIndex + "/" + (_navStack.Count - 1)
                                 + " url=" + _currentUrl);
+                    }
+                    else if (verb == "js")
+                    {
+                        // M3/M4 bench instrument (2026-10-27): evaluate one expression in the live
+                        // page and log its string result. It exists because the Network-graph
+                        // defect is a GEOMETRY question -- the pixels say "top-left corner", but
+                        // only innerWidth/innerHeight, #plot's rect and the canvas/SVG sizes say
+                        // which of the three coordinate spaces went stale. The script must return
+                        // a string (JSON.stringify is the intended wrapper); semicolons are safe
+                        // in an autocmd batch file, but -Cmds splits on ';', so keep a probe
+                        // expression comma-only when driving it through drive-csharp.
+                        string script = cmd.Substring(2).Trim();
+                        byte[] jbuf = new byte[8192];
+                        int jrc = -999;
+                        try { jrc = WebCoreDriver.WebCoreEvalJS(script, jbuf); }
+                        catch (Exception ex) { AutoLog("js: threw " + ex.GetType().Name + ": " + ex.Message); }
+                        string jout = System.Text.Encoding.UTF8.GetString(jbuf).TrimEnd('\0');
+                        AutoLog("js rc=" + jrc + " out=" + jout);
                     }
                     else if (verb == "diag")
                     {
