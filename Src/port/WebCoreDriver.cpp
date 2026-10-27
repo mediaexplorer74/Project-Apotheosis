@@ -3005,9 +3005,11 @@ extern "C" void WebCorePortRecordNetError(const char* phase, const char* type, i
 //
 // So the transfer runs here, on one dedicated thread that owns one persistent easy handle (CA
 // store parsed once per process, connection + TLS session reuse preserved from the persistent-
-// handle fix). The engine posts a URL, waits BOUNDED (2.5 s) for completion, and on timeout
-// returns an error page while this thread keeps going to its own 8 s budget and discards the
-// result. Overlapping requests are rejected, not queued.
+// handle fix). The engine posts a URL and waits on a RE-ARMING stall window (12 s without a body
+// byte or a new response header), then returns an error page while this thread keeps going to its
+// own 10 s connect / 30 s total budget and discards the result. Overlapping requests are rejected,
+// not queued. 2026-10-27: the window was 2.5 s until RFC-style redirect chains (rbc.ru, Wikipedia)
+// proved that a healthy second hop can take longer than that; see the constants in the wait loop.
 // Apotheosis 2026-09-18 (ST-4): one HTTP response hop, as the header callback saw it.
 //
 // Why this exists: ApoFetchChannel used curl's own cookie engine, which put the top-level document's
@@ -3243,7 +3245,7 @@ struct ApoFetchChannel {
     bool hasWork = false;
     bool shutdown = false;
     bool done = true;
-    // Apotheosis 2026-09-18: set by the engine thread when it gives up on the 2500 ms budget, read
+    // Apotheosis 2026-09-18: set by the engine thread when it gives up on the stall budget, read
     // by the worker when the transfer it is still running finally finishes. Without it the log held
     // `curl bg timeout -- error page` and then, seconds later, a plain successful `SL: fetch eff=…
     // size=1016600 http=200 crc=0` with nothing tying the two together -- which reads as a second,
@@ -3271,7 +3273,7 @@ struct ApoFetchChannel {
     std::vector<std::string> seedCookies;
 
     // Apotheosis 2026-09-18: bytes downloaded so far, published by the worker's XFERINFO callback and
-    // read by the engine thread while it waits. This is what turns a fixed 2500 ms deadline into a
+    // read by the engine thread while it waits. This is what turns a fixed deadline into a
     // stall detector, so the engine only has to tell "moving but slow" from "not moving", and "slow but
     // moving" is the ordinary case for a 1 MB page. Advanced by the write callback (every body chunk)
     // and by XFERINFO (as a backstop during the header phase); it is also what WebCoreGetFetchProgress
@@ -3289,7 +3291,7 @@ struct ApoFetchChannel {
     // Apotheosis 2026-09-18: completed response header blocks so far -- the second kind of activity, and
     // the one that was missing from the engine's stall detector. A redirect chain reports dl=0 for its
     // entire life, so a detector that watches only progressDl reads a healthy SSO chain as a dead radio
-    // and gives up on it at the same 2500 ms the old fixed deadline used. Measured on dzen.ru's
+    // and gives up on it inside the first tight window. Measured on dzen.ru's
     // 302 -> login.vk.com hop, 23:40. 0 completed hops is a truthful reading, so this starts at 0 too --
     // see progressDl above for why nothing here may be negative.
     std::atomic<long long> progressHops { 0 };
@@ -3418,7 +3420,7 @@ struct ApoFetchChannel {
                 // redirect hop looks like while its server is thinking: measured on dzen.ru's 302 to
                 // login.vk.com, 23:40, one hop recorded, dl=0, killed at 2.5 s. Activity now means body
                 // bytes OR a completed response header block; silence is reported instead of punished,
-                // and CURLOPT_TIMEOUT (8 s), CURLOPT_CONNECTTIMEOUT (3 s) and CURLOPT_LOW_SPEED (1 B over
+                // and CURLOPT_TIMEOUT (30 s), CURLOPT_CONNECTTIMEOUT (10 s) and CURLOPT_LOW_SPEED (1 B over
                 // 2 s) stay as the rules that end a transfer, each able to name its own cause.
                 curl_easy_setopt(h, CURLOPT_XFERINFOFUNCTION,
                     +[](void* clientp, curl_off_t, curl_off_t dlnow, curl_off_t, curl_off_t) -> int {
@@ -3600,8 +3602,8 @@ static ApoFetchChannel* apoFetchChannelGet()
 // Apotheosis 2026-09-19: **the sign is the interface.** `-1` means, and may now ONLY mean, "no
 // top-level fetch is in flight" -- the engine thread is free and a stalled `finished` counter is a real
 // stall. Any non-negative value means a fetch IS in flight: the engine thread is *supposed* to be
-// blocked, and how long it may stay blocked is bounded by the worker (CONNECTTIMEOUT 3 s, TIMEOUT 8 s,
-// LOW_SPEED 1 B / 2 s) and by the 9.5 s ceiling above -- not by the watchdog's guess. During the
+// blocked, and how long it may stay blocked is bounded by the worker (CONNECTTIMEOUT 10 s, TIMEOUT 30 s,
+// LOW_SPEED 1 B / 2 s) and by the 32 s ceiling above -- not by the watchdog's guess. During the
 // pre-body phase (connect, TLS, TTFB, redirect chain) the value is a legitimate `0`.
 //
 // Measured 04:35:35 on a cold dzen.ru navigation, the run that forced this: TTFB took longer than six
@@ -4132,10 +4134,10 @@ static int buildSession(const char* url, int w, int h, uint8_t* outRGBA)
 #if defined(WK_WINUWP)
     // Apotheosis: the fetch runs on its own thread (apoFetchChannelGet above); the engine waits
     // BOUNDED. A stalled radio used to park this thread inside curl_easy_perform past the
-    // platform's patience -- every silent death unwound to exactly that. Now: 2.5 s without a byte
-    // moving (see the re-arming loop below -- it is a stall detector, not a deadline), then
-    // an error page while the worker finishes its own teardown and discards the result.
-    // Overlapping requests are rejected outright, not queued.
+    // platform's patience -- every silent death unwound to exactly that. Now: 12 s without a body
+    // byte or a new response header (see the re-arming loop below -- it is a stall detector, not a
+    // deadline), then an error page while the worker finishes its own teardown and discards the
+    // result. Overlapping requests are rejected outright, not queued.
     char errbuf[CURL_ERROR_SIZE] = { 0 };
     int crc = (int)CURLE_OPERATION_TIMEDOUT;
     bool budgetExpired = false;
@@ -4175,25 +4177,37 @@ static int buildSession(const char* url, int w, int h, uint8_t* outRGBA)
         }
         ft.cvWork.notify_one();
         std::unique_lock<std::mutex> lk(ft.mtx);
-        // Apotheosis 2026-09-18: a FIXED 2500 ms deadline could not tell a dead radio from a slow
+        // Apotheosis 2026-09-18: a FIXED deadline could not tell a dead radio from a slow
         // transfer, and the second is the ordinary case -- a ~1 MB page (measured: the dzen.ru article
         // this replaced) does not fit, so the port showed an error page for a page it then fetched
-        // successfully and discarded. The wait now RE-ARMS while bytes are still arriving.
+        // successfully and discarded. The wait re-arms while bytes are still arriving.
         //
         // The protection the old deadline provided is not weakened, it is delegated: the worker ends a
         // real stall from its own side, and its rules are the ones that can NAME a cause --
-        // CURLOPT_CONNECTTIMEOUT (3 s), CURLOPT_TIMEOUT (8 s) and CURLOPT_LOW_SPEED_LIMIT/TIME (1 B over
-        // 2 s). An unchanged byte count over a full budget therefore means curl is already tearing the
-        // transfer down. The ceiling sits just above the worker's own 8 s so that the worker's error --
-        // which carries curl's reason -- is preferred to this function's guess.
+        // CURLOPT_CONNECTTIMEOUT (10 s), CURLOPT_TIMEOUT (30 s) and CURLOPT_LOW_SPEED_LIMIT/TIME (1 B
+        // over 2 s). An unchanged byte count over a full window therefore means curl is already tearing
+        // the transfer down. The ceiling sits just above the worker's own 30 s so that the worker's
+        // error -- which carries curl's reason -- is preferred to this function's guess.
+        //
+        // Apotheosis 2026-10-27 (.96): the window was 2.5 s, and that was measurably shorter than a
+        // healthy redirect chain. Two rows of the thirteen-site list were lost to it on the x64 bench:
+        //   rbc.ru        hop[1] -> hop[2] took 2.6 s; engine gave up at 5 005 ms, the worker returned
+        //                 http=200 size=298377 crc=0 at 5 139 ms and the bytes were DISCARDED.
+        //   en.m.wikipedia.org  connection+TLS took 7.62 s while the port had 2.5 s of patience; the
+        //                 worker returned http=200 size=258121 crc=0 at 7.80 s, also DISCARDED.
+        // Both showed the app's "Cannot access the page" for a page that had loaded. The worker's own
+        // connect timeout is 10 s, so the port cannot use a window shorter than that and still claim
+        // the worker's named error is preferred. 12 s gives the connect phase one full second of slack;
+        // a genuinely dead transfer is still ended by curl's 2 s low-speed rule (1 B / 2 s) or its
+        // connect timeout, and the app's 40 s load watchdog remains the outer bound.
         //
         // NOTE (Apotheosis 2026-09-18): the XFERINFO callback is NOT on that list any more, and this
         // comment claimed it was until it was fixed here. It used to return 1 after 2.5 s of an unchanged
         // body byte count, i.e. it aborted the transfer itself and produced crc=42
         // (CURLE_ABORTED_BY_CALLBACK -- a code naming how the transfer died, not why) for what a redirect
         // hop looks like while its server thinks. It now reports silence and aborts nothing.
-        const std::chrono::milliseconds budget { 2500 };
-        const std::chrono::milliseconds ceiling { 9500 };
+        const std::chrono::milliseconds budget { 12000 };
+        const std::chrono::milliseconds ceiling { 32000 };
         const auto waitStart = std::chrono::steady_clock::now();
         long long seenDl = ft.progressDl.load(std::memory_order_relaxed);
         long long seenHops = ft.progressHops.load(std::memory_order_relaxed);
@@ -4217,7 +4231,7 @@ static int buildSession(const char* url, int w, int h, uint8_t* outRGBA)
                 // Apotheosis 2026-09-18: the first reading is ADOPTED, with no movement claim attached.
                 // That covers the connect + first-byte phase -- the one window in which a `moved` verdict
                 // cannot exist yet -- and it costs one extra budget only when nothing at all has happened;
-                // a dead radio is already being ended by curl's own CONNECTTIMEOUT (3 s), whose error this
+                // a dead radio is already being ended by curl's own CONNECTTIMEOUT (10 s), whose error this
                 // thread then reports. The alternative this replaced was worse than useless: the counters
                 // used to start at -1 and the first real reading (0, before any body byte) was compared
                 // against that sentinel, so the log printed "still moving (dl=0)" for a transfer that had
@@ -4260,14 +4274,14 @@ static int buildSession(const char* url, int w, int h, uint8_t* outRGBA)
             // Apotheosis 2026-09-18: this used to be filed as type=Curl, curlcode=28, i.e. as a
             // libcurl timeout -- and it was read as one, twice: in the field ("error curlcode=28"
             // reported as a network fault) and in the first write-up of it. It is not one. curl
-            // never timed out; the 2500 ms budget above is the PORT's own, the worker is still
+            // never timed out; the stall budget above is the PORT's own, the worker is still
             // running, and it can deliver the page seconds later -- measured on dzen.ru, the very
             // URL this path had just reported as failed came back `size=1016600 http=200 crc=0`
             // and was discarded. The type now names the budget so the next reader does not go
             // looking for a network fault. Honest-diagnostic rule, CLAUDE.md.
             budgetExpired = true;
             ft.gaveUp = true;
-            strcpy_s(errbuf, "no download progress for 2500 ms; transfer being torn down, result will be discarded");
+            strcpy_s(errbuf, "no download progress for 12000 ms; transfer being torn down, result will be discarded");
             DBG_STAGE("curl bg timeout -- error page, worker continues");
         }
     }

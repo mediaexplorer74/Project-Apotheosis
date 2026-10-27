@@ -24,10 +24,6 @@
 //   zoom <50..200>           the page zoom, through the Settings slider. The only scale lever
 //                            there is (page scale was removed 2026-10-03), so this is how a run
 //                            tests any geometry other than the window's own width.
-//   dtap                     double-tap-to-fit: toggle between the fit zoom (100 %) and the last
-//                            zoom the user chose that was not 100 %. Calls the same DoubleTapFit()
-//                            the DoubleTapped handler calls, minus its 250 ms tap-hold -- the gesture
-//                            stack cannot be driven from a script on this bench.
 //   suggest <text>           put <text> in the address box with the box treated as focused and
 //                            let the real chain build the dropdown (`_urlFocused` is set for the
 //                            script because a control cannot be focused from here), then log the
@@ -479,16 +475,6 @@ namespace Apotheosis
                         // through the real slider; see the AutoUi case.
                         AutoUi("zoom " + (parts.Length > 1 ? parts[1].Trim() : ""));
                     }
-                    else if (verb == "dtap")
-                    {
-                        // Double-tap-to-fit is a gesture, and this bench cannot drive the gesture
-                        // stack (memory: `synthetic-input-cannot-reach-uwp`), so without a verb the
-                        // feature could only be tested by a finger on a device. The verb calls the
-                        // same DoubleTapFit() the DoubleTapped handler calls -- it does NOT take the
-                        // 250 ms tap-hold path, which exists only to tell a single tap from the first
-                        // half of a pair and has nothing to disambiguate when a script asks.
-                        AutoUi("dtap");
-                    }
                     else if (verb == "suggest")
                     {
                         // Put text in the real UrlBox and open the real dropdown. The gesture stack
@@ -622,7 +608,6 @@ namespace Apotheosis
                                 + " pzoom=" + (int)(_pageZoom * 1000 + 0.5f)
                                 + " vz=" + (int)(_vpZoom * 1000 + 0.5f)
                                 + " zoom=" + _defaultZoom
-                                + " fit=" + (_fitWindow ? 1 : 0)
                                 + " pinch=" + (_pinching ? 1 : 0)
                                 + " url=" + _currentUrl
                                 + " | " + dtxt);
@@ -730,16 +715,6 @@ namespace Apotheosis
                                     HideSettings();                      // reads the slider, applies, saves
                                     AutoLog("ui zoom -> " + pct + "% (slider=" + (int)(SetZoomSlider.Value + 0.5)
                                             + " default=" + _defaultZoom + ")");
-                                }
-                                else if (what != null && what.Equals("dtap", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    // Runs on the dispatcher, where DoubleTapFit's own CommitPageZoom
-                                    // is legal (the verb body itself runs on the engine thread and
-                                    // may not touch XAML). See the `dtap` verb for why this is not
-                                    // the 250 ms handler.
-                                    AutoLog("ui dtap: vz=" + _vpZoom.ToString("0.00")
-                                            + " default=" + _defaultZoom);
-                                    DoubleTapFit();
                                 }
                                 else if (what != null && what.StartsWith("suggest ", StringComparison.OrdinalIgnoreCase))
                                 {

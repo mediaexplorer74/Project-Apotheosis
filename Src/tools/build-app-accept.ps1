@@ -56,7 +56,7 @@ if (-not (Test-Path -LiteralPath $Batch)) {
 # as one "unknown verb" line among hundreds. `hist` and `hash` are read-only and need no session;
 # every other verb is the app's.
 $Known = @('goto', 'scroll', 'swipe', 'scrolln', 'tap', 'taplink', 'links', 'clicklink', 'ui',
-           'lang', 'ua', 'zoom', 'dtap', 'suggest', 'enter', 'wait', 'hash', 'diag', 'js', 'back',
+           'lang', 'ua', 'zoom', 'suggest', 'enter', 'wait', 'hash', 'diag', 'js', 'back',
            'forward', 'hist')
 $bad = @()
 $n = 0

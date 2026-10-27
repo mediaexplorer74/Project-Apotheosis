@@ -1,3 +1,9 @@
+# RETIRED .97 (2026-10-27): written for fitwindow=0 with a fixed 720x1080 frame. On the fitted line
+# the 360-DIP Lumia lays the page out at 360x494 CSS, below NDA's 870 px gate; even zoom 50 gives
+# only 720 CSS (layout width = viewport / zoom), so this probe's "open the graph on the phone with
+# zoom 80" expectation is unreachable. Expect NDA's mobile card/Node Detail branch instead. Do not
+# run this file as-is; rewrite it before the next phone batch.
+#
 # Apotheosis 2026-10-21 -- the Nokia gate probe on the ARM line (build 0.2.3.56 or later).
 #
 # What is being verified. As of .55 the zoom a load lays out at is armed BEFORE the session is

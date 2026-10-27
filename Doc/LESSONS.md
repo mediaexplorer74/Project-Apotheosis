@@ -470,7 +470,15 @@ The report is accurate and the mechanism is not a leak.
   `LocalState` over one session (180 845 `wtimer:` lines). It is not the blink's cause (37 B/s
   while idle, 0.2 `wtimer` enters/s) but it is a shipping-build liability.
 
-## Double-tap to fit (`0.2.3.15`, same day)
+## Double-tap to fit (`0.2.3.15`, same day) — REMOVED in `0.2.3.97` (2026-10-27)
+
+> **Removed.** The gesture, its 250 ms tap hold, `_lastDoubleTapMs`, `DoubleTapFit()` and the
+> `dtap`/`dtapfit` vocabulary are gone; every `Tapped` is forwarded immediately. On NDA the old
+> gesture was measured selecting `?node=A0001` by itself: page zoom 2.00 halved the CSS viewport to
+> 677 px, below the site's 870 px breakpoint, and the site's resize handler chose a node with no
+> click sent. A desktop double-click must be two ordinary clicks, and Zoom is the only scale control
+> the app needs. The notes below are kept as the record of why the gesture existed and why it could
+> not be made harmless on the desktop.
 
 - **`Tapped` fires for the FIRST tap of a pair.** That is the whole difficulty of this gesture: a
   handler that forwards the tap immediately has already sent a click into the page by the time

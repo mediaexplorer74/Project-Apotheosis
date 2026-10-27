@@ -1,3 +1,8 @@
+# RETIRED .97 (2026-10-27): written for fitwindow=0. The fixed-line rotation swap below was removed
+# with the Fit switch; on .97+ rotation is an ordinary content-area size change and the viewport
+# becomes the landscape content area, not the 1080x720 frame. Do not run this file as-is; revise its
+# expectations before the next phone batch.
+#
 # Apotheosis 2026-10-21 -- the landscape input probe on the ARM line (build 0.2.3.57+).
 #
 # What it verifies. On the fixed-viewport line (fitwindow=0) rotation used to be a no-op: the

@@ -86,7 +86,6 @@
                       SizeChanged="OnContentAreaSizeChanged"
                       ManipulationMode="TranslateX,TranslateY,TranslateInertia,Scale"
                       IsTapEnabled="True" Tapped="OnPageTapped"
-                      IsDoubleTapEnabled="True" DoubleTapped="OnPageDoubleTapped"
                       ManipulationStarting="OnManipStarting"
                       ManipulationDelta="OnImageManipDelta"
                       ManipulationCompleted="OnImageManipCompleted"
@@ -448,10 +447,8 @@
                          above, so it takes effect when Settings is dismissed. -->
                     <ToggleSwitch x:Name="SetFabSwitch" Foreground="{StaticResource TxtHi}" Margin="0,18,0,0"/>
 
-                    <!-- Fit the engine viewport to the window instead of the fixed 720x1080 one.
-                         Off by default: it changes the present path, and the ARM line has not seen
-                         it. See ApplyViewport() in MainPage.xaml.cs for what the two modes do. -->
-                    <ToggleSwitch x:Name="SetFitSwitch" Foreground="{StaticResource TxtHi}" Margin="0,18,0,0"/>
+                    <!-- Apotheosis 2026-10-27 (.97): the Fit toggle was removed here. The viewport
+                         is always fitted to the window, and Zoom is the only scale control. -->
 
                     <!-- The address-bar dropdown (history + typed-site matches), gated in
                          ShowSuggestions(). On by default; turning it off leaves the box silent

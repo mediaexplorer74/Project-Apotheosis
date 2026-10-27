@@ -304,9 +304,40 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   `9775F34A02030380B99FFF4A1104CBFF8993A183`, valid to 2027-09-26), the three ARM dependency
   packages, `Add-AppDevPackage.ps1` / `Install.ps1` and a README. NOT deployed or run on either
   Lumia; the device-half checks stay deferred to the next light batch.
+  *Connectivity and viewport simplification, 0.2.3.96-97 (2026-10-27):* `.96` replaced the short
+  fetch-stall window with 12 s and a 32 s ceiling, matching the 10 s connect and 30 s total curl
+  timeouts (the app's 40 s watchdog stays the outer bound). One x64 process then loaded five targets:
+  rbc.ru 11385 ms boot + 3385 ms reload, en.m.wikipedia.org 10408 ms, reddit.com 17272 ms (its JS
+  challenge returns an 8406-byte response and then the real front page), dzen.ru 6611 ms — all
+  `rc=0` — and a nonexistent host failed honestly in 7993 ms with `rc=-16 type=Curl curlcode=6
+  Could not resolve host`. No `DISCARDED` line appeared, so the 12 s window never fired; the earlier
+  "false failures" were connect timeouts inside redirect chains, not dead sites.
+  NDA's graph geometry is the site's own: on x64 `.96` the page reports `#plot w=1860 x=340` and a
+  `1860x1600` canvas while the window is 1355x751; desktop Chromium at `innerWidth 1062` reports the
+  identical `x=340, w=1860` and canvas. The off-centre graph is therefore not an engine defect, and
+  no viewport change should be made for it.
+  The "three-column Node Detail + Network Graph" state was our double-tap-to-fit: a scripted `dtap`
+  took page zoom 1.00 -> 2.00, which halved the CSS viewport to 677 px and crossed NDA's 870 px
+  breakpoint; the site's own resize handler then selected `?node=A0001` 0.6 s later **with no click
+  sent anywhere**. Zooming back to 1.00 restored 1355 px but left the detail open over the graph.
+  ChromeView does not do this because a desktop double-click is two ordinary clicks.
+  `.97` removes the whole ambiguity instead of gating it by device: the double-tap gesture, the
+  250 ms tap hold, `_lastDoubleTapMs`, the `DoubleTapFit`/`dtapfit` code path and the `dtap` verb are
+  gone, and every `Tapped` is forwarded immediately. The Settings Fit toggle is gone too — the fitted
+  viewport is the only line, and Zoom is the single user-facing scale control. The fixed 720x1080
+  frame is kept only as the fallback for a window above `kViewportCeiling` (2048 DIP). `settings.ini`
+  `fitwindow=` keys are ignored; `Str.FitPageToWindow` stays in the positional string table but no
+  UI reads it.
+  Verified on x64 `.97`: `dtap` answers `unknown verb`; two back-to-back `tap 394 192` on NDA's
+  `#zoom-out` logged two `[HIT] ... id=[zoom-out]` lines with `iw=1355` and a clean URL before and
+  after (no page zoom, no `?node=A0001`); Settings shows no Fit switch; `Test-AppxPayload.ps1
+  -ExpectedArch x64` reports `AUDIT PASSED` (35/35 binaries, 52/52 exports), and the installed
+  `WebCoreDriver.dll` hash matches the staged one.
 - **M4. Input matrix per orientation and mode** — the 0.50 zoom floor reads as "pinch is broken";
-  the fitwindow=0 pinch branch and the landscape/inner-scroller cases need one test matrix (verb
-  batches + the finger path) instead of spot fixes.
+  the fitted viewport's pinch, rotation and inner-scroller cases need one test matrix (verb
+  batches + the finger path) instead of spot fixes. The device probes `probe-s7.txt`,
+  `probe-landscape.txt` and `probe-screensize.txt` still describe the retired `fitwindow=0` line and
+  are marked RETIRED at the top; revise their expectations before the next phone batch.
   *First concrete cases, maintainer report 2026-10-26, x64 bench:* (a) **mouse wheel vertical
   scroll does not work**; (b) **horizontal pan after a press-and-sweep on a touch screen does not
   scroll**. The bench is a Surface Pro 5 WITH a touch screen, so both cases are drivable by a real

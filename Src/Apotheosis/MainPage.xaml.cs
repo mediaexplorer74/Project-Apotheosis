@@ -42,18 +42,18 @@ namespace Apotheosis
         // is not a layout tweak -- it is a change to the present path, including its stride, its
         // `contents=` accounting and the GPU DIP/device-pixel mapping.
         //
-        // Apotheosis 2026-10-03 (second pass): no longer `const`. With `fitwindow=1` in settings.ini
-        // a SizeChanged on ContentArea rewrites them to the window's own size, which is what removes
-        // the white fields: measured on this bench, a 1368-DIP-wide content area showed a 720-DIP
-        // page and 647 DIP of white beside it. They are fields rather than a second "live viewport"
-        // pair because every existing use site already means "the current viewport", and a parallel
-        // pair would be a second truth to keep in step.
+        // Apotheosis 2026-10-03 (second pass): no longer `const`. A SizeChanged on ContentArea
+        // rewrites them to the window's own size, which is what removes the white fields:
+        // measured on this bench, a 1368-DIP-wide content area showed a 720-DIP page and 647 DIP
+        // of white beside it. They are fields rather than a second "live viewport" pair because
+        // every existing use site already means "the current viewport", and a parallel pair would
+        // be a second truth to keep in step.
         //
-        // With the setting OFF nothing writes them and the port behaves exactly as it did. That is
-        // still the desktop default; on Windows.Mobile the setting is ON by default since
-        // 2026-10-25, because a fixed 720-px frame is a Lumia 950-shaped canvas and halves every
-        // glyph on the 360-DIP Lumia 640. See the field comment at `_fitWindow`. The measurement
-        // that made the fitted path safe to try is in Doc/Archive/Plan_MVP.md §0 item 4.
+        // Apotheosis 2026-10-27 (.97): fitting is no longer a setting. The 720x1080 pair below is
+        // only the fallback for a window above kViewportCeiling, where the RGBA buffer would get
+        // expensive; every window that fits is laid out at its own size, on desktop and phone
+        // alike. The measurement that made the fitted path safe is in
+        // Doc/Archive/Plan_MVP.md §0 item 4.
         static int kW = 720, kH = 1080;
         // S7 (2026-10-22): ContentArea DIP per frame pixel -- the display scale of the fixed
         // frame (FrameFitScale). 1.0 whenever the frame is drawn 1:1: the fitted viewport
@@ -378,24 +378,14 @@ namespace Apotheosis
         // device with no working touch path is worse than two buttons on one that has. The switch
         // is the answer, not the default.
         bool _showFab = true;
-        // Fit the engine viewport to the window instead of leaving the fixed 720x1080 one.
-        //
-        // 2026-10-25: ON by default on Windows.Mobile, and a one-time migration turns it on for
-        // installs whose settings.ini carries the old automatic `fitwindow=0`. The fixed frame is
-        // a Lumia 950-shaped canvas (720 CSS px wide); on the 360-DIP Lumia 640 the display scale
-        // shrinks every CSS px to 0.46 DIP, so the home page and all text render at half size
-        // (measured: `frame fit scale=0,457 frame=720x1080 area=360x494`). Fitting makes one CSS
-        // px one DIP on every panel, which is the only rule that survives the 360..576 DIP range
-        // of the target phones. The user can still turn it off in Settings; the marker below
-        // makes that choice stick. Desktop keeps the historical default.
-        bool _fitWindow;
-        // `fitwindow_migrated=1` in settings.ini: the old automatic 0 has already been replaced
-        // by the mobile default. Without it, every launch would re-enable fitwindow and the
-        // Settings switch would appear not to work.
-        bool _fitWindowMigrated;
+        // Apotheosis 2026-10-27 (.97): `_fitWindow` and its one-time migration are gone. Fitting
+        // the viewport to the window is the only behaviour now: it is what keeps one CSS pixel
+        // one DIP on every phone panel, and the Settings switch that could turn it off only
+        // created a second, ambiguous scale control next to Zoom. The fixed 720x1080 fallback is
+        // kept solely for windows above kViewportCeiling (see TryBootNavigate).
         // `ua_migrated=1` in settings.ini: the old automatic `ua=0` has already been replaced
-        // by the device default. Same marker discipline as fitwindow_migrated: without it,
-        // every launch would rewrite a deliberate `ua=` choice.
+        // by the device default. Same marker discipline as the retired `fitwindow_migrated`:
+        // without it, every launch would rewrite a deliberate `ua=` choice.
         bool _uaMigrated;
         // The address-bar dropdown (history + site matches). On by default, because that is what the
         // history tiles and the requirement 7 measurement were built around -- but it opens over the
@@ -501,37 +491,14 @@ namespace Apotheosis
         float _liveScale = 1.0f;
         double _focalX = 360, _focalY = 540;
 
-        // ===== Double-tap to fit =====
+        // ===== Double-tap to fit: removed 2026-10-27 (.97) =====
         //
-        // Two facts about the UWP gesture stack decide this design, and both are easy to get wrong:
-        //   * when a double tap occurs, `Tapped` has ALREADY fired for the first tap. A naive
-        //     implementation therefore forwards a click into the page and only then zooms -- and on
-        //     a feed page the first tap of the pair follows a card link, so the "zoom" gesture would
-        //     navigate away;
-        //   * the second tap raises `DoubleTapped` and NOT a second `Tapped`, so cancelling the
-        //     *pending* first tap is enough to make the pair do exactly one thing.
-        // A tap is therefore held for the double-tap window before it is forwarded. That delays
-        // every link tap in the app by kDoubleTapMs, which is the price every mobile browser pays
-        // for this gesture; it is small next to the engine's own click latency (seconds on a heavy
-        // page) and it is the only way the pair can be told apart. The window is the interval UWP
-        // itself uses to decide the pair.
-        const int kDoubleTapMs = 250;
-        DispatcherTimer _tapTimer;
-        double _tapX, _tapY;
-        // Set when a double tap is handled. If the input stack also reports the second tap of the
-        // pair as a `Tapped` -- the documentation says it does not, but the guarantee is the
-        // platform's to keep and not ours to assume -- that stray tap is swallowed instead of
-        // becoming a click 250 ms later. Zero means "never", and the subtraction wraps, so the
-        // comparison is safe across `Environment.TickCount` going negative on a long uptime.
-        uint _lastDoubleTapMs;
-
-        // The zoom double-tap-to-fit returns to: the FIT zoom, where the layout width IS the window
-        // width (see the geometry note on kViewportCeiling). CSS page zoom has no focal point to
-        // zoom *around* -- it re-lays the page out rather than magnifying it -- so this gesture is a
-        // level toggle and not a zoom-to-point: double-tap leaves the fit zoom, double-tap returns
-        // to it. The level it leaves for is the last one the user chose that was not the fit zoom.
-        const float kFitZoom = 1.0f;
-        float _lastFitOffZoom = kZoomMax;
+        // The gesture, its 250 ms tap hold and the `dtap` verb are gone. On a desktop window a
+        // double-click is two ordinary clicks and must reach the page that way: measured on NDA,
+        // pairing two clicks on the graph's "-" produced a page zoom (2.00) that halved the CSS
+        // viewport to 677 px, crossed the site's 870 px breakpoint and made the site select a
+        // node on its own. On the phone the gesture was never needed either -- Zoom is the one
+        // scale control -- and the hold delayed every link tap by a quarter second.
 
         // Load watchdog
         DispatcherTimer _loadWatchdog;
@@ -780,8 +747,6 @@ namespace Apotheosis
                             case "lang": _uiLang = int.Parse(v); break;
                             case "log": _traceOn = (int.Parse(v) != 0); break;
                             case "touchfab": _showFab = (int.Parse(v) != 0); break;
-                            case "fitwindow": _fitWindow = (int.Parse(v) != 0); break;
-                            case "fitwindow_migrated": _fitWindowMigrated = (int.Parse(v) != 0); break;
                             case "ua_migrated": _uaMigrated = (int.Parse(v) != 0); break;
                             case "suggest": _suggestOn = (int.Parse(v) != 0); break;
                             case "headless": _headlessMode = int.Parse(v); break;
@@ -795,18 +760,9 @@ namespace Apotheosis
             if (_uiLang < 0 || _uiLang > 2) _uiLang = 0;
             Str.SetLang(_uiLang);
 
-            // 2026-10-25: the mobile viewport migration. Every earlier build wrote
-            // `fitwindow=0` into settings.ini on its first save even though the user never made
-            // that choice, so the value itself cannot tell "old default" from "the user turned
-            // it off". The marker splits the two cases: absent means the file predates this
-            // rule (or the app has never saved), and the mobile default is applied once; once
-            // written, a later explicit 0 is the user's and is left alone.
-            if (IsMobileDevice() && !_fitWindowMigrated)
-            {
-                if (!_fitWindow) _fitWindow = true;
-                _fitWindowMigrated = true;
-                settingsChanged = true;
-            }
+            // Apotheosis 2026-10-27 (.97): `fitwindow` and `fitwindow_migrated` are no longer read.
+            // Every window that fits is fitted, so there is nothing to migrate and no user choice
+            // to preserve. Old files keep the keys; the switch above ignores them.
 
             // 2026-10-25: the user-agent migration. The old build wrote the mobile iPhone
             // UA on every device; on a desktop window that is exactly the mismatch
@@ -852,8 +808,6 @@ namespace Apotheosis
                 sb.AppendLine($"lang={_uiLang}");
                 sb.AppendLine($"log={(_traceOn ? 1 : 0)}");
                 sb.AppendLine($"touchfab={(_showFab ? 1 : 0)}");
-                sb.AppendLine($"fitwindow={(_fitWindow ? 1 : 0)}");
-                sb.AppendLine($"fitwindow_migrated={(_fitWindowMigrated ? 1 : 0)}");
                 sb.AppendLine($"ua_migrated={(_uaMigrated ? 1 : 0)}");
                 sb.AppendLine($"suggest={(_suggestOn ? 1 : 0)}");
                 sb.AppendLine($"headless={_headlessMode}");
@@ -993,13 +947,13 @@ namespace Apotheosis
             // the window at 1.0 while mobile re-laid the page out at a fixed 412 CSS px and
             // magnified it, which on this bench was 3.29. See the note on kViewportCeiling.
             //
-            // This runs on the UI thread at every call site, and AdoptViewport is a no-op unless
-            // fitwindow is on and a layout pass has happened, so it is safe on the ctor's path too.
-            // Its work is posted after the UA Post above: one engine queue, same order.
-            Crumb($"applysettings: uaMobile={(_uaMobile ? 1 : 0)} fit={(_fitWindow ? 1 : 0)}"
+            // This runs on the UI thread at every call site, and AdoptViewport returns early until
+            // a layout pass has given it a size, so it is safe on the ctor's path too. Its work is
+            // posted after the UA Post above: one engine queue, same order.
+            Crumb($"applysettings: uaMobile={(_uaMobile ? 1 : 0)}"
                   + $" vp={_vpW}x{_vpH} kW={kW}x{kH} vz={_vpZoom:0.00} pz={_pageZoom:0.00}"
                   + $" session={(_sessionActive ? 1 : 0)}");
-            if (_fitWindow) AdoptViewport();
+            AdoptViewport();
         }
 
         static string SearchPrefixFor(int idx)
@@ -1077,9 +1031,8 @@ namespace Apotheosis
             // it a second time. The measurement was a page that never resized and a log with no
             // `fitwindow:` line in it at all.
             //
-            // DrainPendingZoom and not AdoptViewport: the fitted mode has geometry to adopt, the
-            // fixed 720x1080 line only has a pending zoom to re-commit, and AdoptViewport returns at
-            // once when _fitWindow is off. See DrainPendingZoom().
+            // DrainPendingZoom and not AdoptViewport directly: it checks the same flag and is the
+            // one place that knows a deferred pickup may be a rotation as well as a zoom.
             if (!loading && _vpDirty) DrainPendingZoom();
             // S2 (2026-10-21): deliver a navigation that arrived while this load owned the shell.
             // Deferred one dispatcher turn at Low priority on purpose: the ending load's own
@@ -1383,27 +1336,11 @@ namespace Apotheosis
                 EnableGpu();
                 return;
             }
-            // Re-apply the user's page zoom after a load, because a navigation resets the engine's
-            // factor behind our back (see the note in the nav-done block above).
-            //
-            // Both geometries now apply the SAME lever -- CSS page zoom -- and the paths differ only
-            // in who does the repaint:
-            //   fitwindow on  -- the nav-done sentinel sets _vpDirty, so SetLoading(false) ->
-            //                    AdoptViewport -> ApplyViewport re-applies the zoom and repaints.
-            //                    Doing it here as well would post a second zoom+resize through
-            //                    PostZoomAndRepaint, bump _opSeq and make the first frame superseded:
-            //                    an extra ~1.2 s repaint per load for nothing.
-            //   fitwindow off -- the fixed 720x1080 viewport, which is the ARM line as it stands.
-            //                    Nothing above this line re-applies the zoom there (AdoptViewport
-            //                    returns at once when _fitWindow is off), so it is done here, at the
-            //                    current size: WebCoreSessionResize repaints even when the size is
-            //                    unchanged, which is what makes a page zoom possible without a resize
-            //                    at all.
-            // Before 2026-10-03 the fitwindow-off branch went in as page SCALE, because SetPageZoom
-            // does not paint and there was no resize to borrow a repaint from. With the resize
-            // repainting at any size, that reason is gone and the scale path is gone with it.
-            if (!_fitWindow && _sessionActive && _defaultZoom != 100)
-                CommitPageZoom(_defaultZoom / 100.0f, "reload");
+            // The user's page zoom is re-applied by the fitted path: the nav-done sentinel sets
+            // _vpDirty, and SetLoading(false) above drains it through AdoptViewport ->
+            // ApplyViewport, which applies zoom then resize in one repaint. Re-applying it here
+            // as well would post a second zoom+resize, bump _opSeq and make the first frame
+            // superseded -- an extra ~1.2 s of engine thread per load for nothing.
         }
 
         void OnLoadWatchdog(object s, object e)
@@ -1545,43 +1482,11 @@ namespace Apotheosis
 
         void OnPageTapped(object sender, TappedRoutedEventArgs e)
         {
+            // Every tap is a click, forwarded immediately. There is no double-tap gesture to
+            // disambiguate any more; the `dtap` experiment and the NDA state it caused are
+            // recorded in ROADMAP.md, and the gesture's removal in the field comment above.
             var pt = e.GetPosition(ContentArea);
-            if (_lastDoubleTapMs != 0 &&
-                unchecked((uint)Environment.TickCount - _lastDoubleTapMs) < (uint)kDoubleTapMs)
-                return;   // the tail of a double tap, not a tap of its own
-            // Held for the double-tap window rather than forwarded now -- see kDoubleTapMs. The
-            // scripted `tap`/`taplink` verbs call HandleTapAt directly and are NOT delayed: a script
-            // has no double taps to disambiguate, and paying the wait there would only make the
-            // bench slower than the finger.
-            _tapX = pt.X; _tapY = pt.Y;
-            if (_tapTimer == null)
-            {
-                _tapTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(kDoubleTapMs) };
-                _tapTimer.Tick += (s, a) => { _tapTimer.Stop(); HandleTapAt(_tapX, _tapY); };
-            }
-            _tapTimer.Stop();
-            _tapTimer.Start();
-        }
-
-        void OnPageDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-        {
-            // Cancel the pending single tap first, whatever else happens: the pair must do one
-            // thing, and the pending tap is a click that has not been sent yet.
-            if (_tapTimer != null) _tapTimer.Stop();
-            _lastDoubleTapMs = (uint)Environment.TickCount;
-            DoubleTapFit();
-        }
-
-        // The body of the gesture, kept separate from the event handler so the `dtap` autocmd verb
-        // can drive THE SAME path a finger does. A script that re-implemented the toggle would
-        // measure the verb rather than the feature.
-        void DoubleTapFit()
-        {
-            if (!_sessionActive) { Crumb("dtapfit: no session"); return; }
-            bool atFit = Math.Abs(_vpZoom - kFitZoom) < 0.001f;
-            float want = atFit ? _lastFitOffZoom : kFitZoom;
-            Crumb($"dtapfit: {_vpZoom:0.00} -> {want:0.00} ({(atFit ? "off fit" : "to fit")})");
-            CommitPageZoom(want, "dtapfit");
+            HandleTapAt(pt.X, pt.Y);
         }
 
         void ForwardClickToEngine(int px, int py)
@@ -2079,11 +1984,6 @@ namespace Apotheosis
             int pct = (int)(zoom * 100f + 0.5f);
             _defaultZoom = pct;
             _vpZoom = pct / 100f;
-            // What double-tap-to-fit will zoom back to next time. Recorded here and not at the
-            // gesture, because this is the one function every zoom lever goes through -- slider,
-            // pinch and double-tap alike -- so "the last zoom the user chose" needs no second
-            // bookkeeper.
-            if (Math.Abs(_vpZoom - kFitZoom) > 0.001f) _lastFitOffZoom = _vpZoom;
 
             if (!_sessionActive) { Crumb($"{why}: no session, zoom {pct}% kept for the next load"); return; }
             if (_gpuPresent) { Crumb($"{why}: skipped, GPU frame live"); return; }
@@ -3177,7 +3077,6 @@ namespace Apotheosis
             if (SetUaCustomBox != null) SetUaCustomBox.Text = _uaCustom;
             if (SetLangCombo != null) SetLangCombo.SelectedIndex = _uiLang;
             if (SetFabSwitch != null) SetFabSwitch.IsOn = _showFab;
-            if (SetFitSwitch != null) SetFitSwitch.IsOn = _fitWindow;
             if (SetSuggestSwitch != null) SetSuggestSwitch.IsOn = _suggestOn;
             if (SetHeadlessCombo != null) SetHeadlessCombo.SelectedIndex = _headlessMode;
             // Captions, pivot headers and the version line all come from one pass -- see
@@ -3207,15 +3106,11 @@ namespace Apotheosis
             if (SetFabSwitch != null) _showFab = SetFabSwitch.IsOn;
             if (SetSuggestSwitch != null) _suggestOn = SetSuggestSwitch.IsOn;
             if (SetHeadlessCombo != null && SetHeadlessCombo.SelectedIndex >= 0) _headlessMode = SetHeadlessCombo.SelectedIndex;
-            bool wantFit = (SetFitSwitch != null) && SetFitSwitch.IsOn;
             ApplySettings();
             SaveSettings();
-            // The switch takes effect here rather than at the next navigation: the page behind the
+            // Zoom and UA take effect here rather than at the next navigation: the page behind the
             // Settings sheet is already loaded and will not fire the branch that used to own this.
             RefreshFab();
-            // Fitting is not a flag it reads later -- it is a resize now, and turning it off is a
-            // resize back to 720x1080. SetFitWindow is a no-op when nothing changed.
-            SetFitWindow(wantFit);
             SettingsPage.Visibility = Visibility.Collapsed;
             // The home page is HTML built by BuildHomeHtml(), so the ordinary XAML repaint cannot
             // reach it: a language chosen while its document is on screen leaves the hero and the
@@ -3356,7 +3251,6 @@ namespace Apotheosis
             Loc(SettingsCustomUA, "CustomUserAgent");
             Loc(SettingsDefaultZoom, "DefaultZoom");
             LocSwitch(SetFabSwitch, "ShowScrollButtons");
-            LocSwitch(SetFitSwitch, "FitPageToWindow");
             LocSwitch(SetSuggestSwitch, "AddressBarSuggestions");
 
             // Settings, Advanced.
@@ -4231,7 +4125,7 @@ namespace Apotheosis
             string url = string.IsNullOrEmpty(_bootUrl) ? _homeUrl : _bootUrl;
             _bootUrl = null;
 
-            if (_fitWindow && w <= kViewportCeiling && h <= kViewportCeiling)
+            if (w <= kViewportCeiling && h <= kViewportCeiling)
             {
                 // Same rule AdoptViewport applies after a load, only earlier: the fitted viewport
                 // is the content area at the user's page zoom, and kW/kH are the buffer that the
@@ -4242,7 +4136,9 @@ namespace Apotheosis
             }
             else
             {
-                Crumb($"boot: fixed viewport {kW}x{kH} (fit={(_fitWindow ? 1 : 0)} area={w}x{h})");
+                // Only a window above the RGBA-buffer ceiling falls back to the fixed frame; the
+                // fitted path is the shipping one everywhere else. See kViewportCeiling.
+                Crumb($"boot: fixed viewport {kW}x{kH} (area={w}x{h} above ceiling)");
             }
 
             NavigateTo(url, true);
@@ -4259,31 +4155,9 @@ namespace Apotheosis
             // The boot load owns this first pass; starting it here is what makes the document's
             // initial innerWidth the fitted one. See _bootUrl.
             if (TryBootNavigate(w, h)) return;
-            if (!_fitWindow)
-            {
-                // The fixed-viewport line ignores size changes by design -- except one: ROTATION.
-                // The viewport is a portrait 720x1080 frame and RenderImage is Stretch=None at
-                // Top/Left, so in a landscape window the page keeps its portrait shape in the left
-                // part of the panel and every gesture started to the right of it is outside the
-                // page. Reported from the Lumia as "in landscape scroll and pinch do not work"
-                // (2026-10-21) while the log showed `pinch: ... rc=0`: the engine was alive, the
-                // page never turned with the window. The adopt is the SWAP of the same fixed pair
-                // (720x1080 portrait, 1080x720 landscape) through the posted body the pinch and the
-                // fitted line already use, so the zoom-then-resize order and the frame buffer
-                // cannot drift from the other callers. The wanted geometry goes into _vpW/_vpH
-                // BEFORE the busy test, so a rotation that lands mid-load is adopted by
-                // DrainPendingZoom instead of being lost.
-                bool wantLandscape = w > h;
-                if (wantLandscape != (kW > kH))
-                {
-                    _vpW = wantLandscape ? kH : kW;
-                    _vpH = wantLandscape ? kW : kH;
-                    if (_gpuPresent) return;               // the GPU line presents on its own surface
-                    if (_loading || _interacting) { _vpDirty = true; return; }
-                    PostZoomAndRepaint(_vpW, _vpH, _pageZoom, "rotate");
-                }
-                return;
-            }
+            // (The old fixed-viewport rotation swap lived here. It was reachable only while the
+            // Fit switch was off; every window that fits is fitted now, so rotation is just the
+            // size change below.)
             if (w > kViewportCeiling || h > kViewportCeiling) return;
             if (w == _vpW && h == _vpH) return;
             _vpW = w; _vpH = h;
@@ -4314,7 +4188,6 @@ namespace Apotheosis
         // current when the load started.
         void AdoptViewport()
         {
-            if (!_fitWindow) return;
             if (_vpW < 16 || _vpH < 16) return;                 // no layout pass yet
             if (_loading || _interacting) { _vpDirty = true; Crumb($"adopt: deferred (L{(_loading ? 1 : 0)}I{(_interacting ? 1 : 0)})"); return; }
             _vpDirty = false;
@@ -4339,72 +4212,16 @@ namespace Apotheosis
             if (_currentUrl == "about:home") NavigateTo("about:home", false);
         }
 
-        // Every deferred pickup, in one place, for both viewport modes.
+        // Every deferred pickup, in one place.
         //
         // _vpDirty is the engine-busy flag that CommitPageZoom, ApplyViewport, AdoptViewport and
-        // OnContentAreaSizeChanged all set when they find a load or an interaction in flight. In the
-        // fitted mode the drain was AdoptViewport, and it re-derived the zoom and the geometry. The
-        // fixed 720x1080 line had no drain at all: AdoptViewport and ApplyViewport both return at
-        // once when _fitWindow is off, so a commit that landed while the engine was busy -- which is
-        // exactly a pinch on a heavy page, since the load's own zoom re-apply is still in flight --
-        // was dropped outright and the page stayed at the stale zoom. Reported from the Lumia as
-        // "питч не отрабатывает вообще" on a heavy page at the 0.50 floor.
-        //
-        // Fit-off has no geometry to adopt (the viewport is the constant kW x kH), so "drain" means
-        // re-run the zoom commit that was deferred. CommitPageZoom is the same body, late: it is
-        // idempotent here because _vpDirty is cleared first, so its already-at test can fire and
-        // there is no second copy of the clamp or the zoom-then-repaint order.
+        // OnContentAreaSizeChanged all set when they find a load or an interaction in flight.
+        // AdoptViewport re-derives the zoom and adopts whatever geometry was written to
+        // _vpW/_vpH, which covers a deferred zoom and a rotation that landed mid-load alike.
         void DrainPendingZoom()
         {
             if (!_vpDirty) return;
-            if (_fitWindow) { AdoptViewport(); return; }
-            if (_gpuPresent) { Crumb("drain: skipped, GPU frame live"); return; }
-            if (_loading || _interacting)
-            {
-                Crumb($"drain: still busy (L{(_loading ? 1 : 0)}I{(_interacting ? 1 : 0)})");
-                return;
-            }
-            // Cleared before the commit, not after: CommitPageZoom's busy branch would set it again,
-            // and with it clear its already-at short-circuit can tell a real late commit from a
-            // re-post of one that has already reached the engine.
-            _vpDirty = false;
-            // A rotation that arrived while the engine was busy wrote its wanted geometry into
-            // _vpW/_vpH and left _vpDirty set; the zoom-only commit below would repaint at the OLD
-            // size and the turn would be lost. The >= 16 test keeps a never-written _vpW/_vpH
-            // (a cold start that never called SetFitWindow) out of this branch. See
-            // OnContentAreaSizeChanged's fixed-line rotation adopt.
-            if (_vpW >= 16 && _vpH >= 16 && (kW != _vpW || kH != _vpH))
-            {
-                Crumb($"drain: deferred rotate {kW}x{kH} -> {_vpW}x{_vpH}");
-                PostZoomAndRepaint(_vpW, _vpH, _vpZoom, "rotate");
-                return;
-            }
-            Crumb($"drain: applying deferred zoom {_vpZoom:0.00} (fit off)");
-            CommitPageZoom(_vpZoom, "drain");
-        }
-
-        void SetFitWindow(bool on)
-        {
-            if (_fitWindow == on) return;
-            _fitWindow = on;
-            if (!on)
-            {
-                // "Off" has to mean the state the ARM line runs: the fixed 720x1080 viewport at
-                // zoom 1. kW/kH and _pageZoom are deliberately NOT written here -- ApplyViewport's
-                // no-op test compares them against the wanted values, and pre-writing them would
-                // make it conclude there is nothing to do while the engine is still fitted.
-                //
-                // _vpZoom does follow the setting, because it IS the wanted value: the ApplyViewport
-                // call below is made directly rather than through AdoptViewport, so nothing else
-                // would recompute it first. (That call is inert either way -- ApplyViewport returns
-                // at once when _fitWindow is off -- but a wrong _vpZoom left here would be read by
-                // the next adopt.)
-                _vpW = 720; _vpH = 1080; _vpZoom = ViewportZoom();
-                if (_sessionActive) ApplyViewport();
-                else { kW = 720; kH = 1080; _pageZoom = 1f; RefreshFab(); }
-                return;
-            }
-            OnContentAreaSizeChanged(null, null);
+            AdoptViewport();
         }
 
         // The wanted page zoom for the fitted viewport: the user's Settings value, and nothing else.
@@ -4431,7 +4248,6 @@ namespace Apotheosis
         // zoom-then-resize order and the repaint are stated once for both callers.
         void ApplyViewport()
         {
-            if (!_fitWindow) return;
             if (_gpuPresent) { Crumb("fitwindow: skipped, GPU frame live"); return; }
             int w = _vpW, h = _vpH;
             if (w < 16 || h < 16) return;
