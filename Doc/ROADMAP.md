@@ -549,6 +549,14 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   scope: the fleet is W10M-class, so MetroSurf's 512 MB findings are evidence about the GPU path,
   not a hardware target. Revisit triggers are listed in section 9.1 of the analysis; until one
   fires, this stays reference material rather than a backlog item.
+  *Bench observation, `0.2.3.95` (2026-10-27):* the RuTube video page
+  `https://rutube.ru/video/c28c0ef4b8ae097bd6fdde9f6250a268/` loads with the correct title
+  («Мадагаскар 3 …»), so fetch and redirect handling are fine; the page's own player then shows
+  «Что-то пошло не так. На сервере что-то сломалось». That is the expected shape of
+  `ENABLE_VIDEO=OFF`: the document renders, the media element cannot. Also worth writing down,
+  because it cost a session: `www.rutube.com` is not the site — it 302s to the parked
+  `ww38.rutube.com`; the real host is `rutube.ru`. This is a page-side failure mode, not a new
+  port defect, and by itself it does not fire the "a core site needs video" trigger.
 
 ## How to run this plan
 
