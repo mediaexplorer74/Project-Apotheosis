@@ -1326,6 +1326,14 @@ static char g_lastUrl[1024] = "";    // last document URL (requested vs effectiv
 // Both sides run on the engine thread -- the funnels dispatch inside WebCore, WebCoreTakePopupUrl
 // is called from WebEngine.Instance.Post -- so no lock; a take clears the slot by construction.
 static char g_pendingPopupUrl[1024] = "";
+// M6 (2026-10-27): watchdog fire counter + engine-heartbeat counter. The callback (engine
+// thread, deep in JS) bumps g_runawayFires; WebCoreLiveTick bumps g_m6Hb on every CALL -- so
+// while the engine thread is wedged mid-tick g_m6Hb freezes. The shell reads BOTH from its
+// always-alive UI timer (safe: two plain aligned int loads, no locks -- the pair is what the
+// M6 kill switch discriminates a real wedge from a recovered while(true)), and the getter
+// exported via WebCoreDriver.exports.def (#50, #51).
+static unsigned g_runawayFires = 0;   // monotonic; every fire counts, health or not
+static unsigned g_m6Hb = 0;           // ++ at every WebCoreLiveTick entry (engine liveness)
 static uint32_t g_lastFrameHash = 0; // hash of the last painted frame, for blit de-duplication
 static int g_lastPendingResources = 0; // pending/unknown resources as of the last census
 extern "C" bool g_apoUaMobile = true;  // mobile UA switch: true = iPhone-style UA, false = desktop (LoadingFrameLoaderClient::userAgent)
@@ -2858,12 +2866,39 @@ static void apoArmJsWatchdog()
     gpuLogMarker(b);
     wd.setTimeLimit(WTF::Seconds(15),
         [](JSC::JSGlobalObject* globalObject, void*, void*) -> bool {
-            WebCorePort::portDiagLog("js watchdog fired: runaway script terminated");
-            // Apotheosis: the callback returns true (= terminate), but that only sets a pending JS
-            // exception -- it does not unwind C++. Whether the pending exception ever clears a frame
-            // is the open question (PLAN.md item 0a), so record WHAT was interrupting us here, while
-            // it is still on the stack.
+            // M6 (2026-10-27): the fire itself now carries three jobs.
+            //
+            // 1) Count. The old callback logged once per fire but left NOTHING the shell could
+            //    poll -- M6's kill switch needs a monotonic fire count (g_runawayFires).
+            // 2) RE-ARM. JSC's shouldTerminate() returns without restarting the timer, enteredVM
+            //    only re-arms on a VM EXIT that a dzen-style EventLoop spin never makes, and the
+            //    live tick cannot re-arm while the engine thread is stuck mid-tick -- that is why
+            //    the measured trace has ONE 'js watchdog fired' line and then 18 minutes of
+            //    silence at tickstep=1 (DZEN-SCROLL-DEATH.md §10c). apoArmJsWatchdog() from
+            //    inside the callback re-queues the next check in 15 s regardless of VM residency,
+            //    so a stuck runaway gets re-detected every 15 s instead of never again.
+            // 3) Disarm when JS is gone: a leftover queued check that fires with no top frame
+            //    clears the time limit, breaking our own re-arm chain; the normal
+            //    apoArmJsWatchdog() at buildSession/livetop brings protection back.
+            ++g_runawayFires;
+            char line[192];
+            std::snprintf(line, sizeof line, "js watchdog fired #%u topCallFrame=%p",
+                g_runawayFires, globalObject ? (void*)globalObject->vm().topCallFrame : nullptr);
+            WebCorePort::portDiagLog(line);
             apoDumpRunawayJsStack(globalObject);
+            bool liveJs = globalObject && globalObject->vm().topCallFrame;
+            if (!liveJs) {
+                // Disarm = noTimeLimit: hasTimeLimit() goes false, enteredVM stops queueing,
+                // and any stale queued check short-circuits in shouldTerminate() on
+                // m_deadline == infinity without touching the callback. Seconds(0) would be an
+                // instant-refire loop -- one of the two traps of this API.
+                if (JSC::VM* m = WebCore::commonVMOrNull())
+                    m->ensureWatchdog().setTimeLimit(
+                        JSC::Watchdog::noTimeLimit, nullptr, nullptr, nullptr);
+                gpuLogMarker("js watchdog: chain disarmed (no live JS)");
+                return false;
+            }
+            apoArmJsWatchdog();
             return true;
         });
 }
@@ -4770,6 +4805,19 @@ int WebCoreTakePopupUrl(char* buf, int len)
     int n = std::snprintf(buf, static_cast<size_t>(len), "%s", g_pendingPopupUrl);
     g_pendingPopupUrl[0] = '\0';
     return n < 0 ? 0 : n;
+}
+
+// M6 kill switch, reads for the shell's UI timer (see the statics' comment): fires alone never
+// kill -- a recovered while(true) also leaves fire>=1 -- the pair with the frozen heartbeat is
+// the discriminator, evaluated shell-side where a wedge is observable anyway.
+int WebCoreGetRunawayFires()
+{
+    return static_cast<int>(g_runawayFires);
+}
+
+int WebCoreGetM6Heartbeat()
+{
+    return static_cast<int>(g_m6Hb);
 }
 
 // Evaluate JS in the page and copy the string result into out; 0 or an error code
@@ -7494,6 +7542,10 @@ int WebCoreCanGoForward()
 
 int WebCoreLiveTick(uint8_t* outRGBA)
 {
+    // M6: liveness heartbeat -- bumps on every CALL, and a wedged engine thread never issues
+    // another call, so the shell can tell "busy but alive" (counter moving) from "wedged"
+    // (counter frozen across watchdog fires) without touching any engine state.
+    ++g_m6Hb;
     // A cadence, not a gesture: 200 ms while the app is idle and foreground (see the bracketing
     // block above for why this is not a burst).
     ApoGestureLiveTick();

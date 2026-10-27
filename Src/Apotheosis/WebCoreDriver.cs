@@ -241,6 +241,14 @@ namespace Apotheosis
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
         public static extern int WebCoreTakePopupUrl(byte[] buf, int len);
 
+        // M6 kill switch: fire count and engine-heartbeat counter. UI-thread readable by
+        // design -- two plain int loads, evaluated as a pair (see MainPage.M6Check).
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int WebCoreGetRunawayFires();
+
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int WebCoreGetM6Heartbeat();
+
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)]
         public static extern int WebCoreGetLinkCount();
 

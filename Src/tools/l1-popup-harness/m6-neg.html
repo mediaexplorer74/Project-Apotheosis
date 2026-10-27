@@ -1,0 +1,20 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>M6 NEG pending</title>
+<body>
+<h1>M6 negative probe: a killable runaway</h1>
+<p id="st">armed; a plain while(true) starts inside a page timer in 3 s.</p>
+<script>
+setTimeout(function () {
+    document.title = 'M6 NEG running';
+    while (true) { }
+}, 3000);
+// If the watchdog's termination sticks (it does for a single-frame loop -- measured
+// DZEN-SCROLL-DEATH.md §10e), this page REGAINS control and reports back.
+setTimeout(function () {
+    document.title = 'M6 NEG recovered';
+    document.getElementById('st').textContent = 'recovered after the runaway';
+    new Image().src = '/beacon?fn=m6neg&r=recovered';
+}, 12000);
+</script>
+</body>

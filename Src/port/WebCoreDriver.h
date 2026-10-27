@@ -107,6 +107,11 @@ int WebCoreGetUrl(char* buf, int len);
 // Returns bytes copied (0 = nothing queued), which also clears buf.
 int WebCoreTakePopupUrl(char* buf, int len);
 
+// M6: watchdog fire count and engine-call heartbeat (%50, %51). Read from the shell's UI
+// timer; fires across a FROZEN heartbeat = an unrecoverable runaway -> the M6 kill switch.
+int WebCoreGetRunawayFires();
+int WebCoreGetM6Heartbeat();
+
 // Directly download url to outPath (standalone curl, no render, reuses CA blob). Returns HTTP status (e.g. 200)
 // on success, negative on failure. curl global init must have occurred first.
 int WebCoreDownload(const char* url, const char* outPath);

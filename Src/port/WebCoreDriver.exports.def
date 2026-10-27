@@ -80,6 +80,8 @@ EXPORTS
     WebCoreGetTitle
     WebCoreGetUrl
     WebCoreTakePopupUrl
+    WebCoreGetRunawayFires
+    WebCoreGetM6Heartbeat
     WebCoreGetLinkCount
     WebCoreGetLink
     WebCoreGetFrameHash

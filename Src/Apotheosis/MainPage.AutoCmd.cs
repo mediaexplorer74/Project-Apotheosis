@@ -181,8 +181,46 @@ namespace Apotheosis
             catch (Exception ex) { AutoLog("packaged batch FAILED " + ex.GetType().Name + ": " + ex.Message); }
         }
 
+        // M6 kill switch (2026-10-27), polled on this always-alive 250 ms UI timer -- deliberately
+        // NOT on the live tick, which is dead exactly when M6 matters (the engine thread is
+        // wedged mid-post). Discriminator: a NEW watchdog fire while the engine heartbeat is
+        // frozen since the previous fire = the dzen shape (fires chain every 15 s because the
+        // driver re-arms inside its callback, and the heartbeat cannot move while the
+        // EventLoop spin owns the thread). A recovered while(true) moves the heartbeat between
+        // fires and cannot ever reach 2 stall fires -- measured on the negative bench run.
+        // Two plain C int loads; no engine call, no lock.
+        int _m6Fires;          // fires observed so far
+        int _m6HbAtFire;       // heartbeat as of the last fire
+        int _m6StallFires;     // consecutive fires across a frozen heartbeat
+
+        void M6Check()
+        {
+            try
+            {
+                int fires = WebCoreDriver.WebCoreGetRunawayFires();
+                if (fires == _m6Fires) return;
+                int hb = WebCoreDriver.WebCoreGetM6Heartbeat();
+                _m6StallFires = (hb == _m6HbAtFire) ? _m6StallFires + 1 : 0;
+                _m6Fires = fires;
+                _m6HbAtFire = hb;
+                AutoLog($"m6: watchdog fire #{fires} hb={hb} stallFires={_m6StallFires}");
+                if (_m6StallFires >= 2)
+                {
+                    // The one cure M6 has: the runaway cannot be unwound from inside JS (the
+                    // termination exception is swallowed by the page listener path -- see
+                    // ROADMAP M6), so the app stops being a zombie and the user gets a clean
+                    // restart instead of a frozen window. Shutdown is orderly, every marker of
+                    // this line has been flushed by its fopen/flush-per-line writer.
+                    AutoLog($"m6: runaway stuck ({_m6StallFires} fires on a frozen heartbeat) -- exiting app");
+                    Application.Current.Exit();
+                }
+            }
+            catch { }
+        }
+
         void PollAutoCmd()
         {
+            M6Check();
             if (_autoCmdRunning) return;
             try
             {

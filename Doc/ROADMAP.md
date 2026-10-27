@@ -308,6 +308,29 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   a port API to clear it at session teardown (true kill, needs JSC-side edit). Repro notes: plain
   `while(true)` IS already killed; the cheap microtask replay did NOT freeze; dzen's cycle is
   gesture-armed — see DZEN-SCROLL-DEATH.md §10c–§10e.
+  *M6 v1 implemented in `0.2.3.88` (2026-10-27), driver-only — no WebCore/JSC source edit:*
+  (1) the watchdog callback now COUNTS every fire (`g_runawayFires`, marker
+  `js watchdog fired #N topCallFrame=...`) and RE-ARMS itself via `apoArmJsWatchdog()` — a
+  closed re-arm gap JSC leaves open: `shouldTerminate` returns without restarting the timer,
+  `enteredVM` re-arms only on a VM exit the dzen spin never makes, and no live tick can re-arm
+  while the engine thread owns the wedge (that is the measured "ONE fired line, 18 minutes of
+  silence" of §10c). On a healthy box the per-tick apoArm renewal keeps the stale queued check
+  short-circuiting on a pushed deadline — harmless; during a wedge, where no tick flows, the
+  re-arm chain re-detects every 15 s. (2) Two new C ABI getters, exports #50
+  `WebCoreGetRunawayFires` and #51 `WebCoreGetM6Heartbeat`; the heartbeat bumps on every
+  `WebCoreLiveTick` CALL, so it FREEZES exactly when the engine thread wedges. (3) The shell's
+  always-alive 250 ms PollAutoCmd timer runs `M6Check()`: a SECOND fire across a frozen
+  heartbeat = the dzen shape -> `m6: runaway stuck ... exiting app` + `Application.Current.Exit()`
+  — M6's kill: orderly, marker-flushed, never a zombie window. A recovered `while(true)` moves
+  the heartbeat between fires and structurally cannot reach 2.
+  **Measured, negative path, x64 `0.2.3.88` (2026-10-27):** `m6-neg.html` timed `while(true)` →
+  `js watchdog fired #1 topCallFrame=000000DC53BFE5B0` → the page's recovery timer beacons
+  `GET /beacon?fn=m6neg&r=recovered` in the SAME SECOND (termination stuck, block unwound) →
+  shell logs `m6: watchdog fire #1 hb=78 stallFires=0` → app alive, no exit. The
+  `chain disarmed` branch stayed silent because healthy per-tick re-arms outrun the stale check —
+  expected, not a miss. **The positive wedge path (exit at ≥45 s) is code-complete and
+  mechanically traced but NOT yet reproduced** — the stuck spin still needs a real dzen gesture
+  session; M6's kill is currently negative-tested only, and that is the honest status.
 - **M7. Performance baseline on the device (speed is its own axis, not a side effect of memory).**
   MVP explicitly scoped performance tuning out; 1.0 does not (Phase 0 criterion 6). Measure on
   BOTH devices with the instruments that already exist (`engineact`, `finished`, `[SCT]` in
