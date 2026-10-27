@@ -87,8 +87,10 @@
                       ManipulationMode="TranslateX,TranslateY,TranslateInertia,Scale"
                       IsTapEnabled="True" Tapped="OnPageTapped"
                       IsDoubleTapEnabled="True" DoubleTapped="OnPageDoubleTapped"
+                      ManipulationStarting="OnManipStarting"
                       ManipulationDelta="OnImageManipDelta"
-                      ManipulationCompleted="OnImageManipCompleted">
+                      ManipulationCompleted="OnImageManipCompleted"
+                      PointerWheelChanged="OnContentWheel">
                     <!-- S7 (2026-10-22): FrameFit carries the display scale of the fixed frame:
                          the whole 720x1080 bitmap drawn as large as fits the window, top-left
                          anchored. RenderImage itself keeps a free RenderTransform for the live

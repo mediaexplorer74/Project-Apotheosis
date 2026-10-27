@@ -1,0 +1,22 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>M4 H-SCROLL probe</title>
+<body>
+<h1>M4: horizontal scroll probe</h1>
+<p>Swipe this wide block sideways (touch), or Shift+wheel over it. There is real horizontal
+overflow: 2400 px of content in a ~360 px window. If scrolling works, the title bar of the gray
+box moves left and <b id="w">what you see</b> stays put.</p>
+<div style="width:700px;height:180px;overflow-x:scroll;background:#bbb;border:2px solid #333">
+<div style="width:2400px;height:176px;background:linear-gradient(90deg,#f88,#88f)">
+<span style="font-size:26px;padding:60px;display:inline-block">SCROLL ME RIGHT >>></span>
+</div>
+</div>
+<br>
+<div style="overflow-x:visible;background:#dfd;padding:8px">
+<a href="http://127.0.0.1:8765/popup.html">back to popup page</a> (a same-target link for
+link-table checks)
+</div>
+<div style="height:2600px;background:repeating-linear-gradient(#fff,#fff 39px,#eef 40px)">
+<p>... vertical spacer: wheel the mouse here to test VERTICAL wheel scrolling ...</p>
+</div>
+</body>

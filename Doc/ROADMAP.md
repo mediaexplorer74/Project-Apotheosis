@@ -238,6 +238,31 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
 - **M4. Input matrix per orientation and mode** — the 0.50 zoom floor reads as "pinch is broken";
   the fitwindow=0 pinch branch and the landscape/inner-scroller cases need one test matrix (verb
   batches + the finger path) instead of spot fixes.
+  *First concrete cases, maintainer report 2026-10-26, x64 bench:* (a) **mouse wheel vertical
+  scroll does not work**; (b) **horizontal pan after a press-and-sweep on a touch screen does not
+  scroll**. The bench is a Surface Pro 5 WITH a touch screen, so both cases are drivable by a real
+  finger/wheel on x64 (synthetic input cannot reach UWP), no Lumia needed for development.
+  *Triage and result, `0.2.3.87` (2026-10-27):*
+  (a) ROOT CAUSE OF THE WHEEL — `ContentArea` subscribed only to manipulation/tap events:
+  `PointerWheelChanged` was wired to nobody, so a notch reached the void with no trace anywhere.
+  Fixed: `OnContentWheel` converts one notch (±120) to 75 DIP through the same fitScale mapping
+  the finger uses, maps the CONTENT CENTER as the inner-scroller point (a wheel event carries no
+  position), and feeds `FreeScrollBy` — same accumulator, engine post, `scroll` log line and blit
+  as a drag; Shift+wheel is horizontal via `CoreWindow.GetKeyState(VirtualKey.Shift)` (the
+  `KeyModifiers` enum is not spelled `CoreVirtualKeyKeys` in the 19041 contract winmds — measured,
+  it appears nowhere in the 88 refs; and UWP's handler type is `PointerRoutedEventArgs`, not
+  `PointerWheelRoutedEventArgs`, which cost two failed builds to learn). Verified on the bench by
+  the maintainer's own hand: 75 `wheel d=±120 sh=0 -> dy=±75` lines in autocmd-log, both
+  directions, verdict «всё отлично» — before this build the wheel produced zero lines. The Shift
+  branch is NOT yet exercised (the bench mouse has no tilt wheel).
+  (b) HORIZONTAL TOUCH: still partially open. On `hscroll.html` (inner div, real overflow)
+  horizontal finger swipes now log `scroll dx=72..174 dy=-4..` and the engine answers
+  `[SCT] out=1|DIV` — the inner scroller moves. BUT nothing functional was changed for this path,
+  and the new `manip start` marker (installed for triage) shows the gesture stack always worked
+  here, so the ORIGINAL complaint most likely involved either a page with no horizontal RANGE
+  (frame clamps and rc=0 looks like "no scroll") or a context outside this repro; the frame-level
+  horizontal case has not been reproduced. Next probe: a page with a document-level horizontal
+  overflow (body wider than the viewport) to separate range-0 from a map failure.
 - **M5. The memory ceiling — intelligent consumption control.** Heavy pages still cost hundreds of
   MB with every release lever withdrawn. "Ceiling" alone was too vague to schedule, so the item is
   split; the three stages run in order (measurement before levers, levers before budgets — the
@@ -261,6 +286,28 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
     is checked, M5 is not done.
 - **M6. Watchdog killability** — the JSC watchdog fires but termination does not stick on a page
   dispatch cycle; a runaway JS loop is detectable (heartbeat tickstep=1) but not curable in-app.
+  **Recon 2026-10-26 (code, no fix yet):** the swallow point is now named —
+  `JSEventListener::handleEvent`'s exception path: the WORKER branch reacts to
+  `vm.isTerminationException` with `scriptController->forbidExecution()` (JSEventListener.cpp:247),
+  while the **page/main branch just does `reportException(...); return`** — the TerminationException
+  is consumed as an ordinary uncaught exception and `handleEvent` returns normally, so the C++ cycle
+  beneath it continues. Supporting mechanics, all measured or read in tree: (1)
+  `m_hasTerminationRequest` is cleared by exactly ONE site, `VM::executeEntryScopeServicesOnExit`
+  (VM.cpp:1766), which for the §10c spin never runs — the nested `EventLoop::run` never leaves the
+  outer entry scope; (2) `Watchdog::shouldTerminate` returns `true` WITHOUT arming a next timer, and
+  the next arming would come from `enteredVM` or the live tick's `apoArmJsWatchdog` — both dead
+  while the tick is stuck, which is why the measured trace has ONE `js watchdog fired` line and 18
+  minutes of silence at `tickstep=1`; (3) `vm.forbidExecutionOnTermination()` sets a VM-global
+  `executionForbidden` that by upstream's own comment is kept worker-only "until we're sure clients
+  using the JSC watchdog aren't broken" — calling it from the main path would kill ALL future JS in
+  this process unless a driver-level reset path exists. Fix directions to choose between: **F1**
+  mirror the worker branch (re-throw termination through the dispatch chain so the spin unwinds to
+  `RunLoop::cycle` and the tick returns) — surgical but needs strict propagation proofs through
+  `fireEventListeners`/`dispatchEvent`; **F3** re-arm a follow-up timer from inside the watchdog
+  callback so re-enters get re-detected (cheap, diagnostic value only); **F4** VM-global forbid +
+  a port API to clear it at session teardown (true kill, needs JSC-side edit). Repro notes: plain
+  `while(true)` IS already killed; the cheap microtask replay did NOT freeze; dzen's cycle is
+  gesture-armed — see DZEN-SCROLL-DEATH.md §10c–§10e.
 - **M7. Performance baseline on the device (speed is its own axis, not a side effect of memory).**
   MVP explicitly scoped performance tuning out; 1.0 does not (Phase 0 criterion 6). Measure on
   BOTH devices with the instruments that already exist (`engineact`, `finished`, `[SCT]` in

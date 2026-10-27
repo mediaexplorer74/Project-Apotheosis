@@ -1886,6 +1886,61 @@ namespace Apotheosis
         // zoom re-runs layout, and re-running it per finger delta would cost ~1.2 s of engine thread
         // each time. Chrome previews its pinch the same way -- magnify now, reflow on release -- and
         // the commit below is what makes the two agree.
+        // M4 triage marker for the horizontal-finger case: ONE line per gesture the XAML manipulation
+        // stack accepted. A horizontal swipe with no `manip start` lines means the stack never saw
+        // the gesture; `manip start` without a following `scroll dx=` line means the delta was
+        // eaten before FreeScrollBy; a `scroll` line means the engine answered -- read [SCT] in
+        // gpu-steps for that one. Three-way discrimination from one logged line.
+        void OnManipStarting(object sender, ManipulationStartingRoutedEventArgs e)
+        {
+            AutoLog("manip start");
+        }
+
+        // M4, first case (2026-10-27): THE MOUSE WHEEL. ContentArea subscribed to manipulation and
+        // taps only -- PointerWheelChanged was nobody's event, so a wheel notch went to the void
+        // with no trace anywhere (maintainer report: vertical wheel scroll does not work, x64).
+        // The fix speaks the dialect the finger path already speaks: one notch = 75 DIP through the
+        // same DIP -> frame-pixel mapping (fitScale on the software path, raw on GPU), then straight
+        // into FreeScrollBy -- the same accumulator, engine-thread post, `scroll dx= dy=` line and
+        // blit as a drag. Shift+wheel drives the horizontal axis, because the wheel has exactly two
+        // axes and the horizontal gesture is the open half of this same report.
+        //
+        // The point is the CONTENT CENTER, not 0,0: a wheel event has no position, and
+        // WebCoreScrollByAt's inner-scroller walk does -- center hits the page's own scroller the
+        // way a center-pointing touch would.
+        // UWP spells this handler as PointerEventHandler/PointerRoutedEventArgs: there is no
+        // PointerWheelRoutedEventArgs in the SDK projection at all (verified against the 19041
+        // contract winmds 2026-10-27 -- that name exists on WPF/WinUI only, and using it fails
+        // both csc and the XamlCompiler, the latter silently, MSB4181 with no detail).
+        void OnContentWheel(object sender, PointerRoutedEventArgs e)
+        {
+            if (!_sessionActive) return;
+            int delta = e.GetCurrentPoint(ContentArea).Properties.MouseWheelDelta;
+            if (delta == 0) return;
+            ApplyDisplayScale();
+            // Shift detection via CoreWindow rather than e.KeyModifiers: the enum behind KeyModifiers
+            // is not named CoreVirtualKeyKeys in this SDK's contract winmds (measured: the string
+            // appears nowhere in the 88 refs), and guessing its name again costs a whole build.
+            var cw = Windows.UI.Core.CoreWindow.GetForCurrentThread();
+            bool horizontal = cw != null &&
+                (cw.GetKeyState(Windows.System.VirtualKey.Shift) &
+                     Windows.UI.Core.CoreVirtualKeyStates.Down) ==
+                     Windows.UI.Core.CoreVirtualKeyStates.Down;
+            double sc = _gpuPresent ? 1.0 : _fitScale;
+            if (sc < 0.01) sc = 0.01;
+            // UWP sign: positive delta = wheel forward = content scrolls UP = negative dy
+            // (the FAB spells the same vector: up=-900, down=+900).
+            double v = -delta * (75.0 / 120.0) / sc;
+            int idx = horizontal ? (int)(v < 0 ? v - 0.5 : v + 0.5) : 0;
+            int idy = horizontal ? 0 : (int)(v < 0 ? v - 0.5 : v + 0.5);
+            if (idx == 0 && idy == 0) return;   // sub-pixel remainder: let the next notch carry it
+            MapTapToEngine(ContentArea.ActualWidth / 2, ContentArea.ActualHeight / 2, out int px, out int py);
+            if (px < 0 || py < 0 || px >= kW || py >= kH) { px = _scrollPointX; py = _scrollPointY; }
+            AutoLog($"wheel d={delta} sh={(horizontal ? 1 : 0)} -> dx={idx} dy={idy} at {px},{py}");
+            e.Handled = true;
+            FreeScrollBy(idx, idy, px, py);
+        }
+
         void OnImageManipDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             if (!_sessionActive) return;
