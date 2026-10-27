@@ -257,8 +257,13 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   A maintainer resize check on the same build confirmed the responsive branch is live rather than
   frozen at boot: narrowing the window switches NDA to Node Detail, widening restores the graph.
   The initial-viewport fix therefore seeds the correct first document without pinning the layout to
-  one branch. Landscape-graph / portrait-detail on the Lumia remains the expected behaviour, not a
-  measured result (the device-testing constraint still applies).
+  one branch. One expectation needs a guard before the phone batch: the measured ContentArea on the
+  Lumias is 360x494 DIP, so landscape is about 494 CSS px, still below NDA's 870 px mobile
+  breakpoint. The phone is therefore expected to keep the Node Detail branch in BOTH orientations;
+  a missing graph there is the site's responsive design, not a boot-fix regression. The batch
+  should verify that Node Detail is usable and that no top-left node pile appears, not force the
+  desktop graph onto a 494 px viewport. (If the graph is ever required on the phone, that is a
+  site-breakpoint or page-zoom decision, not an engine fix.)
   *ARM synchronization package, 0.2.3.94 (2026-10-27):* the ARM driver was rebuilt from the same
   port sources and the app bundle was built and audited without deployment. `WebCoreDriver.dll`
   now carries 52 exports including `WebCoreEvalJS`; `Test-AppxPayload.ps1 -ExpectedArch arm`
