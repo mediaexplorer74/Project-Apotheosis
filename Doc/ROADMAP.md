@@ -290,6 +290,20 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   `Src/Apotheosis/AppPackages/Apotheosis_0.2.3.94_Test/Apotheosis_0.2.3.94_arm.appxbundle`
   (46.6 MB). It has NOT been deployed or run on either Lumia, so the boot fix and the `js` verb
   remain x64-measured only.
+  *ARM release candidate, 0.2.3.95 (2026-10-27):* rebuilt from the same sources as the x64
+  `.95` build, carrying M5.1 `SL: pmem`, the dzen timeouts and the hardware-keyboard route.
+  `Test-AppxPayload.ps1 -ExpectedArch arm` again reports `AUDIT PASSED` (30/30 ARM binaries,
+  52/52 exports, driver at the package root); `WebCoreDriver.dll` in the bundle hashes to
+  `F05029135A2FBE90EBC3C2A1377C70EED0296B7E703FC363C78A8C2D179A7038`, matching the staged
+  driver. The bundle is
+  `Src/Apotheosis/AppPackages/Apotheosis_0.2.3.95_Test/Apotheosis_0.2.3.95_arm.appxbundle`
+  (46.6 MB). Sideload archive for the maintainer's GitHub Release upload:
+  `C:\Users\media\Desktop\Apotheosis_0.2.3.95_ARM_sideload.zip`, 52,509,709 bytes (50.08 MB),
+  SHA256 `3BCBBF5F95D2F9B4C2C68276F55438BDF45B594B691240EF64C9E49D4346D973`. It contains the
+  bundle, the public `CN=media` certificate (thumbprint
+  `9775F34A02030380B99FFF4A1104CBFF8993A183`, valid to 2027-09-26), the three ARM dependency
+  packages, `Add-AppDevPackage.ps1` / `Install.ps1` and a README. NOT deployed or run on either
+  Lumia; the device-half checks stay deferred to the next light batch.
 - **M4. Input matrix per orientation and mode** — the 0.50 zoom floor reads as "pinch is broken";
   the fitwindow=0 pinch branch and the landscape/inner-scroller cases need one test matrix (verb
   batches + the finger path) instead of spot fixes.
