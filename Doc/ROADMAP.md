@@ -353,6 +353,20 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   on this bench. Next: implement (a)+(b), take startup→first-paint and load end-to-end, then the
   device half (Phase 0 criterion 6 wants Lumia numbers too — deferred to a device session).
 
+  *Both instruments shipped in `0.2.3.89` (2026-10-27) and paid out immediately:*
+  (a) `startup: first blit N ms after mainpage-ctor` — stamped at the top of `BlitToBitmap`,
+  before the GPU early-return so a gpu build gets its own answer; (b) `timing: SessionLoad
+  t=N ms rc=? url=...` — a steady_clock around `WebCoreSessionLoadImpl` in the wrapper
+  (APO_SEH_RETURN_INT had to be re-expanded by hand, the macro's `return` would preempt the
+  log). **Measurement #2 — startup→first paint:** **2989 ms** mainpage-ctor → first pixels
+  (bench, .NET Native Debug bundle, software present). **Measurement #3 — document load
+  end-to-end** (the driver's own duration, not the batch's waits): local harness page
+  `hscroll.html` **1254 ms**; `example.com` **1297–2482 ms** (cold vs warm sample);
+  `lenta.ru` **6234 ms** as a heavy real-world document — note the diag right after it still
+  reads `rs=I pending=100`: the 6.2 s buys the main document and its first paint, and
+  subresources keep arriving for tens of seconds more (that distinction is exactly why the
+  instrument exists).
+
   Decision to make from those measurements, not by default: the GPU
   present question ([GPU-LIVENESS.md](GPU-LIVENESS.md) is still on pause) — software present on a
   Snapdragon 400 may cost proportionally far more than on the bench, and "software is the MVP-safe

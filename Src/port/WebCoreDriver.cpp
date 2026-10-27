@@ -7442,9 +7442,26 @@ int WebCoreRenderHtml(const char* utf8Html, int w, int h, uint8_t* outRGBA)
     APO_SEH_RETURN_INT(WebCoreRenderHtmlImpl(utf8Html, w, h, outRGBA));
 }
 
+// M7 (2026-10-27): end-to-end SessionLoad duration. gpu-steps markers carry NO wall-clock
+// timestamp (one fopen per line, deliberately), and the shell's batch deltas measure the planned
+// `wait`s that surround a load rather than the load -- so the load's own cost needs a duration
+// line, which needs no clock at all: steady_clock around the impl, ms in the marker. Replicates
+// APO_SEH_RETURN_INT (cannot keep the macro: the return must not preempt the log) under the same
+// APO_SEH_SUPPORTED gate; a faulting load measures nothing, which is the right omission.
 int WebCoreSessionLoad(const char* url, int w, int h, uint8_t* outRGBA)
 {
-    APO_SEH_RETURN_INT(WebCoreSessionLoadImpl(url, w, h, outRGBA));
+    const auto m7t0 = std::chrono::steady_clock::now();
+    int m7rc;
+#if APO_SEH_SUPPORTED
+    __try { m7rc = WebCoreSessionLoadImpl(url, w, h, outRGBA); }
+    __except (ApoSehFilter(GetExceptionInformation())) { m7rc = kErrSeh; }
+#else
+    m7rc = WebCoreSessionLoadImpl(url, w, h, outRGBA);
+#endif
+    const long m7ms = static_cast<long>(std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::steady_clock::now() - m7t0).count());
+    gpuLogMarkerF("timing: SessionLoad t=%ld ms rc=%d url=%.60s", m7ms, m7rc, url ? url : "");
+    return m7rc;
 }
 
 void WebCoreCloseSession()

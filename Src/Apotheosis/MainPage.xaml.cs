@@ -529,6 +529,11 @@ namespace Apotheosis
 
         bool _appForeground = true;
 
+        // M7 startup→first-paint pair: ctor time here, first BlitToBitmap stamps the delta (see that
+        // method). Field initializer runs at the same construction instant as the ctor body.
+        DateTime _ctorAt = DateTime.Now;
+        bool _firstBlitLogged;
+
         public MainPage()
         {
             App.BootMark("mainpage-ctor");
@@ -3923,6 +3928,17 @@ namespace Apotheosis
 
         void BlitToBitmap(byte[] rgba)
         {
+            // M7 (2026-10-27): the first-paint stamp boot.txt never had. boot.txt times
+            // app-ctor/onlaunched/mainpage-ctor/mainpage-xaml-ok, and until this line NOTHING
+            // marked the moment the user first saw pixels -- so startup-to-first-paint, Phase 0
+            // criterion 6, was uncomputable on the app line. Stamped BEFORE the GPU early-return
+            // so a gpu-present build gets its own answer too; int-only formatting, culture-safe.
+            if (!_firstBlitLogged)
+            {
+                _firstBlitLogged = true;
+                AutoLog("startup: first blit " + (int)(DateTime.Now - _ctorAt).TotalMilliseconds
+                    + " ms after mainpage-ctor");
+            }
             if (_gpuPresent) return;
             try
             {
