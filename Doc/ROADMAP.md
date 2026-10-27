@@ -179,6 +179,18 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   Measured on x64 `.79`: dzen clean, `ya.ru`/`example.com`/`lenta.ru` load, the mobile probe sends
   the iPhone string, and the suffix matcher passes 21 URL cases. Microsoft blocks this bench client
   with Edge too, so that block is not UA-specific. L1 remains next.
+  **Connect-timeout follow-up, `0.2.3.95` (2026-10-27):** the maintainer reported dzen opening only
+  on roughly the fifth attempt while Chrome opened it first try. The trace says the site was never
+  down: every failed hop read `SL: hop[0] status=301/302 ...` followed by
+  `SL: curl done crc=28 http=301 size=0` at 3.2-4.4 s, i.e. `CURLE_OPERATION_TIMEDOUT` raised by
+  `CURLOPT_CONNECTTIMEOUT=3` while resolving/connecting the SECOND host of the SSO chain
+  (`sso.passport.yandex.ru`, `login.vk.com`) — DNS resolution is part of that 3 s. Dzen has belonged
+  to VK since 2022, so the VK ID hops are its normal account path, not a suspicious redirect. The
+  same log's successful load took 7.7 s against the 8 s TOTAL limit, one slow response away from the
+  same false failure. Raised to connect 10 s / total 30 s; the 1 B-per-2 s low-speed rule and the
+  app's 40 s watchdog still end a genuinely dead transfer. Measured on `.95`: three consecutive
+  dzen loads, engine `SessionLoad` 6528 / 7104 / 6969 ms, all rc=0; the middle one exceeds the old
+  8 s wall clock and would have been a fourth false failure under the previous limits.
 
 ## Phase M - medium term (weeks each)
 
@@ -312,6 +324,19 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   the frame 0 -> 300 -> 600 -> 900. The range-0 hypothesis is therefore NOT reproducible at the
   engine layer. The actual touch path on the Surface's screen still needs the maintainer's finger
   (synthetic input cannot reach UWP). Evidence: `Src/tools/shots/m4b-hwide-92.png`.
+  *M4(c) hardware keyboard, `0.2.3.95` (2026-10-27):* maintainer report — an in-page field could
+  only be typed into after summoning the on-screen keyboard, so physical keys had no route into the
+  page. The route was structurally absent, not broken: the only text path was
+  `ImeBox.TextChanged -> SendKeyToEngine`, and ImeBox is focused only by `OpenKeyboard()`, which runs
+  only when a tap reported an editable. Added a CoreWindow `CharacterReceived` + `KeyDown` hook:
+  printable characters go to `WebCoreTypeText`, Backspace/Enter to `WebCoreKeyAction`, both gated on
+  `WebCoreFocusedEditable`; ImeBox and XAML text controls keep priority so nothing is typed twice;
+  Ctrl+L / F5 / Ctrl+R / Alt+Left are wired as window shortcuts. Measured on the x64 bench:
+  `hwkeys: hooked CharacterReceived+KeyDown`; a physical Cyrillic key logged
+  `hwkeys: first char U+0442` and reached the page; `js` read back the inserted Latin text.
+  Maintainer verdict: «hardware keyboard ожил». `ime: open editable=1 focus=Keyboard` also shows
+  that ImeBox focus itself was never the broken half. The test page is
+  `Src/tools/l1-popup-harness/keytest.html` (input/textarea/contenteditable, keydown counter).
 - **M5. The memory ceiling — intelligent consumption control.** Heavy pages still cost hundreds of
   MB with every release lever withdrawn. "Ceiling" alone was too vague to schedule, so the item is
   split; the three stages run in order (measurement before levers, levers before budgets — the
@@ -323,6 +348,17 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
     (default-off behind `cacherelease.txt`). Deliverable: one honest per-site memory profile of
     the thirteen-site list on both devices, with each of the three gaps either closed or named
     unfixable-with-why.
+    *M5.1 result, `0.2.3.95` (2026-10-27):* the whole-process blind spot is CLOSED on x64.
+    `K32GetProcessMemoryInfo` resolves from the already-mapped kernel32 and works inside the
+    AppContainer; `SL: pmem at entry / after teardown / after build` now carries
+    `wsB / peakWsB / privateB / pagefileB / faults` in the same log stream as `SL: mem` and
+    `SL: docs`, at each sampling point. Measured across the boot page plus three dzen navigations:
+    `after build` WS 191.9 -> 242.1 -> 412.0 -> 468.5 MB while private went
+    404.8 -> 483.6 -> 646.4 -> 689.6 MB. The app-side `mem.txt` at 10:45:56 read 656.3 MB against
+    pmem's 689.6 MB — same order, same direction, and the difference is the ledger's later poll
+    plus allocator drift. The earlier "no process reading in the AppContainer" conclusion therefore
+    holds for `memoryFootprint()`/`QueryWorkingSet`, NOT for K32GetProcessMemoryInfo. `decodedB=0`
+    and the `evictResources()` lever remain open; this closes only the whole-process gap.
   * **M5.2 — levers (influence the consumption, not only watch it).** Wire the UWP pressure signals
     — `MemoryManager.AppMemoryUsage`, `AppMemoryUsageLevel`, `AppMemoryUsageIncreased` /
     `InviteMemoryChange` — to a real "shrink now" path: at `High` the browser compresses itself

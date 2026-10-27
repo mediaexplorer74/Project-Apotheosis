@@ -654,6 +654,13 @@ typedef void* (__stdcall* ApoAddVehFn)(unsigned long first, ApoVehHandler handle
 extern "C" __declspec(dllimport) HMODULE __stdcall GetModuleHandleW(LPCWSTR);
 #endif
 
+#if !defined(_ERRHANDLINGAPI_H_) && !defined(_WINBASE_)
+// Same treatment for the error code the M5.1 process-memory probe reports. Token for token what
+// <errhandlingapi.h> declares (DWORD WINAPI GetLastError(VOID)), so an include chain that turns out
+// to pull the header in is a duplicate declaration and not a conflict.
+extern "C" __declspec(dllimport) unsigned long __stdcall GetLastError();
+#endif
+
 // EXCEPTION_CONTINUE_SEARCH's value; winnt.h defines it as 0 and this TU has no windows.h. It is
 // spelled out separately from the macro of the same meaning above because that one is 1 on purpose
 // (a filter's "handle it" is a different constant from a handler's "pass it on").
@@ -3383,8 +3390,23 @@ struct ApoFetchChannel {
                 curl_easy_setopt(h, CURLOPT_URL, jobUrl.c_str());
                 curl_easy_setopt(h, CURLOPT_FOLLOWLOCATION, 1L);
                 curl_easy_setopt(h, CURLOPT_MAXREDIRS, 10L);
-                curl_easy_setopt(h, CURLOPT_TIMEOUT, 8L);
-                curl_easy_setopt(h, CURLOPT_CONNECTTIMEOUT, 3L);
+                // Apotheosis 2026-10-27 (dzen retry fix): these were 8 s and 3 s, and the 3 s one
+                // is what made dzen.ru look unreachable on the bench while Chrome loaded it on the
+                // first try. Measured in one session: every failed dzen hop reads
+                //   SL: hop[0] status=301/302 ...  -> SL: curl done crc=28 http=301 size=0
+                // at t=3.2..4.4 s, i.e. CURLE_OPERATION_TIMEDOUT raised while resolving/connecting
+                // the SECOND host of the SSO chain (sso.passport.yandex.ru, login.vk.com), not while
+                // fetching the document. CURLOPT_CONNECTTIMEOUT covers DNS resolution, and this
+                // resolver regularly needs more than 3 s for a cold name; Chrome has no such cap,
+                // which is the whole difference between the two browsers here. The successful load
+                // in the same log took 7.7 s against the 8 s TOTAL timeout -- one slow response away
+                // from the same false failure.
+                // So: 10 s to resolve+connect one host, 30 s for the whole redirect chain. The stall
+                // detector above (1 B / 2 s low-speed, plus the 3 s silence report) still ends a
+                // genuinely dead transfer early, and MainPage's 40 s load watchdog remains the outer
+                // bound, so this does not turn a hang into a longer hang.
+                curl_easy_setopt(h, CURLOPT_TIMEOUT, 30L);
+                curl_easy_setopt(h, CURLOPT_CONNECTTIMEOUT, 10L);
                 curl_easy_setopt(h, CURLOPT_LOW_SPEED_LIMIT, 1L);
                 curl_easy_setopt(h, CURLOPT_LOW_SPEED_TIME, 2L);
                 curl_easy_setopt(h, CURLOPT_TCP_KEEPALIVE, 1L);
@@ -5494,6 +5516,85 @@ static void apoLogLivePages(const char* when)
     }
 }
 
+// Apotheosis 2026-10-27: M5.1 -- read the process working set from inside the engine, at the instant
+// the per-navigation instruments fire.
+//
+// Why this exists: every memory number in this file is a *component* reading (cache bytes, document
+// nodes, JS heap), and the only whole-process figure the bench has is MainPage's `mem.txt` ledger,
+// which polls on its own cadence from the UI thread. Correlating the two means matching timestamps
+// across two logs and hoping no poll landed on either side of a navigation. The slope work needs the
+// whole-process figure on the SAME line of the SAME log as `SL: mem` and `SL: docs`, at the same
+// three sampling points (`at entry` / `after teardown` / `after build`).
+//
+// Why not the two engine APIs that look right: both dead ends are documented on apoLogMemoryStats()
+// below -- `WTF::memoryFootprint()` returns 0 under the App Container (QueryWorkingSet is outside
+// WINAPI_PARTITION_APP), and `WTF::fastMallocStatistics()` is PeakWorkingSetSize spelled as a bmalloc
+// statistic. K32GetProcessMemoryInfo is the kernel32 spelling of the same reading and is deliberately
+// NOT linked: this TU has no windows.h, psapi.h's PROCESS_MEMORY_COUNTERS_EX is partition-gated, and
+// linking psapi/kernel32 would add an import to the ARM line for what is currently a bench
+// diagnostic. Resolving it from the already-mapped kernel32 costs one GetProcAddress and no link
+// change; a missing export or a refused call is a logged line, not a build break -- the rule the VEH
+// probe above already follows. Whether the App Container actually permits the call is exactly what
+// this probe is for, and the answer is recorded in Doc/ROADMAP.md, not assumed here.
+//
+// The struct is spelled out rather than taken from psapi.h for the same partition reason. Its layout
+// is the Win32 ABI K32GetProcessMemoryInfo has written since Vista, and `uintptr_t` is SIZE_T on both
+// targets, so one definition is correct for the 4-byte ARM32 and 8-byte x64 builds. Field names are
+// lowercased to keep this TU clear of the SDK's PROCESS_MEMORY_COUNTERS_EX identifiers.
+static void apoLogProcessMemory(const char* when)
+{
+    struct ApoProcessMemoryCounters {
+        unsigned long cb;
+        unsigned long pageFaultCount;
+        uintptr_t peakWorkingSetSize;
+        uintptr_t workingSetSize;
+        uintptr_t quotaPeakPagedPoolUsage;
+        uintptr_t quotaPagedPoolUsage;
+        uintptr_t quotaPeakNonPagedPoolUsage;
+        uintptr_t quotaNonPagedPoolUsage;
+        uintptr_t pagefileUsage;
+        uintptr_t peakPagefileUsage;
+        uintptr_t privateUsage;
+    };
+    typedef int (__stdcall* ApoGetProcessMemoryInfoFn)(void*, ApoProcessMemoryCounters*, unsigned long);
+
+    static ApoGetProcessMemoryInfoFn fn = nullptr;
+    static unsigned char resolveState = 0;      // 0 = not tried, 1 = resolved, 2 = absent
+    static unsigned long resolveError = 0;
+    if (resolveState == 0) {
+        HMODULE kernel32 = GetModuleHandleW(L"kernel32.dll");
+        if (kernel32)
+            fn = reinterpret_cast<ApoGetProcessMemoryInfoFn>(GetProcAddress(kernel32, "K32GetProcessMemoryInfo"));
+        if (fn) {
+            resolveState = 1;
+        } else {
+            resolveState = 2;
+            resolveError = GetLastError();
+        }
+    }
+    if (!fn) {
+        // Once per process the resolution outcome is fixed; printing it on every navigation is what
+        // makes a device log self-contained, and the line is two dozen bytes.
+        gpuLogMarkerF("SL: pmem %s unavailable (K32GetProcessMemoryInfo resolve err=%lu)", when, resolveError);
+        return;
+    }
+
+    ApoProcessMemoryCounters c {};
+    c.cb = (unsigned long)sizeof c;
+    // (void*)-1 is GetCurrentProcess(). The pseudo-handle is a constant, and passing it avoids
+    // pulling processthreadsapi.h into a TU that has no windows.h.
+    if (!fn((void*)-1, &c, (unsigned long)sizeof c)) {
+        gpuLogMarkerF("SL: pmem %s failed (K32GetProcessMemoryInfo err=%lu)", when, GetLastError());
+        return;
+    }
+    // Bytes, not MB: the app-side ledger rounds to 0.1 MB and this is the number that has to be
+    // differenced against it. faults is included because a navigation that grows the working set
+    // without growing private bytes is a different story than one that does.
+    gpuLogMarkerF("SL: pmem %s wsB=%llu peakWsB=%llu privateB=%llu pagefileB=%llu faults=%lu",
+        when, (unsigned long long)c.workingSetSize, (unsigned long long)c.peakWorkingSetSize,
+        (unsigned long long)c.privateUsage, (unsigned long long)c.pagefileUsage, c.pageFaultCount);
+}
+
 // Apotheosis 2026-09-24: attribute the RSS remainder, and do it by asking WebCore rather than guessing.
 //
 // Why this exists: `apoLogLivePages` counts the hidden per-SVG Pages and the controlled pages priced one
@@ -5544,6 +5645,9 @@ static void apoLogLivePages(const char* when)
 // call sites, and neither is inside a `#pragma strict_gs_check(push, off)` region.
 static void apoLogMemoryStats(const char* when)
 {
+    // M5.1: the process reading is taken first and with the same `when`, so every block of memory
+    // lines for one sampling point is anchored by one whole-process number.
+    apoLogProcessMemory(when);
     auto stats = WebCore::PerformanceLogging::memoryUsageStatistics(WebCore::ShouldIncludeExpensiveComputations::Yes);
     for (auto& [key, value] : stats)
         gpuLogMarkerF("SL: mem %s %s=%llu", when, key.characters(), (unsigned long long)value);
@@ -5720,6 +5824,9 @@ static int WebCoreSessionLoadImpl(const char* url, int w, int h, uint8_t* outRGB
         return kErrBusy;
     }
     apoLogLivePages("at entry");
+    // M5.1: the only sampling point that has no apoLogMemoryStats() call of its own, and the one
+    // that prices what the previous session left behind before teardown starts.
+    apoLogProcessMemory("at entry");
     DBG_STAGE("WebCoreSessionLoad calling teardownSession");
     // Every navigation tears the old session down first, so this is the `why=` a teardown abort
     // carries when the death is a *load* and not a close -- §3/§4 of the `.23` trace could not tell

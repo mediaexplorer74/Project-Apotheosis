@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>M4 keyboard test</title>
+<style>body{font:18px sans-serif;padding:24px}input,textarea{font-size:20px;padding:6px;width:420px}</style></head>
+<body>
+<h1>M4 hardware keyboard</h1>
+<p>input</p><input id="q" autocomplete="off">
+<p>textarea</p><textarea id="t" rows="3"></textarea>
+<p>contenteditable</p><div id="c" contenteditable="true" style="border:1px solid #888;min-height:40px;width:420px"></div>
+<p id="events">events: 0</p>
+<script>
+var n = 0;
+document.addEventListener('keydown', function (e) {
+  n++;
+  document.getElementById('events').textContent = 'events: ' + n + ' last=' + e.key;
+});
+</script>
+</body>
+</html>

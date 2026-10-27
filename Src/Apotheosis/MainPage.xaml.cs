@@ -540,6 +540,14 @@ namespace Apotheosis
         string _lastImeText = "";
         bool _imeOpen;
         bool _imeSyncing;
+        // 2026-10-27: hardware keyboard. The ImeBox route below only exists once OpenKeyboard()
+        // has focused it; the window itself has never forwarded a key to WebCore. `_engineEditable`
+        // is the UI-side copy of WebCoreFocusedEditable(), written whenever a tap or a live tick
+        // reads it on the engine thread.
+        bool _hwKeysHooked;
+        bool _hwCharLogged;
+        int _engineEditable;
+        char _hwHighSurrogate;
 
         bool _appForeground = true;
 
@@ -651,6 +659,11 @@ namespace Apotheosis
                 };
             }
             catch { }
+
+            // Hardware keyboard (2026-10-27). Subscribing at the CoreWindow level, not on
+            // ContentArea: the content grid is not focusable, so a KeyDown routed through XAML
+            // would only fire when some toolbar control happened to own focus.
+            HookHardwareKeyboard();
 
             // Test URL hook
             string bootUrl = _homeUrl;
@@ -1128,6 +1141,10 @@ namespace Apotheosis
             string wurl = string.IsNullOrEmpty(url) ? "about:home" : url;
             bool isHome = wurl == "about:home";
             _currentUrl = isHome ? "about:home" : wurl;
+            // A navigation tears the old page down; no editable survives it. Clear the hardware
+            // keyboard gate here so a character typed during the load cannot land in the new page.
+            _engineEditable = 0;
+            _hwHighSurrogate = '\0';
 
             // End the gesture's preview, not the zoom. The page zoom is a user-level setting now, so
             // a navigation must not clear it: the port's teardown DOES forget the factor behind our
@@ -1639,8 +1656,13 @@ namespace Apotheosis
                             {
                                 ApplyEngineFrame(rgba, titleW, navW, links);
                                 SetLoading(false);
+                                // 2026-10-27: evidence for the hardware-keyboard path. A tap that
+                                // reports 0 here is the case where physical typing can only work if
+                                // the page itself focused something the engine can see; logging the
+                                // transition (not every tap) keeps autocmd-log readable.
+                                if (editableCopy != _engineEditable) { _engineEditable = editableCopy; AutoLog("editable: " + editableCopy); }
                                 if (string.IsNullOrEmpty(navW)) { if (editableCopy != 0) OpenKeyboard(); else CloseKeyboard(); }
-                                else CloseKeyboard();
+                                else { _engineEditable = 0; CloseKeyboard(); }
                             }
                         }
                         else if (!string.IsNullOrEmpty(linkHit))
@@ -2142,7 +2164,7 @@ namespace Apotheosis
             {
                 if (!_appForeground) return;
                 byte[] rgba = NewFrameBuffer();
-                int rc = -999; uint hash = 0; int pending = 0;
+                int rc = -999; uint hash = 0; int pending = 0; int editableNow = -1;
                 GCHandle h = GCHandle.Alloc(rgba, GCHandleType.Pinned);
                 try
                 {
@@ -2151,6 +2173,10 @@ namespace Apotheosis
                     {
                         hash = WebCoreDriver.WebCoreGetFrameHash();
                         pending = WebCoreDriver.WebCoreGetPendingResourceCount();
+                        // Keeps the hardware-key gate in step with focus the PAGE moved itself --
+                        // a search box focused by the site's own click handler never goes through
+                        // the tap report that normally writes _engineEditable.
+                        try { editableNow = WebCoreDriver.WebCoreFocusedEditable(); } catch { }
                     }
                 }
                 finally { h.Free(); }
@@ -2192,6 +2218,7 @@ namespace Apotheosis
                         popupUrl = Encoding.UTF8.GetString(pBuf).TrimEnd('\0');
                 }
                 int rcCopy = rc; uint hashCopy = hash; int pendingCopy = pending;
+                int editableCopy = editableNow;
                 string engineUrlCopy = engineUrl;
                 string popupUrlCopy = popupUrl;
                 try
@@ -2199,6 +2226,11 @@ namespace Apotheosis
                     disp.RunAsync(CoreDispatcherPriority.Low, () =>
                     {
                         _liveBusy = false;
+                        if (editableCopy >= 0 && editableCopy != _engineEditable)
+                        {
+                            _engineEditable = editableCopy;
+                            AutoLog("editable: " + editableCopy);
+                        }
                         if (_opSeq != mySeq) return;
                         if (!_sessionActive || _loading || _interacting || !_appForeground) return;
                         if (rcCopy != 0)
@@ -2302,6 +2334,11 @@ namespace Apotheosis
             _lastImeText = "";
             _imeSyncing = false;
             ImeBox?.Focus(FocusState.Programmatic);
+            // Evidence for the 2026-10-27 bench report: if FocusState is not Programmatic here, the
+            // text box never owned the keys and only the on-screen keyboard could type. This line
+            // tells that apart from "OpenKeyboard was never reached" (no line at all).
+            AutoLog("ime: open editable=" + _engineEditable + " focus="
+                + (ImeBox != null ? ImeBox.FocusState.ToString() : "null"));
         }
 
         void CloseKeyboard()
@@ -2404,6 +2441,132 @@ namespace Apotheosis
                 }
                 catch { }
             });
+        }
+
+        // ===== Hardware keyboard =====
+        //
+        // 2026-10-27, bench report: an in-page field could only be typed into after the on-screen
+        // keyboard was opened, i.e. physical typing did nothing. The cause was structural: the only
+        // route from a key to WebCore is ImeBox.TextChanged -> SendKeyToEngine, and that box is
+        // focused by OpenKeyboard(), which runs only when a TAP reported an editable. Any case where
+        // the tap report is 0, where focus() on the engine side did not take, or where the user
+        // reaches an input without that exact tap sequence, leaves the physical keyboard with no
+        // route at all. Chrome has one; this is it.
+        //
+        // Priorities, in order, so nothing is typed twice:
+        //   1. ImeBox has XAML focus  -> TextChanged already forwards, so skip (_imeOpen);
+        //   2. a XAML text control has focus (address bar, find box) -> it owns its keys, skip;
+        //   3. otherwise printable characters go to WebCoreTypeText, Backspace/Enter to
+        //      WebCoreKeyAction -- and only while the engine reports a focused editable.
+        // Text is forwarded without setting Handled: with focus on a non-text control that is a
+        // no-op, and swallowing it would break Space on a focused toolbar button.
+        void HookHardwareKeyboard()
+        {
+            if (_hwKeysHooked) return;
+            try
+            {
+                var cw = CoreWindow.GetForCurrentThread();
+                if (cw == null) { AutoLog("hwkeys: no CoreWindow"); return; }
+                cw.CharacterReceived += OnHwCharacterReceived;
+                cw.KeyDown += OnHwKeyDown;
+                _hwKeysHooked = true;
+                AutoLog("hwkeys: hooked CharacterReceived+KeyDown");
+            }
+            catch (Exception ex) { AutoLog("hwkeys: hook failed " + ex.GetType().Name + ": " + ex.Message); }
+        }
+
+        bool IsXamlTextControlFocused()
+        {
+            try
+            {
+                var f = FocusManager.GetFocusedElement();
+                return f is TextBox || f is PasswordBox || f is RichEditBox || f is AutoSuggestBox;
+            }
+            catch { return false; }
+        }
+
+        void FocusUrlBox()
+        {
+            try
+            {
+                UrlBox?.Focus(FocusState.Programmatic);
+                UrlBox?.SelectAll();
+                _urlFocused = true;
+            }
+            catch { }
+        }
+
+        void OnHwKeyDown(CoreWindow sender, KeyEventArgs e)
+        {
+            if (!_sessionActive) return;
+            bool ctrl = (sender.GetKeyState(VirtualKey.Control) & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down;
+            bool alt = (sender.GetKeyState(VirtualKey.Menu) & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down;
+
+            // Window shortcuts work regardless of where focus sits, except inside a text control
+            // that is editing its own text (Ctrl+L from the address bar still means "select it all").
+            if (ctrl && e.VirtualKey == VirtualKey.L)
+            {
+                FocusUrlBox();
+                e.Handled = true;
+                return;
+            }
+            if (e.VirtualKey == VirtualKey.F5 || (ctrl && e.VirtualKey == VirtualKey.R))
+            {
+                Reload();
+                e.Handled = true;
+                return;
+            }
+            if (alt && e.VirtualKey == VirtualKey.Left)
+            {
+                NavigateHistory(-1);
+                e.Handled = true;
+                return;
+            }
+
+            if (_imeOpen || IsXamlTextControlFocused()) return;
+            if (_engineEditable <= 0) return;
+            if (e.VirtualKey == VirtualKey.Back)
+            {
+                SendKeyToEngine(2, null);
+                e.Handled = true;
+            }
+            else if (e.VirtualKey == VirtualKey.Enter)
+            {
+                SendKeyToEngine(1, null);
+                e.Handled = true;
+            }
+        }
+
+        void OnHwCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs e)
+        {
+            if (!_sessionActive || _imeOpen || IsXamlTextControlFocused()) return;
+            if (_engineEditable <= 0) return;
+            uint cp = e.KeyCode;
+            // Controls are handled by OnHwKeyDown; a NUL is not text.
+            if (cp == 0 || cp == 8 || cp == 13 || cp == 27) return;
+            string text;
+            if (cp >= 0xD800 && cp <= 0xDBFF)
+            {
+                _hwHighSurrogate = (char)cp;
+                return;
+            }
+            if (cp >= 0xDC00 && cp <= 0xDFFF)
+            {
+                if (_hwHighSurrogate == '\0') return;
+                text = new string(new[] { _hwHighSurrogate, (char)cp });
+                _hwHighSurrogate = '\0';
+            }
+            else
+            {
+                _hwHighSurrogate = '\0';
+                text = char.ConvertFromUtf32((int)cp);
+            }
+            if (!_hwCharLogged)
+            {
+                _hwCharLogged = true;
+                AutoLog("hwkeys: first char U+" + ((int)char.ConvertToUtf32(text, 0)).ToString("X4"));
+            }
+            SendKeyToEngine(0, text);
         }
 
         // ===== Toolbar events =====
