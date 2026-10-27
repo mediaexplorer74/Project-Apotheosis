@@ -335,8 +335,25 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   MVP explicitly scoped performance tuning out; 1.0 does not (Phase 0 criterion 6). Measure on
   BOTH devices with the instruments that already exist (`engineact`, `finished`, `[SCT]` in
   gpu-steps.txt, the heartbeat): startup → first paint, a typical page load end-to-end, scroll
-  cadence on a tall page. Record the numbers here, then take the three most expensive findings
-  into the queue as follow-ups. Decision to make from those measurements, not by default: the GPU
+  cadence on a tall page. Record the numbers here, then take
+  the three most expensive findings into the queue as follow-ups.
+
+  *Recon + FIRST NUMBER, x64 bench `0.2.3.88` (2026-10-27):* the instrument name-check matters
+  more than expected — `engineact`, `finished` and the heartbeat producers live ONLY in the C++
+  harness (`Src/harness/MainPage.xaml.cpp`); the C# app has none of them, so M7's app-side baseline
+  needs two small additions: (a) a first-paint stamp (`boot.txt` times ctor→xaml-ok but nothing
+  ever stamps the first blit), (b) a load-duration marker in ms (gpu-steps markers carry NO
+  timestamps and batch deltas are dominated by planned `wait`s, which measure sleep and not the
+  page). READY TODAY: `scrolln <dx> <dy> <n>` times each engine step individually, and
+  `mem.txt`/`boot.txt` are timestamped health streams. **Measurement #1 — scroll cadence**,
+  software present, `hscroll.html` 1080×3019, two runs of n=40 (down dy=30, up dy=-30),
+  80 steps: **mean 4.4 ms, median 4 ms, p90 6 ms, min 3 ms, max 18 ms** — the max is the first
+  three steps after `goto` (cold path: layout+paint+link rebuild), then the cadence settles at
+  3–5 ms/step, i.e. a finger at 60 Hz asks for 16.7 ms/step and the engine answers ~4× faster
+  on this bench. Next: implement (a)+(b), take startup→first-paint and load end-to-end, then the
+  device half (Phase 0 criterion 6 wants Lumia numbers too — deferred to a device session).
+
+  Decision to make from those measurements, not by default: the GPU
   present question ([GPU-LIVENESS.md](GPU-LIVENESS.md) is still on pause) — software present on a
   Snapdragon 400 may cost proportionally far more than on the bench, and "software is the MVP-safe
   path" was an MVP verdict, not a performance one.
