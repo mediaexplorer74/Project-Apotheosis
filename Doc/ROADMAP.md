@@ -264,6 +264,12 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   should verify that Node Detail is usable and that no top-left node pile appears, not force the
   desktop graph onto a 494 px viewport. (If the graph is ever required on the phone, that is a
   site-breakpoint or page-zoom decision, not an engine fix.)
+  Maintainer recall (2026-10-27) explains the older observation: before `fitwindow` became the
+  mobile default in 0.2.3.76, the fixed frame was swapped to 1080x720 in landscape, so NDA saw
+  1080 CSS px (>870), took its desktop branch and rendered the graph downscaled to the panel. The
+  fitted line sees 494 px and takes mobile. The old graph was a desktop canvas rendered small, not
+  proof that the phone can show the desktop layout at 1:1; both behaviours are correct for their
+  respective viewport, and neither is a boot-fix regression.
   *ARM synchronization package, 0.2.3.94 (2026-10-27):* the ARM driver was rebuilt from the same
   port sources and the app bundle was built and audited without deployment. `WebCoreDriver.dll`
   now carries 52 exports including `WebCoreEvalJS`; `Test-AppxPayload.ps1 -ExpectedArch arm`
