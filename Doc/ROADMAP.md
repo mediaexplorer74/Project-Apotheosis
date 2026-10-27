@@ -304,6 +304,16 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   `9775F34A02030380B99FFF4A1104CBFF8993A183`, valid to 2027-09-26), the three ARM dependency
   packages, `Add-AppDevPackage.ps1` / `Install.ps1` and a README. NOT deployed or run on either
   Lumia; the device-half checks stay deferred to the next light batch.
+  *ARM release candidate, 0.2.3.97 (2026-10-27):* rebuilt from the same sources as x64 `.97`,
+  including the 12 s fetch window and the double-tap / Fit-toggle removal. `Test-AppxPayload.ps1
+  -ExpectedArch arm` reports `AUDIT PASSED` (30/30 ARM binaries, 52/52 exports, driver at the
+  package root). Bundle SHA256
+  `60D27372DAC4572754D87D8A11E4358A04721EB8A10811BFF96AB07B71AEDAF5`. Sideload archive on the
+  desktop: `C:\Users\media\Desktop\Apotheosis_0.2.3.97_ARM_sideload.zip`, 52,509,308 bytes
+  (50.08 MB), SHA256 `719EEC24778057748F09C250AADDD488BD84D98C64B997CA3E28EBC7F658E10E`.
+  It contains the bundle, the `CN=media` certificate, the three ARM dependency packages,
+  `Add-AppDevPackage.ps1` / `Install.ps1` and an updated README; the `.95` archive is left beside it
+  for rollback. NOT deployed or run on either Lumia; the device checks stay deferred.
   *Connectivity and viewport simplification, 0.2.3.96-97 (2026-10-27):* `.96` replaced the short
   fetch-stall window with 12 s and a 32 s ceiling, matching the 10 s connect and 30 s total curl
   timeouts (the app's 40 s watchdog stays the outer bound). One x64 process then loaded five targets:
