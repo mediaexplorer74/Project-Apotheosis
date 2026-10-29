@@ -316,6 +316,22 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   It contains the bundle, the `CN=media` certificate, the three ARM dependency packages,
   `Add-AppDevPackage.ps1` / `Install.ps1` and an updated README; the `.95` archive is left beside it
   for rollback. NOT deployed or run on either Lumia; the device checks stay deferred.
+  *ARM release, 0.2.3.100 (2026-10-29):* the first ARM release to ship the GPU default fix --
+  ARM starts with `gpudefault=0`, the GPU path is opt-in via Settings or `settings.ini`, and the
+  640's first-load crash is gone (proved on a fresh install; see M1). This is also the build that
+  passed the popup and Back acceptance on both phones (L1 below). Rebuilt clean with
+  `build-app-arm.bat`, so the bundle contains no `Assets/device-run.txt`;
+  `Test-AppxPayload.ps1 -ExpectedArch arm` reports `AUDIT PASSED` (30/30 ARM binaries, 52/52
+  exports). Opening the inner ARM `.appx` confirms no `Assets/device-run.txt`; the acceptance copy
+  still has it. Bundle: 48,864,049 bytes, SHA256
+  `4B8F9F43946C5FBD0BF04B73F61F6C4AE4C827D8D7DEF9E107A267FBC26B7B79`. Sideload archive for the
+  maintainer's GitHub Release upload:
+  `C:\Users\media\Desktop\Apotheosis_0.2.3.100_ARM_sideload.zip`, 52,508,002 bytes, SHA256
+  `D75B17F54ADF6F65DC80E8196FF34A97BDF2285A3D5C8B45C49C95E479906EC2`. It contains the bundle,
+  the `CN=media` certificate (thumbprint `9775F34A02030380B99FFF4A1104CBFF8993A183`), the three
+  ARM dependency packages, `Add-AppDevPackage.ps1` / `Install.ps1` and a `.100` README. The test
+  phones currently carry the embedded-batch acceptance bundle of the same version, so re-installing
+  the clean bundle over it would be refused (`0x80073CFB`); users coming from `.97` are unaffected.
   *Connectivity and viewport simplification, 0.2.3.96-97 (2026-10-27):* `.96` replaced the short
   fetch-stall window with 12 s and a 32 s ceiling, matching the 10 s connect and 30 s total curl
   timeouts (the app's 40 s watchdog stays the outer bound). One x64 process then loaded five targets:
@@ -620,9 +636,9 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   `Src/tools/device-logs/20261029-0631-popup-100-640/` and
   `Src/tools/device-logs/20261029-0631-popup-100-950/`.
   **Remaining limits:** (1) one run per phone is one run — no three-consecutive-runs, no memory
-  figure; (2) `.98`/`.99`/`.100` are embedded-batch acceptance builds, not releases — `.97`
-  remains the published ARM release, and `.100`'s source fix (GPU off by default on ARM) still
-  needs a clean release build without the batch; (3) the host-reload caveat above for
+  figure; (2) the `.100` clean release bundle and its sideload ZIP exist (M1 has the hashes), but
+  `.97` remains the published ARM release until that ZIP is uploaded; the embedded-batch `.98`,
+  `.99` and `.100` acceptance bundles must not be uploaded; (3) the host-reload caveat above for
   Back-from-a-popup.
   Evidence: `Doc/Archive/Summary.md` 2026-10-26 popup section and the 2026-10-27/2026-10-29 L1
   sections.

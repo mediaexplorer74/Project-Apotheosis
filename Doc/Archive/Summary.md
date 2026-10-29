@@ -3669,10 +3669,19 @@ device completed it -- `-List` is the way to check, not a retry. The batch holds
 `Src/tools/device-logs/20261029-0631-popup-100-640/` and
 `Src/tools/device-logs/20261029-0631-popup-100-950/`.
 
-**What `.100` is.** An embedded-batch acceptance build, like `.98`/`.99`, not a release. `.97`
-remains the published ARM release; the `.100` source fix still needs a clean release build without
-`Assets/device-run.txt`. Three-consecutive-run stability and the memory figure remain open Phase 0
-items.
+**What `.100` is.** The acceptance run used an embedded-batch bundle (kept at
+`Src/Apotheosis/AppPackages/Apotheosis_0.2.3.100_accept/`, SHA256
+`EA7C3E7E3A6377544A456A397C46BB897EAA7D6ABF83517962EB1899F5059CE3`; not for upload). A separate
+clean `.100` bundle was then built with `build-app-arm.bat`, with no `Assets/device-run.txt`;
+`Test-AppxPayload.ps1 -ExpectedArch arm` reports `AUDIT PASSED` (30/30 ARM binaries, 52/52
+exports), bundle 48,864,049 bytes, SHA256
+`4B8F9F43946C5FBD0BF04B73F61F6C4AE4C827D8D7DEF9E107A267FBC26B7B79`. The sideload ZIP is on the
+desktop: `Apotheosis_0.2.3.100_ARM_sideload.zip`, 52,508,002 bytes, SHA256
+`D75B17F54ADF6F65DC80E8196FF34A97BDF2285A3D5C8B45C49C95E479906EC2`. `.97` remains the published
+ARM release until the maintainer uploads it. The test phones carry the acceptance bundle of the
+same version, so installing the clean bundle over them would hit the same-version gate
+(`0x80073CFB`); this does not affect users updating from `.97`. Three-consecutive-run stability
+and the memory figure remain open Phase 0 items.
 
 ---
 
