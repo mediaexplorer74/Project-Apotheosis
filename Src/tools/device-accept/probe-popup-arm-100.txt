@@ -1,0 +1,91 @@
+# Apotheosis 2026-10-27 -- L1 popup + Back-from-popup ARM acceptance, 0.2.3.100.
+#
+# The popup funnel was measured on the x64 bench in 0.2.3.86 (two batches: a target=_blank
+# link and a gesture window.open), including a cross-origin popup from :8765 to :8766. The
+# published .97 ARM build carries that fix, but neither phone batch after it exercised a
+# popup, and no batch ever exercised Back FROM a popup. This batch does both on ARM.
+#
+# Same harness and addresses as probe-l1-arm-light-98.txt: the phone reaches the PC at
+# 192.168.1.34, :8765 is the main origin, :8766 is the second origin. popup-cross.html used
+# to hardcode 127.0.0.1:8766 (on the phone that is the phone itself); it now derives the
+# host from location.hostname and keeps the loopback href for the x64 bench.
+#
+# Expected, funnel A (`_blank` link):
+#   popup.html       links n=1; clicklink 0 leaves shellurl on popup.html (the href is cancelled)
+#   after the queue: diag title=POPUP TARGET OK url=...popup-target.html?src=blank
+#   hist             engine back=0 fwd=0 -- measured .100; the popup is a fresh shell session,
+#                    so the earlier expectation of back=1 was wrong
+#   back             history back rc=-99 moved=0 can=0/0, then host idx 2/2 -> 1/2 and diag
+#                    title=BLANK LINK PAGE url=...popup.html (host-stack reload, not engine back)
+#
+# Expected, funnel B (window.open inside the click gesture):
+#   popup-open.html  links n=1; after the click the beacon GET /beacon?fn=window.open&r=null
+#   after the queue: diag title=POPUP TARGET OK url=...popup-target.html?src=open
+#                    (src=open, not src=href -- the queue drove it, the page cancelled the href)
+#   back             diag title=JOPEN pending url=...popup-open.html
+#
+# Expected, cross-origin popup:
+#   popup-cross.html clicklink 0 -> diag title=CROSS TARGET OK
+#                    url=http://192.168.1.34:8766/cross-target.html?src=blank
+#   back             diag title=CROSS POPUP PAGE url=...popup-cross.html
+#
+# Acceptance is both halves: autocmd-log titles/URLs, and server.log hosting the GETs
+# (/popup-target.html?src=blank, /popup-target.html?src=open, /beacon?...r=null, and
+# cross-target.html arriving on :8766 with Host=192.168.1.34:8766).
+#
+# The phone must stay awake by hand; `back` is the top-level verb, which routes through
+# AutoUi to NavigateHistory(-1) -- the same method as the toolbar Back button.
+
+wait 45000
+diag
+
+# --- funnel A: target=_blank link opens in the current window -------------------------------
+goto http://192.168.1.34:8765/popup.html
+wait 15000
+links
+clicklink 0
+wait 20000
+tap 2 2
+wait 2000
+diag
+hist
+back
+wait 20000
+tap 2 2
+wait 2000
+diag
+hist
+
+# --- funnel B: window.open() inside a click gesture; return value stays null ----------------
+goto http://192.168.1.34:8765/popup-open.html
+wait 15000
+links
+clicklink 0
+wait 20000
+tap 2 2
+wait 2000
+diag
+hist
+back
+wait 20000
+tap 2 2
+wait 2000
+diag
+hist
+
+# --- cross-origin: :8765 -> :8766, host derived from the page, not hardcoded ---------------
+goto http://192.168.1.34:8765/popup-cross.html
+wait 15000
+links
+clicklink 0
+wait 20000
+tap 2 2
+wait 2000
+diag
+hist
+back
+wait 20000
+tap 2 2
+wait 2000
+diag
+hist

@@ -3619,6 +3619,60 @@ release. It does NOT prove popups on ARM (the phone batches are frames only), Ba
 (no verb reaches the shell's Back), or three-consecutive-run stability. `.98`/`.99` are
 embedded-batch acceptance builds, not releases. Open release fix from this session: do not let a
 640's first page load reach `WebCoreGpuInit` by default -- GPU off on ARM, or explicit-toggle only.
+The popup/ARM and Back items were closed by `.100` on 2026-10-29 (next section).
+
+## ARM GPU default off, popups and Back on both phones (`0.2.3.100`, Oct 29, 2026)
+
+**The release fix.** `_gpuDefault` was a constant `true`, so a fresh ARM install reached
+`WebCoreGpuInit` on its first real page load -- a hard crash on the 640. In `.100` the initial value
+is `GpuDefaultForThisDevice()`: false when `Package.Current.Id.Architecture == Arm`, true on x64.
+A `settings.ini` `gpudefault` key and the Settings toggle still override it on either
+architecture, and the crash-loop flag is untouched. The 640 was tested as a genuinely fresh
+install: `.99` was uninstalled (LocalState removed) and `.100` installed. It ran the whole batch
+with `settings.ini` ending `gpudefault=0`, zero `[GPU] enter` / `[GPU] sharedDisplay` lines in
+`gpu-steps.txt`, and no `gpuinit.txt` and no `gpu-crash.flag`. The 950 (updated in place, its
+`gpudefault` was already 0) shows the same negative marker set.
+
+**The popup batch.** `Src/tools/device-accept/probe-popup-arm-100.txt` drove three funnels on both
+phones. Every one opened in the current window:
+
+| funnel | engine marker | diag after the queue | diag after `back` |
+| --- | --- | --- | --- |
+| `target=_blank` | `POPUP: new-window-policy` | `...popup-target.html?src=blank` `title=POPUP TARGET OK` | `title=BLANK LINK PAGE` |
+| gesture `window.open` | `POPUP: window.open` + beacon `r=null` | `...?src=open` `title=POPUP TARGET OK` | `title=JOPEN pending` |
+| cross-origin | `popup queued ...:8766/cross-target.html` | `...:8766/cross-target.html?src=blank` `title=CROSS TARGET OK` | `title=CROSS POPUP PAGE` |
+
+The two device logs agree line for line. The server log holds exactly two of each request: 2
+`popup-target.html?src=blank`, 2 `?src=open`, 2 `beacon?fn=window.open&r=null`, 2
+`cross-target.html?src=blank` on :8766, and 4 fetches of each opener page (initial plus the reload
+done by Back). `popup-cross.html` used to hardcode `127.0.0.1:8766`, which on a phone means the
+phone itself; it now derives the host from `location.hostname` while keeping the loopback href for
+the bench. The cross request arrived with `host=192.168.1.34:8766`, so the derived URL is what the
+phone actually used.
+
+**What Back actually did -- host reload, not engine history.** The top-level `back` verb routes
+through `AutoUi` to `NavigateHistory(-1)`, the same path as the toolbar button. After every popup
+the log reads `hist engine back=0 fwd=0 cached=0/0` and then `history back rc=-99 moved=0 can=0/0`:
+the engine has no entry, because the popup was opened by the shell's `NavigateTo`, which builds a
+fresh engine session. `NavigateHistory` therefore falls through to the host stack, which navigates
+the opener URL; the next `hist` shows `host idx` one step down (2/2 -> 1/2) and the opener title is
+on screen. User-visible Back works, but it is a reload, not a restoration -- scroll and form state
+are lost. A true engine-history Back across a popup would need the popup queue to navigate the
+current session instead of starting a new one; that is a separate design change, not a `.100`
+regression.
+
+**Operational notes.** The 640's Device Portal was down until the user unlocked it and opened
+Device Portal; the uninstall request then exceeded the script's 15 s client timeout even though the
+device completed it -- `-List` is the way to check, not a retry. The batch holds the display awake
+(`display: held awake for the batch`); both phones suspended only after the run (640 at 06:30:30,
+950 at 06:33:00, while the batches ended at 06:27:28 and 06:28:00). Evidence:
+`Src/tools/device-logs/20261029-0631-popup-100-640/` and
+`Src/tools/device-logs/20261029-0631-popup-100-950/`.
+
+**What `.100` is.** An embedded-batch acceptance build, like `.98`/`.99`, not a release. `.97`
+remains the published ARM release; the `.100` source fix still needs a clean release build without
+`Assets/device-run.txt`. Three-consecutive-run stability and the memory figure remain open Phase 0
+items.
 
 ---
 

@@ -518,15 +518,25 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   default `gpudefault=1`, the first real page load called `WebCoreGpuInit`; `gpu-steps.txt` ends
   at `[GPU] sharedDisplay`, `gpuinit.txt` was never written and `gpu-crash.flag` held `1`. The
   next launch consumed the flag, saved `gpudefault=0`, and the same nine-page set then passed.
-  A 1.0 install on a 640 must not need that first crash to learn the lesson: default the GPU path
-  off on ARM, or arm it only from an explicit user toggle, before release.
+  A 1.0 install on a 640 must not need that first crash to learn the lesson.
+
+  **Fixed in `0.2.3.100` (2026-10-29): ARM starts with the GPU path off.** `_gpuDefault` is now
+  `GpuDefaultForThisDevice()` — false when `Package.Current.Id.Architecture == Arm`, true on the
+  x64 bench. A `settings.ini` `gpudefault` key or the Settings toggle still overrides either
+  architecture, and the existing crash-loop flag is untouched. Measured on the 640 by
+  uninstalling `.99` (fresh LocalState) and installing `.100`: the popup batch completed,
+  `settings.ini` ended `gpudefault=0`, `gpu-steps.txt` has zero `[GPU] enter` and `sharedDisplay`
+  lines, and neither `gpuinit.txt` nor `gpu-crash.flag` exists. The 950 (updated in place,
+  `gpudefault` already 0) shows the same negative marker set.
 
 ## Phase L — long term (months each)
 
-- **L1. Frames and popups** — **iframes/frames DONE on x64 in `0.2.3.80` (2026-10-25); popups
-  DONE on x64 in `0.2.3.86` (2026-10-26, single-window policy); iframe phone acceptance DONE on
-  the Lumia 950 in `0.2.3.85` (2026-10-25, batch `probe-l1-arm-85.txt`); the Lumia 640 pass and
-  an ARM build with the popup fix are still open — L1 is NOT closed.** `LoadingFrameLoaderClient::createFrame` now mirrors WebKitLegacy's
+- **L1. Frames and popups** — **DONE on x64 and both phones.** iframes/frames landed on x64 in
+  `0.2.3.80` (2026-10-25), on the Lumia 950 in `0.2.3.85` and on the Lumia 640 in `0.2.3.99`;
+  popups landed on x64 in `0.2.3.86` (single-window policy) and on both phones in `0.2.3.100`
+  (2026-10-29), including Back-from-a-popup. The 640 pass, the ARM popup build and the popup/Back
+  run that this intro used to list as open are closed. Three-consecutive-run stability belongs to
+  Phase 0 criterion 1, not L1. `LoadingFrameLoaderClient::createFrame` now mirrors WebKitLegacy's
   `_createFrameWithPage`: effective sandbox flags are the owner's plus the parent's, the referrer
   policy falls back to the top document only when the owner's is the empty string, the frame is
   built with `LocalFrame::createSubframe`, named with `tree().setSpecifiedName()` and initialized
@@ -586,12 +596,36 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   `[GPU] sharedDisplay`, `gpuinit.txt` was never written and `gpu-crash.flag` held `1`. The next
   launch consumed the flag, saved `gpudefault=0`, and the `.99` run completed all nine pages
   (no code change between .98 and .99 beyond the embedded batch). See M1 for the release fix.
-  **Still open:** (1) popups on ARM — `.97` carries the fix, but both phone batches exercised
-  frames only, so a Lumia popup run (`_blank` and gesture `window.open`) is still owed; (2)
-  Back-from-a-popup was not exercised (no autocmd verb reaches the shell's Back); (3) one run per
-  phone is one run — no three-consecutive-runs, no memory figure; (4) `.98`/`.99` are
-  embedded-batch acceptance builds, not releases; `.97` remains the published ARM release.
-  Evidence: `Doc/Archive/Summary.md` 2026-10-26 popup section and the 2026-10-27 L1 section.
+  **ARM popups and Back-from-a-popup (`0.2.3.100`, 2026-10-29).** The batch
+  `Src/tools/device-accept/probe-popup-arm-100.txt` ran three funnels on both phones, each in the
+  current window: `_blank` → `POPUP: new-window-policy` → `popup queued` → diag
+  `url=...popup-target.html?src=blank title=POPUP TARGET OK`; gesture `window.open` → diag
+  `...?src=open title=POPUP TARGET OK` with the beacon `GET /beacon?fn=window.open&r=null`; and the
+  cross-origin popup → `...:8766/cross-target.html?src=blank title=CROSS TARGET OK`. The server log
+  for the run holds two of each: 2 `src=blank`, 2 `src=open`, 2 beacons `r=null`, 2
+  `cross-target.html` on :8766 — and 4 fetches of each opener page (initial + the reload done by
+  Back). `popup-cross.html` used to hardcode `127.0.0.1:8766`, which on a phone is the phone
+  itself; it now derives the host from `location.hostname` and keeps the loopback href for the
+  bench. The cross request arrived as `host=192.168.1.34:8766`, which is the proof the derivation
+  worked.
+  **Back-from-a-popup works, but it is a host-stack reload, not engine history.** The top-level
+  `back` verb routes through `AutoUi` to the same `NavigateHistory(-1)` as the toolbar button.
+  Measured after every popup: `hist engine back=0 fwd=0 cached=0/0`, then
+  `history back rc=-99 moved=0 can=0/0`, then `hist host idx` one step down (2/2 → 1/2) and the
+  opener title back on screen (`BLANK LINK PAGE` / `JOPEN pending` / `CROSS POPUP PAGE`). The
+  engine has no entry because the popup is opened by the shell's `NavigateTo`, which builds a
+  fresh session; the host stack then navigates the URL, so the page returns but scroll and form
+  state do not. A true engine-history Back across a popup would need the queue to navigate the
+  current session instead. Evidence:
+  `Src/tools/device-logs/20261029-0631-popup-100-640/` and
+  `Src/tools/device-logs/20261029-0631-popup-100-950/`.
+  **Remaining limits:** (1) one run per phone is one run — no three-consecutive-runs, no memory
+  figure; (2) `.98`/`.99`/`.100` are embedded-batch acceptance builds, not releases — `.97`
+  remains the published ARM release, and `.100`'s source fix (GPU off by default on ARM) still
+  needs a clean release build without the batch; (3) the host-reload caveat above for
+  Back-from-a-popup.
+  Evidence: `Doc/Archive/Summary.md` 2026-10-26 popup section and the 2026-10-27/2026-10-29 L1
+  sections.
 - **L2. ARM JavaScriptCore currency** — the ARM JSC predates the RedBlackTree insert crash cure, and
   a header-only cure cannot travel through a relink: the fix is a real JSC rebuild in a build dir
   that CANNOT be reconfigured without breaking (one cmake edit costs a full ~10 h rebuild). Plan a

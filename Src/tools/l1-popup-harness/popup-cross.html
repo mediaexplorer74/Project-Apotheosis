@@ -4,4 +4,12 @@
 <body>
 <h1>L1: cross-origin popup (second origin = port 8766)</h1>
 <a id="cx" href="http://127.0.0.1:8766/cross-target.html?src=blank" target="_blank">open cross-origin popup</a>
+<script>
+// The phones reach this server through the PC's LAN address, where 127.0.0.1 is the PHONE.
+// Keep the loopback href for the x64 bench, but derive the host for every other caller.
+// Port 8766 on the same host is the second origin.
+if (location.hostname !== '127.0.0.1' && location.hostname !== 'localhost')
+    document.getElementById('cx').href =
+        'http://' + location.hostname + ':8766/cross-target.html?src=blank';
+</script>
 </body>

@@ -446,7 +446,14 @@ namespace Apotheosis
         // GPU
         bool _gpuOn;
         bool _gpuPresent;
-        bool _gpuDefault = true;
+        // Opt-in on ARM. Measured on the Lumia 640 (2026-10-27, .98): with this true, the first
+        // real page load auto-called WebCoreGpuInit and the process died inside
+        // PlatformDisplay::sharedDisplay() before gpuinit.txt could be written -- gpu-crash.flag
+        // was the only trace. The crash-loop guard below learns that lesson one launch too late
+        // for a fresh install, so ARM starts with the software path; the x64 bench keeps the old
+        // default. A settings.ini `gpudefault` key or the Settings toggle still wins on either
+        // architecture.
+        bool _gpuDefault = GpuDefaultForThisDevice();
         bool _gpuAutoTried;
         PropertySet _gpuProps;
         int _gpuOrient;
@@ -655,6 +662,15 @@ namespace Apotheosis
 
         // ===== Data persistence =====
         static string LocalStateDir() => ApplicationData.Current.LocalFolder.Path;
+
+        // A package's architecture is fixed at install time, unlike DeviceFamily (a desktop package
+        // can run on ARM64 Windows). If the API is unavailable, keep the old desktop default rather
+        // than silently changing behaviour on the bench.
+        static bool GpuDefaultForThisDevice()
+        {
+            try { return Package.Current.Id.Architecture != ProcessorArchitecture.Arm; }
+            catch { return true; }
+        }
 
         static List<Entry> ReadEntries(string path)
         {

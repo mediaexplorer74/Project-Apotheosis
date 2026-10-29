@@ -1209,4 +1209,14 @@ instrument: keep it in the repo next to the probe, not in a scratch directory.
 (`WebCoreGpuInit` -> `PlatformDisplay::sharedDisplay()`) hard-crashes the process on the Lumia 640
 before `gpuinit.txt` can be written; `gpu-crash.flag=1` is the only trace. The next launch
 consumes the flag and saves `gpudefault=0`. Do not read a batch that stops after its first load as
-a frame bug until that marker pair is checked.
+a frame bug until that marker pair is checked. Fixed in `0.2.3.100`: `_gpuDefault` is false when
+the package architecture is ARM and true on x64, so a fresh 640 install ran the whole popup batch
+with `gpudefault=0`, no `[GPU] enter`/`sharedDisplay` line, no `gpuinit.txt` and no
+`gpu-crash.flag`.
+
+**Back from a popup is a host reload, not engine history.** The popup is opened by the shell's
+`NavigateTo`, which builds a fresh engine session, so after it `hist` reads `engine back=0` and
+`back` logs `history back rc=-99 moved=0 can=0/0` before the host stack navigates the opener URL
+(`host idx` decrements). That `rc=-99` means "the engine had nothing", not a refused Back; the
+page does return, but it is reloaded, not restored. Measured on both phones with `.100`,
+2026-10-29.
