@@ -704,6 +704,11 @@ The report is accurate and the mechanism is not a leak.
   scripts was the whole mistake — the x64 C# package carries its ru-RU strings inline, so the flag is
   harmless there and destructive here, where they live in the language pack. `BundleArtifacts/arm.txt`
   is the cheap tell: it is rewritten by every build and its line count is the package count.
+- **The Revision is a device-iteration counter, not a free field.** The install gate compares the
+  whole version, so any increase works, but a five-digit tail is a diagnostic mess. `Set-AppVersion.ps1`
+  caps the Revision at 100 and rolls over into the third field: `0.2.3.99 -> 0.2.3.100 -> 0.2.4.0`.
+  The order is still increasing for the package manager (third field dominates the fourth), so the
+  rollover is a normal update, not a downgrade.
 - The general shape: **a build flag that is correct on one line is not evidence for the other line.**
   Same family as [[two-lines-two-sdk-header-versions]] — verify per line, with an artifact you can
   count, not with a green checkmark.

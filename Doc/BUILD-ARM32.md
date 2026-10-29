@@ -1203,6 +1203,8 @@ The artifact lands at `Src/Apotheosis/AppPackages/Apotheosis_<version>_Test/Apot
 font-stub relink — the manifest is shared with the x64 line and read `0.2.3.36` on 2026-10-14, so read
 the file rather than this sentence). **Bump the version first** — `pwsh -File Src/tools/Set-AppVersion.ps1` — because the
 device refuses an install whose identity matches the installed one while the contents differ: 0x80073CFB.
+The default bump advances the Revision, and rolls over at 100 into the third field
+(`0.2.3.99` -> `0.2.3.100` -> `0.2.4.0`), so the Revision stays a two-digit device-iteration counter.
 
 Run MSBuild and the ARM driver script under **`pwsh`** (PowerShell 7), not `powershell.exe` (5.1):
 under 5.1 any native tool that writes to stderr (llvm-lib without `/MACHINE`, the ARM env script's own

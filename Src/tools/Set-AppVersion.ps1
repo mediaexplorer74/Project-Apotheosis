@@ -17,12 +17,16 @@
     written into the file. Doing that by hand is exactly how the name and the version drift apart.
 
     So: bump the version and stamp the name in a single pass. Run without -Version to increment the
-    Revision (the fourth field), which is the field the install gate compares.
+    Revision (the fourth field), which is the field the install gate compares. The Revision is
+    capped at 100: bumping 0.2.3.99 gives 0.2.3.100, and bumping 0.2.3.100 rolls over into
+    0.2.4.0 instead of growing a five-digit tail like 0.2.3.101 or 0.2.3.19999. The third field is
+    incremented and the Revision reset to 0 once it has reached 100.
 
     The manifest is read and written as raw text so its line endings survive untouched.
 
 .PARAMETER Version
-    The version to set, as x.y.z.w. Default: the current Identity version with Revision + 1.
+    The version to set, as x.y.z.w. Default: the current Identity version with the Revision bumped
+    by one, rolling over at 100 into the Build field (0.2.3.99 -> 0.2.3.100 -> 0.2.4.0).
 
 .PARAMETER Plain
     Set the display name to the bare product name, with no version. Use this for a release build,
@@ -37,6 +41,10 @@
 .EXAMPLE
     pwsh -File Src/tools/Set-AppVersion.ps1
     # Apotheosis 0.2.3.20 -> 0.2.3.21, display name "Apotheosis 0.2.3.21"
+
+.EXAMPLE
+    pwsh -File Src/tools/Set-AppVersion.ps1
+    # at the cap: Apotheosis 0.2.3.100 -> 0.2.4.0, display name "Apotheosis 0.2.4.0"
 
 .EXAMPLE
     pwsh -File Src/tools/Set-AppVersion.ps1 -Version 1.0.0.0 -Plain
@@ -67,8 +75,16 @@ if ($Version) {
     if ($Version -notmatch '^\d+\.\d+\.\d+\.\d+$') { throw "-Version must be x.y.z.w, got '$Version'" }
     $newVer = $Version
 } else {
-    $newVer = '{0}.{1}.{2}.{3}' -f $cur.Groups[1].Value, $cur.Groups[2].Value,
-                                 $cur.Groups[3].Value, ([int]$cur.Groups[4].Value + 1)
+    $build = [int]$cur.Groups[3].Value
+    $rev = [int]$cur.Groups[4].Value
+    if ($rev -ge 100) {
+        # 0.2.3.100 -> 0.2.4.0: keep the Revision a two-digit device-iteration counter.
+        $build++
+        $rev = 0
+    } else {
+        $rev++
+    }
+    $newVer = '{0}.{1}.{2}.{3}' -f $cur.Groups[1].Value, $cur.Groups[2].Value, $build, $rev
 }
 
 $newName = if ($Plain) { $ProductName } else { "$ProductName $newVer" }
