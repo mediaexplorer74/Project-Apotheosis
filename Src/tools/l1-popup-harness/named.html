@@ -1,0 +1,30 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>NAMED pending</title>
+<body style="font:16px sans-serif;margin:8px">
+<h1>Named target: the existing frame must take the navigation</h1>
+<iframe name="slot" src="/reg-frame.html" width="520" height="150"></iframe>
+<p><a id="go" href="/same.html" target="slot">navigate the existing slot</a></p>
+<script>
+// clicklink 0 clicks the link above. Once the existing named frame has committed /same.html,
+// its pathname and its own text go into the title; a new frame instead of a reused one is
+// visible in port-trace as a second `FRAME: created`.
+(function () {
+    var n = 0;
+    var t = setInterval(function () {
+        try {
+            var w = frames['slot'];
+            var p = w.location.pathname;
+            if (p.indexOf('/same.html') >= 0) {
+                var txt = '';
+                try { txt = w.document.getElementById('t').textContent; } catch (e) {}
+                document.title = 'NAMED slot=' + p + ' text=' + txt;
+                clearInterval(t);
+                return;
+            }
+        } catch (e) {}
+        if (++n > 40) clearInterval(t);
+    }, 500);
+})();
+</script>
+</body>

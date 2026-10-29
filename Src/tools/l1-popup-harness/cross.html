@@ -1,0 +1,18 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>CROSS child</title>
+<body style="background:#fdd;font:20px sans-serif;margin:0;padding:20px">
+<p id="t">CROSS ORIGIN</p>
+<script>
+// Served from port 8766 while the parent is 8765. The read MUST throw; on success the page
+// asks for /cross-origin-access-ran.png, which is exactly what the acceptance log must NOT
+// contain.
+try {
+    parent.document;
+    document.getElementById('t').textContent = 'CROSS ORIGIN - PARENT READ OK';
+    new Image().src = '/cross-origin-access-ran.png?r=' + Math.random();
+} catch (e) {
+    document.getElementById('t').textContent = 'CROSS ORIGIN BLOCKED';
+}
+</script>
+</body>

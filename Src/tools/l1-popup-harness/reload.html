@@ -1,0 +1,22 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>RELOAD pending</title>
+<body style="font:16px sans-serif;margin:8px">
+<h1>src change: same-origin to cross-origin after 2 s</h1>
+<iframe id="f" src="/same.html" width="520" height="150"></iframe>
+<script>
+setTimeout(function () {
+    var f = document.getElementById('f');
+    f.onload = function () {
+        var blocked = false;
+        try {
+            // Reading location across origins must throw; the title names the outcome, and the
+            // 8766 server log must show /cross.html.
+            f.contentWindow.location.href;
+        } catch (e) { blocked = true; }
+        document.title = 'RELOAD ' + (blocked ? 'cross-blocked' : 'NOT blocked');
+    };
+    f.src = 'http://' + location.hostname + ':8766/cross.html';
+}, 2000);
+</script>
+</body>

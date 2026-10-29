@@ -1,0 +1,22 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>DYNAMIC pending</title>
+<body style="font:16px sans-serif;margin:8px">
+<h1>Dynamic creation: a frame is created by script after 2 s</h1>
+<script>
+setTimeout(function () {
+    var f = document.createElement('iframe');
+    f.id = 'f';
+    f.width = 520;
+    f.height = 150;
+    f.onload = function () {
+        var txt = '';
+        try { txt = f.contentDocument.getElementById('t').textContent; } catch (e) {}
+        document.title = 'DYNAMIC OK iframes=' +
+            document.querySelectorAll('iframe').length + ' text=' + txt;
+    };
+    f.src = '/same.html';
+    document.body.appendChild(f);
+}, 2000);
+</script>
+</body>

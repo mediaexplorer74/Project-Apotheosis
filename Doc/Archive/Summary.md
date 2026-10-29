@@ -3547,6 +3547,79 @@ Cross-origin WAS covered in a sixth batch: a `_blank` from :8765 queued
 title=CROSS TARGET OK`, and the port-8766 server logged the GET — the queue carries an
 absolute URL and origin plays no part in it.
 
+## L1 frames on both phones, and the 640's first-load GPU crash (`0.2.3.98` / `0.2.3.99`, Oct 27, 2026)
+
+**Why this run needed a reconstruction first.** The iframe/frame pages behind the `.85` Lumia 950
+result had never been committed. The popup subset of `Src/tools/l1-popup-harness/` was tracked; the
+frame pages were not, and by this session they were gone. They were rebuilt from the expected-title
+list in `Src/tools/device-accept/probe-l1-arm-85.txt` (`index.html` plus `same`, `cross`, `nested`,
+`nested-inner`, `scroll`, `sandbox-frame`, `sandbox-direct`, `srcdoc-direct`, `frameset`, `named`,
+`remove`, `reload`, `dynamic`, `resize`, `frame-left`, `frame-right`). Before any phone was touched,
+x64 `0.2.3.97` reproduced the `.85` titles verbatim with no app change:
+
+| page | diag title on x64 `.97` |
+| --- | --- |
+| `/` | `L1 iframes=6 same=SAME-ORIGIN PARENT ACCESS OK srcdoc=SRCDOC OK` |
+| `/sandbox-direct.html` | `SANDBOX C=SANDBOXED FRAME - gray = script blocked` |
+| `/srcdoc-direct.html` | `SRCDOC inline=SRCDOC OKinline document, no network request` |
+| `/frameset.html` | `FRAMESET frames=2 names=left,right w=674/675` |
+| `/named.html` | `NAMED slot=/same.html text=SAME ORIGIN OK green background, 520x150` |
+| `/remove.html` | `REMOVED OK iframes=0` |
+| `/reload.html` | `RELOAD cross-blocked` |
+| `/dynamic.html` | `DYNAMIC OK iframes=1 text=SAME ORIGIN OK green background, 520x150` |
+| `/resize.html` | `RESIZE OK actual=600x220` |
+
+The server log carried the negative evidence too: exactly one `/sandbox-script-ran.png` (the
+`allow-scripts` frame's), no `/cross-origin-access-ran.png`, `cross.html` served from :8766 for
+the cross frame and the reload, and `nested-inner.html` fetched once.
+
+**The phone batch.** `Src/tools/device-accept/probe-l1-arm-light-98.txt` is the same nine pages
+plus `example.com`, with the `.85` 45 s cold-home settle and no `dzen.ru` (deferred: the 640 has
+little storage and a Snapdragon 400). It was embedded with `build-app-accept.ps1`, which bumped
+the package and removed the staged copy afterwards; both bundles passed `Test-AppxPayload.ps1`
+(30/30 ARM binaries, 52/52 exports, `Assets/device-run.txt` present).
+
+**Lumia 950, `.98` -- passed.** All nine titles above, then `example.com`:
+`url=https://example.com/ title=Example Domain ... pending=0 rs=C`. The user watching the screen
+read the static example page as "frozen"; the diag says the load finished and nothing was pending.
+Server log (192.168.1.34): one `sandbox-script-ran.png`, zero `cross-origin-access-ran.png`,
+`cross.html` on :8766 twice (root + reload), both frameset frames fetched.
+
+**Lumia 640, `.98` -- the first page load crashed, and the cause was the GPU default.** The APP
+reached the root page and published its full title, then the process died. `gpu-steps.txt` ends:
+
+```
+[GPU] enter
+[GPU] ensureWebCoreInitialized
+[GPU] sharedDisplay
+```
+
+`gpu-crash.flag` held `1`, `gpuinit.txt` was never written. `settings.ini` had `gpudefault=1`; the
+shell auto-calls `EnableGpu()` after the first real session (`MainPage.xaml.cs` around the
+`_gpuDefault && !_gpuOn && !_gpuAutoTried` guard), and on this device
+`PlatformDisplay::sharedDisplay()` is a hard native crash, not a catchable failure. The 950 did not
+show it because its `settings.ini` already had `gpudefault=0` from earlier GPU experiments. On the
+next 640 launch the crash-loop guard consumed the flag, saved `gpudefault=0`, deleted it, and the
+home screen rendered (`after-home-render rc=0`). This is a first-run defect on the 640, not a frame
+defect: the very same pages passed immediately afterwards.
+
+**Lumia 640, `.99` -- passed.** The same batch, same app code, only a new version (a device rerun
+requires one): all nine titles, then `title=Example Domain pending=0 rs=C`; the user watched the
+removal frame disappear and a frame grow, which is the page's own script doing what the title
+reports. Server log marker pattern was identical to the 950's. The `.99` run is the first L1 frame
+acceptance on the 640.
+
+**Tooling change.** `pull-device-logs.ps1` gained `-Scheme`/`-Port` (defaults unchanged:
+https/443). The 640's https:443 listener times out from this bench while http:80 answers, and
+every other device script already took a scheme; the log pull was the one step with no fallback.
+
+**What this closes, and what it does not.** L1 frame acceptance now exists on both phones
+(`.85`/`.98` on the 950, `.99` on the 640), with the popup fix carried by the published `.97` ARM
+release. It does NOT prove popups on ARM (the phone batches are frames only), Back-from-a-popup
+(no verb reaches the shell's Back), or three-consecutive-run stability. `.98`/`.99` are
+embedded-batch acceptance builds, not releases. Open release fix from this session: do not let a
+640's first page load reach `WebCoreGpuInit` by default -- GPU off on ARM, or explicit-toggle only.
+
 ---
 
 *"Reviving the Windows Phone web for the people who never let it die."*

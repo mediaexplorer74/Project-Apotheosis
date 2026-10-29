@@ -1,0 +1,102 @@
+# Apotheosis 2026-10-27 -- LIGHT L1 (iframe/frame) ARM acceptance, 0.2.3.98.
+#
+# The heavy 0.2.3.85 batch (probe-l1-arm-85.txt) reached all ten harness pages on the Lumia 950
+# on 2026-10-25. That evidence stands. This batch exists because the harness pages themselves
+# were NOT in the repo (never tracked; only the popup subset was), so they were reconstructed on
+# 2026-10-27 and validated first on x64 .97 -- all nine titles below matched the .85 log exactly.
+# This run checks the reconstruction on both phones and takes the first L1 pass on the Lumia 640,
+# without the dzen.ru regression (deferred: the 640 has little storage and a Snapdragon 400).
+#
+# Same harness, same addresses: localhost on the phone is the phone, so the parent is the PC by
+# LAN address; cross-origin is port 8766 on the same host. The PC firewall allows 8765-8766
+# inbound and the manifest declares privateNetworkClientServer.
+#
+# Expected diag titles (from the .85 device log):
+#   /                              L1 iframes=6 same=SAME-ORIGIN PARENT ACCESS OK srcdoc=SRCDOC OK
+#   /sandbox-direct.html           SANDBOX C=SANDBOXED FRAME - gray = script blocked
+#   /srcdoc-direct.html            SRCDOC inline=SRCDOC OKinline document, no network request
+#   /frameset.html                 FRAMESET frames=2 names=left,right w=<n>/<n>
+#   /named.html                    NAMED slot=/same.html text=SAME ORIGIN OK green background, 520x150
+#   /remove.html                   REMOVED OK iframes=0
+#   /reload.html                   RELOAD cross-blocked
+#   /dynamic.html                  DYNAMIC OK iframes=1 text=SAME ORIGIN OK green background, 520x150
+#   /resize.html                   RESIZE OK actual=600x220
+# Harness server log must show /same-origin-access-ran.png, /nested-inner.html, /cross.html on
+# 8766, and exactly one /sandbox-script-ran.png; NO /cross-origin-access-ran.png.
+
+# Cold home needs the longer settle (the .83 run was suspended 25 s after its goto); the phone
+# must stay awake by hand.
+wait 45000
+
+# --- root: six iframes + srcdoc, seven frames with the nested child -------------------------
+goto http://192.168.1.34:8765/?run=98
+wait 25000
+tap 2 2
+wait 2000
+diag
+hash
+
+# --- sandbox, all three halves side by side -------------------------------------------------
+goto http://192.168.1.34:8765/sandbox-direct.html
+wait 15000
+tap 2 2
+wait 2000
+diag
+
+# --- srcdoc: an inline document, no network request -----------------------------------------
+goto http://192.168.1.34:8765/srcdoc-direct.html
+wait 12000
+tap 2 2
+wait 2000
+diag
+
+# --- frameset: two real <frame>s, 50/50 -----------------------------------------------------
+goto http://192.168.1.34:8765/frameset.html
+wait 15000
+tap 2 2
+wait 2000
+diag
+
+# --- named target: clicklink must reuse the existing named frame ----------------------------
+goto http://192.168.1.34:8765/named.html
+wait 12000
+links
+clicklink 0
+wait 12000
+tap 2 2
+wait 2000
+diag
+
+# --- removal --------------------------------------------------------------------------------
+goto http://192.168.1.34:8765/remove.html
+wait 16000
+tap 2 2
+wait 2000
+diag
+
+# --- subframe src change, same -> cross -----------------------------------------------------
+goto http://192.168.1.34:8765/reload.html
+wait 18000
+tap 2 2
+wait 2000
+diag
+
+# --- dynamic creation -----------------------------------------------------------------------
+goto http://192.168.1.34:8765/dynamic.html
+wait 14000
+tap 2 2
+wait 2000
+diag
+
+# --- resize ---------------------------------------------------------------------------------
+goto http://192.168.1.34:8765/resize.html
+wait 14000
+tap 2 2
+wait 2000
+diag
+
+# --- cheap network regression: TLS + a static document --------------------------------------
+# No tap: the page reports through the load itself, and a tap at 2,2 may hit site chrome.
+goto https://example.com/
+wait 20000
+diag

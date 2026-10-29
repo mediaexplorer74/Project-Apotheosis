@@ -1,0 +1,20 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>RESIZE pending</title>
+<body style="font:16px sans-serif;margin:8px">
+<h1>Resize: 300x110 becomes 600x220 after 2 s</h1>
+<iframe id="f" src="/same.html" width="300" height="110"></iframe>
+<script>
+setTimeout(function () {
+    var f = document.getElementById('f');
+    f.width = 600;
+    f.height = 220;
+    setTimeout(function () {
+        // Report the child's own innerWidth/innerHeight, not the attributes just written.
+        var w = '', h = '';
+        try { w = f.contentWindow.innerWidth; h = f.contentWindow.innerHeight; } catch (e) {}
+        document.title = 'RESIZE OK actual=' + w + 'x' + h;
+    }, 400);
+}, 2000);
+</script>
+</body>

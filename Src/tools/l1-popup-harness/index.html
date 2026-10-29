@@ -1,0 +1,41 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>L1 pending</title>
+<!-- L1 root: six iframes -- same-origin, cross-origin, nested, clipped/scrolling, sandbox,
+     srcdoc -- plus the nested frame's own child, seven frames total. The title is the
+     measurement: it is read back through `diag`, since this phone has no screenshot endpoint.
+     See Src/tools/device-accept/probe-l1-arm-85.txt for the expected strings. -->
+<body style="font:16px sans-serif;margin:8px">
+<h1>L1 frames</h1>
+<iframe id="f-same" src="/same.html" width="300" height="150"></iframe>
+<iframe id="f-cross" src="about:blank" width="300" height="150"></iframe>
+<iframe id="f-nested" src="/nested.html" width="300" height="150"></iframe>
+<iframe id="f-clip" src="/scroll.html" width="160" height="80" scrolling="no"></iframe>
+<iframe id="f-sandbox" src="/sandbox-frame.html" sandbox width="300" height="150"></iframe>
+<iframe id="f-srcdoc" srcdoc="<body><p>SRCDOC OK</p>inline document, no network request</body>" width="300" height="150"></iframe>
+<script>
+(function () {
+    // Cross-origin is a second PORT on the same host: changing the port changes the origin,
+    // and using location.hostname keeps the page working from the bench (127.0.0.1) and the
+    // phone (the PC's LAN address) without a hardcoded address.
+    document.getElementById('f-cross').src = 'http://' + location.hostname + ':8766/cross.html';
+    var n = 0;
+    var t = setInterval(function () {
+        var ifs = document.querySelectorAll('iframe');
+        var same = 'BLOCKED', sr = 'BLOCKED';
+        try {
+            var d = document.getElementById('f-same').contentDocument;
+            if (d && d.getElementById('t')) same = 'SAME-ORIGIN PARENT ACCESS OK';
+        } catch (e) {}
+        try {
+            var s = document.getElementById('f-srcdoc').contentDocument;
+            if (s && s.body && s.body.textContent.indexOf('SRCDOC OK') >= 0) sr = 'SRCDOC OK';
+        } catch (e) {}
+        document.title = 'L1 iframes=' + ifs.length + ' same=' + same + ' srcdoc=' + sr;
+        // The children need a few hundred ms each on the Lumia; 20 tries is 10 s, well inside
+        // the batch's 30 s settle, and the title is stable once all six have committed.
+        if (++n > 20) clearInterval(t);
+    }, 500);
+})();
+</script>
+</body>

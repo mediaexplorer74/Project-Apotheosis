@@ -1,0 +1,14 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>REMOVE pending</title>
+<body style="font:16px sans-serif;margin:8px">
+<h1>Removal: the iframe disappears after 3 s</h1>
+<iframe id="f" src="/same.html" width="520" height="150"></iframe>
+<script>
+setTimeout(function () {
+    var f = document.getElementById('f');
+    f.parentNode.removeChild(f);
+    document.title = 'REMOVED OK iframes=' + document.querySelectorAll('iframe').length;
+}, 3000);
+</script>
+</body>

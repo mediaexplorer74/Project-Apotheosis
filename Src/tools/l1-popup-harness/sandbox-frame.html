@@ -1,0 +1,12 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>SANDBOX child</title>
+<body style="background:#bbb;font:18px sans-serif;margin:0;padding:8px">
+<p id="t">SANDBOXED FRAME - gray = script blocked</p>
+<script>
+// Runs only in the allow-scripts frame. Without that flag the text above stays unchanged and
+// no marker request exists -- the positive readout, not an inference from silence.
+document.getElementById('t').textContent = 'SANDBOXED FRAME - SCRIPT RAN';
+new Image().src = '/sandbox-script-ran.png?r=' + Math.random();
+</script>
+</body>

@@ -1,0 +1,26 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>SANDBOX pending</title>
+<body style="font:16px sans-serif;margin:8px">
+<h1>Sandbox: A = no flags, B = allow-scripts, C = allow-same-origin</h1>
+<iframe id="a" src="/sandbox-frame.html" sandbox width="300" height="120"></iframe>
+<iframe id="b" src="/sandbox-frame.html" sandbox="allow-scripts" width="300" height="120"></iframe>
+<iframe id="c" src="/sandbox-frame.html" sandbox="allow-same-origin" width="300" height="120"></iframe>
+<script>
+// C is the positive control: its origin is kept (the parent can read its DOM) while its
+// scripts must NOT run. An unchanged text therefore proves the flag was honoured; it is not
+// inferred from silence. B is the only frame that may request /sandbox-script-ran.png.
+(function () {
+    var n = 0;
+    var t = setInterval(function () {
+        var txt = 'BLOCKED';
+        try {
+            var d = document.getElementById('c').contentDocument;
+            if (d && d.getElementById('t')) txt = d.getElementById('t').textContent;
+        } catch (e) {}
+        document.title = 'SANDBOX C=' + txt;
+        if (++n > 20) clearInterval(t);
+    }, 500);
+})();
+</script>
+</body>

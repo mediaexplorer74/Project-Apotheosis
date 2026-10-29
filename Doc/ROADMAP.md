@@ -20,9 +20,10 @@ toward a number needs the number defined, so 1.0.0.0 is reached when ALL of the 
 
 1. **Device matrix green on BOTH phones.** The thirteen-site smoke list passes three consecutive
    runs with no process death on the Lumia 950 (3 GB, Snapdragon 810) **and** on the Lumia 640
-   (1 GB, Snapdragon 400). The 640 has never been in the validation set at all — it is the machine
-   that will feel every memory and speed defect first, so every Phase M/L verification below runs
-   on it, not only on the 950.
+   (1 GB, Snapdragon 400). The 640 entered the validation set on 2026-10-27 (L1 frames, `.99`),
+   but the thirteen-site list has still not run there — it is the machine that will feel every
+   memory and speed defect first, so every Phase M/L verification below runs on it, not only on
+   the 950.
 2. **A memory number exists.** Peak RSS on the 640 stays under the budget M5.3 sets, measured by
    the smoke list on the heavy rows. No budget, or a budget nobody measured, fails this criterion.
 3. **Memories survive a restart.** Cookies and localStorage persist (M1 + M2); a login made before
@@ -30,7 +31,8 @@ toward a number needs the number defined, so 1.0.0.0 is reached when ALL of the 
 4. **The input matrix is green** (M4): every orientation, mode and gesture either works or fails
    with a named, honest reason — no silent refusals.
 5. **`<iframe>` paints and issues a request** (L1). A "Chrome in miniature" that renders embedded
-   content as an empty box is not one.
+   content as an empty box is not one. Measured on both phones 2026-10-27 (`.98` on the 950,
+   `.99` on the 640); see Phase L.
 6. **Speed is a stated quantity, not a guess** (M7): startup-to-first-paint and scroll cadence are
    measured on both devices and recorded in this file.
 
@@ -512,6 +514,13 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   Snapdragon 400 may cost proportionally far more than on the bench, and "software is the MVP-safe
   path" was an MVP verdict, not a performance one.
 
+  **Measured on the Lumia 640 (2026-10-27): the automatic path is a hard crash there.** With the
+  default `gpudefault=1`, the first real page load called `WebCoreGpuInit`; `gpu-steps.txt` ends
+  at `[GPU] sharedDisplay`, `gpuinit.txt` was never written and `gpu-crash.flag` held `1`. The
+  next launch consumed the flag, saved `gpudefault=0`, and the same nine-page set then passed.
+  A 1.0 install on a 640 must not need that first crash to learn the lesson: default the GPU path
+  off on ARM, or arm it only from an explicit user toggle, before release.
+
 ## Phase L — long term (months each)
 
 - **L1. Frames and popups** — **iframes/frames DONE on x64 in `0.2.3.80` (2026-10-25); popups
@@ -557,11 +566,32 @@ Tabs (L3) are explicitly NOT part of 1.0 — see L3 below.
   links navigate normally with `url follows engine`; an unknown target is queued — correct
   single-window interpretation. **Cross-origin popup verified too (batch 6):** a `_blank` from :8765
   queued `http://127.0.0.1:8766/cross-target.html` and the final diag read `url=...:8766/...
-  title=CROSS TARGET OK` with the 8766 server logging the GET. **Still open:** (1) the Lumia 640
-  run of the iframe batch (`192.168.1.39`) and an ARM build carrying these popups, which Phase 0
-  requires before any "both devices" wording; (2) Back-from-a-popup was not exercised (no autocmd
-  verb reaches the shell's Back); (3) one 10-minute run is one run — no three-consecutive-runs,
-  no memory figure. Evidence: `Doc/Archive/Summary.md` 2026-10-26 popup section.
+  title=CROSS TARGET OK` with the 8766 server logging the GET.
+  **Light ARM acceptance on both phones (`.98`/`.99`, 2026-10-27):** the pages the `.85` batch
+  used had never been tracked and were missing from the working tree, so they were reconstructed
+  (now in `Src/tools/l1-popup-harness/`: `index.html`, `same.html`, `cross.html`, `nested.html`,
+  `nested-inner.html`, `scroll.html`, `sandbox-frame.html`, `sandbox-direct.html`,
+  `srcdoc-direct.html`, `frameset.html`, `named.html`, `remove.html`, `reload.html`,
+  `dynamic.html`, `resize.html`, `frame-left.html`, `frame-right.html`) and validated first on
+  x64 `.97`: all nine titles matched the `.85` log verbatim. Lumia 950 `.98`: all nine titles
+  plus `example.com`
+  (`title=Example Domain pending=0 rs=C`); server log showed exactly one
+  `/sandbox-script-ran.png` (the `allow-scripts` frame), no `/cross-origin-access-ran.png`, and
+  `/cross.html` on :8766 for the root and reload frames. Lumia 640 `.99`: same nine titles and
+  `example.com`, same marker pattern. Evidence:
+  `Src/tools/device-logs/20261027-1935-l1-light-98-950/` and
+  `Src/tools/device-logs/20261027-2030-l1-light-99-640/`.
+  **The 640's `.98` run found a first-load crash, not a frame defect:** with the default
+  `gpudefault=1`, the first real page load auto-called `WebCoreGpuInit`; `gpu-steps.txt` ends at
+  `[GPU] sharedDisplay`, `gpuinit.txt` was never written and `gpu-crash.flag` held `1`. The next
+  launch consumed the flag, saved `gpudefault=0`, and the `.99` run completed all nine pages
+  (no code change between .98 and .99 beyond the embedded batch). See M1 for the release fix.
+  **Still open:** (1) popups on ARM — `.97` carries the fix, but both phone batches exercised
+  frames only, so a Lumia popup run (`_blank` and gesture `window.open`) is still owed; (2)
+  Back-from-a-popup was not exercised (no autocmd verb reaches the shell's Back); (3) one run per
+  phone is one run — no three-consecutive-runs, no memory figure; (4) `.98`/`.99` are
+  embedded-batch acceptance builds, not releases; `.97` remains the published ARM release.
+  Evidence: `Doc/Archive/Summary.md` 2026-10-26 popup section and the 2026-10-27 L1 section.
 - **L2. ARM JavaScriptCore currency** — the ARM JSC predates the RedBlackTree insert crash cure, and
   a header-only cure cannot travel through a relink: the fix is a real JSC rebuild in a build dir
   that CANNOT be reconfigured without breaking (one cmake edit costs a full ~10 h rebuild). Plan a

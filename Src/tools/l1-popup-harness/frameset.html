@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+<meta charset=utf-8>
+<title>FRAMESET pending</title>
+<script>
+// A frame document has no body to hang a result on, so the measurement goes into the title
+// of the frameset itself: both named frames must exist and the two widths must be equal.
+window.onload = function () {
+    setTimeout(function () {
+        var f = window.frames;
+        if (f.length !== 2) {
+            document.title = 'FRAMESET frames=' + f.length + ' names=?';
+            return;
+        }
+        document.title = 'FRAMESET frames=' + f.length +
+            ' names=' + f[0].name + ',' + f[1].name +
+            ' w=' + f[0].innerWidth + '/' + f[1].innerWidth;
+    }, 800);
+};
+</script>
+</head>
+<frameset cols="50%,50%">
+<frame name="left" src="/frame-left.html">
+<frame name="right" src="/frame-right.html">
+</frameset>
+</html>

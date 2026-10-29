@@ -1,0 +1,19 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>SAME child</title>
+<body style="background:#0a0;color:#fff;font:20px sans-serif;margin:0;padding:20px">
+<h2 id="t">SAME ORIGIN OK</h2>
+<script>
+// The marker request is the server-side proof that a same-origin child really reached into
+// the parent DOM; a blocked child leaves no request at all.
+var ok = false;
+try { parent.document; ok = true; } catch (e) {}
+var t = document.getElementById('t');
+if (ok) {
+    t.textContent = 'SAME ORIGIN OK green background, 520x150';
+    new Image().src = '/same-origin-access-ran.png?r=' + Math.random();
+} else {
+    t.textContent = 'SAME ORIGIN BLOCKED';
+}
+</script>
+</body>

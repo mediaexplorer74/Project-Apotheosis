@@ -27,6 +27,11 @@
 [CmdletBinding()]
 param(
     [string]$Ip = '192.168.1.35',
+    # The 640's https:443 listener times out from this bench (measured 2026-10-27) while http:80
+    # answers; Wdp-Deploy and device-launch already take a scheme, and a log pull that cannot use
+    # the same channel is the one step of a device run with no http fallback.
+    [ValidateSet('https', 'http')][string]$Scheme = 'https',
+    [int]$Port = 443,
     [string]$OutDir,
     # Which installed package's LocalState to read. This used to be hardcoded to the C++ harness, so
     # the script answered "Harness is not installed on this device" on any machine where only the
@@ -96,7 +101,8 @@ if (-not $OutDir) {
 }
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 
-$base = "https://${Ip}:443"
+if ($Scheme -eq 'http' -and -not $PSBoundParameters.ContainsKey('Port')) { $Port = 80 }
+$base = "${Scheme}://${Ip}:${Port}"
 $handler = [System.Net.Http.HttpClientHandler]::new()
 $handler.ServerCertificateCustomValidationCallback =
     [System.Net.Http.HttpClientHandler]::DangerousAcceptAnyServerCertificateValidator

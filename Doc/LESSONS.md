@@ -1199,3 +1199,14 @@ family is exempted. On this bench the syntax that works is
 `CheckNetIsolation LoopbackExempt -a '-n=ME.Apotheosis_cj4nrm0qt9s1y'`; without the quotes
 `-n=...` is parsed as a parameter and the command answers "Invalid Parameters". Remove the
 exemption when the harness is done.
+
+**Track the harness with the evidence.** The frame pages behind the `.85` phone acceptance were
+never committed; by 2026-10-27 they were gone and had to be reconstructed from the batch's
+expected titles before the 640 could be tested. A page that carries a measurement is an
+instrument: keep it in the repo next to the probe, not in a scratch directory.
+
+**The first page load is not free on a 640.** With `gpudefault=1`, the automatic GPU path
+(`WebCoreGpuInit` -> `PlatformDisplay::sharedDisplay()`) hard-crashes the process on the Lumia 640
+before `gpuinit.txt` can be written; `gpu-crash.flag=1` is the only trace. The next launch
+consumes the flag and saves `gpudefault=0`. Do not read a batch that stops after its first load as
+a frame bug until that marker pair is checked.

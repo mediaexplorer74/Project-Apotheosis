@@ -1,0 +1,24 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>SRCDOC pending</title>
+<body style="font:16px sans-serif;margin:8px">
+<h1>srcdoc: an inline document with no network request</h1>
+<iframe id="f" srcdoc="<body><p>SRCDOC OK</p>inline document, no network request</body>" width="600" height="160"></iframe>
+<script>
+// The inline document has no URL of its own; the only network traffic may be this parent HTML.
+(function () {
+    var n = 0;
+    var t = setInterval(function () {
+        try {
+            var d = document.getElementById('f').contentDocument;
+            if (d && d.body) {
+                document.title = 'SRCDOC inline=' + d.body.textContent;
+                clearInterval(t);
+                return;
+            }
+        } catch (e) {}
+        if (++n > 20) clearInterval(t);
+    }, 300);
+})();
+</script>
+</body>
